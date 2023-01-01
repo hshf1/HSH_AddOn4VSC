@@ -8,15 +8,19 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 
 ### Added 
 
-- bisher nur für MacOS, integration für Windows folgt und dann Linux
-- Quiz erstellen
 - Ggf. Möglichkeiten mit dem Debugger in betracht ziehen.
 
 ### Fixed
 
-- Statusbar-Tool zum starten vom Quiz
+- 
 
-## [0.0.11] 29.12.2022
+## [0.0.11] 01.01.2023
+
+### neu hinzugefügt
+
+- C-Quiz
+- Statusbar-Tool zum starten vom C-Quiz
+- Integration für Windows und Linux
 
 ### geändert
 
