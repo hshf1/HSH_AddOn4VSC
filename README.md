@@ -10,17 +10,13 @@ Dies ist ein kleiner Schritt um die C-Vorlesung besser zu untersützen. Für die
 * Datei- und Verzeichnisnamen auf Umlaute und Leerzeichen überprüfen und warnen
 * Dateiendung auf ".c" prüfen und warnen
 
-## Requirements
-
-Derzeit keine.
-
-## Extension Settings
+## Erweiterungs-Einstellungen
 
 Derzeit keine.
 
 ## Bekannte Probleme
 
----
+Derzeit keine.
 
 ## Weitere Informationen
 
@@ -28,4 +24,4 @@ Weitere Informationen gibt es auf der GitHub-Seite der C-Vorlesung:
 
 * [GitHub VorlesungC HsH](https://github.com/hshf1/VorlesungC)
 
-**Enjoy!**
+**Viel Spaß!**
