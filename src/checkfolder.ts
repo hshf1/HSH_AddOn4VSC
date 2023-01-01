@@ -46,15 +46,3 @@ export function openprefolder(username_from_extpath: string) {
 		openfolder()
 	}
 }
-
-export function checkfilefoldername() {
-	var filePath: string = vscode.window.activeTextEditor?.document.uri.fsPath || "no_file_defined"
-	var filePathlowercase = filePath.toLowerCase()
-	console.log(filePath)
-	if (filePathlowercase.indexOf('ä') !== -1 || filePathlowercase.indexOf('ö') !== -1 || filePathlowercase.indexOf('ü') !== -1 || filePathlowercase.indexOf(' ') !== -1) {
-		vscode.window.showErrorMessage(`${filePath} beinhaltet Umlaute oder Leerzeichen!`)
-	}
-	if (!filePath.endsWith('.c')) {
-		vscode.window.showErrorMessage(`${filePath} endet nicht mit ".c"! Für das Compilieren muss die Datei mit ".c" enden!`)
-	}
-}

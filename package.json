@@ -3,6 +3,7 @@
   "displayName": "AddOn4VSC",
   "publisher": "cako",
   "description": "Eine Erweiterung für die C-Vorlesung.",
+  "icon": "images/AddOn4VSC.png",
   "license": "license",
   "repository": {
     "type": "git",

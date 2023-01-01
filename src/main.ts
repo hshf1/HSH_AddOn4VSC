@@ -1,7 +1,8 @@
 import * as vscode from 'vscode'
 import * as path from 'path'
 import { IS_LINUX, IS_OSX } from './extsettings'
-import { checkfilefoldername, openprefolder } from './checkfolder'
+import { openprefolder } from './checkfolder'
+import { checkname } from './filefoldername'
 import { checkjsons } from './jsonfilescheck'
 import { startQuiz } from './quiz'
 
@@ -35,11 +36,11 @@ export function activate(context: vscode.ExtensionContext) {
 	**************************************************************************************/
 
 	// Datei- und Ordnernamen nach Umlauten oder Leerzeichen prüfen
-	vscode.workspace.onDidSaveTextDocument(() => {
-		checkfilefoldername()
+	vscode.workspace.onDidSaveTextDocument(async () => {
+		await checkname()
 	})
-	vscode.debug.onDidChangeBreakpoints(() => {
-		checkfilefoldername()
+	vscode.debug.onDidChangeBreakpoints(async () => {
+		await checkname()
 	})
 
 	// C-Quiz starten
