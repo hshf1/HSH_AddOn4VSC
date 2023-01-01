@@ -6,7 +6,7 @@
   "license": "license",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/cakohsh/addon4vsc"
   },
   "version": "1.0.0",
   "engines": {
@@ -14,26 +14,6 @@
   },
   "categories": [
     "Other"
-  ],
-  "extensionDependencies": [
-    "formulahendry.code-runner",
-    "ms-vscode.cpptools",
-    "ms-vsliveshare.vsliveshare",
-    "ms-vsliveshare.vsliveshare-audio"
-  ],
-  "browser": [
-    {
-      "name": "Mac",
-      "extensionDependencies": [
-        "vadimcn.vscode-lldb"
-      ]
-    },
-    {
-      "name": "Linux",
-      "extensionDependencies": [
-        "vadimcn.vscode-lldb"
-      ]
-    }
   ],
   "activationEvents": [
     "onCommand:exam.start",
@@ -56,6 +36,26 @@
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js"
   },
+  "extensionDependencies": [
+    "formulahendry.code-runner",
+    "ms-vscode.cpptools",
+    "ms-vsliveshare.vsliveshare",
+    "ms-vsliveshare.vsliveshare-audio"
+  ],
+  "browser": [
+    {
+      "name": "Mac",
+      "extensionDependencies": [
+        "vadimcn.vscode-lldb"
+      ]
+    },
+    {
+      "name": "Linux",
+      "extensionDependencies": [
+        "vadimcn.vscode-lldb"
+      ]
+    }
+  ],
   "devDependencies": {
     "@types/glob": "^8.0.0",
     "@types/mocha": "^10.0.0",
@@ -68,5 +68,8 @@
     "glob": "^8.0.3",
     "mocha": "^10.1.0",
     "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "handlebars": "^4.7.7"
   }
 }

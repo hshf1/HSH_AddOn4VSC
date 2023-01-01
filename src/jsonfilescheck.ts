@@ -2,7 +2,7 @@ import { settingsjsondata, tasksjsondata } from './jsonfilesdata'
 import { promises, writeFile } from 'fs'
 import { IS_LINUX, IS_WINDOWS } from './extsettings'
 
-export function checkjsons(username_from_extpath: string, extpath: string) {
+export function checkjsons(username_from_extpath: string) {
 	var filePathsettingsjson = username_from_extpath + '/Library/Application Support/Code/User/settings.json'
 	var filePathtasksjson = username_from_extpath + '/Library/Application Support/Code/User/tasks.json'
 
@@ -33,7 +33,7 @@ function setsettingsjson(filePath: string) {
 	})
 }
 
-async function settasksjson(filePath: string) {
+function settasksjson(filePath: string) {
 	console.log(`${filePath}: tasks.json existiert nicht, es wird jetzt erstellt`)
 	writeFile(filePath, tasksjsondata, (error) => {
 		if (error) {

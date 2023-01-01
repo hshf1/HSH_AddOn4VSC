@@ -15,7 +15,7 @@ export function activate(context: vscode.ExtensionContext) {
 	const username_from_extpath = path.dirname(path.dirname(path.dirname(extpath)))
 
 	// settings/tasks/launch-.json überprüfen und einfügen
-	checkjsons(username_from_extpath, extpath)
+	checkjsons(username_from_extpath)
 
 	// vordefinierten Ordner öffnen, falls gefunden, sonst auffordern
 	if (!(vscode.workspace.workspaceFolders?.toString)) {

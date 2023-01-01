@@ -48,7 +48,7 @@ export function openprefolder(username_from_extpath: string) {
 }
 
 export function checkfilefoldername() {
-	var filePath = vscode.window.activeTextEditor?.document.uri.fsPath || "no_file_defined"
+	var filePath: string = vscode.window.activeTextEditor?.document.uri.fsPath || "no_file_defined"
 	var filePathlowercase = filePath.toLowerCase()
 	console.log(filePath)
 	if (filePathlowercase.indexOf('ä') !== -1 || filePathlowercase.indexOf('ö') !== -1 || filePathlowercase.indexOf('ü') !== -1 || filePathlowercase.indexOf(' ') !== -1) {
