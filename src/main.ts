@@ -2,7 +2,6 @@ import * as vscode from 'vscode'
 import * as path from 'path'
 import { checkfilefoldername, openprefolder } from './checkfolder'
 import { checkjsons } from './jsonfilescheck'
-import { allsystems } from './installextensions'
 import { startQuiz } from './quiz'
 
 export function activate(context: vscode.ExtensionContext) {
@@ -17,9 +16,6 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// settings/tasks/launch-.json überprüfen und einfügen
 	checkjsons(username_from_extpath, extpath)
-
-	// Extensions überprüfen und ggf. installieren
-	allsystems()
 
 	// vordefinierten Ordner öffnen, falls gefunden, sonst auffordern
 	if (!(vscode.workspace.workspaceFolders?.toString)) {

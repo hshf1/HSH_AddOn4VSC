@@ -15,6 +15,26 @@
   "categories": [
     "Other"
   ],
+  "extensionDependencies": [
+    "formulahendry.code-runner",
+    "ms-vscode.cpptools",
+    "ms-vsliveshare.vsliveshare",
+    "ms-vsliveshare.vsliveshare-audio"
+  ],
+  "browser": [
+    {
+      "name": "Mac",
+      "extensionDependencies": [
+        "vadimcn.vscode-lldb"
+      ]
+    },
+    {
+      "name": "Linux",
+      "extensionDependencies": [
+        "vadimcn.vscode-lldb"
+      ]
+    }
+  ],
   "activationEvents": [
     "onCommand:exam.start",
     "onStartupFinished"
@@ -48,8 +68,5 @@
     "glob": "^8.0.3",
     "mocha": "^10.1.0",
     "typescript": "^4.8.4"
-  },
-  "dependencies": {
-    "handlebars": "^4.7.7"
   }
 }

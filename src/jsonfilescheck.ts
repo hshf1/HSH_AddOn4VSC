@@ -33,7 +33,7 @@ function setsettingsjson(filePath: string) {
 	})
 }
 
-function settasksjson(filePath: string) {
+async function settasksjson(filePath: string) {
 	console.log(`${filePath}: tasks.json existiert nicht, es wird jetzt erstellt`)
 	writeFile(filePath, tasksjsondata, (error) => {
 		if (error) {
