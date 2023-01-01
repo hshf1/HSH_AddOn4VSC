@@ -2,7 +2,13 @@
 
 ## Features
 
-Dies ist ein kleiner Schritt um die C-Vorlesung besser zu untersützen. Beim Start von VSCode wird ein vordefinierter Ordner mit dem Namen "C_Uebung" im Dokumentenverzeichnis geöffnet, falls dieser vorhanden ist. Ansonsten kommt die Aufforderung, einen Ordner zu öffnen.
+Dies ist ein kleiner Schritt um die C-Vorlesung besser zu untersützen. Für die Betriebssysteme Linux, MacOs und Windows.
+
+* Erstellen eines vordefinierten Ordners
+* Wenn beim starten von VSCode kein Ordner geöffnet ist, vordefinierten Ordner starten oder Ordner auswählen lassen 
+* C-Quiz
+* Datei- und Verzeichnisnamen auf Umlaute und Leerzeichen überprüfen und warnen
+* Dateiendung auf ".c" prüfen und warnen
 
 ## Requirements
 
@@ -13,8 +19,6 @@ Derzeit keine.
 Derzeit keine.
 
 ## Bekannte Probleme
-
-* Windows/Linux funktionieren noch nicht.
 
 ---
 
