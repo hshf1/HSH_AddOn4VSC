@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # AddOn4VSC
 
 ## Features
@@ -26,7 +25,3 @@ Weitere Informationen gibt es auf der GitHub-Seite der C-Vorlesung:
 * [GitHub VorlesungC HsH](https://github.com/hshf1/VorlesungC)
 
 **Enjoy!**
-=======
-# addon4vsc
-Eine Erweiterung für die VorlesungC
->>>>>>> Initial commit
