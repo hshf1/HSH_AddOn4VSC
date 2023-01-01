@@ -42,20 +42,6 @@
     "ms-vsliveshare.vsliveshare",
     "ms-vsliveshare.vsliveshare-audio"
   ],
-  "browser": [
-    {
-      "name": "Mac",
-      "extensionDependencies": [
-        "vadimcn.vscode-lldb"
-      ]
-    },
-    {
-      "name": "Linux",
-      "extensionDependencies": [
-        "vadimcn.vscode-lldb"
-      ]
-    }
-  ],
   "devDependencies": {
     "@types/glob": "^8.0.0",
     "@types/mocha": "^10.0.0",
@@ -68,8 +54,5 @@
     "glob": "^8.0.3",
     "mocha": "^10.1.0",
     "typescript": "^4.8.4"
-  },
-  "dependencies": {
-    "handlebars": "^4.7.7"
   }
 }
