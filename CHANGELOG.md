@@ -1,0 +1,46 @@
+# Changelog
+
+Alle wichtigen Änderungen werden hier gespeichert und veröffentlicht.
+
+Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+
+## [Unreleased]
+
+### Added 
+
+- bisher nur für MacOS, integration für Windows folgt und dann Linux
+- Quiz erstellen
+- Ggf. Möglichkeiten mit dem Debugger in betracht ziehen.
+
+### Fixed
+
+- Statusbar-Tool zum starten vom Quiz
+
+## [0.0.11] 29.12.2022
+
+### geändert
+
+- json-Dateien sind nun zusammengefasst und die Einstellungen in den jeweiligen einzelnen Dateien Plattform-spezifisch beschrieben.
+- Effizientere schreibweise vom Code.
+
+## [0.0.1] - [0.0.10] 26.12.2022 - 28.12.2022
+
+### neu hinzugefügt
+
+- Auf die Dateiendung achten. Alles außer ".c" ist falsch und es kommt eine Warnmeldung.
+- Datei- und Verzeichnisnamen auf Leerzeichen und Umlaute überprüfen und warnen.
+- Die settings.json, launch.json und tasks.json erstellen, wenn nicht vorhanden.
+- Das vordefinierte Verzeichnis soll erstellt werden, falls noch nicht vorhanden.
+- Vordefinierter Ordner (in Dokumente, Name: C_Uebung) wird automatisch geöffnet, falls vorhanden.
+- Öffnen eines Ordners zu Beginn von VSCode nur dann, falls kein Ordner bereits geöffnet ist.
+- Erkennung vom Betriebssystem.
+- Installation aller erforderlichen Extensions zu Beginn von VSCode, falls diese fehlen.
+- Die Idee, die VorlesungC mithilfe dieser Erweiterung zu unterstützen.
+
+### bearbeitet
+
+- Aufruf der Ordnerabfrage wurde angepasst.
+- Die Methode, um die json-Dateien zu bekommen wurde angepasst.
+- Überprüfung auf vorhandensein der benötigten Extensions wurde verbessert.
+- Methode, um zum Pfad des Ordners zu gelangen wurde angepasst. (MacOS)
+- Abfrage zum Ordner öffnen nur dann, wenn vordefinierter Ordner nicht gefunden wird.
