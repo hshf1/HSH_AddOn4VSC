@@ -1,10 +1,8 @@
-import * as vscode from 'vscode'
+import { Uri, workspace, window } from 'vscode'
 import { extname, dirname, basename, join } from 'path'
 
-let renameanfrage: string | vscode.Disposable
-
 export async function checkname() {
-    var filePath: string = vscode.window.activeTextEditor?.document.uri.fsPath || "no_file_defined"
+    var filePath: string = window.activeTextEditor?.document.uri.fsPath || "no_file_defined"
 
     if (filePath.toLowerCase().indexOf('ä') !== -1 || filePath.toLowerCase().indexOf('ö') !== -1 || filePath.toLowerCase().indexOf('ü') !== -1 || filePath.toLowerCase().indexOf(' ') !== -1 || extname(filePath) !== '.c') {
         await rename(filePath)
@@ -12,14 +10,10 @@ export async function checkname() {
 }
 
 async function rename(currentPath: string) {
-    if (renameanfrage instanceof vscode.Disposable) {
-        renameanfrage.dispose();
-    }
-
-    renameanfrage = await vscode.window.showWarningMessage(
-        `${currentPath} hat Fehler im Dateinamen. Sollen diese automatisch angepasst werden?`,
+    let renameanfrage = await window.showWarningMessage(
+        `Es sind Fehler im Dateinamen vorhanden! Sollen diese automatisch angepasst werden?`,
         'Ja',
-        'Nein'
+        'Nein',
     ) || ''
 
     if (renameanfrage === 'Ja') {
@@ -28,7 +22,7 @@ async function rename(currentPath: string) {
         const constbasename = basename(currentPath)
 
         if (constdirname.toLowerCase().indexOf('ä') !== -1 || constdirname.toLowerCase().indexOf('ö') !== -1 || constdirname.toLowerCase().indexOf('ü') !== -1 || constdirname.toLowerCase().indexOf(' ') !== -1) {
-            vscode.window.showErrorMessage(`${constdirname} enthält Umlaute oder Leerzeichen! Diese müssen manuell umbenannt werden!`)
+            window.showErrorMessage(`${constdirname} enthält Umlaute oder Leerzeichen! Diese müssen manuell umbenannt werden!`)
         }
 
         const replacedBasename = constbasename.replace(/[äöü ÄÖÜ]/g, (char: string) => {
@@ -62,7 +56,7 @@ async function rename(currentPath: string) {
             }
         }
 
-        await vscode.workspace.fs.rename(vscode.Uri.file(currentPath), vscode.Uri.file(currentPath).with({ path: newfullname }))
+        await workspace.fs.rename(Uri.file(currentPath), Uri.file(currentPath).with({ path: newfullname }))
 
     }
 }

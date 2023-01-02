@@ -6,9 +6,9 @@ Dies ist ein kleiner Schritt um die C-Vorlesung besser zu untersützen. Für die
 
 * Erstellen eines vordefinierten Ordners
 * Wenn beim starten von VSCode kein Ordner geöffnet ist, vordefinierten Ordner starten oder Ordner auswählen lassen 
-* C-Quiz
-* Datei- und Verzeichnisnamen auf Umlaute und Leerzeichen überprüfen und warnen
-* Dateiendung auf ".c" prüfen und warnen
+* C-Quiz (im Menü)
+* Datei- und Verzeichnisnamen auf Umlaute und Leerzeichen überprüfen, warnen und Dateinamen automatisch anpassen
+* Dateiendung auf ".c" prüfen, warnen und automatisch anpassen
 
 ## Erweiterungs-Einstellungen
 

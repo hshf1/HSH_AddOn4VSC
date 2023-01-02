@@ -1,10 +1,10 @@
 import * as vscode from 'vscode'
-import * as path from 'path'
-import { IS_LINUX, IS_OSX } from './extsettings'
+import { dirname } from 'path'
+import { IS_WINDOWS, menue_button } from './extsettings'
 import { openprefolder } from './checkfolder'
 import { checkname } from './filefoldername'
 import { checkjsons } from './jsonfilescheck'
-import { startQuiz } from './quiz'
+import { active_addon, menue } from './menue'
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -12,21 +12,17 @@ export function activate(context: vscode.ExtensionContext) {
 	Beim Start einmal durchgeführte Funktionen!
 	**************************************************************************************/
 
-	// Pfaderstellung für alle weiteren Befehle
 	const extpath = context.extensionPath
-	const username_from_extpath = path.dirname(path.dirname(path.dirname(extpath)))
+	const username_from_extpath = dirname(dirname(dirname(extpath)))
 
-	// Für MacOS und Linux benötigte Erweiterung für den Compiler
-	if (IS_LINUX || IS_OSX) {
+	if (!IS_WINDOWS) {
 		if (!vscode.extensions.getExtension('vadimcn.vscode-lldb')) {
 			vscode.commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb')
 		}
 	}
 
-	// settings/tasks/launch-.json überprüfen und einfügen
 	checkjsons(username_from_extpath)
 
-	// vordefinierten Ordner öffnen, falls gefunden, sonst auffordern
 	if (!(vscode.workspace.workspaceFolders?.toString)) {
 		openprefolder(username_from_extpath)
 	}
@@ -35,21 +31,24 @@ export function activate(context: vscode.ExtensionContext) {
 	Funktionen, die immer wieder aufgerufen werden können, je nach Event
 	**************************************************************************************/
 
-	// Datei- und Ordnernamen nach Umlauten oder Leerzeichen prüfen
 	vscode.workspace.onDidSaveTextDocument(async () => {
-		await checkname()
-	})
-	vscode.debug.onDidChangeBreakpoints(async () => {
-		await checkname()
+		if (active_addon) {
+			await checkname()
+		}
 	})
 
-	// C-Quiz starten
+	vscode.debug.onDidChangeBreakpoints(async () => {
+		if (active_addon) {
+			await checkname()
+		}
+	})
+
 	context.subscriptions.push(
-		vscode.commands.registerCommand('exam.start', () => {
-			startQuiz()
+		vscode.commands.registerCommand('menue.show', () => {
+			menue()
+			menue_button.hide()
 		})
 	)
 }
 
-// This method is called when your extension is deactivated
 export function deactivate() { }

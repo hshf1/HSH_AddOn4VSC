@@ -23,7 +23,6 @@ export function checkjsons(username_from_extpath: string) {
 }
 
 function setsettingsjson(filePath: string) {
-	console.log(`${filePath}: settings.json existiert nicht, es wird jetzt erstellt`)
 	writeFile(filePath, settingsjsondata, (error) => {
 		if (error) {
 			console.error(error);
@@ -34,7 +33,6 @@ function setsettingsjson(filePath: string) {
 }
 
 function settasksjson(filePath: string) {
-	console.log(`${filePath}: tasks.json existiert nicht, es wird jetzt erstellt`)
 	writeFile(filePath, tasksjsondata, (error) => {
 		if (error) {
 			console.error(error);

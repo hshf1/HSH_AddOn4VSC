@@ -9,15 +9,20 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 ### Added 
 
 - Ggf. Möglichkeiten mit dem Debugger in betracht ziehen.
+- Quizpanel
+- Ausführen von externen Skripten
 
 ### Fixed
 
 - 
 
-## [1.0.0] 01.01.2023
+## [1.0.0] -[1.0.2] 02.01.2023
 
 ### neu hinzugefügt
 
+- Menü (Statusbar unten und Activitybar links)
+- Möglichkeit, Erweiterung über Menü bis zur nächsten manuellen oder automatische Aktivierung zu deaktivieren
+- Möglichkeit, auf Buttondruck Namen direkt auf zu ändern (Umlaute und Leerzeichen)
 - C-Quiz
 - Statusbar-Tool zum starten vom C-Quiz
 - Integration für Windows und Linux

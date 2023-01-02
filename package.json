@@ -9,23 +9,61 @@
     "type": "git",
     "url": "https://github.com/cakohsh/addon4vsc"
   },
-  "version": "1.0.1",
+  "version": "1.1.0",
   "engines": {
-    "vscode": "^1.74.0"
+    "vscode": "^1.73.0"
   },
   "categories": [
     "Other"
   ],
   "activationEvents": [
+    "onCommand:menue.show",
     "onCommand:exam.start",
+    "onCommand:exam.stop",
+    "onCommand:extension.on",
+    "onCommand:extension.off",
     "onStartupFinished"
   ],
   "main": "./out/main.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "package-explorer",
+          "title": "Erweiterung für VorlesungC",
+          "icon": "images/activity_bar.svg"
+        }
+      ]
+    },
+    "views": {
+      "package-explorer": [
+        {
+          "id": "menue_bar_activity",
+          "name": "Menü",
+          "icon": "images/activity_bar.svg"
+        }
+      ]
+    },
     "commands": [
+      {
+        "command": "menue.show",
+        "title": "Klicken, um zum Menü zu gelangen"
+      },
       {
         "command": "exam.start",
         "title": "Starte die Übung!"
+      },
+      {
+        "command": "exam.stop",
+        "title": "Beende C-Quiz"
+      },
+      {
+        "command": "extension.on",
+        "title": "Erweiterung wieder aktivieren"
+      },
+      {
+        "command": "extension.off",
+        "title": "Erweiterung pausieren"
       }
     ]
   },
@@ -47,7 +85,7 @@
     "@types/glob": "^8.0.0",
     "@types/mocha": "^10.0.0",
     "@types/node": "16.x",
-    "@types/vscode": "^1.74.0",
+    "@types/vscode": "^1.73.0",
     "@typescript-eslint/eslint-plugin": "^5.42.0",
     "@typescript-eslint/parser": "^5.42.0",
     "@vscode/test-electron": "^2.2.0",

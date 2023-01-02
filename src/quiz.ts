@@ -1,84 +1,100 @@
 import * as vscode from 'vscode'
+import { menue_button } from './extsettings';
+import { status_quiz } from './tree';
 import { questions } from './quizqestions'
+import { error } from 'console';
 
-export const button = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-button.text = 'C-Quiz starten';
-button.tooltip = 'Klicken, um C-Quiz zu starten';
-button.command = 'exam.start';
-button.show();
+let quizOutputChannel: vscode.OutputChannel
+let active_quickpick1: any
+let currentQuestionIndex: number
+let score: number
+let selectedanswer: string
 
-export function startQuiz() {
+async function showNextQuestion(quizOutputChannel: vscode.OutputChannel) {
+    if (currentQuestionIndex < questions.length) {
+        const question = questions[currentQuestionIndex].question
+        const items = questions[currentQuestionIndex].answers.map(answer => ({ label: answer }))
+        items.push({ label: 'C-Quiz beenden' })
+        quizOutputChannel.appendLine(question)
+        active_quickpick1 = await quiz_showQuickPick(question, items).catch(error)
+        if (status_quiz) {
+            if (selectedanswer === questions[currentQuestionIndex].correctAnswer) {
+                score++;
+                quizOutputChannel.appendLine(`${selectedanswer} ist richtig!\nAktuelle Punktzahl: ${score} von ${questions.length} Punkten.\n\n`)
+            } else if (selectedanswer === 'C-Quiz beenden') {
+                vscode.commands.executeCommand('exam.stop')
+                return 0
+            } else {
+                quizOutputChannel.appendLine(`${selectedanswer} ist falsch!\nAktuelle Punktzahl: ${score} von ${questions.length} Punkten.\n\n`)
+            }
+            currentQuestionIndex++
 
-    button.hide()
+            if (quizOutputChannel) {
+                showNextQuestion(quizOutputChannel)
+            } else {
+                disposeQuickPick()
+            }
 
-    const quizOutputChannel = vscode.window.createOutputChannel('C-Quiz');
-
-    quizOutputChannel.appendLine('Willkommen beim C-Quiz! Es geht los:');
-    quizOutputChannel.show();
-
-    let score = 0;
-    let currentQuestionIndex = 0;
-    showNextQuestion()
-
-    function showNextQuestion() {
-        // Check if there are more questions
-        if (currentQuestionIndex < questions.length) {
-            // Get the current question
-            const question = questions[currentQuestionIndex];
-            quizOutputChannel.appendLine(question.question)
-            // Create an array of items for the quick pick
-            const items = question.answers.map(answer => ({ label: answer }));
-            items.push({ label: 'C-Quiz beenden' })
-            // Display the quick pick
-            vscode.window.showQuickPick(items, {
-                ignoreFocusOut: true,
-                placeHolder: question.question
-            }).then(selectedOption => {
-                if (selectedOption) {
-                    // Check if the selected answer is correct
-                    if (selectedOption.label === question.correctAnswer) {
-                        score++;
-                        quizOutputChannel.appendLine(`Gewählte Antwort: ${selectedOption.label} ist richtig!`)
-                        vscode.window.showInformationMessage(`${selectedOption.label} ist die richtige Antwort! :-)`);
-                    } else if (selectedOption.label === 'C-Quiz beenden') {
-                        quizOutputChannel.dispose()
-                        button.show()
-                        vscode.window.showInformationMessage('C-Quiz beendet!')
-                    } else {
-                        quizOutputChannel.appendLine(`Gewählte Antwort: ${selectedOption.label} ist falsch!`)
-                        vscode.window.showWarningMessage(`${selectedOption.label} ist die falsche Antwort! :-(`);
-                    }
-
-                    // Update the current question index
-                    currentQuestionIndex++;
-
-                    // Show the next question
-                    showNextQuestion();
-                }
-            });
         } else {
             let items2: {
                 label: string
-            }[] = []
-            items2.push({ label: 'C-Quiz beenden' }, { label: 'C-Quiz neu starten' })
+            }[] = [
+                    { label: 'C-Quiz beenden' },
+                    { label: 'C-Quiz neu starten' }
+                ]
             quizOutputChannel.appendLine(`Du hast ${score} Punkte von insgesamt ${questions.length} erreicht.\nC-Quiz beenden oder neu starten?`)
-            vscode.window.showQuickPick(items2, {
+            await vscode.window.showQuickPick(items2, {
                 ignoreFocusOut: true,
                 placeHolder: 'C-Quiz beenden oder neu starten?'
             }).then(selectedOption => {
                 if (selectedOption) {
-                    // Check if the selected answer is correct
                     if (selectedOption.label === 'C-Quiz beenden') {
-                        quizOutputChannel.dispose()
-                        button.show()
-                        vscode.window.showInformationMessage('C-Quiz beendet!')
+                        vscode.commands.executeCommand('exam.stop')
+                        return 0
                     } else {
                         quizOutputChannel.dispose()
                         vscode.window.showInformationMessage('C-Quiz neu gestartet!')
-                        startQuiz()
+                        vscode.commands.executeCommand('exam.start')
                     }
                 }
             })
         }
+    }
+}
+
+export function startQuiz() {
+    if (status_quiz) {
+        currentQuestionIndex = 0
+        score = 0
+        menue_button.hide()
+        quizOutputChannel = vscode.window.createOutputChannel('C-Quiz')
+        quizOutputChannel.appendLine('Willkommen beim C-Quiz! Es geht los:')
+        quizOutputChannel.show()
+        showNextQuestion(quizOutputChannel)
+    }
+}
+
+export function quit_quiz() {
+    if (!status_quiz) {
+        quizOutputChannel?.dispose()
+        disposeQuickPick()
+        menue_button.show()
+        vscode.window.showInformationMessage('C-Quiz beendet!')
+    }
+}
+
+async function quiz_showQuickPick(question: string, items: { label: string }[]) {
+    const quickpick = await vscode.window.showQuickPick(items, {
+        placeHolder: question,
+        ignoreFocusOut: true
+    })
+    if (quickpick && status_quiz) {
+        selectedanswer = quickpick?.label
+    }
+}
+
+export function disposeQuickPick() {
+    if (active_quickpick1 instanceof vscode.Disposable) {
+        active_quickpick1.dispose()
     }
 }

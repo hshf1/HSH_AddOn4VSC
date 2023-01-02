@@ -1,9 +1,6 @@
 import { IS_WINDOWS } from "./extsettings"
 
-var filesencoding = 'utf8' // Linux und MacOS
-if (IS_WINDOWS) {
-    filesencoding = 'cp437' // Windows
-}
+var filesencoding = !IS_WINDOWS ? 'utf8' : 'cp437';
 
 export const settingsjsondata = `{
     // Allgemeine Nutzereinstellungen

@@ -1,18 +1,19 @@
-import * as vscode from 'vscode'
+import { Uri, OpenDialogOptions, commands, window } from 'vscode'
 import { IS_WINDOWS, testprogc } from './extsettings'
 import { existsSync, mkdirSync, writeFileSync } from 'fs'
 
 function openfolder() {
-	const options: vscode.OpenDialogOptions = {
+	const options: OpenDialogOptions = {
 		canSelectMany: false,
 		openLabel: 'Ordner öffnen',
 		canSelectFiles: false,
 		canSelectFolders: true,
-	};
-	vscode.window.showOpenDialog(options).then(fileUri => {
+	}
+
+	window.showOpenDialog(options).then(fileUri => {
 		if (fileUri && fileUri[0]) {
 			console.log('Ausgewählter Ordner: ' + fileUri[0].fsPath);
-			vscode.commands.executeCommand(`vscode.openFolder`, fileUri[0]);
+			commands.executeCommand(`vscode.openFolder`, fileUri[0]);
 		}
 	})
 }
@@ -24,7 +25,7 @@ export function openprefolder(username_from_extpath: string) {
 	}
 	const folderPathParsed = folderPath.split(`\\`).join(`/`)
 	const testprogfilepath = username_from_extpath + folderPathParsed + '/testprog.c'
-	const folderUri = vscode.Uri.file(username_from_extpath + folderPathParsed)
+	const folderUri = Uri.file(username_from_extpath + folderPathParsed)
 	console.log(`folderUri: ${folderUri}`)
 	if (!existsSync(username_from_extpath + folderPathParsed)) {
 		try {
@@ -41,7 +42,7 @@ export function openprefolder(username_from_extpath: string) {
 		}
 	}
 	if (existsSync(username_from_extpath + folderPathParsed)) {
-		vscode.commands.executeCommand(`vscode.openFolder`, folderUri)
+		commands.executeCommand(`vscode.openFolder`, folderUri)
 	} else {
 		openfolder()
 	}

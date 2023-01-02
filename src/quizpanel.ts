@@ -1,21 +1,21 @@
-import * as vscode from 'vscode'
-import { button } from './quiz'
+import { WebviewPanel, ExtensionContext, window, ViewColumn } from 'vscode'
+import { menue_button as button } from './extsettings'
 
-let currentPanel: vscode.WebviewPanel | undefined = undefined;
+let currentPanel: WebviewPanel | undefined = undefined;
 
-export function quiz(context: vscode.ExtensionContext) {
-    const columnToShowIn = vscode.window.activeTextEditor
-        ? vscode.window.activeTextEditor.viewColumn
+export function quiz(context: ExtensionContext) {
+    const columnToShowIn = window.activeTextEditor
+        ? window.activeTextEditor.viewColumn
         : undefined;
 
     if (currentPanel) {
         currentPanel.reveal(columnToShowIn);
     } else {
         button.hide()
-        currentPanel = vscode.window.createWebviewPanel(
+        currentPanel = window.createWebviewPanel(
             'c_uebung',
             'C-Übung',
-            vscode.ViewColumn.One,
+            ViewColumn.One,
             {
                 enableScripts: true,
                 retainContextWhenHidden: true
@@ -37,7 +37,7 @@ export function quiz(context: vscode.ExtensionContext) {
             message => {
                 switch (message.command) {
                     case 'alert':
-                        vscode.window.showErrorMessage(message.text);
+                        window.showErrorMessage(message.text);
                         return;
                 }
             },
