@@ -4,9 +4,7 @@ import { menue_button as button } from './extsettings'
 let currentPanel: WebviewPanel | undefined = undefined;
 
 export function quiz(context: ExtensionContext) {
-    const columnToShowIn = window.activeTextEditor
-        ? window.activeTextEditor.viewColumn
-        : undefined;
+    const columnToShowIn = window.activeTextEditor ? window.activeTextEditor.viewColumn : undefined;
 
     if (currentPanel) {
         currentPanel.reveal(columnToShowIn);

@@ -1,13 +1,11 @@
-import { IS_WINDOWS } from "./extsettings"
-
-var filesencoding = !IS_WINDOWS ? 'utf8' : 'cp437';
+import { filesencoding_settingsjson } from "./extsettings"
 
 export const settingsjsondata = `{
     // Allgemeine Nutzereinstellungen
     "liveshare.anonymousGuestApproval": "accept",   // Live Share eingeladene Anonyme Nutzer automatisch akzeptieren
     "liveshare.guestApprovalRequired": false,       // Live Share um eingeladene Nutzer automatisch zu akzeptieren auf false einstellen
     "extensions.ignoreRecommendations": true,       // Keine Empfehlungen mehr Anzeigen
-    "files.encoding": "${filesencoding}",                       // Zur richtigen Darstellung von Umlauten
+    "files.encoding": "${filesencoding_settingsjson}",                       // Zur richtigen Darstellung von Umlauten
     //"files.autoGuessEncoding": true,              // Zurzeit deaktiviert, da noch instabil! Automatische Anpassung der Encodierung, falls möglich
     "editor.unicodeHighlight.nonBasicASCII": false, // Nicht Basic ASCII Zeichen nicht hervorheben
     "files.autoSave": "onFocusChange",              // Dateien werden bei Änderungen des Fokus automatisch gespeichert

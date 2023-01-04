@@ -10,6 +10,7 @@ export async function checkname() {
 }
 
 async function rename(currentPath: string) {
+    const invalidChars = /[äöü ÄÖÜ]/g;
     let renameanfrage = await window.showWarningMessage(
         `Es sind Fehler im Dateinamen vorhanden! Sollen diese automatisch angepasst werden?`,
         'Ja',
@@ -25,25 +26,16 @@ async function rename(currentPath: string) {
             window.showErrorMessage(`${constdirname} enthält Umlaute oder Leerzeichen! Diese müssen manuell umbenannt werden!`)
         }
 
-        const replacedBasename = constbasename.replace(/[äöü ÄÖÜ]/g, (char: string) => {
-            switch (char) {
-                case ' ':
-                    return '';
-                case 'ä':
-                    return 'ae';
-                case 'ö':
-                    return 'oe';
-                case 'ü':
-                    return 'ue';
-                case 'Ä':
-                    return 'AE';
-                case 'Ö':
-                    return 'OE';
-                case 'Ü':
-                    return 'UE';
-                default:
-                    return char;
-            }
+        const replacedBasename = constbasename.replace(invalidChars, (char: string) => {
+            return {
+                ' ': '_',
+                'ä': 'ae',
+                'ö': 'oe',
+                'ü': 'ue',
+                'Ä': 'AE',
+                'Ö': 'OE',
+                'Ü': 'UE',
+            }[char] || char;
         })
 
         newfullname = join(constdirname, replacedBasename)

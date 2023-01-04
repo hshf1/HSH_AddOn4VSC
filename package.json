@@ -17,6 +17,19 @@
     "Other"
   ],
   "activationEvents": [
+    "onCommand:aufgabe1.pruefen",
+    "onCommand:aufgabe2.pruefen",
+    "onCommand:aufgabe3.pruefen",
+    "onCommand:aufgabe4.pruefen",
+    "onCommand:aufgabe5.pruefen",
+    "onCommand:aufgabe6.pruefen",
+    "onCommand:aufgabe7.pruefen",
+    "onCommand:aufgabe8.pruefen",
+    "onCommand:aufgabe9.pruefen",
+    "onCommand:aufgabe10.pruefen",
+    "onCommand:aufgabe11.pruefen",
+    "onCommand:default.settingsjson",
+    "onCommand:default.tasksjson",
     "onCommand:menue.show",
     "onCommand:exam.start",
     "onCommand:exam.stop",
@@ -45,6 +58,10 @@
       ]
     },
     "commands": [
+      {
+        "command": "check.Solution",
+        "title": "Überprüfen der Aufgabe"
+      },
       {
         "command": "menue.show",
         "title": "Klicken, um zum Menü zu gelangen"
@@ -91,7 +108,7 @@
     "@vscode/test-electron": "^2.2.0",
     "eslint": "^8.26.0",
     "glob": "^8.0.3",
-    "mocha": "^10.1.0",
+    "mocha": "^10.2.0",
     "typescript": "^4.8.4"
   }
 }

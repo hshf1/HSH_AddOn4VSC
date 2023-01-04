@@ -1,16 +1,16 @@
-import * as vscode from 'vscode'
+import { OutputChannel, commands, window, Disposable } from 'vscode'
 import { menue_button } from './extsettings';
-import { status_quiz } from './tree';
+import { status_quiz } from './registercommands';
 import { questions } from './quizqestions'
 import { error } from 'console';
 
-let quizOutputChannel: vscode.OutputChannel
+let quizOutputChannel: OutputChannel
 let active_quickpick1: any
 let currentQuestionIndex: number
 let score: number
 let selectedanswer: string
 
-async function showNextQuestion(quizOutputChannel: vscode.OutputChannel) {
+async function showNextQuestion(quizOutputChannel: OutputChannel) {
     if (currentQuestionIndex < questions.length) {
         const question = questions[currentQuestionIndex].question
         const items = questions[currentQuestionIndex].answers.map(answer => ({ label: answer }))
@@ -22,7 +22,7 @@ async function showNextQuestion(quizOutputChannel: vscode.OutputChannel) {
                 score++;
                 quizOutputChannel.appendLine(`${selectedanswer} ist richtig!\nAktuelle Punktzahl: ${score} von ${questions.length} Punkten.\n\n`)
             } else if (selectedanswer === 'C-Quiz beenden') {
-                vscode.commands.executeCommand('exam.stop')
+                commands.executeCommand('exam.stop')
                 return 0
             } else {
                 quizOutputChannel.appendLine(`${selectedanswer} ist falsch!\nAktuelle Punktzahl: ${score} von ${questions.length} Punkten.\n\n`)
@@ -43,18 +43,18 @@ async function showNextQuestion(quizOutputChannel: vscode.OutputChannel) {
                     { label: 'C-Quiz neu starten' }
                 ]
             quizOutputChannel.appendLine(`Du hast ${score} Punkte von insgesamt ${questions.length} erreicht.\nC-Quiz beenden oder neu starten?`)
-            await vscode.window.showQuickPick(items2, {
+            await window.showQuickPick(items2, {
                 ignoreFocusOut: true,
                 placeHolder: 'C-Quiz beenden oder neu starten?'
             }).then(selectedOption => {
                 if (selectedOption) {
                     if (selectedOption.label === 'C-Quiz beenden') {
-                        vscode.commands.executeCommand('exam.stop')
+                        commands.executeCommand('exam.stop')
                         return 0
                     } else {
                         quizOutputChannel.dispose()
-                        vscode.window.showInformationMessage('C-Quiz neu gestartet!')
-                        vscode.commands.executeCommand('exam.start')
+                        window.showInformationMessage('C-Quiz neu gestartet!')
+                        commands.executeCommand('exam.start')
                     }
                 }
             })
@@ -67,7 +67,7 @@ export function startQuiz() {
         currentQuestionIndex = 0
         score = 0
         menue_button.hide()
-        quizOutputChannel = vscode.window.createOutputChannel('C-Quiz')
+        quizOutputChannel = window.createOutputChannel('C-Quiz')
         quizOutputChannel.appendLine('Willkommen beim C-Quiz! Es geht los:')
         quizOutputChannel.show()
         showNextQuestion(quizOutputChannel)
@@ -79,12 +79,12 @@ export function quit_quiz() {
         quizOutputChannel?.dispose()
         disposeQuickPick()
         menue_button.show()
-        vscode.window.showInformationMessage('C-Quiz beendet!')
+        window.showInformationMessage('C-Quiz beendet!')
     }
 }
 
 async function quiz_showQuickPick(question: string, items: { label: string }[]) {
-    const quickpick = await vscode.window.showQuickPick(items, {
+    const quickpick = await window.showQuickPick(items, {
         placeHolder: question,
         ignoreFocusOut: true
     })
@@ -94,7 +94,7 @@ async function quiz_showQuickPick(question: string, items: { label: string }[]) 
 }
 
 export function disposeQuickPick() {
-    if (active_quickpick1 instanceof vscode.Disposable) {
+    if (active_quickpick1 instanceof Disposable) {
         active_quickpick1.dispose()
     }
 }

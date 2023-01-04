@@ -1,6 +1,6 @@
 import { window, commands } from 'vscode'
 import { menue_button } from './extsettings'
-import { treeDataProvider } from './tree'
+import { treeDataProvider } from './activity_bar'
 
 export let active_addon: boolean = true
 
@@ -9,6 +9,7 @@ export function active_addon_func(active_addon_ext: boolean) {
 }
 
 export function menue() {
+    menue_button.hide()
     let menueitems: {
         label: string
     }[] = [
@@ -27,20 +28,24 @@ export function menue() {
         placeHolder: 'Wählen Sie eine Option aus:',
 
     }).then(selectedOption => {
-        if (selectedOption) {
-            if (selectedOption.label === 'Menü schließen') {
-            } else if (selectedOption.label === 'C-Quiz starten') {
-                commands.executeCommand('exam.start')
-                treeDataProvider.refresh()
-            } else if (selectedOption.label === 'Erweiterung wieder aktivieren') {
-                active_addon = true
-                commands.executeCommand('extension.on')
-                treeDataProvider.refresh()
-            } else if (selectedOption.label === 'Erweiterung bis zum nächsten (Neu-)Start von VSCode deaktivieren') {
-                active_addon = false
-                commands.executeCommand('extension.off')
-                treeDataProvider.refresh()
-            }
+        const option = selectedOption?.label
+        switch (option) {
+            case 'Menü schließen':
+                break;
+            case 'C-Quiz starten':
+                commands.executeCommand('exam.start');
+                treeDataProvider.refresh();
+                break;
+            case 'Erweiterung wieder aktivieren':
+                active_addon = true;
+                commands.executeCommand('extension.on');
+                treeDataProvider.refresh();
+                break;
+            case 'Erweiterung bis zum nächsten (Neu-)Start von VSCode deaktivieren':
+                active_addon = false;
+                commands.executeCommand('extension.off');
+                treeDataProvider.refresh();
+                break;
         }
         menue_button.show()
     })

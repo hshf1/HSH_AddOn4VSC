@@ -11,6 +11,8 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 - Ggf. Möglichkeiten mit dem Debugger in betracht ziehen.
 - Quizpanel
 - Ausführen von externen Skripten
+- Möglichkeit, vorgegebene Aufgaben nach Anforderung und Ergebnis prüfen zu lassen
+- Menüerweiterung, unteranderem Einstellungen zurücksetzen
 
 ### Fixed
 

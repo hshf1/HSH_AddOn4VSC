@@ -1,5 +1,5 @@
 import { Uri, OpenDialogOptions, commands, window } from 'vscode'
-import { IS_WINDOWS, testprogc } from './extsettings'
+import { filePath_testprog, folderPath_C_Uebung, testprogc } from './extsettings'
 import { existsSync, mkdirSync, writeFileSync } from 'fs'
 
 function openfolder() {
@@ -18,30 +18,23 @@ function openfolder() {
 	})
 }
 
-export function openprefolder(username_from_extpath: string) {
-	var folderPath = '/Documents/C_Uebung'
-	if (IS_WINDOWS) {
-		folderPath = '\\Documents\\C_Uebung'
-	}
-	const folderPathParsed = folderPath.split(`\\`).join(`/`)
-	const testprogfilepath = username_from_extpath + folderPathParsed + '/testprog.c'
-	const folderUri = Uri.file(username_from_extpath + folderPathParsed)
-	console.log(`folderUri: ${folderUri}`)
-	if (!existsSync(username_from_extpath + folderPathParsed)) {
+export function openprefolder() {
+	const folderUri = Uri.file(folderPath_C_Uebung)
+	if (!existsSync(folderPath_C_Uebung)) {
 		try {
-			mkdirSync(username_from_extpath + folderPathParsed)
+			mkdirSync(folderPath_C_Uebung)
 		} catch (error) {
 			console.error(error)
 		}
 	}
-	if (!existsSync(testprogfilepath)) {
+	if (!existsSync(filePath_testprog)) {
 		try {
-			writeFileSync(testprogfilepath, testprogc)
+			writeFileSync(filePath_testprog, testprogc)
 		} catch (error) {
 			console.error(error)
 		}
 	}
-	if (existsSync(username_from_extpath + folderPathParsed)) {
+	if (existsSync(folderPath_C_Uebung)) {
 		commands.executeCommand(`vscode.openFolder`, folderUri)
 	} else {
 		openfolder()

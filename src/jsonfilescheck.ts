@@ -1,43 +1,45 @@
 import { settingsjsondata, tasksjsondata } from './jsonfilesdata'
-import { promises, writeFile } from 'fs'
-import { IS_LINUX, IS_WINDOWS } from './extsettings'
+import { promises, unlinkSync } from 'fs'
+import { filePath_settingsjson, filePath_tasksjson } from './extsettings'
 
-export function checkjsons(username_from_extpath: string) {
-	var filePathsettingsjson = username_from_extpath + '/Library/Application Support/Code/User/settings.json'
-	var filePathtasksjson = username_from_extpath + '/Library/Application Support/Code/User/tasks.json'
+export async function deletejsons(filePath_todelete: string) {
+	try {
+		unlinkSync(filePath_todelete)
+	  } catch (err: any) {
+		if (err.code === 'ENOENT') {
+		  console.error(`Datei existiert nicht: ${filePath_todelete}`)
+		} else {
+		  console.error(`Ein Problem ist beim löschen der Datei aufgetreten: ${filePath_todelete}`)
+		  console.error(err)
+		}
+	  }
+}
 
-	if (IS_WINDOWS) {
-		filePathsettingsjson = username_from_extpath + '\\AppData\\Roaming\\Code\\User\\settings.json'
-		filePathtasksjson = username_from_extpath + '\\AppData\\Roaming\\Code\\User\\tasks.json'
-	} else if (IS_LINUX) {
-		filePathsettingsjson = username_from_extpath + '/.config/Code/User/settings.json'
-		filePathtasksjson = username_from_extpath + '/.config/Code/User/tasks.json'
+export async function checkjsons() {
+	try {
+		await promises.stat(filePath_settingsjson)
+	} catch {
+		await setsettingsjson()
 	}
-
-	promises.access(filePathsettingsjson)
-		.then(() => console.log(`${filePathsettingsjson} existiert bereits`))
-		.catch(() => setsettingsjson(filePathsettingsjson))
-	promises.access(filePathtasksjson)
-		.then(() => console.log(`${filePathtasksjson} existiert bereits`))
-		.catch(() => settasksjson(filePathtasksjson));
+	try {
+		await promises.stat(filePath_tasksjson)
+	} catch {
+		await settasksjson()
+	}
 }
 
-function setsettingsjson(filePath: string) {
-	writeFile(filePath, settingsjsondata, (error) => {
-		if (error) {
-			console.error(error);
-		} else {
-			console.log(`The file ${filePath} was created successfully!`)
-		}
-	})
+async function setsettingsjson() {
+	try {
+		await promises.writeFile(filePath_settingsjson, settingsjsondata)
+	} catch (err) {
+		console.error(err)
+	}
 }
 
-function settasksjson(filePath: string) {
-	writeFile(filePath, tasksjsondata, (error) => {
-		if (error) {
-			console.error(error);
-		} else {
-			console.log(`The file ${filePath} was created successfully!`)
-		}
-	})
+async function settasksjson() {
+	try {
+		await promises.writeFile(filePath_tasksjson, tasksjsondata)
+	} catch (err) {
+		console.error(err)
+	}
 }
