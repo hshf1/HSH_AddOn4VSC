@@ -6,17 +6,31 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 
 ## [Unreleased]
 
-### Added 
+### neu hinzugefügt 
 
 - Ggf. Möglichkeiten mit dem Debugger in betracht ziehen.
 - Quizpanel
 - Ausführen von externen Skripten
-- Möglichkeit, vorgegebene Aufgaben nach Anforderung und Ergebnis prüfen zu lassen
-- Menüerweiterung, unteranderem Einstellungen zurücksetzen
 
-### Fixed
+### fertig
 
 - 
+
+## [1.1.0] - [1.1.1] 05.01.2023
+
+### neu hinzugefügt
+
+- settings.json und tasks.json auf "default" zurücksetzen
+- Übungsaufgaben prüfen auf Output und Anforderungen
+
+
+### geändert
+
+- Statusbar nur noch zur Aktivierung/Pausierung der Erweiterung
+- Änderung der Punkte in der Activitybar
+- Effizientere schreibweise vom Code
+- globale Variablen vor allem in extsettings.ts definiert
+- noch mehr commands hinzugefügt
 
 ## [1.0.0] -[1.0.2] 02.01.2023
 
