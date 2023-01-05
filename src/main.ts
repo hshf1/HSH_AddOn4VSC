@@ -1,11 +1,9 @@
-import { ExtensionContext, commands, workspace, debug, window } from 'vscode'
+import { ExtensionContext, commands, workspace, debug } from 'vscode'
 import { openprefolder } from './checkfolder'
 import { checkname } from './filefoldername'
 import { checkjsons } from './jsonfilescheck'
-import { active_addon } from './status_bar'
-import { evaluate } from './evaluate'
+import { active_addon, active_addon_func } from './status_bar'
 import { constregistercommands } from './registercommands'
-import { error_message, information_message } from './output'
 
 export function activate(context: ExtensionContext) {
 
@@ -14,6 +12,8 @@ export function activate(context: ExtensionContext) {
 	**************************************************************************************/
 
 	initialize()
+
+	active_addon_func(true)
 
 	checkjsons()
 
@@ -30,41 +30,12 @@ export function activate(context: ExtensionContext) {
 			await checkname()
 		}
 	}
-
 	workspace.onDidSaveTextDocument(eventHandler_checkname)
 	debug.onDidChangeBreakpoints(eventHandler_checkname)
 
 	constregistercommands.forEach(command => {
 		context.subscriptions.push(commands.registerCommand(command.name, command.callback));
 	})
-
-	context.subscriptions.push(
-		commands.registerCommand("check.Solution", async () => {
-			const editor = window.activeTextEditor;
-			if (!editor) {
-				error_message("No active text editor")
-				return;
-			}
-
-			const code = editor.document.getText();
-			console.log(code)
-			const exercise = {
-				output: "Hello, world!",
-				requirements: [
-					"main",
-					"printf"
-				],
-			};
-
-			const result = await evaluate(code, exercise);
-
-			if (result.passed) {
-				information_message("Solution is correct");
-			} else {
-				error_message("Solution is incorrect");
-			}
-		})
-	)
 
 }
 

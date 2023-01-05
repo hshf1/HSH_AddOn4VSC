@@ -1,5 +1,4 @@
 import { WebviewPanel, ExtensionContext, window, ViewColumn } from 'vscode'
-import { menue_button as button } from './extsettings'
 
 let currentPanel: WebviewPanel | undefined = undefined;
 
@@ -9,7 +8,6 @@ export function quiz(context: ExtensionContext) {
     if (currentPanel) {
         currentPanel.reveal(columnToShowIn);
     } else {
-        button.hide()
         currentPanel = window.createWebviewPanel(
             'c_uebung',
             'C-Übung',
@@ -23,7 +21,6 @@ export function quiz(context: ExtensionContext) {
 
         currentPanel.onDidDispose(
             () => {
-                button.show()
                 currentPanel = undefined;
             },
             null,

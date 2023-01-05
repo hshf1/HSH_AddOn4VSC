@@ -3,7 +3,7 @@ import { Command } from "vscode"
 export const constcommands: Command[] = [
     { command: 'exam.start', title: 'Starte C-Quiz' }, // [0]
     { command: 'extension.on', title: "Erweiterung wieder aktivieren" },
-    { command: "extension.off", title: "Erweiterung bis zum nächsten (Neu-)Start von VSCode deaktivieren" },
+    { command: "extension.off", title: "Erweiterung bis zum nächsten (Neu-)Start von VSCode pausieren" },
     { command: 'exam.stop', title: 'Beende C-Quiz' },
     { command: 'default.settingsjson', title: 'settings.json zurücksetzen'},
     { command: 'default.tasksjson', title: 'tasks.json zurücksetzen'}, // [5]
@@ -17,9 +17,5 @@ export const constcommands: Command[] = [
     { command: 'aufgabe8.pruefen', title: 'Aufgabe 8 prüfen'},
     { command: 'aufgabe9.pruefen', title: 'Aufgabe 9 prüfen'},
     { command: 'aufgabe10.pruefen', title: 'Aufgabe 10 prüfen'}, // [15]
-    { command: 'aufgabe11.pruefen', title: 'Aufgabe 11 prüfen'},
-    { command: 'menue.show', title: 'Menü anzeigen'},
-    { command: 'aufgabe11.pruefen', title: 'Aufgabe 11 prüfen'},
-    { command: 'aufgabe11.pruefen', title: 'Aufgabe 11 prüfen'},
-    { command: 'aufgabe11.pruefen', title: 'Aufgabe 11 prüfen'} // [20]
+    { command: 'aufgabe11.pruefen', title: 'Aufgabe 11 prüfen'}
 ]

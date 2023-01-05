@@ -30,7 +30,6 @@
     "onCommand:aufgabe11.pruefen",
     "onCommand:default.settingsjson",
     "onCommand:default.tasksjson",
-    "onCommand:menue.show",
     "onCommand:exam.start",
     "onCommand:exam.stop",
     "onCommand:extension.on",
@@ -59,12 +58,56 @@
     },
     "commands": [
       {
-        "command": "check.Solution",
-        "title": "Überprüfen der Aufgabe"
+        "command": "default.settingsjson",
+        "title": "settings.json zurücksetzen"
       },
       {
-        "command": "menue.show",
-        "title": "Klicken, um zum Menü zu gelangen"
+        "command": "default.tasksjson",
+        "title": "tasks.json zurücksetzen"
+      },
+      {
+        "command": "aufgabe1.pruefen",
+        "title": "Überprüfen der Aufgabe 1"
+      },
+      {
+        "command": "aufgabe2.pruefen",
+        "title": "Überprüfen der Aufgabe 2"
+      },
+      {
+        "command": "aufgabe3.pruefen",
+        "title": "Überprüfen der Aufgabe 3"
+      },
+      {
+        "command": "aufgabe4.pruefen",
+        "title": "Überprüfen der Aufgabe 4"
+      },
+      {
+        "command": "aufgabe5.pruefen",
+        "title": "Überprüfen der Aufgabe 5"
+      },
+      {
+        "command": "aufgabe6.pruefen",
+        "title": "Überprüfen der Aufgabe 6"
+      },
+      {
+        "command": "aufgabe7.pruefen",
+        "title": "Überprüfen der Aufgabe 7"
+      },
+      {
+        "command": "aufgabe8.pruefen",
+        "title": "Überprüfen der Aufgabe 8"
+      },
+      {
+        "command": "aufgabe9.pruefen",
+        "title": "Überprüfen der Aufgabe 9"
+      },
+      {
+        "command": "aufgabe10.pruefen",
+        "title": "Überprüfen der Aufgabe 10"
+      },
+      {
+        "command": "aufgabe11.pruefen",
+        "title": "Überprüfen der Aufgabe 11"
       },
       {
         "command": "exam.start",

@@ -5,7 +5,6 @@ import {
 import { active_addon } from './status_bar'
 import { status_quiz } from './registercommands'
 import { constcommands } from './constcommands'
-import { createDiffieHellmanGroup } from 'crypto'
 
 export class DepNodeProvider implements TreeDataProvider<Dependency> {
     private _onDidChangeTreeData: EventEmitter<any> = new EventEmitter<any>()
@@ -44,7 +43,7 @@ export class DepNodeProvider implements TreeDataProvider<Dependency> {
                 new Dependency('settings.json zurücksetzen', TreeItemCollapsibleState.None, constcommands[4]),
                 new Dependency('tasks.json zurücksetzen', TreeItemCollapsibleState.None, constcommands[5])
             ]
-        } else if (dependency.label === 'Aufgaben prüfen') {
+        } else if (dependency.label === 'Übungsaufgaben prüfen') {
             return [
                 new Dependency('Aufgabe 1 prüfen', TreeItemCollapsibleState.None, constcommands[6]),
                 new Dependency('Aufgabe 2 prüfen', TreeItemCollapsibleState.None, constcommands[7]),

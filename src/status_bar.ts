@@ -1,52 +1,13 @@
-import { window, commands } from 'vscode'
-import { menue_button } from './extsettings'
-import { treeDataProvider } from './activity_bar'
+import { window, StatusBarAlignment } from 'vscode'
 
 export let active_addon: boolean = true
 
+const statusbar_button = window.createStatusBarItem(StatusBarAlignment.Right, 100)
+statusbar_button.show()
+
 export function active_addon_func(active_addon_ext: boolean) {
     active_addon = active_addon_ext
-}
-
-export function menue() {
-    menue_button.hide()
-    let menueitems: {
-        label: string
-    }[] = [
-            { label: 'Menü schließen' },
-            { label: 'C-Quiz starten' }
-        ]
-
-    if (!active_addon) {
-        menueitems.push({ label: 'Erweiterung wieder aktivieren' })
-    } else if (active_addon) {
-        menueitems.push({ label: 'Erweiterung bis zum nächsten (Neu-)Start von VSCode deaktivieren' })
-    }
-
-    window.showQuickPick(menueitems, {
-        ignoreFocusOut: true,
-        placeHolder: 'Wählen Sie eine Option aus:',
-
-    }).then(selectedOption => {
-        const option = selectedOption?.label
-        switch (option) {
-            case 'Menü schließen':
-                break;
-            case 'C-Quiz starten':
-                commands.executeCommand('exam.start');
-                treeDataProvider.refresh();
-                break;
-            case 'Erweiterung wieder aktivieren':
-                active_addon = true;
-                commands.executeCommand('extension.on');
-                treeDataProvider.refresh();
-                break;
-            case 'Erweiterung bis zum nächsten (Neu-)Start von VSCode deaktivieren':
-                active_addon = false;
-                commands.executeCommand('extension.off');
-                treeDataProvider.refresh();
-                break;
-        }
-        menue_button.show()
-    })
+    statusbar_button.text = active_addon ? 'AddOn4VSC pausieren' : 'AddOn4VSC wieder aktivieren'
+    statusbar_button.tooltip = active_addon ? 'Klicken, um die Erweiterung AddOn4VSC zu pausieren pausieren (spätestens, bis wenn VSCode neu startet)' : 'Klicken, um die Erweiterung AddOn4VSC wieder zu aktivieren'
+    statusbar_button.command = active_addon ? 'extension.off' : 'extension.on'
 }
