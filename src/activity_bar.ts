@@ -7,7 +7,7 @@ import { status_quiz } from './registercommands'
 import { constcommands } from './constcommands'
 import { githubsettings, github_status } from './github'
 
-export let dependencies: any
+export let dependencies: any = []
 export let element: any
 
 export class Dependency extends TreeItem {
@@ -41,7 +41,14 @@ export class DepNodeProvider implements TreeDataProvider<Dependency> {
     }
 
     private getDependencies(): Dependency[] {
-        return [...dependencies]
+        return [
+            new Dependency(status_quiz ? 'C-Quiz beenden' : 'C-Quiz starten', TreeItemCollapsibleState.None, constcommands[status_quiz ? 3 : 0]),
+            new Dependency(active_addon ? 'Erweiterung pausieren' : 'Erweiterung wieder aktivieren', TreeItemCollapsibleState.None, constcommands[active_addon ? 2 : 1]),
+            new Dependency('Einstellungen zurücksetzen', TreeItemCollapsibleState.Collapsed),
+            new Dependency('Übungsaufgaben prüfen', TreeItemCollapsibleState.Collapsed),
+            new Dependency('GitHub: Vorlesung C', TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: ['https://github.com/hshf1/VorlesungC', ''] }),
+            new Dependency('Nützliche Links', TreeItemCollapsibleState.Collapsed)
+        ]
     }
 
     private getPackageDependencies(dependency: Dependency): Dependency[] {
@@ -64,6 +71,10 @@ export class DepNodeProvider implements TreeDataProvider<Dependency> {
                 new Dependency('Aufgabe 10 prüfen', TreeItemCollapsibleState.None, constcommands[15]),
                 new Dependency('Aufgabe 11 prüfen', TreeItemCollapsibleState.None, constcommands[16])
             ]
+        } else if (dependency.label === 'Nützliche Links') {
+            return [
+                ...dependencies
+            ]
         } else {
             return []
         }
@@ -79,18 +90,9 @@ const treeViewOptions: TreeViewOptions<Dependency> = {
 build_activity_bar()
 
 async function build_activity_bar() {
-
     while (github_status === undefined) {
         await new Promise(resolve => setTimeout(resolve, 1000));
     }
-
-    dependencies = [
-        new Dependency(status_quiz ? 'C-Quiz beenden' : 'C-Quiz starten', TreeItemCollapsibleState.None, constcommands[status_quiz ? 3 : 0]),
-        new Dependency(active_addon ? 'Erweiterung pausieren' : 'Erweiterung wieder aktivieren', TreeItemCollapsibleState.None, constcommands[active_addon ? 2 : 1]),
-        new Dependency('Einstellungen zurücksetzen', TreeItemCollapsibleState.Collapsed),
-        new Dependency('Übungsaufgaben prüfen', TreeItemCollapsibleState.Collapsed),
-        new Dependency('GitHub: Vorlesung C', TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: ['https://github.com/hshf1/VorlesungC', ''] })
-    ]
 
     if (github_status === true) {
         for (element in githubsettings) {
