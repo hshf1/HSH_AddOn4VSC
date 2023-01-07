@@ -34,6 +34,7 @@
     "onCommand:exam.stop",
     "onCommand:extension.on",
     "onCommand:extension.off",
+    "onCommand:open.link",
     "onStartupFinished"
   ],
   "main": "./out/main.js",
@@ -57,6 +58,10 @@
       ]
     },
     "commands": [
+      {
+        "command": "open.link",
+        "title": "Öffne Link '%link%'"
+      },
       {
         "command": "default.settingsjson",
         "title": "settings.json zurücksetzen"
@@ -153,5 +158,9 @@
     "glob": "^8.0.3",
     "mocha": "^10.2.0",
     "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "@types/request": "^2.48.8",
+    "request": "^2.88.2"
   }
 }

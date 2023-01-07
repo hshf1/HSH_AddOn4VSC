@@ -5,6 +5,20 @@ import {
 import { active_addon } from './status_bar'
 import { status_quiz } from './registercommands'
 import { constcommands } from './constcommands'
+import { githubsettings, github_status } from './github'
+
+export let dependencies: any
+export let element: any
+
+export class Dependency extends TreeItem {
+    constructor(
+        public readonly label: string,
+        public readonly collapsibleState: TreeItemCollapsibleState,
+        public readonly command?: Command,
+    ) {
+        super(label, collapsibleState);
+    }
+}
 
 export class DepNodeProvider implements TreeDataProvider<Dependency> {
     private _onDidChangeTreeData: EventEmitter<any> = new EventEmitter<any>()
@@ -27,14 +41,7 @@ export class DepNodeProvider implements TreeDataProvider<Dependency> {
     }
 
     private getDependencies(): Dependency[] {
-        const active_addon_dependency_text = active_addon ? 'Erweiterung pausieren' : 'Erweiterung wieder aktivieren';
-        const quiz_text = status_quiz ? 'C-Quiz beenden' : 'C-Quiz starten';
-        return [
-            new Dependency(quiz_text, TreeItemCollapsibleState.None, constcommands[status_quiz ? 3 : 0]),
-            new Dependency(active_addon_dependency_text, TreeItemCollapsibleState.None, constcommands[active_addon ? 2 : 1]),
-            new Dependency('Einstellungen zurücksetzen', TreeItemCollapsibleState.Collapsed, undefined),
-            new Dependency('Aufgaben prüfen', TreeItemCollapsibleState.Collapsed, undefined)
-        ]
+        return [...dependencies]
     }
 
     private getPackageDependencies(dependency: Dependency): Dependency[] {
@@ -65,20 +72,34 @@ export class DepNodeProvider implements TreeDataProvider<Dependency> {
 
 export const treeDataProvider = new DepNodeProvider();
 
-export class Dependency extends TreeItem {
-    constructor(
-        public readonly label: string,
-        public readonly collapsibleState: TreeItemCollapsibleState,
-        public readonly command?: Command,
-    ) {
-        super(label, collapsibleState);
-    }
-}
-
-window.registerTreeDataProvider('menue_bar_activity', treeDataProvider);
-
 const treeViewOptions: TreeViewOptions<Dependency> = {
     treeDataProvider: treeDataProvider
-};
+}
 
-window.createTreeView('menue_bar_activity', treeViewOptions);
+build_activity_bar()
+
+async function build_activity_bar() {
+
+    while (github_status === undefined) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+
+    dependencies = [
+        new Dependency(status_quiz ? 'C-Quiz beenden' : 'C-Quiz starten', TreeItemCollapsibleState.None, constcommands[status_quiz ? 3 : 0]),
+        new Dependency(active_addon ? 'Erweiterung pausieren' : 'Erweiterung wieder aktivieren', TreeItemCollapsibleState.None, constcommands[active_addon ? 2 : 1]),
+        new Dependency('Einstellungen zurücksetzen', TreeItemCollapsibleState.Collapsed),
+        new Dependency('Übungsaufgaben prüfen', TreeItemCollapsibleState.Collapsed),
+        new Dependency('GitHub: Vorlesung C', TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: ['https://github.com/hshf1/VorlesungC', ''] })
+    ]
+
+    if (github_status === true) {
+        for (element in githubsettings) {
+            if (element.includes('link_name')) {
+                dependencies.push(new Dependency(githubsettings[element], TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: [githubsettings[Object.keys(githubsettings)[Object.keys(githubsettings).indexOf(element) + 1]], githubsettings[Object.keys(githubsettings)[Object.keys(githubsettings).indexOf(element) + 2]]] }))
+            }
+        }
+    }
+
+    window.registerTreeDataProvider('menue_bar_activity', treeDataProvider);
+    window.createTreeView('menue_bar_activity', treeViewOptions)
+}

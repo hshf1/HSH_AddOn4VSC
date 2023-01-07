@@ -5,14 +5,14 @@ import { filePath_settingsjson, filePath_tasksjson } from './extsettings'
 export async function deletejsons(filePath_todelete: string) {
 	try {
 		unlinkSync(filePath_todelete)
-	  } catch (err: any) {
+	} catch (err: any) {
 		if (err.code === 'ENOENT') {
-		  console.error(`Datei existiert nicht: ${filePath_todelete}`)
+			console.error(`Datei existiert nicht: ${filePath_todelete}`)
 		} else {
-		  console.error(`Ein Problem ist beim löschen der Datei aufgetreten: ${filePath_todelete}`)
-		  console.error(err)
+			console.error(`Ein Problem ist beim löschen der Datei aufgetreten: ${filePath_todelete}`)
+			console.error(err)
 		}
-	  }
+	}
 }
 
 export async function checkjsons() {

@@ -2,17 +2,19 @@ import { extensions, commands } from 'vscode'
 import { dirname } from 'path'
 import { error_message } from './output'
 
-const IS_WINDOWS = process.platform.startsWith('win')
-const IS_OSX = process.platform == 'darwin'
-const IS_LINUX = !IS_WINDOWS && !IS_OSX
+export const IS_WINDOWS = process.platform.startsWith('win')
+export const IS_OSX = process.platform == 'darwin'
+export const IS_LINUX = !IS_WINDOWS && !IS_OSX
 
-const userhomefolder = dirname(dirname(dirname(dirname(__dirname))))
+export let setting_init: boolean | undefined = undefined
 export let folderPath_C_Uebung: string
 export let filePath_settingsjson: string
 export let filePath_tasksjson: string
 export let filePath_testprog: string
 export let filesencoding_settingsjson: string
 export let gcc_command: string
+
+const userhomefolder = dirname(dirname(dirname(dirname(__dirname))))
 
 if (IS_WINDOWS) {
     folderPath_C_Uebung = `${userhomefolder}\\Documents\\C_Uebung`
@@ -54,3 +56,5 @@ int main() {
     printf("Erinnerung: Datei- und Verzeichnisname dürfen keine Umlaute oder Leerzeichen haben!\\n");
     printf("Das Ergebnis von x lautet: %d\\n",x);
 }`
+
+setting_init = true

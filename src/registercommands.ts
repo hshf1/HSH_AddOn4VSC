@@ -4,9 +4,11 @@ import { evaluate } from './runexercises'
 import { constexercise } from './exercises'
 import { filePath_settingsjson, filePath_tasksjson } from './extsettings'
 import { checkjsons, deletejsons } from './jsonfilescheck'
-import { information_message } from './output'
+import { error_message, information_message, warning_message } from './output'
 import { startQuiz, quit_quiz } from './quiz'
 import { active_addon_func } from './status_bar'
+import { githubsettings } from './github'
+import { env, Uri } from 'vscode'
 
 export let status_quiz: boolean
 
@@ -14,9 +16,18 @@ export const constregistercommands = [
     {
         name: constcommands[0].command,
         callback: () => {
-            status_quiz = true
-            startQuiz()
-            treeDataProvider.refresh()
+            console.log(githubsettings)
+            if (githubsettings.hasOwnProperty('quiz_active')) {
+                if (githubsettings['quiz_active'] == 'ja') {
+                    status_quiz = true
+                    startQuiz()
+                    treeDataProvider.refresh()
+                } else {
+                    warning_message(`Das Quiz ist derzeit nicht aktiv. Versuche es zu einem späteren Zeitpunkt erneut!`)
+                }
+            } else {
+                warning_message(`Quiz derzeit deaktiviert. Prüfe deine Internetverbindung und starte VSCode erneut.`)
+            }
         }
     },
     {
@@ -122,6 +133,20 @@ export const constregistercommands = [
         name: constcommands[16].command,
         callback: async () => {
             await evaluate(constexercise[10])
+        }
+    },
+    {
+        name: 'open.link',
+        callback: (...args: any) => {
+            if (args[0] === '') {
+                error_message('Es wurde kein Link zum Öffnen übergeben!')
+                return
+            }
+            if (args[1] >= new Date(Date.now()).toLocaleDateString('de-DE', { year: 'numeric', month: '2-digit', day: '2-digit' }) || args[1] === '') {
+                env.openExternal(Uri.parse(args[0]));
+            } else {
+                warning_message(`Der Link ist nicht mehr aktiv. Dies sollte bald erneuert werden.`)
+            }
         }
     }
 ]

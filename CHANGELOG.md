@@ -16,13 +16,15 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 
 - 
 
-## [1.1.0] - [1.1.1] 05.01.2023
+## [1.1.0] - [1.1.2] 05.01.2023 - 07.01.2023
 
 ### neu hinzugefügt
 
 - settings.json und tasks.json auf "default" zurücksetzen
 - Übungsaufgaben prüfen auf Output und Anforderungen
-
+- Möglichkeit, dass Admins über GitHub Links in die Extension einbinden
+- Automatische Erkennung von Variablen link_name, link und gueltig_bis, Link läuft ab beim setzen von gueltig_bis
+- Möglichkeit, Aufgaben nach Output überprüfen und Anforderungen vorgeben (Aufgaben an sich fehlen noch)
 
 ### geändert
 
