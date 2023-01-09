@@ -3,8 +3,9 @@ import { error_message, information_message, warning_message } from './output'
 import { dirname, basename, parse } from 'path'
 import { gcc_command } from './extsettings'
 import { spawn } from 'child_process'
+import { number1, number2 } from './insertforexercise'
 
-export async function evaluate(exercise: { output: string, requirements: string[] }) {
+export async function evaluate(exercise: { output: string, requirements: string[] }, aufgabe: number) {
 
     let codecontent: string, codefile: string, codefilePath: string,
         codefilebaseName: string, codefilebaseNamenoextension: string,
@@ -44,10 +45,17 @@ export async function evaluate(exercise: { output: string, requirements: string[
     if (compileProcess.exitCode !== 0) {
         return { passed: false, requirements: [] };
     }
-
+    
     const runProcess = spawn(`${codefilePath}/${codefilebaseNamenoextension}`)
+
+    if (aufgabe === 0) {
+        runProcess.stdin.write(`${number1}\n`);
+        runProcess.stdin.write(`${number2}\n`);
+    }
+    
     runProcess.stdout.on("data", (data) => {
         runOutput += data
+        console.log(runOutput)
     })
     runProcess.stderr.on("data", (data) => {
         runOutput += data
@@ -58,16 +66,23 @@ export async function evaluate(exercise: { output: string, requirements: string[
         runProcess.on("error", reject)
     })
 
-    const passed = runOutput === exercise.output
+    let passed: boolean = false
+
+    if (aufgabe === 0) {
+        passed = runOutput.includes(exercise.output)
+    } else {
+        passed = runOutput === exercise.output
+    }
     const requirements = exercise.requirements.filter((req) => !codecontent.includes(req));
 
 
     if (passed && (requirements.length === 0)) {
         information_message(`Aufgabe erfolgreich gemeistert!`)
     } else if (passed && !(requirements.length === 0)) {
-        warning_message(`Die Ausgabe vom Programm stimmt, jedoch sind folgende Anforderungen nicht erfüllt: ${requirements.join(", ")}.`)
+        warning_message(`Die Ausgabe vom Programm stimmt, jedoch sind folgende Anforderungen nicht erfüllt:`+exercise.requirements ? `${requirements.join(", ")}.`: 'Keine speziellen Anforderungen bei dieser Aufgabe.')
     } else {
         error_message(`Die Ausgabe "${exercise.output}" konnte nicht erkannt werden. Weiterhin sind folgende Anforderungen zu erfüllen: ${exercise.requirements.join(", ")}.`)
     }
     return { passed, requirements };
 }
+

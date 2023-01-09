@@ -9,8 +9,10 @@ import { startQuiz, quit_quiz } from './quiz'
 import { active_addon_func } from './status_bar'
 import { githubsettings } from './github'
 import { env, Uri } from 'vscode'
+import { addfunc } from './insertforexercise'
 
 export let status_quiz: boolean
+export let sum: number | undefined
 
 export const constregistercommands = [
     {
@@ -72,67 +74,68 @@ export const constregistercommands = [
     {
         name: constcommands[6].command,
         callback: async () => {
-            await evaluate(constexercise[0])
+            await addfunc()
+            //await evaluate(constexercise[0], 0)
         }
     },
     {
         name: constcommands[7].command,
         callback: async () => {
-            await evaluate(constexercise[1])
+            await evaluate(constexercise[1], 1)
         }
     },
     {
         name: constcommands[8].command,
         callback: async () => {
-            await evaluate(constexercise[2])
+            await evaluate(constexercise[2], 2)
         }
     },
     {
         name: constcommands[9].command,
         callback: async () => {
-            await evaluate(constexercise[3])
+            await evaluate(constexercise[3], 3)
         }
     },
     {
         name: constcommands[10].command,
         callback: async () => {
-            await evaluate(constexercise[4])
+            await evaluate(constexercise[4], 4)
         }
     },
     {
         name: constcommands[11].command,
         callback: async () => {
-            await evaluate(constexercise[5])
+            await evaluate(constexercise[5], 5)
         }
     },
     {
         name: constcommands[12].command,
         callback: async () => {
-            await evaluate(constexercise[6])
+            await evaluate(constexercise[6], 6)
         }
     },
     {
         name: constcommands[13].command,
         callback: async () => {
-            await evaluate(constexercise[7])
+            await evaluate(constexercise[7], 7)
         }
     },
     {
         name: constcommands[14].command,
         callback: async () => {
-            await evaluate(constexercise[8])
+            await evaluate(constexercise[8], 8)
         }
     },
     {
         name: constcommands[15].command,
         callback: async () => {
-            await evaluate(constexercise[9])
+            await evaluate(constexercise[9], 9)
         }
     },
     {
         name: constcommands[16].command,
         callback: async () => {
-            await evaluate(constexercise[10])
+            await evaluate(constexercise[10], 10)
         }
     },
     {

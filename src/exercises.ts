@@ -1,15 +1,13 @@
+import { sum } from "./insertforexercise"
+
 export const constexercise = [
     {
-        output: "Hello, world!",
-        requirements: [
-            "scanf",
-            "printf"
-        ]
+        output: `${sum}`,
+        requirements: []
     },
     {
         output: "Hello, world!",
         requirements: [
-            "scanf",
             "printf"
         ]
     },
