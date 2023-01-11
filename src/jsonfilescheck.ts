@@ -2,7 +2,7 @@ import { settingsjsondata, tasksjsondata } from './jsonfilesdata'
 import { promises, unlinkSync } from 'fs'
 import { filePath_settingsjson, filePath_tasksjson } from './extsettings'
 
-export async function deletejsons(filePath_todelete: string) {
+export async function renewjsons(filePath_todelete: string) {
 	try {
 		unlinkSync(filePath_todelete)
 	} catch (err: any) {
@@ -12,6 +12,11 @@ export async function deletejsons(filePath_todelete: string) {
 			console.error(`Ein Problem ist beim löschen der Datei aufgetreten: ${filePath_todelete}`)
 			console.error(err)
 		}
+	}
+	if (filePath_todelete.includes("settings")) {
+		await setsettingsjson()
+	} else if (filePath_todelete.includes("tasks")) {
+		await settasksjson()
 	}
 }
 

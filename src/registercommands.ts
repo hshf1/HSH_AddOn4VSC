@@ -3,11 +3,11 @@ import { constcommands } from './constcommands'
 import { evaluate } from './runexercises'
 import { constexercise } from './exercises'
 import { filePath_settingsjson, filePath_tasksjson } from './extsettings'
-import { checkjsons, deletejsons } from './jsonfilescheck'
+import { renewjsons } from './jsonfilescheck'
 import { error_message, information_message, warning_message } from './output'
 import { startQuiz, quit_quiz } from './quiz'
 import { active_addon_func } from './status_bar'
-import { githubsettings } from './github'
+import { githubsettings, github_status } from './github'
 import { env, Uri } from 'vscode'
 import { addfunc } from './insertforexercise'
 
@@ -18,9 +18,8 @@ export const constregistercommands = [
     {
         name: constcommands[0].command,
         callback: () => {
-            console.log(githubsettings)
-            if (githubsettings.hasOwnProperty('quiz_active')) {
-                if (githubsettings['quiz_active'] == 'ja') {
+            if (githubsettings.hasOwnProperty('quiz_active') || github_status) {
+                if (githubsettings['quiz_active'] === true) {
                     status_quiz = true
                     startQuiz()
                     treeDataProvider.refresh()
@@ -57,8 +56,7 @@ export const constregistercommands = [
     {
         name: constcommands[4].command,
         callback: () => {
-            deletejsons(filePath_settingsjson)
-            checkjsons()
+            renewjsons(filePath_settingsjson)
             information_message('settings.json wurde zurückgesetzt. Manchmal muss VSCode neu gestartet werden, um einige Änderungen wirksam zu machen.')
 
         }
@@ -66,8 +64,7 @@ export const constregistercommands = [
     {
         name: constcommands[5].command,
         callback: () => {
-            deletejsons(filePath_tasksjson)
-            checkjsons()
+            renewjsons(filePath_tasksjson)
             information_message('tasks.json wurde zurückgesetzt. Manchmal muss VSCode neu gestartet werden, um einige Änderungen wirksam zu machen.')
         }
     },
@@ -146,7 +143,7 @@ export const constregistercommands = [
                 return
             }
             if (args[1] >= new Date(Date.now()).toLocaleDateString('de-DE', { year: 'numeric', month: '2-digit', day: '2-digit' }) || args[1] === '') {
-                env.openExternal(Uri.parse(args[0]));
+                env.openExternal(Uri.parse(args[0]))
             } else {
                 warning_message(`Der Link ist nicht mehr aktiv. Dies sollte bald erneuert werden.`)
             }
