@@ -7,8 +7,7 @@ import { status_quiz } from './registercommands'
 import { constcommands } from './constcommands'
 import { githubsettings, github_status } from './github'
 
-export let dependencies: any = []
-export let element: any
+export let dependencies_link: any = [], dependencies_main: any = [], element: any
 
 export class Dependency extends TreeItem {
     constructor(
@@ -25,6 +24,7 @@ export class DepNodeProvider implements TreeDataProvider<Dependency> {
     readonly onDidChangeTreeData: Event<any> = this._onDidChangeTreeData.event
 
     refresh(): void {
+        build_activity_bar()
         this._onDidChangeTreeData.fire(undefined)
     }
 
@@ -42,12 +42,7 @@ export class DepNodeProvider implements TreeDataProvider<Dependency> {
 
     private getDependencies(): Dependency[] {
         return [
-            new Dependency(status_quiz ? 'C-Quiz beenden' : 'C-Quiz starten', TreeItemCollapsibleState.None, constcommands[status_quiz ? 3 : 0]),
-            new Dependency(active_addon ? 'Erweiterung pausieren' : 'Erweiterung wieder aktivieren', TreeItemCollapsibleState.None, constcommands[active_addon ? 2 : 1]),
-            new Dependency('Einstellungen zurücksetzen', TreeItemCollapsibleState.Collapsed),
-            new Dependency('Übungsaufgaben prüfen', TreeItemCollapsibleState.Collapsed),
-            new Dependency('GitHub: Vorlesung C', TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: ['https://github.com/hshf1/VorlesungC', ''] }),
-            new Dependency('Nützliche Links', TreeItemCollapsibleState.Collapsed)
+            ...dependencies_main
         ]
     }
 
@@ -73,7 +68,7 @@ export class DepNodeProvider implements TreeDataProvider<Dependency> {
             ]
         } else if (dependency.label === 'Nützliche Links') {
             return [
-                ...dependencies
+                ...dependencies_link
             ]
         } else {
             return []
@@ -94,14 +89,23 @@ async function build_activity_bar() {
         await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
+    dependencies_main = [
+        new Dependency('GitHub: Vorlesung C', TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: ['https://github.com/hshf1/VorlesungC', ''] }),
+        new Dependency(active_addon ? 'Erweiterung pausieren' : 'Erweiterung wieder aktivieren', TreeItemCollapsibleState.None, constcommands[active_addon ? 2 : 1]),
+        new Dependency('Einstellungen zurücksetzen', TreeItemCollapsibleState.Collapsed),
+        new Dependency('Übungsaufgaben prüfen', TreeItemCollapsibleState.Collapsed),
+        new Dependency('Nützliche Links', TreeItemCollapsibleState.Collapsed)
+    ]
+
     if (github_status === true) {
         for (element in githubsettings) {
             if (element.includes('link_name')) {
-                dependencies.push(new Dependency(githubsettings[element], TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: [githubsettings[Object.keys(githubsettings)[Object.keys(githubsettings).indexOf(element) + 1]], githubsettings[Object.keys(githubsettings)[Object.keys(githubsettings).indexOf(element) + 2]]] }))
+                dependencies_link.push(new Dependency(githubsettings[element], TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: [githubsettings[Object.keys(githubsettings)[Object.keys(githubsettings).indexOf(element) + 1]], githubsettings[Object.keys(githubsettings)[Object.keys(githubsettings).indexOf(element) + 2]]] }))
+            } else if (element === 'quiz_active' && githubsettings[element] === true) {
+                dependencies_main.push(new Dependency(status_quiz ? 'C-Quiz beenden' : 'C-Quiz starten', TreeItemCollapsibleState.None, constcommands[status_quiz ? 3 : 0]))
             }
         }
     }
-
-    window.registerTreeDataProvider('menue_bar_activity', treeDataProvider);
+    window.registerTreeDataProvider('menue_bar_activity', treeDataProvider)
     window.createTreeView('menue_bar_activity', treeViewOptions)
 }

@@ -55,7 +55,6 @@ export async function evaluate(exercise: { output: string, requirements: string[
     
     runProcess.stdout.on("data", (data) => {
         runOutput += data
-        console.log(runOutput)
     })
     runProcess.stderr.on("data", (data) => {
         runOutput += data
