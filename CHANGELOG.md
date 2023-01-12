@@ -16,7 +16,7 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 
 - 
 
-## [1.1.0] - [1.1.3] 05.01.2023 - 09.01.2023
+## [1.1.0] - [1.1.5] 05.01.2023 - 12.01.2023
 
 ### neu hinzugefügt
 
@@ -29,6 +29,7 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 ### geändert
 
 - Statusbar nur noch zur Aktivierung/Pausierung der Erweiterung
+- Quiz nun auch über GitHub anpassbar und Quiz-Fragen und Antworten werden nun gemischt statt hintereinander abgefragt zu werden
 - Änderung der Punkte in der Activitybar
 - Effizientere schreibweise vom Code
 - globale Variablen vor allem in extsettings.ts definiert
