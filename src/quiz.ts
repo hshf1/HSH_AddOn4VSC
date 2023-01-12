@@ -1,94 +1,78 @@
-import { OutputChannel, commands, window, Disposable } from 'vscode'
-import { status_quiz } from './registercommands';
-import { questions } from './quizqestions'
-import { error } from 'console';
+import { OutputChannel, commands, window, QuickPick, QuickPickItem } from 'vscode'
+import { githubquiz } from './github'
 
 let quizOutputChannel: OutputChannel
-let active_quickpick1: any
-let currentQuestionIndex: number
-let score: number
-let selectedanswer: string
+let active_quickpick1: QuickPick<QuickPickItem>;
+let score: number, currentIndex: number
 
 export function startQuiz() {
-    if (status_quiz) {
-        currentQuestionIndex = 0
-        score = 0
-        quizOutputChannel = window.createOutputChannel('C-Quiz')
-        quizOutputChannel.show()
-        quizOutputChannel.appendLine('Willkommen beim C-Quiz! Es geht los:')
-        showNextQuestion()
-    }
+    createQuickpick()
+    currentIndex = 0
+    score = 0
+    quizOutputChannel = window.createOutputChannel('C-Quiz')
+    quizOutputChannel.show()
+    quizOutputChannel.appendLine(`Willkommen beim C-Quiz!\nEs befinden sich derzeit ${githubquiz.length} Fragen im C-Quiz.\nEs geht los:\n`)
+    showquestion()
 }
 
 export function quit_quiz() {
-    if (!status_quiz) {
-        quizOutputChannel?.dispose()
-        if (active_quickpick1 instanceof Disposable) {
-            active_quickpick1.dispose()
-        }
-        window.showInformationMessage('C-Quiz beendet!')
-    }
+    quizOutputChannel?.dispose()
+    active_quickpick1?.dispose()
+    window.showInformationMessage('C-Quiz beendet!')
 }
 
-async function quiz_showQuickPick(question: string, items: { label: string }[]) {
-    const quickpick = await window.showQuickPick(items, {
-        placeHolder: question,
-        ignoreFocusOut: true
-    })
-    if (quickpick && status_quiz) {
-        selectedanswer = quickpick?.label
-    }
+async function createQuickpick() {
+    active_quickpick1 = window.createQuickPick()
+    active_quickpick1.show()
+    active_quickpick1.ignoreFocusOut = true
 }
 
-async function showNextQuestion() {
-    if (currentQuestionIndex < questions.length) {
-        const question = questions[currentQuestionIndex].question
-        const items = questions[currentQuestionIndex].answers.map(answer => ({ label: answer }))
+function showquestion() {
+    if (currentIndex < githubquiz.length) {
+        const question = githubquiz[currentIndex].question
+        const items: QuickPickItem[] = githubquiz[currentIndex].answers.map(answer => ({ label: answer }))
         items.push({ label: 'C-Quiz beenden' })
+
         quizOutputChannel.appendLine(question)
-        active_quickpick1 = await quiz_showQuickPick(question, items).catch(error)
-        if (status_quiz) {
-            if (selectedanswer === questions[currentQuestionIndex].correctAnswer) {
-                score++;
-                quizOutputChannel.appendLine(`${selectedanswer} ist richtig!\nAktuelle Punktzahl: ${score} von ${questions.length} Punkten.\n\n`)
-            } else if (selectedanswer === 'C-Quiz beenden') {
+        active_quickpick1.placeholder = question
+        active_quickpick1.items = items
+        active_quickpick1.onDidAccept(() => {
+            const selectedAnswer = active_quickpick1.selectedItems[0].label
+            if (selectedAnswer === 'C-Quiz beenden') {
                 commands.executeCommand('exam.stop')
-                return 0
+            } else if (selectedAnswer === githubquiz[currentIndex].correctAnswer) {
+                score++
+                quizOutputChannel.appendLine(`${selectedAnswer} ist richtig!\nAktueller Stand: ${score} von ${githubquiz.length} richtig beantwortet.\n\n`)
             } else {
-                quizOutputChannel.appendLine(`${selectedanswer} ist falsch!\nAktuelle Punktzahl: ${score} von ${questions.length} Punkten.\n\n`)
+                quizOutputChannel.appendLine(`${selectedAnswer} ist falsch!\nAktueller Stand: ${score} von ${githubquiz.length} richtig beantwortet.\n\n`)
             }
-            currentQuestionIndex++
+            active_quickpick1.selectedItems = []
+            currentIndex++
+            showquestion()
+        })
+    } else { endpoint_quiz() }
+}
 
-            if (quizOutputChannel) {
-                showNextQuestion()
-            } else {
-                commands.executeCommand('exam.stop')
-            }
+async function endpoint_quiz() {
+
+    quizOutputChannel.appendLine(`${score} richtige Antworten von insgesamt ${githubquiz.length}.\nC-Quiz beenden oder neu starten?`)
+
+    let items2: {
+        label: string
+    }[] = [
+            { label: 'C-Quiz beenden' },
+            { label: 'C-Quiz neu starten' }
+        ]
+    active_quickpick1.placeholder = 'C-Quiz beenden oder neu starten?'
+    active_quickpick1.items = items2
+
+    active_quickpick1.onDidAccept(() => {
+        if (active_quickpick1.selectedItems[0].label === 'C-Quiz beenden') {
+            commands.executeCommand('exam.stop')
+        } else if (active_quickpick1.selectedItems[0].label === 'C-Quiz neu starten') {
+            window.showInformationMessage('C-Quiz neu gestartet!')
+            commands.executeCommand('exam.start')
         }
-
-    } else {
-        quizOutputChannel.appendLine(`Du hast ${score} Punkte von insgesamt ${questions.length} erreicht.\nC-Quiz beenden oder neu starten?`)
-
-        let items2: {
-            label: string
-        }[] = [
-                { label: 'C-Quiz beenden' },
-                { label: 'C-Quiz neu starten' }
-            ]
-        active_quickpick1 = await quiz_showQuickPick('C-Quiz beenden oder neu starten?', items2)
-
-        if (status_quiz) {
-            switch (selectedanswer) {
-                case 'C-Quiz beenden':
-                    commands.executeCommand('exam.stop')
-                    break
-                case 'C-Quiz neu starten':
-                    window.showInformationMessage('C-Quiz neu gestartet!')
-                    commands.executeCommand('exam.start')
-                    break
-                default:
-                    break
-            }
-        }
-    }
+        active_quickpick1.selectedItems = []
+    })
 }

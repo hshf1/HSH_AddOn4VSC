@@ -3,11 +3,11 @@ import {
     TreeItemCollapsibleState, EventEmitter, Event, TreeItem
 } from 'vscode'
 import { active_addon } from './status_bar'
-import { status_quiz } from './registercommands'
 import { constcommands } from './constcommands'
-import { githubsettings, github_status } from './github'
+import { githublinks, github_status } from './github'
+import { quiz_status } from './registercommands'
 
-export let dependencies_link: any = [], dependencies_main: any = [], element: any
+export let dependencies_link: any = [], dependencies_main: any = []
 
 export class Dependency extends TreeItem {
     constructor(
@@ -91,10 +91,8 @@ async function build_activity_bar() {
     }
 
     if (github_status === true) {
-        for (element in githubsettings) {
-            if (element.includes('link_name')) {
-                dependencies_link.push(new Dependency(githubsettings[element], TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: [githubsettings[Object.keys(githubsettings)[Object.keys(githubsettings).indexOf(element) + 1]], githubsettings[Object.keys(githubsettings)[Object.keys(githubsettings).indexOf(element) + 2]]] }))
-            }
+        for (let i = 0; i < githublinks.length; i++) {
+            dependencies_link.push(new Dependency(githublinks[i].name, TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: [githublinks[i].link, githublinks[i].gueltig_bis] }))
         }
     }
     window.registerTreeDataProvider('menue_bar_activity', treeDataProvider)
@@ -104,7 +102,7 @@ async function build_activity_bar() {
 function aktualisieren() {
     dependencies_main = [
         new Dependency('GitHub: Vorlesung C', TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: ['https://github.com/hshf1/VorlesungC', ''] }),
-        new Dependency(status_quiz ? 'C-Quiz beenden' : 'C-Quiz starten', TreeItemCollapsibleState.None, constcommands[status_quiz ? 3 : 0]),
+        new Dependency(quiz_status ? 'C-Quiz beenden' : 'C-Quiz starten', TreeItemCollapsibleState.None, constcommands[quiz_status ? 3 : 0]),
         new Dependency(active_addon ? 'Erweiterung pausieren' : 'Erweiterung wieder aktivieren', TreeItemCollapsibleState.None, constcommands[active_addon ? 2 : 1]),
         new Dependency('Einstellungen zurücksetzen', TreeItemCollapsibleState.Collapsed),
         new Dependency('Übungsaufgaben prüfen', TreeItemCollapsibleState.Collapsed),

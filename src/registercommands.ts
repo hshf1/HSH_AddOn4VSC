@@ -7,25 +7,23 @@ import { renewjsons } from './jsonfilescheck'
 import { error_message, information_message, warning_message } from './output'
 import { startQuiz, quit_quiz } from './quiz'
 import { active_addon_func } from './status_bar'
-import { githubsettings, github_status } from './github'
+import { githubquiz, github_status } from './github'
 import { env, Uri } from 'vscode'
 import { addfunc } from './insertforexercise'
 
-export let status_quiz: boolean
 export let sum: number | undefined
+export let quiz_status = false
 
 export const constregistercommands = [
     {
         name: constcommands[0].command,
         callback: () => {
-            if (githubsettings.hasOwnProperty('quiz_active') || github_status) {
-                if (githubsettings['quiz_active'] === true) {
-                    status_quiz = true
-                    startQuiz()
-                    treeDataProvider.refresh()
-                } else {
-                    warning_message(`Das Quiz ist derzeit nicht aktiv. Versuche es zu einem späteren Zeitpunkt erneut!`)
-                }
+            if (githubquiz) {
+                quiz_status = true
+                startQuiz()
+                treeDataProvider.refresh()
+            } else if (github_status) {
+                warning_message(`Das Quiz ist derzeit nicht aktiv. Versuche es zu einem späteren Zeitpunkt erneut!`)
             } else {
                 warning_message(`Quiz derzeit deaktiviert. Prüfe deine Internetverbindung und starte VSCode erneut.`)
             }
@@ -48,7 +46,7 @@ export const constregistercommands = [
     {
         name: constcommands[3].command,
         callback: () => {
-            status_quiz = false
+            quiz_status = false
             quit_quiz()
             treeDataProvider.refresh()
         }
