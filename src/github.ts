@@ -1,5 +1,5 @@
 import { get } from 'request'
-import { warning_message } from './output'
+import { window } from 'vscode'
 
 export let githublinks: { link: string, name: string, gueltig_bis?: string }[] = []
 export let githubquiz: { question: string, answers: string[], correctAnswer: string }[] = []
@@ -9,7 +9,7 @@ get('https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/A
     if (error) {
         console.error(error)
         github_status = false
-        warning_message(`Einstellungen aus GitHub konnten nicht geladen werden. Einige Zusatzfunktionen sind deaktiviert, prüfen Sie Ihre Internetverbindung.`)
+        window.showWarningMessage(`Einstellungen aus GitHub konnten nicht geladen werden. Einige Zusatzfunktionen sind deaktiviert, prüfen Sie Ihre Internetverbindung.`)
     } else {
         const elements = body.replace(/[\n]/g, '').split('<-')
         let currentLink: { link: string, name: string, gueltig_bis?: string } = { link: "", name: "", gueltig_bis: "" }
@@ -33,7 +33,7 @@ get('https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/A
     if (error) {
         console.error(error)
         github_status = false
-        warning_message(`Einstellungen aus GitHub konnten nicht geladen werden. Einige Zusatzfunktionen sind deaktiviert, prüfen Sie Ihre Internetverbindung.`)
+        window.showWarningMessage(`Einstellungen aus GitHub konnten nicht geladen werden. Einige Zusatzfunktionen sind deaktiviert, prüfen Sie Ihre Internetverbindung.`)
     } else {
 
         const quizelements = body.replace(/[\n]/g, '').split('<-')

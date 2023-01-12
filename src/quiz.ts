@@ -4,15 +4,32 @@ import { githubquiz } from './github'
 let quizOutputChannel: OutputChannel
 let active_quickpick1: QuickPick<QuickPickItem>;
 let score: number, currentIndex: number
+let githubquiz_shuffeld: { question: string, answers: string[], correctAnswer: string }[] = []
 
 export function startQuiz() {
-    createQuickpick()
-    currentIndex = 0
-    score = 0
+    githubquiz_shuffeld = shuffleArray(githubquiz)
+    for (let i = 0; i < githubquiz_shuffeld.length; i++) {
+        githubquiz_shuffeld[i].answers.sort(() => Math.random() - 0.5)
+    }
+
+    currentIndex = 0, score = 0
     quizOutputChannel = window.createOutputChannel('C-Quiz')
     quizOutputChannel.show()
     quizOutputChannel.appendLine(`Willkommen beim C-Quiz!\nEs befinden sich derzeit ${githubquiz.length} Fragen im C-Quiz.\nEs geht los:\n`)
+
+    active_quickpick1 = window.createQuickPick()
+    active_quickpick1.show()
+    active_quickpick1.ignoreFocusOut = true
+
     showquestion()
+}
+
+function shuffleArray(arr: { question: string, answers: string[], correctAnswer: string }[]) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
 }
 
 export function quit_quiz() {
@@ -21,16 +38,10 @@ export function quit_quiz() {
     window.showInformationMessage('C-Quiz beendet!')
 }
 
-async function createQuickpick() {
-    active_quickpick1 = window.createQuickPick()
-    active_quickpick1.show()
-    active_quickpick1.ignoreFocusOut = true
-}
-
 function showquestion() {
-    if (currentIndex < githubquiz.length) {
-        const question = githubquiz[currentIndex].question
-        const items: QuickPickItem[] = githubquiz[currentIndex].answers.map(answer => ({ label: answer }))
+    if (currentIndex < githubquiz_shuffeld.length) {
+        const question = githubquiz_shuffeld[currentIndex].question
+        const items: QuickPickItem[] = githubquiz_shuffeld[currentIndex].answers.map(answer => ({ label: answer }))
         items.push({ label: 'C-Quiz beenden' })
 
         quizOutputChannel.appendLine(question)
@@ -40,11 +51,11 @@ function showquestion() {
             const selectedAnswer = active_quickpick1.selectedItems[0].label
             if (selectedAnswer === 'C-Quiz beenden') {
                 commands.executeCommand('exam.stop')
-            } else if (selectedAnswer === githubquiz[currentIndex].correctAnswer) {
+            } else if (selectedAnswer === githubquiz_shuffeld[currentIndex].correctAnswer) {
                 score++
-                quizOutputChannel.appendLine(`${selectedAnswer} ist richtig!\nAktueller Stand: ${score} von ${githubquiz.length} richtig beantwortet.\n\n`)
+                quizOutputChannel.appendLine(`${selectedAnswer} ist richtig!\nAktueller Stand: ${score} von ${githubquiz_shuffeld.length} richtig beantwortet.\n\n`)
             } else {
-                quizOutputChannel.appendLine(`${selectedAnswer} ist falsch!\nAktueller Stand: ${score} von ${githubquiz.length} richtig beantwortet.\n\n`)
+                quizOutputChannel.appendLine(`${selectedAnswer} ist falsch!\nAktueller Stand: ${score} von ${githubquiz_shuffeld.length} richtig beantwortet.\n\n`)
             }
             active_quickpick1.selectedItems = []
             currentIndex++
@@ -53,9 +64,9 @@ function showquestion() {
     } else { endpoint_quiz() }
 }
 
-async function endpoint_quiz() {
+function endpoint_quiz() {
 
-    quizOutputChannel.appendLine(`${score} richtige Antworten von insgesamt ${githubquiz.length}.\nC-Quiz beenden oder neu starten?`)
+    quizOutputChannel.appendLine(`${score} richtige Antworten von insgesamt ${githubquiz_shuffeld.length}.\nC-Quiz beenden oder neu starten?`)
 
     let items2: {
         label: string

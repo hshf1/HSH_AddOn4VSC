@@ -1,4 +1,4 @@
-import { ExtensionContext, commands, workspace, debug } from 'vscode'
+import { ExtensionContext, commands, workspace, debug, window } from 'vscode'
 import { openprefolder } from './checkfolder'
 import { checkname } from './filefoldername'
 import { checkjsons } from './jsonfilescheck'
@@ -6,7 +6,6 @@ import { active_addon, active_addon_func } from './status_bar'
 import { constregistercommands } from './registercommands'
 import { setting_init } from './extsettings'
 import { github_status } from './github'
-import { warning_message } from './output'
 
 export function activate(context: ExtensionContext) {
 
@@ -58,10 +57,10 @@ async function initialize() {
 	while (init_status === undefined) {
 		if (setting_init !== undefined && github_status !== undefined) {
 			if (setting_init === false) {
-				warning_message('Einstellungen konnten nicht richtig initialisiert werden. Bei Problem VSCode neu starten.')
+				window.showWarningMessage('Einstellungen konnten nicht richtig initialisiert werden. Bei Problem VSCode neu starten.')
 			}
 			if (github_status === false) {
-				warning_message('GitHub Einstellungen konnten nicht richtig initialisiert werden. Bei Problem VSCode neu starten.')
+				window.showWarningMessage('GitHub Einstellungen konnten nicht richtig initialisiert werden. Bei Problem VSCode neu starten.')
 			}
 			init_status = true
 		}

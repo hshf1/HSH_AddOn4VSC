@@ -1,5 +1,4 @@
 import { window } from 'vscode'
-import { error_message, information_message, warning_message } from './output'
 import { dirname, basename, parse } from 'path'
 import { gcc_command } from './extsettings'
 import { spawn } from 'child_process'
@@ -19,7 +18,7 @@ export async function evaluate(exercise: { output: string, requirements: string[
         codefilebaseName = basename(codefile)
         codefilebaseNamenoextension = parse(codefilebaseName).name
     } else {
-        error_message(`Es konnte kein aktives Textdokument erkannt werden! Versuchen Sie es nochmal.`)
+        window.showErrorMessage(`Es konnte kein aktives Textdokument erkannt werden! Versuchen Sie es nochmal.`)
         return
     }
 
@@ -76,11 +75,11 @@ export async function evaluate(exercise: { output: string, requirements: string[
 
 
     if (passed && (requirements.length === 0)) {
-        information_message(`Aufgabe erfolgreich gemeistert!`)
+        window.showInformationMessage(`Aufgabe erfolgreich gemeistert!`)
     } else if (passed && !(requirements.length === 0)) {
-        warning_message(`Die Ausgabe vom Programm stimmt, jedoch sind folgende Anforderungen nicht erfüllt:`+exercise.requirements ? `${requirements.join(", ")}.`: 'Keine speziellen Anforderungen bei dieser Aufgabe.')
+        window.showWarningMessage(`Die Ausgabe vom Programm stimmt, jedoch sind folgende Anforderungen nicht erfüllt:`+exercise.requirements ? `${requirements.join(", ")}.`: 'Keine speziellen Anforderungen bei dieser Aufgabe.')
     } else {
-        error_message(`Die Ausgabe "${exercise.output}" konnte nicht erkannt werden. Weiterhin sind folgende Anforderungen zu erfüllen: ${exercise.requirements.join(", ")}.`)
+        window.showErrorMessage(`Die Ausgabe "${exercise.output}" konnte nicht erkannt werden. Weiterhin sind folgende Anforderungen zu erfüllen: ${exercise.requirements.join(", ")}.`)
     }
     return { passed, requirements };
 }

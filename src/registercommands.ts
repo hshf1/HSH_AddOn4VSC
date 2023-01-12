@@ -4,11 +4,10 @@ import { evaluate } from './runexercises'
 import { constexercise } from './exercises'
 import { filePath_settingsjson, filePath_tasksjson } from './extsettings'
 import { renewjsons } from './jsonfilescheck'
-import { error_message, information_message, warning_message } from './output'
 import { startQuiz, quit_quiz } from './quiz'
 import { active_addon_func } from './status_bar'
 import { githubquiz, github_status } from './github'
-import { env, Uri } from 'vscode'
+import { env, Uri, window } from 'vscode'
 import { addfunc } from './insertforexercise'
 
 export let sum: number | undefined
@@ -23,9 +22,9 @@ export const constregistercommands = [
                 startQuiz()
                 treeDataProvider.refresh()
             } else if (github_status) {
-                warning_message(`Das Quiz ist derzeit nicht aktiv. Versuche es zu einem späteren Zeitpunkt erneut!`)
+                window.showWarningMessage(`Das Quiz ist derzeit nicht aktiv. Versuche es zu einem späteren Zeitpunkt erneut!`)
             } else {
-                warning_message(`Quiz derzeit deaktiviert. Prüfe deine Internetverbindung und starte VSCode erneut.`)
+                window.showWarningMessage(`Quiz derzeit deaktiviert. Prüfe deine Internetverbindung und starte VSCode erneut.`)
             }
         }
     },
@@ -55,7 +54,7 @@ export const constregistercommands = [
         name: constcommands[4].command,
         callback: () => {
             renewjsons(filePath_settingsjson)
-            information_message('settings.json wurde zurückgesetzt. Manchmal muss VSCode neu gestartet werden, um einige Änderungen wirksam zu machen.')
+            window.showInformationMessage('settings.json wurde zurückgesetzt. Manchmal muss VSCode neu gestartet werden, um einige Änderungen wirksam zu machen.')
 
         }
     },
@@ -63,7 +62,7 @@ export const constregistercommands = [
         name: constcommands[5].command,
         callback: () => {
             renewjsons(filePath_tasksjson)
-            information_message('tasks.json wurde zurückgesetzt. Manchmal muss VSCode neu gestartet werden, um einige Änderungen wirksam zu machen.')
+            window.showInformationMessage('tasks.json wurde zurückgesetzt. Manchmal muss VSCode neu gestartet werden, um einige Änderungen wirksam zu machen.')
         }
     },
     {
@@ -137,13 +136,13 @@ export const constregistercommands = [
         name: 'open.link',
         callback: (...args: any) => {
             if (args[0] === '') {
-                error_message('Es wurde kein Link zum Öffnen übergeben!')
+                window.showErrorMessage('Es wurde kein Link zum Öffnen übergeben!')
                 return
             }
             if (args[1] >= new Date(Date.now()).toLocaleDateString('de-DE', { year: 'numeric', month: '2-digit', day: '2-digit' }) || args[1] === '') {
                 env.openExternal(Uri.parse(args[0]))
             } else {
-                warning_message(`Der Link ist nicht mehr aktiv. Dies sollte bald erneuert werden.`)
+                window.showWarningMessage(`Der Link ist nicht mehr aktiv. Dies sollte bald erneuert werden.`)
             }
         }
     }

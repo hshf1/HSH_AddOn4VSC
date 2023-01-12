@@ -1,6 +1,5 @@
-import { extensions, commands } from 'vscode'
+import { extensions, commands, window } from 'vscode'
 import { dirname } from 'path'
-import { error_message } from './output'
 
 export const IS_WINDOWS = process.platform.startsWith('win')
 export const IS_OSX = process.platform == 'darwin'
@@ -44,7 +43,7 @@ if (IS_WINDOWS) {
         commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb')
     }
 } else {
-    error_message(`Betriebssystem wurde nicht erkannt! Einige Funktionen werden nicht richtig ausgeführt.`)
+    window.showErrorMessage(`Betriebssystem wurde nicht erkannt! Einige Funktionen werden nicht richtig ausgeführt.`)
 }
 
 export const testprogc = `#include <stdio.h>
