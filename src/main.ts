@@ -22,10 +22,15 @@ export function activate(context: ExtensionContext) {
 	if (!(workspace.workspaceFolders?.toString)) {
 		openprefolder()
 	}
-
+	
 	/**************************************************************************************
 	Funktionen, die immer wieder aufgerufen werden können, je nach Event
 	**************************************************************************************/
+
+	workspace.onDidChangeConfiguration(event => {
+		commands.executeCommand('workbench.action.closeActiveEditor')
+		commands.executeCommand('workbench.action.reloadWindow');
+	});
 
 	const eventHandler_checkname = async () => {
 		if (active_addon) {

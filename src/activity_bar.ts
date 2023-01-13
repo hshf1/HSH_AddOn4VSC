@@ -105,7 +105,7 @@ function aktualisieren() {
         new Dependency(quiz_status ? 'C-Quiz beenden' : 'C-Quiz starten', TreeItemCollapsibleState.None, constcommands[quiz_status ? 3 : 0]),
         new Dependency(active_addon ? 'Erweiterung pausieren' : 'Erweiterung wieder aktivieren', TreeItemCollapsibleState.None, constcommands[active_addon ? 2 : 1]),
         new Dependency('Einstellungen zurücksetzen', TreeItemCollapsibleState.Collapsed),
-        new Dependency('Übungsaufgaben prüfen', TreeItemCollapsibleState.Collapsed),
+        //new Dependency('Übungsaufgaben prüfen', TreeItemCollapsibleState.Collapsed),
         new Dependency('Nützliche Links', TreeItemCollapsibleState.Collapsed)
     ]
 }

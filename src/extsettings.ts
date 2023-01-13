@@ -1,4 +1,4 @@
-import { extensions, commands, window } from 'vscode'
+import { extensions, commands, window, workspace } from 'vscode'
 import { dirname } from 'path'
 
 export const IS_WINDOWS = process.platform.startsWith('win')
@@ -12,16 +12,25 @@ export let filePath_tasksjson: string
 export let filePath_testprog: string
 export let filesencoding_settingsjson: string
 export let gcc_command: string
+export let config = workspace.getConfiguration('addon4vsc')
+export let enableFeature = config.get('computerraum')
 
 const userhomefolder = dirname(dirname(dirname(dirname(__dirname))))
 
-if (IS_WINDOWS) {
+if (IS_WINDOWS && !enableFeature) {
     folderPath_C_Uebung = `${userhomefolder}\\Documents\\C_Uebung`
     filePath_settingsjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\settings.json`
     filePath_tasksjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
     filePath_testprog = `${folderPath_C_Uebung}\\testprog.c`
     filesencoding_settingsjson = 'cp437'
     gcc_command = 'C:\\ProgramData\\chocolatey\\bin\\gcc.exe'
+} else if (IS_WINDOWS && enableFeature) {
+    folderPath_C_Uebung = `U:\\C_Uebung`
+    filePath_settingsjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\settings.json`
+    filePath_tasksjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
+    filePath_testprog = `${folderPath_C_Uebung}\\testprog.c`
+    filesencoding_settingsjson = 'cp437'
+    gcc_command = ''
 } else if (IS_OSX) {
     folderPath_C_Uebung = `${userhomefolder}/Documents/C_Uebung`
     filePath_settingsjson = `${userhomefolder}/Library/Application Support/Code/User/settings.json`

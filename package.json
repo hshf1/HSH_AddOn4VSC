@@ -39,6 +39,16 @@
   ],
   "main": "./out/main.js",
   "contributes": {
+    "configuration": {
+      "title": "AddOn4VSC Einstellungen",
+      "properties": {
+        "addon4vsc.computerraum": {
+          "type": "boolean",
+          "description": "Hier die Einstellung aktivieren, falls VSCode aus dem RZ der Hochschule Hannover gestartet wird!",
+          "default": false
+        }
+      }
+    },
     "viewsContainers": {
       "activitybar": [
         {
