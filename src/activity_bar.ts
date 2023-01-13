@@ -2,9 +2,9 @@ import {
     window, Command, TreeDataProvider, TreeViewOptions,
     TreeItemCollapsibleState, EventEmitter, Event, TreeItem
 } from 'vscode'
-import { active_addon } from './status_bar'
 import { constcommands } from './constcommands'
 import { githublinks, github_status } from './github'
+import { statusbar_button } from './extsettings'
 import { quiz_status } from './registercommands'
 
 export let dependencies_link: any = [], dependencies_main: any = []
@@ -103,7 +103,7 @@ function aktualisieren() {
     dependencies_main = [
         new Dependency('GitHub: Vorlesung C', TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: ['https://github.com/hshf1/VorlesungC', ''] }),
         new Dependency(quiz_status ? 'C-Quiz beenden' : 'C-Quiz starten', TreeItemCollapsibleState.None, constcommands[quiz_status ? 3 : 0]),
-        new Dependency(active_addon ? 'Erweiterung pausieren' : 'Erweiterung wieder aktivieren', TreeItemCollapsibleState.None, constcommands[active_addon ? 2 : 1]),
+        new Dependency((statusbar_button.command === 'extension.off') ? 'Erweiterung pausieren' : 'Erweiterung wieder aktivieren', TreeItemCollapsibleState.None, constcommands[(statusbar_button.command === 'extension.off') ? 2 : 1]),
         new Dependency('Einstellungen zurücksetzen', TreeItemCollapsibleState.Collapsed),
         //new Dependency('Übungsaufgaben prüfen', TreeItemCollapsibleState.Collapsed),
         new Dependency('Nützliche Links', TreeItemCollapsibleState.Collapsed)

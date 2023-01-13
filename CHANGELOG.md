@@ -9,14 +9,13 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 ### neu hinzugefügt 
 
 - Ggf. Möglichkeiten mit dem Debugger in betracht ziehen.
-- Quizpanel
 - Ausführen von externen Skripten
 
 ### fertig
 
 - 
 
-## [1.1.0] - [1.1.5] 05.01.2023 - 12.01.2023
+## [1.1.0] - [1.1.6] 05.01.2023 - 13.01.2023
 
 ### neu hinzugefügt
 
@@ -25,6 +24,7 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 - Möglichkeit, dass Admins über GitHub Links in die Extension einbinden
 - Automatische Erkennung von Variablen link_name, link und gueltig_bis, Link läuft ab beim setzen von gueltig_bis
 - Möglichkeit, Aufgaben nach Output überprüfen und Anforderungen vorgeben (Aufgaben an sich fehlen noch)
+- Für das RZ der HsH angepasst
 
 ### geändert
 
@@ -34,6 +34,7 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 - Effizientere schreibweise vom Code
 - globale Variablen vor allem in extsettings.ts definiert
 - noch mehr commands hinzugefügt
+- Aufgabenüberprüfung ausgeblendet, da noch im Test und nicht freigegeben
 
 ## [1.0.0] -[1.0.2] 02.01.2023
 

@@ -2,9 +2,8 @@ import { ExtensionContext, commands, workspace, debug, window } from 'vscode'
 import { openprefolder } from './checkfolder'
 import { checkname } from './filefoldername'
 import { checkjsons } from './jsonfilescheck'
-import { active_addon, active_addon_func } from './status_bar'
 import { constregistercommands } from './registercommands'
-import { setting_init } from './extsettings'
+import { IS_WINDOWS, setting_init, statusbar_button } from './extsettings'
 import { github_status } from './github'
 
 export function activate(context: ExtensionContext) {
@@ -15,25 +14,25 @@ export function activate(context: ExtensionContext) {
 
 	initialize()
 
-	active_addon_func(true)
-
 	checkjsons()
 
 	if (!(workspace.workspaceFolders?.toString)) {
 		openprefolder()
 	}
-	
+
 	/**************************************************************************************
 	Funktionen, die immer wieder aufgerufen werden können, je nach Event
 	**************************************************************************************/
 
 	workspace.onDidChangeConfiguration(event => {
-		commands.executeCommand('workbench.action.closeActiveEditor')
-		commands.executeCommand('workbench.action.reloadWindow');
-	});
+		if (IS_WINDOWS) {
+			commands.executeCommand('workbench.action.closeActiveEditor')
+			commands.executeCommand('workbench.action.reloadWindow')
+		}
+	})
 
 	const eventHandler_checkname = async () => {
-		if (active_addon) {
+		if (statusbar_button.command === 'extension.off') {
 			await checkname()
 		}
 	}
@@ -51,12 +50,9 @@ async function initialize() {
 	try {
 		await require('./extsettings')
 		await require('./github')
-		// Initialize your extension using the settings from extsettings.ts
 	} catch (error) {
 		console.error(error);
-		// Wait for a second before trying again
 		await new Promise(resolve => setTimeout(resolve, 1000))
-		// Try initializing again
 		await initialize()
 	}
 	while (init_status === undefined) {

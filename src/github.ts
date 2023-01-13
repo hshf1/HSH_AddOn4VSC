@@ -35,7 +35,6 @@ get('https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/A
         github_status = false
         window.showWarningMessage(`Einstellungen aus GitHub konnten nicht geladen werden. Einige Zusatzfunktionen sind deaktiviert, prüfen Sie Ihre Internetverbindung.`)
     } else {
-
         const quizelements = body.replace(/[\n]/g, '').split('<-')
         let currentQuestion: { question: string, answers: string[], correctAnswer: string } = { question: "", answers: [], correctAnswer: "" }
         for (const quizelement of quizelements) {

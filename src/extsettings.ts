@@ -1,5 +1,5 @@
-import { extensions, commands, window, workspace } from 'vscode'
-import { dirname } from 'path'
+import { extensions, commands, window, workspace, StatusBarAlignment } from 'vscode'
+import { homedir } from 'os'
 
 export const IS_WINDOWS = process.platform.startsWith('win')
 export const IS_OSX = process.platform == 'darwin'
@@ -15,7 +15,7 @@ export let gcc_command: string
 export let config = workspace.getConfiguration('addon4vsc')
 export let enableFeature = config.get('computerraum')
 
-const userhomefolder = dirname(dirname(dirname(dirname(__dirname))))
+const userhomefolder = homedir()
 
 if (IS_WINDOWS && !enableFeature) {
     folderPath_C_Uebung = `${userhomefolder}\\Documents\\C_Uebung`
@@ -55,6 +55,12 @@ if (IS_WINDOWS && !enableFeature) {
     window.showErrorMessage(`Betriebssystem wurde nicht erkannt! Einige Funktionen werden nicht richtig ausgeführt.`)
 }
 
+export const statusbar_button = window.createStatusBarItem(StatusBarAlignment.Right, 100)
+statusbar_button.text = 'AddOn4VSC pausieren'
+statusbar_button.tooltip = 'Klicken, um die Erweiterung AddOn4VSC zu pausieren (spätestens, bis wenn VSCode neu startet)'
+statusbar_button.command = 'extension.off'
+statusbar_button.show()
+
 export const testprogc = `#include <stdio.h>
 
 int main() {
@@ -62,7 +68,7 @@ int main() {
     x++;
 
     printf("Erinnerung: Datei- und Verzeichnisname dürfen keine Umlaute oder Leerzeichen haben!\\n");
-    printf("Das Ergebnis von x lautet: %d\\n",x);
+    printf("Das Ergebnis von x lautet: %d\\n", x);
 }`
 
 setting_init = true

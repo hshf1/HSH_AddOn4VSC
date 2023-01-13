@@ -2,16 +2,16 @@ import { treeDataProvider } from './activity_bar'
 import { constcommands } from './constcommands'
 import { evaluate } from './runexercises'
 import { constexercise } from './exercises'
-import { filePath_settingsjson, filePath_tasksjson } from './extsettings'
+import { filePath_settingsjson, filePath_tasksjson, statusbar_button } from './extsettings'
 import { renewjsons } from './jsonfilescheck'
 import { startQuiz, quit_quiz } from './quiz'
-import { active_addon_func } from './status_bar'
 import { githubquiz, github_status } from './github'
 import { env, Uri, window } from 'vscode'
 import { addfunc } from './insertforexercise'
 
 export let sum: number | undefined
 export let quiz_status = false
+export let active_addon: boolean = true
 
 export const constregistercommands = [
     {
@@ -31,14 +31,18 @@ export const constregistercommands = [
     {
         name: constcommands[1].command,
         callback: () => {
-            active_addon_func(true)
+            statusbar_button.text = 'AddOn4VSC pausieren'
+            statusbar_button.tooltip = 'Klicken, um die Erweiterung AddOn4VSC zu pausieren (spätestens, bis wenn VSCode neu startet)'
+            statusbar_button.command = 'extension.off'
             treeDataProvider.refresh()
         }
     },
     {
         name: constcommands[2].command,
         callback: () => {
-            active_addon_func(false)
+            statusbar_button.text = 'AddOn4VSC wieder aktivieren'
+            statusbar_button.tooltip = 'Klicken, um die Erweiterung AddOn4VSC wieder zu aktivieren'
+            statusbar_button.command = 'extension.on'
             treeDataProvider.refresh()
         }
     },
@@ -80,60 +84,6 @@ export const constregistercommands = [
     },
     {
         name: constcommands[8].command,
-        callback: async () => {
-            await evaluate(constexercise[2], 2)
-        }
-    },
-    {
-        name: constcommands[9].command,
-        callback: async () => {
-            await evaluate(constexercise[3], 3)
-        }
-    },
-    {
-        name: constcommands[10].command,
-        callback: async () => {
-            await evaluate(constexercise[4], 4)
-        }
-    },
-    {
-        name: constcommands[11].command,
-        callback: async () => {
-            await evaluate(constexercise[5], 5)
-        }
-    },
-    {
-        name: constcommands[12].command,
-        callback: async () => {
-            await evaluate(constexercise[6], 6)
-        }
-    },
-    {
-        name: constcommands[13].command,
-        callback: async () => {
-            await evaluate(constexercise[7], 7)
-        }
-    },
-    {
-        name: constcommands[14].command,
-        callback: async () => {
-            await evaluate(constexercise[8], 8)
-        }
-    },
-    {
-        name: constcommands[15].command,
-        callback: async () => {
-            await evaluate(constexercise[9], 9)
-        }
-    },
-    {
-        name: constcommands[16].command,
-        callback: async () => {
-            await evaluate(constexercise[10], 10)
-        }
-    },
-    {
-        name: 'open.link',
         callback: (...args: any) => {
             if (args[0] === '') {
                 window.showErrorMessage('Es wurde kein Link zum Öffnen übergeben!')

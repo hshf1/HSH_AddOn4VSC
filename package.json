@@ -19,15 +19,6 @@
   "activationEvents": [
     "onCommand:aufgabe1.pruefen",
     "onCommand:aufgabe2.pruefen",
-    "onCommand:aufgabe3.pruefen",
-    "onCommand:aufgabe4.pruefen",
-    "onCommand:aufgabe5.pruefen",
-    "onCommand:aufgabe6.pruefen",
-    "onCommand:aufgabe7.pruefen",
-    "onCommand:aufgabe8.pruefen",
-    "onCommand:aufgabe9.pruefen",
-    "onCommand:aufgabe10.pruefen",
-    "onCommand:aufgabe11.pruefen",
     "onCommand:default.settingsjson",
     "onCommand:default.tasksjson",
     "onCommand:exam.start",
@@ -40,12 +31,13 @@
   "main": "./out/main.js",
   "contributes": {
     "configuration": {
-      "title": "AddOn4VSC Einstellungen",
+      "title": "AddOn4VSC",
       "properties": {
         "addon4vsc.computerraum": {
           "type": "boolean",
           "description": "Hier die Einstellung aktivieren, falls VSCode aus dem RZ der Hochschule Hannover gestartet wird!",
-          "default": false
+          "default": false,
+          "scope": "application"
         }
       }
     },
@@ -87,42 +79,6 @@
       {
         "command": "aufgabe2.pruefen",
         "title": "Überprüfen der Aufgabe 2"
-      },
-      {
-        "command": "aufgabe3.pruefen",
-        "title": "Überprüfen der Aufgabe 3"
-      },
-      {
-        "command": "aufgabe4.pruefen",
-        "title": "Überprüfen der Aufgabe 4"
-      },
-      {
-        "command": "aufgabe5.pruefen",
-        "title": "Überprüfen der Aufgabe 5"
-      },
-      {
-        "command": "aufgabe6.pruefen",
-        "title": "Überprüfen der Aufgabe 6"
-      },
-      {
-        "command": "aufgabe7.pruefen",
-        "title": "Überprüfen der Aufgabe 7"
-      },
-      {
-        "command": "aufgabe8.pruefen",
-        "title": "Überprüfen der Aufgabe 8"
-      },
-      {
-        "command": "aufgabe9.pruefen",
-        "title": "Überprüfen der Aufgabe 9"
-      },
-      {
-        "command": "aufgabe10.pruefen",
-        "title": "Überprüfen der Aufgabe 10"
-      },
-      {
-        "command": "aufgabe11.pruefen",
-        "title": "Überprüfen der Aufgabe 11"
       },
       {
         "command": "exam.start",
