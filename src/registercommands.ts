@@ -103,30 +103,34 @@ export const constregistercommands = [
     {
         name: constcommands[9].command,
         callback: async () => {
-            exec('gcc --version', (error, stdout) => {
-                if (error) {
-                    window.showErrorMessage(`Compiler nicht gefunden, jetzt installieren?`, 'Compiler jetzt installieren', 'Nein').then(selected => {
-                        if (selected === 'Compiler jetzt installieren') {
-                            commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(userhomefolder)).then(() => {
-                                if (IS_WINDOWS && !enableFeature) {
-                                    commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb runAs -ArgumentList \'/k curl -o %temp%\\vsc.cmd https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/vscwindows.cmd && %temp%\\vsc.cmd\'\"\n' })
-                                } else if (IS_OSX) {
-                                    commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'curl -sL https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/vsclinuxosx.sh | bash\n' })
-                                } else if (IS_LINUX) {
-                                    commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'sudo snap install curl && curl -sL https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/vsclinuxosx.sh | bash\n' })
-                                }
-                            })
-                        }
-                    })
-                    window.showWarningMessage(`Nach Beendigung der Installation muss VSCode neu gestartet werden!`, 'Jetzt neu starten', 'Später neu starten').then(selected => {
-                        if (selected === 'Jetzt neu starten') {
-                            commands.executeCommand('workbench.action.reloadWindow')
-                        }
-                    })
-                } else {
-                    window.showInformationMessage(`Compiler bereits installiert`)
-                }
-            })
+            if (!enableFeature || !IS_WINDOWS) {
+                exec('gcc --version', (error, stdout) => {
+                    if (error) {
+                        window.showErrorMessage(`Compiler nicht gefunden, jetzt installieren?`, 'Compiler jetzt installieren', 'Nein').then(selected => {
+                            if (selected === 'Compiler jetzt installieren') {
+                                commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(userhomefolder)).then(() => {
+                                    if (IS_WINDOWS && !enableFeature) {
+                                        commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb runAs -ArgumentList \'/k curl -o %temp%\\vsc.cmd https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/vscwindows.cmd && %temp%\\vsc.cmd\'\"\n' })
+                                    } else if (IS_OSX) {
+                                        commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'curl -sL https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/vsclinuxosx.sh | bash\n' })
+                                    } else if (IS_LINUX) {
+                                        commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'sudo snap install curl && curl -sL https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/vsclinuxosx.sh | bash\n' })
+                                    }
+                                })
+                            }
+                        })
+                        window.showWarningMessage(`Nach Beendigung der Installation muss VSCode neu gestartet werden!`, 'Jetzt neu starten', 'Später neu starten').then(selected => {
+                            if (selected === 'Jetzt neu starten') {
+                                commands.executeCommand('workbench.action.reloadWindow')
+                            }
+                        })
+                    } else {
+                        window.showInformationMessage(`Compiler bereits installiert`)
+                    }
+                })
+            } else {
+                window.showErrorMessage('Diese Aktion kann nicht im RZ der HsH ausgeführt werden!')
+            }
         }
     }
 ]
