@@ -1,4 +1,5 @@
 .vscode/
+images/
 node_modules/
 src/test/
 out/
