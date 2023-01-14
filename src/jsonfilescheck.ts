@@ -1,6 +1,7 @@
-import { settingsjsondata, tasksjsondata } from './jsonfilesdata'
 import { promises, unlinkSync } from 'fs'
-import { filePath_settingsjson, filePath_tasksjson } from './extsettings'
+
+import { settingsjsondata, tasksjsondata } from './constants'
+import { filePath_settingsjson, filePath_tasksjson } from './init'
 
 export async function renewjsons(filePath_todelete: string) {
 	try {

@@ -1,6 +1,8 @@
 import { Uri, OpenDialogOptions, commands, window } from 'vscode'
-import { enableFeature, filePath_testprog, folderPath_C_Uebung, IS_WINDOWS, testprogc } from './extsettings'
 import { existsSync, mkdirSync, writeFileSync } from 'fs'
+
+import { enableFeature, filePath_testprog, folderPath_C_Uebung, IS_WINDOWS } from './init'
+import { testprogc } from './constants'
 
 function openfolder() {
 	const options: OpenDialogOptions = {

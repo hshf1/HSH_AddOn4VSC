@@ -1,4 +1,5 @@
 import { OutputChannel, commands, window, QuickPick, QuickPickItem } from 'vscode'
+
 import { githubquiz } from './github'
 
 let quizOutputChannel: OutputChannel

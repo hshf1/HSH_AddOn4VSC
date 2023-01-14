@@ -1,5 +1,6 @@
 import { Uri, workspace, window } from 'vscode'
-import { extname, dirname, basename, join } from 'path'
+import { extname, dirname, basename, join, parse } from 'path'
+import { existsSync } from 'fs';
 
 export async function checkname() {
     var filePath: string = window.activeTextEditor?.document.uri.fsPath || "no_file_defined"
@@ -47,8 +48,16 @@ async function rename(currentPath: string) {
                 newfullname = newfullname.replace(extname(currentPath), '.c')
             }
         }
+        save_rename(currentPath, newfullname)
+    }
+}
 
+async function save_rename(currentPath: string, newfullname: any) {
+    if (existsSync(newfullname)) {
+        let parsedPath = parse(newfullname)
+        let newName = join(parsedPath.dir, `${parsedPath.name}_1${parsedPath.ext}`)
+        save_rename(currentPath, newName)
+    } else {
         await workspace.fs.rename(Uri.file(currentPath), Uri.file(currentPath).with({ path: newfullname }))
-
     }
 }

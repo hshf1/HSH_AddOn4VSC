@@ -15,7 +15,7 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 
 - 
 
-## [1.1.0] - [1.1.6] 05.01.2023 - 13.01.2023
+## [1.1.0] - [1.1.7] 05.01.2023 - 14.01.2023
 
 ### neu hinzugefügt
 
@@ -25,6 +25,7 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 - Automatische Erkennung von Variablen link_name, link und gueltig_bis, Link läuft ab beim setzen von gueltig_bis
 - Möglichkeit, Aufgaben nach Output überprüfen und Anforderungen vorgeben (Aufgaben an sich fehlen noch)
 - Für das RZ der HsH angepasst
+- Compiler installieren, führt Skript über GitHub aus für Windows, Linux und MacOS (Unter Einstellungen in der Activity-Bar)
 
 ### geändert
 

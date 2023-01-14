@@ -1,9 +1,10 @@
 import { ExtensionContext, commands, workspace, debug, window } from 'vscode'
+
 import { openprefolder } from './checkfolder'
 import { checkname } from './filefoldername'
 import { checkjsons } from './jsonfilescheck'
 import { constregistercommands } from './registercommands'
-import { IS_WINDOWS, setting_init, statusbar_button } from './extsettings'
+import { enableFeature, setting_init, statusbar_button } from './init'
 import { github_status } from './github'
 
 export function activate(context: ExtensionContext) {
@@ -25,7 +26,7 @@ export function activate(context: ExtensionContext) {
 	**************************************************************************************/
 
 	workspace.onDidChangeConfiguration(event => {
-		if (IS_WINDOWS) {
+		if (!enableFeature && workspace.getConfiguration('addon4vsc').get('computerraum') || enableFeature && !workspace.getConfiguration('addon4vsc').get('computerraum')) {
 			commands.executeCommand('workbench.action.closeActiveEditor')
 			commands.executeCommand('workbench.action.reloadWindow')
 		}

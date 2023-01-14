@@ -15,7 +15,7 @@ export let gcc_command: string
 export let config = workspace.getConfiguration('addon4vsc')
 export let enableFeature = config.get('computerraum')
 
-const userhomefolder = homedir()
+export const userhomefolder = homedir()
 
 if (IS_WINDOWS && !enableFeature) {
     folderPath_C_Uebung = `${userhomefolder}\\Documents\\C_Uebung`
@@ -60,15 +60,5 @@ statusbar_button.text = 'AddOn4VSC pausieren'
 statusbar_button.tooltip = 'Klicken, um die Erweiterung AddOn4VSC zu pausieren (spätestens, bis wenn VSCode neu startet)'
 statusbar_button.command = 'extension.off'
 statusbar_button.show()
-
-export const testprogc = `#include <stdio.h>
-
-int main() {
-    int x = 1;
-    x++;
-
-    printf("Erinnerung: Datei- und Verzeichnisname dürfen keine Umlaute oder Leerzeichen haben!\\n");
-    printf("Das Ergebnis von x lautet: %d\\n", x);
-}`
 
 setting_init = true

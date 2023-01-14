@@ -2,9 +2,10 @@ import {
     window, Command, TreeDataProvider, TreeViewOptions,
     TreeItemCollapsibleState, EventEmitter, Event, TreeItem
 } from 'vscode'
-import { constcommands } from './constcommands'
+
+import { constcommands } from './constants'
 import { githublinks, github_status } from './github'
-import { statusbar_button } from './extsettings'
+import { statusbar_button } from './init'
 import { quiz_status } from './registercommands'
 
 export let dependencies_link: any = [], dependencies_main: any = []
@@ -47,8 +48,9 @@ export class DepNodeProvider implements TreeDataProvider<Dependency> {
     }
 
     private getPackageDependencies(dependency: Dependency): Dependency[] {
-        if (dependency.label === 'Einstellungen zurücksetzen') {
+        if (dependency.label === 'Einstellungen') {
             return [
+                new Dependency('Compiler installieren', TreeItemCollapsibleState.None, constcommands[9]),
                 new Dependency('settings.json zurücksetzen', TreeItemCollapsibleState.None, constcommands[4]),
                 new Dependency('tasks.json zurücksetzen', TreeItemCollapsibleState.None, constcommands[5])
             ]
@@ -56,15 +58,6 @@ export class DepNodeProvider implements TreeDataProvider<Dependency> {
             return [
                 new Dependency('Aufgabe 1 prüfen', TreeItemCollapsibleState.None, constcommands[6]),
                 new Dependency('Aufgabe 2 prüfen', TreeItemCollapsibleState.None, constcommands[7]),
-                new Dependency('Aufgabe 3 prüfen', TreeItemCollapsibleState.None, constcommands[8]),
-                new Dependency('Aufgabe 4 prüfen', TreeItemCollapsibleState.None, constcommands[9]),
-                new Dependency('Aufgabe 5 prüfen', TreeItemCollapsibleState.None, constcommands[10]),
-                new Dependency('Aufgabe 6 prüfen', TreeItemCollapsibleState.None, constcommands[11]),
-                new Dependency('Aufgabe 7 prüfen', TreeItemCollapsibleState.None, constcommands[12]),
-                new Dependency('Aufgabe 8 prüfen', TreeItemCollapsibleState.None, constcommands[13]),
-                new Dependency('Aufgabe 9 prüfen', TreeItemCollapsibleState.None, constcommands[14]),
-                new Dependency('Aufgabe 10 prüfen', TreeItemCollapsibleState.None, constcommands[15]),
-                new Dependency('Aufgabe 11 prüfen', TreeItemCollapsibleState.None, constcommands[16])
             ]
         } else if (dependency.label === 'Nützliche Links') {
             return [
@@ -104,7 +97,7 @@ function aktualisieren() {
         new Dependency('GitHub: Vorlesung C', TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: ['https://github.com/hshf1/VorlesungC', ''] }),
         new Dependency(quiz_status ? 'C-Quiz beenden' : 'C-Quiz starten', TreeItemCollapsibleState.None, constcommands[quiz_status ? 3 : 0]),
         new Dependency((statusbar_button.command === 'extension.off') ? 'Erweiterung pausieren' : 'Erweiterung wieder aktivieren', TreeItemCollapsibleState.None, constcommands[(statusbar_button.command === 'extension.off') ? 2 : 1]),
-        new Dependency('Einstellungen zurücksetzen', TreeItemCollapsibleState.Collapsed),
+        new Dependency('Einstellungen', TreeItemCollapsibleState.Collapsed),
         //new Dependency('Übungsaufgaben prüfen', TreeItemCollapsibleState.Collapsed),
         new Dependency('Nützliche Links', TreeItemCollapsibleState.Collapsed)
     ]
