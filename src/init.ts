@@ -4,6 +4,7 @@ import { homedir } from 'os'
 export const IS_WINDOWS = process.platform.startsWith('win')
 export const IS_OSX = process.platform == 'darwin'
 export const IS_LINUX = !IS_WINDOWS && !IS_OSX
+export const userhomefolder = homedir()
 
 export let setting_init: boolean | undefined = undefined
 export let folderPath_C_Uebung: string
@@ -12,19 +13,19 @@ export let filePath_tasksjson: string
 export let filePath_testprog: string
 export let filesencoding_settingsjson: string
 export let gcc_command: string
-export let config = workspace.getConfiguration('addon4vsc')
-export let enableFeature = config.get('computerraum')
+const config = workspace.getConfiguration('addon4vsc')
+export const computerraum_hsh = config.get('computerraum')
 
-export const userhomefolder = homedir()
+export const compilerpath: string = !computerraum_hsh ? 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe' : 'C:\\\\Program Files (x86)\\\\Dev-Cpp\\\\MinGW64\\\\bin\\\\gcc.exe' ;
 
-if (IS_WINDOWS && !enableFeature) {
+if (IS_WINDOWS && !computerraum_hsh) {
     folderPath_C_Uebung = `${userhomefolder}\\Documents\\C_Uebung`
     filePath_settingsjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\settings.json`
     filePath_tasksjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
     filePath_testprog = `${folderPath_C_Uebung}\\testprog.c`
     filesencoding_settingsjson = 'cp437'
     gcc_command = 'C:\\ProgramData\\chocolatey\\bin\\gcc.exe'
-} else if (IS_WINDOWS && enableFeature) {
+} else if (IS_WINDOWS && computerraum_hsh) {
     folderPath_C_Uebung = `U:\\C_Uebung`
     filePath_settingsjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\settings.json`
     filePath_tasksjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\tasks.json`

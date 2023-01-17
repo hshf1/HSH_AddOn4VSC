@@ -4,7 +4,7 @@ import { openprefolder } from './checkfolder'
 import { checkname } from './filefoldername'
 import { checkjsons } from './jsonfilescheck'
 import { constregistercommands } from './registercommands'
-import { enableFeature, setting_init, statusbar_button } from './init'
+import { computerraum_hsh, setting_init, statusbar_button } from './init'
 import { github_status } from './github'
 
 export function activate(context: ExtensionContext) {
@@ -26,7 +26,7 @@ export function activate(context: ExtensionContext) {
 	**************************************************************************************/
 
 	workspace.onDidChangeConfiguration(event => {
-		if (!enableFeature && workspace.getConfiguration('addon4vsc').get('computerraum') || enableFeature && !workspace.getConfiguration('addon4vsc').get('computerraum')) {
+		if (!computerraum_hsh && workspace.getConfiguration('addon4vsc').get('computerraum') || computerraum_hsh && !workspace.getConfiguration('addon4vsc').get('computerraum')) {
 			commands.executeCommand('workbench.action.closeActiveEditor')
 			commands.executeCommand('workbench.action.reloadWindow')
 		}
@@ -49,7 +49,7 @@ export function activate(context: ExtensionContext) {
 async function initialize() {
 	let init_status: boolean | undefined = undefined
 	try {
-		await require('./extsettings')
+		await require('./init')
 		await require('./github')
 	} catch (error) {
 		console.error(error);

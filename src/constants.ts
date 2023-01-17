@@ -1,6 +1,6 @@
 import { Command } from "vscode"
 
-import { filesencoding_settingsjson } from "./init"
+import { filesencoding_settingsjson, compilerpath } from "./init"
 import { sum } from "./insertforexercise"
 
 export const constcommands: Command[] = [
@@ -113,7 +113,7 @@ export const tasksjsondata = `{
         {
             "type": "cppbuild",
             "label": "C/C++: gcc.exe Aktive Datei kompilieren",
-            "command": "C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe",
+            "command": "${compilerpath}",
             "args": [
                 "-g",
                 "\${file}",
@@ -130,7 +130,7 @@ export const tasksjsondata = `{
                 "kind": "build",
                 "isDefault": true
             },
-            "detail": "Compiler: C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe"
+            "detail": "Compiler: ${compilerpath}"
         }
     ]
 }`
