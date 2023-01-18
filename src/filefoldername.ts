@@ -1,11 +1,19 @@
 import { Uri, workspace, window } from 'vscode'
 import { extname, dirname, basename, join, parse } from 'path'
 import { existsSync } from 'fs';
+import { IS_WINDOWS } from './init';
 
 export async function checkname() {
-    var filePath: string = window.activeTextEditor?.document.uri.fsPath || "no_file_defined"
+    const filePath: string = window.activeTextEditor?.document.uri.fsPath || "no_file_defined"
+    const constdirname = dirname(filePath).toLowerCase()
+    const constbasename = basename(filePath).toLowerCase()
+    const constextname = extname(filePath)
 
-    if (filePath.toLowerCase().indexOf('ä') !== -1 || filePath.toLowerCase().indexOf('ö') !== -1 || filePath.toLowerCase().indexOf('ü') !== -1 || filePath.toLowerCase().indexOf(' ') !== -1 || extname(filePath) !== '.c') {
+    if (IS_WINDOWS && (constdirname.indexOf('ä') !== -1 || constdirname.indexOf('ö') !== -1 || constdirname.indexOf('ü') !== -1 || constdirname.indexOf(' ') !== -1)) {
+        window.showErrorMessage(`${constdirname} enthält Umlaute oder Leerzeichen! Diese müssen manuell umbenannt werden!`)
+    }
+
+    if (constbasename.indexOf('ä') !== -1 || constbasename.indexOf('ö') !== -1 || constbasename.indexOf('ü') !== -1 || constbasename.indexOf(' ') !== -1 || constextname !== '.c') {
         await rename(filePath)
     }
 }
@@ -22,10 +30,6 @@ async function rename(currentPath: string) {
         let newfullname: any;
         const constdirname = dirname(currentPath);
         const constbasename = basename(currentPath)
-
-        if (constdirname.toLowerCase().indexOf('ä') !== -1 || constdirname.toLowerCase().indexOf('ö') !== -1 || constdirname.toLowerCase().indexOf('ü') !== -1 || constdirname.toLowerCase().indexOf(' ') !== -1) {
-            window.showErrorMessage(`${constdirname} enthält Umlaute oder Leerzeichen! Diese müssen manuell umbenannt werden!`)
-        }
 
         const replacedBasename = constbasename.replace(invalidChars, (char: string) => {
             return {

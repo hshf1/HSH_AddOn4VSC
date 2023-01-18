@@ -14,7 +14,7 @@ export function activate(context: ExtensionContext) {
 	**************************************************************************************/
 
 	initialize()
-
+	
 	checkjsons()
 
 	if (!(workspace.workspaceFolders?.toString)) {

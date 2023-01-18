@@ -23,7 +23,7 @@ function openfolder() {
 export async function openprefolder() {
 	const folderUri = Uri.file(folderPath_C_Uebung)
 	let selectedOption: boolean = false
-	if (IS_WINDOWS && !computerraum_hsh && existsSync('U:\\')) {
+	if (IS_WINDOWS && !computerraum_hsh && existsSync('U:\\Systemordner')) {
 		window.showErrorMessage('Wird VSCode im RZ der Hochschule Hannover gestartet?', 'VSCode wird im RZ der Hochschule Hannover gestartet', 'Nein').then(async selected => {
 			if (selected === 'VSCode wird im RZ der Hochschule Hannover gestartet') {
 				commands.executeCommand('workbench.action.openSettings', 'addon4vsc.computerraum')

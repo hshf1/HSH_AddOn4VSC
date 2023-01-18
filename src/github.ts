@@ -43,7 +43,7 @@ get('https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/A
                 currentQuestion.question = quizvalue.trim()
             } else if (quizproperty.startsWith('antworten')) {
                 currentQuestion.answers = quizvalue.split(',').map((item: string) => item.trim())
-            } else if (quizproperty.startsWith('loesung')) {
+            } else if (quizproperty.startsWith('lösung')) {
                 currentQuestion.correctAnswer = quizvalue.trim()
                 githubquiz.push(currentQuestion)
                 currentQuestion = { question: "", answers: [], correctAnswer: "" }
