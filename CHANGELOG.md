@@ -15,6 +15,12 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 
 - 
 
+## [1.3.0] 20.01.2023
+
+### geändert
+
+- Extension-Name zu HSH_AddOn4VSC geändert
+
 ## [1.2.0] - [1.2.4] 14.01.2023 - 20.01.2023
 
 ### neu hinzugefügt
