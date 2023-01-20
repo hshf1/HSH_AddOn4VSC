@@ -1,12 +1,12 @@
 import { env, Uri, window } from 'vscode'
 
 import { treeDataProvider } from './activity_bar'
-import { evaluate } from './runexercises'
-import { constexercise, constcommands } from './constants'
+//import { evaluate } from './runexercises'
+import { /*constexercise,*/ constcommands } from './constants'
 import { renewjsons } from './jsonfilescheck'
 import { startQuiz, quit_quiz } from './quiz'
 import { githubquiz, github_status } from './github'
-import { addfunc } from './insertforexercise'
+//import { addfunc } from './insertforexercise'
 import { compiler_init, filePath_settingsjson, filePath_tasksjson, statusbar_button } from './init'
 
 export let sum: number | undefined
@@ -72,14 +72,14 @@ export const constregistercommands = [
     {
         name: constcommands[6].command,
         callback: async () => {
-            await addfunc()
+            // await addfunc()
             //await evaluate(constexercise[0], 0)
         }
     },
     {
         name: constcommands[7].command,
         callback: async () => {
-            await evaluate(constexercise[1], 1)
+            // await evaluate(constexercise[1], 1)
         }
     },
     {

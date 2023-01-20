@@ -6,7 +6,7 @@ import {
 import { constcommands } from './constants'
 import { githublinks, github_status } from './github'
 import { statusbar_button } from './init'
-import { quiz_status } from './registercommands'
+//import { quiz_status } from './registercommands'
 
 export let dependencies_link: any = [], dependencies_main: any = []
 

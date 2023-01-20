@@ -1,7 +1,7 @@
 import { Command } from "vscode"
 
 import { filesencoding_settingsjson, compilerpath } from "./init"
-import { sum } from "./insertforexercise"
+// import { sum } from "./insertforexercise"
 
 export const constcommands: Command[] = [
     { command: 'exam.start', title: 'Starte C-Quiz' }, // [0]
@@ -16,7 +16,7 @@ export const constcommands: Command[] = [
     { command: 'install.compiler', title: 'Compiler installieren'}
 ]
 
-// Testkonstante für Übungsaufgaben - Testphase
+/* // Testkonstante für Übungsaufgaben - Testphase
 export const constexercise = [
     {
         output: `${sum}`,
@@ -28,7 +28,7 @@ export const constexercise = [
             "printf"
         ]
     }
-]
+] */
 
 export const settingsjsondata = `{
     // Allgemeine Nutzereinstellungen

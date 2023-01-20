@@ -2,7 +2,7 @@ import { window } from 'vscode'
 import { dirname, basename, parse } from 'path'
 import { spawn } from 'child_process'
 
-import { gcc_command } from './init'
+import { gcc_command } from '../init'
 import { number1, number2 } from './insertforexercise'
 
 export async function evaluate(exercise: { output: string, requirements: string[] }, aufgabe: number) {
