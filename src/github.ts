@@ -15,20 +15,23 @@ get('https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/A
         let currentLink: { link: string, name: string, gueltig_bis?: string } = { link: "", name: "", gueltig_bis: "" }
         for (const element of elements) {
             const [property, value] = element.split('->')
-            if (property.startsWith('link')) {
-                currentLink.link = value.trim()
-            } else if (property.startsWith('name')) {
+            if (property.startsWith('name')) {
                 currentLink.name = value.trim()
-            } else if (property.startsWith('gueltig_bis')) {
+            } else if (property.startsWith('link')) {
+                currentLink.link = value.trim()
+                githublinks.push(currentLink)
+                currentLink = { link: "", name: "", gueltig_bis: "" }
+            } /* else if (property.startsWith('gueltig_bis')) {
                 currentLink.gueltig_bis = value.trim()
                 githublinks.push(currentLink)
                 currentLink = { link: "", name: "", gueltig_bis: "" }
-            }
+            } */
         }
         github_status = true
     }
 })
 
+/*
 get('https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/AddOn4VSC/quiz.txt', (error, response, body) => {
     if (error) {
         console.error(error)
@@ -51,3 +54,4 @@ get('https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/A
         }
     }
 })
+*/

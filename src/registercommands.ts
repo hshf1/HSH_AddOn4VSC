@@ -85,11 +85,12 @@ export const constregistercommands = [
     {
         name: constcommands[8].command,
         callback: (...args: any) => {
+            let date: string = new Date(Date.now()).toLocaleDateString('de-DE', { year: 'numeric', month: '2-digit', day: '2-digit' })
             if (args[0] === '') {
                 window.showErrorMessage('Es wurde kein Link zum Öffnen übergeben!')
                 return
             }
-            if (args[1] >= new Date(Date.now()).toLocaleDateString('de-DE', { year: 'numeric', month: '2-digit', day: '2-digit' }) || args[1] === '') {
+            if (args[1] >= date || args[1] === '') {
                 env.openExternal(Uri.parse(args[0]))
             } else {
                 window.showWarningMessage(`Der Link ist nicht mehr aktiv. Dies sollte bald erneuert werden.`)

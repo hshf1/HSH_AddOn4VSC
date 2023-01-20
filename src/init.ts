@@ -64,7 +64,9 @@ statusbar_button.tooltip = 'Klicken, um die Erweiterung AddOn4VSC zu pausieren (
 statusbar_button.command = 'extension.off'
 statusbar_button.show()
 
-compiler_init()
+if (!compiler_stat) {
+    compiler_init()
+}
 
 export function compiler_init() {
     exec('gcc --version', (error, stdout) => {
@@ -89,11 +91,11 @@ export function compiler_init() {
             if (compiler_stat) {
                 window.showInformationMessage(`Compiler bereits installiert`)
             }
+            if (!compiler_stat) {
+                compiler_stat = true
+            }
         }
     })
-    if (!compiler_init) {
-        compiler_stat = true
-    }
 }
 
 setting_init = true
