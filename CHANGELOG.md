@@ -15,7 +15,7 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 
 - 
 
-## [1.2.0]
+## [1.2.0] - [1.2.4] 14.01.2023 - 20.01.2023
 
 ### neu hinzugefügt
 
@@ -26,6 +26,8 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 
 - Fehlerbehebung: Beim automatischen umbenennen wird nun, falls es schon den Namen gibt, ein "_1" angehängt
 - Dateien zusammengefasst, wenn möglich
+- C-Quiz vorerst entfernt, um Verwirrung zu vermeiden
+- testprog.c angepasst an Vorlesung
 
 ## [1.1.0] - [1.1.6] 05.01.2023 - 13.01.2023
 

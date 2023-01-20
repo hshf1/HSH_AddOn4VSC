@@ -137,10 +137,19 @@ export const tasksjsondata = `{
 
 export const testprogc = `#include <stdio.h>
 
-int main() {
-    int x = 1;
-    x++;
+int main()
+{
+    int i; // Laufvariable i
+    float y;
 
-    printf("Erinnerung: Datei- und Verzeichnisname darf keine Umlaute oder Leerzeichen enthalten!\\n");
-    printf("Das Ergebnis von x lautet: %d\\n", x);
+    i=0;
+    printf("Hallo!\\n");
+    i=i+1;
+    printf("Hallo 1!\\n");
+    i=i+1;
+    printf("Hallo 2!\\n");
+    i=i+1;
+    printf("Hallo 3!\\n");
+    y = 12 + 4 % 3 * 7 / 8;
+    return 0;
 }`

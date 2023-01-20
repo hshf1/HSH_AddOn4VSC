@@ -1,5 +1,4 @@
-import { commands, env, Uri, window } from 'vscode'
-import { exec } from 'child_process'
+import { env, Uri, window } from 'vscode'
 
 import { treeDataProvider } from './activity_bar'
 import { evaluate } from './runexercises'
@@ -8,10 +7,7 @@ import { renewjsons } from './jsonfilescheck'
 import { startQuiz, quit_quiz } from './quiz'
 import { githubquiz, github_status } from './github'
 import { addfunc } from './insertforexercise'
-import {
-    computerraum_hsh, filePath_settingsjson, filePath_tasksjson,
-    IS_LINUX, IS_OSX, IS_WINDOWS, statusbar_button, userhomefolder
-} from './init'
+import { compiler_init, filePath_settingsjson, filePath_tasksjson, statusbar_button } from './init'
 
 export let sum: number | undefined
 export let quiz_status = false
@@ -103,32 +99,7 @@ export const constregistercommands = [
     {
         name: constcommands[9].command,
         callback: async () => {
-            exec('gcc --version', (error, stdout) => {
-                if (error) {
-                    window.showErrorMessage(`Compiler nicht gefunden, jetzt installieren?`, 'Compiler jetzt installieren', 'Nein').then(selected => {
-                        if (selected === 'Compiler jetzt installieren') {
-                            commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(userhomefolder)).then(() => {
-                                if (IS_WINDOWS && !computerraum_hsh) {
-                                    commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb runAs -ArgumentList \'/k curl -o %temp%\\vsc.cmd https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/vscwindows.cmd && %temp%\\vsc.cmd\'\"\n' })
-                                } else if (IS_WINDOWS && computerraum_hsh) {
-                                    commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'curl https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/VSCodeCR.cmd -o %temp%\\VSCodeCR.cmd && %temp%\\VSCodeCR.cmd\n' })
-                                } else if (IS_OSX) {
-                                    commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'curl -sL https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/vsclinuxosx.sh | bash\n' })
-                                } else if (IS_LINUX) {
-                                    commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'sudo snap install curl && curl -sL https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/vsclinuxosx.sh | bash\n' })
-                                }
-                            })
-                            window.showWarningMessage(`Nach Beendigung der Installation muss VSCode meistens neu gestartet werden!`, 'Jetzt neu starten', 'Später neu starten').then(selected => {
-                                if (selected === 'Jetzt neu starten') {
-                                    commands.executeCommand('workbench.action.reloadWindow')
-                                }
-                            })
-                        }
-                    })
-                } else {
-                    window.showInformationMessage(`Compiler bereits installiert`)
-                }
-            })
+            compiler_init()
         }
     }
 ]

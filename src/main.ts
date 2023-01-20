@@ -7,7 +7,7 @@ import { constregistercommands } from './registercommands'
 import { computerraum_hsh, setting_init, statusbar_button } from './init'
 import { github_status } from './github'
 
-export function activate(context: ExtensionContext) {
+export async function activate(context: ExtensionContext) {
 
 	/**************************************************************************************
 	Beim Start einmal durchgeführte Funktionen!

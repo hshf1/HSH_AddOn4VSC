@@ -1,8 +1,8 @@
 {
   "name": "addon4vsc",
-  "displayName": "AddOn4VSC",
+  "displayName": "HSH_AddOn4VSC",
   "publisher": "cako",
-  "description": "Eine Erweiterung für die C-Vorlesung.",
+  "description": "Eine Erweiterung für die C-Vorlesung der HsH.",
   "icon": "images/AddOn4VSC.png",
   "license": "license",
   "repository": {
@@ -31,7 +31,7 @@
   "main": "./out/main.js",
   "contributes": {
     "configuration": {
-      "title": "AddOn4VSC",
+      "title": "HSH_AddOn4VSC",
       "properties": {
         "addon4vsc.computerraum": {
           "type": "boolean",

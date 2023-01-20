@@ -50,9 +50,9 @@ export class DepNodeProvider implements TreeDataProvider<Dependency> {
     private getPackageDependencies(dependency: Dependency): Dependency[] {
         if (dependency.label === 'Einstellungen') {
             return [
-                new Dependency('Compiler installieren', TreeItemCollapsibleState.None, constcommands[9]),
                 new Dependency('settings.json zurücksetzen', TreeItemCollapsibleState.None, constcommands[4]),
-                new Dependency('tasks.json zurücksetzen', TreeItemCollapsibleState.None, constcommands[5])
+                new Dependency('tasks.json zurücksetzen', TreeItemCollapsibleState.None, constcommands[5]),
+                new Dependency('Compiler prüfen', TreeItemCollapsibleState.None, constcommands[9])
             ]
         } else if (dependency.label === 'Übungsaufgaben prüfen') {
             return [
@@ -95,10 +95,10 @@ async function build_activity_bar() {
 function aktualisieren() {
     dependencies_main = [
         new Dependency('GitHub: Vorlesung C', TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: ['https://github.com/hshf1/VorlesungC', ''] }),
-        new Dependency(quiz_status ? 'C-Quiz beenden' : 'C-Quiz starten', TreeItemCollapsibleState.None, constcommands[quiz_status ? 3 : 0]),
+        //new Dependency(quiz_status ? 'C-Quiz beenden' : 'C-Quiz starten', TreeItemCollapsibleState.None, constcommands[quiz_status ? 3 : 0]),
         new Dependency((statusbar_button.command === 'extension.off') ? 'Erweiterung pausieren' : 'Erweiterung wieder aktivieren', TreeItemCollapsibleState.None, constcommands[(statusbar_button.command === 'extension.off') ? 2 : 1]),
         new Dependency('Einstellungen', TreeItemCollapsibleState.Collapsed),
         //new Dependency('Übungsaufgaben prüfen', TreeItemCollapsibleState.Collapsed),
-        new Dependency('Nützliche Links', TreeItemCollapsibleState.Collapsed)
+        new Dependency('Nützliche Links', TreeItemCollapsibleState.Expanded)
     ]
 }
