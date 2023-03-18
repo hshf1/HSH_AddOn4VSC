@@ -1,7 +1,8 @@
 .vscode/
 node_modules/
 src/test/
-src/tesfiles/
+src/testfiles/
 out/
 *.vsix
 package-lock.json
+.DS_Store
