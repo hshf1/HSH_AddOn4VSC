@@ -4,33 +4,18 @@ import { openprefolder } from './checkfolder'
 import { checkname } from './filefoldername'
 import { checkjsons } from './jsonfilescheck'
 import { constregistercommands } from './registercommands'
-import { computerraum_hsh, setting_init, statusbar_button } from './init'
+import { setting_init, statusbar_button } from './init'
 import { github_status } from './github'
 
 export async function activate(context: ExtensionContext) {
 
-	/**************************************************************************************
-	Beim Start einmal durchgeführte Funktionen!
-	**************************************************************************************/
-
 	initialize()
-	
+
 	checkjsons()
 
 	if (!(workspace.workspaceFolders?.toString)) {
 		openprefolder()
 	}
-
-	/**************************************************************************************
-	Funktionen, die immer wieder aufgerufen werden können, je nach Event
-	**************************************************************************************/
-
-	workspace.onDidChangeConfiguration(event => {
-		if (!computerraum_hsh && workspace.getConfiguration('addon4vsc').get('computerraum') || computerraum_hsh && !workspace.getConfiguration('addon4vsc').get('computerraum')) {
-			commands.executeCommand('workbench.action.closeActiveEditor')
-			commands.executeCommand('workbench.action.reloadWindow')
-		}
-	})
 
 	const eventHandler_checkname = async () => {
 		if (statusbar_button.command === 'extension.off') {
@@ -62,7 +47,7 @@ async function initialize() {
 				window.showWarningMessage('Einstellungen konnten nicht richtig initialisiert werden. Bei Problem VSCode neu starten.')
 			}
 			if (github_status === false) {
-				window.showWarningMessage('GitHub Einstellungen konnten nicht richtig initialisiert werden. Bei Problem VSCode neu starten.')
+				window.showWarningMessage(`Nützliche Links aus GitHub konnten nicht geladen werden. Bei Bedarf Internetverbindug prüfen und VSCode neu starten.`)
 			}
 			init_status = true
 		}

@@ -22,6 +22,6 @@ Weitere Informationen gibt es auf der GitHub-Seite der C-Vorlesung:
 
 Interesse am Code dieser Erweiterung? Hier ist es zu finden:
 
-* [GitHub AddOn4VSC](https://github.com/cakohsh/addon4vsc)
+* [GitHub HSH_AddOn4VSC](https://github.com/hshf1/HSH_AddOn4VSC)
 
 **Viel Spaß!**

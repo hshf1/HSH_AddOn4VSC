@@ -6,7 +6,6 @@ import {
 import { constcommands } from './constants'
 import { githublinks, github_status } from './github'
 import { statusbar_button } from './init'
-//import { quiz_status } from './registercommands'
 
 export let dependencies_link: any = [], dependencies_main: any = []
 
@@ -50,14 +49,9 @@ export class DepNodeProvider implements TreeDataProvider<Dependency> {
     private getPackageDependencies(dependency: Dependency): Dependency[] {
         if (dependency.label === 'Einstellungen') {
             return [
-                new Dependency('settings.json zurücksetzen', TreeItemCollapsibleState.None, constcommands[4]),
-                new Dependency('tasks.json zurücksetzen', TreeItemCollapsibleState.None, constcommands[5]),
-                new Dependency('Compiler prüfen', TreeItemCollapsibleState.None, constcommands[9])
-            ]
-        } else if (dependency.label === 'Übungsaufgaben prüfen') {
-            return [
-                new Dependency('Aufgabe 1 prüfen', TreeItemCollapsibleState.None, constcommands[6]),
-                new Dependency('Aufgabe 2 prüfen', TreeItemCollapsibleState.None, constcommands[7]),
+                new Dependency('settings.json zurücksetzen', TreeItemCollapsibleState.None, constcommands[2]),
+                new Dependency('tasks.json zurücksetzen', TreeItemCollapsibleState.None, constcommands[3]),
+                new Dependency('Compiler prüfen', TreeItemCollapsibleState.None, constcommands[5])
             ]
         } else if (dependency.label === 'Nützliche Links') {
             return [
@@ -85,7 +79,7 @@ async function build_activity_bar() {
 
     if (github_status === true) {
         for (let i = 0; i < githublinks.length; i++) {
-            dependencies_link.push(new Dependency(githublinks[i].name, TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: [githublinks[i].link, githublinks[i].gueltig_bis] }))
+            dependencies_link.push(new Dependency(githublinks[i].name, TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: [githublinks[i].link] }))
         }
     }
     window.registerTreeDataProvider('menue_bar_activity', treeDataProvider)
@@ -95,10 +89,10 @@ async function build_activity_bar() {
 function aktualisieren() {
     dependencies_main = [
         new Dependency('GitHub: Vorlesung C', TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: ['https://github.com/hshf1/VorlesungC', ''] }),
-        //new Dependency(quiz_status ? 'C-Quiz beenden' : 'C-Quiz starten', TreeItemCollapsibleState.None, constcommands[quiz_status ? 3 : 0]),
-        new Dependency((statusbar_button.command === 'extension.off') ? 'Erweiterung pausieren' : 'Erweiterung wieder aktivieren', TreeItemCollapsibleState.None, constcommands[(statusbar_button.command === 'extension.off') ? 2 : 1]),
+
+        new Dependency((statusbar_button.command === 'extension.off') ? 'Erweiterung pausieren' : 'Erweiterung wieder aktivieren', TreeItemCollapsibleState.None, constcommands[(statusbar_button.command === 'extension.off') ? 1 : 0]),
         new Dependency('Einstellungen', TreeItemCollapsibleState.Collapsed),
-        //new Dependency('Übungsaufgaben prüfen', TreeItemCollapsibleState.Collapsed),
+
         new Dependency('Nützliche Links', TreeItemCollapsibleState.Expanded)
     ]
 }

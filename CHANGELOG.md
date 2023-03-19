@@ -8,18 +8,28 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 
 ### neu hinzugefügt 
 
-- Ggf. Möglichkeiten mit dem Debugger in betracht ziehen.
-- Ausführen von externen Skripten
+- 
 
 ### fertig
 
 - 
+
+## [1.3.1] 19.03.2023
+
+### geändert
+
+- Quellcode der Extension nun im GitHub der HsH zu finden unter: [GitHub HSH_AddOn4VSC](https://github.com/hshf1/HSH_AddOn4VSC)
+- Nicht benötigte Zeilen Code wurden entfernt
+- Kompatibilität mit älteren VSCode Versionen angesetzt
+- Ausführung der Installationsskripts angepasst
+- Automatische Pfad-Zuordnung, wenn im RZ gestartet wird
 
 ## [1.3.0] 20.01.2023
 
 ### geändert
 
 - Extension-Name zu HSH_AddOn4VSC geändert
+- Compiler automatisch mit installieren, wenn es fehlt
 
 ## [1.2.0] - [1.2.4] 14.01.2023 - 20.01.2023
 

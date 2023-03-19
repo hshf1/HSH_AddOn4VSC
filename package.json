@@ -7,22 +7,18 @@
   "license": "license",
   "repository": {
     "type": "git",
-    "url": "https://github.com/cakohsh/addon4vsc"
+    "url": "https://github.com/hshf1/HSH_AddOn4VSC"
   },
   "version": "1.3.0",
   "engines": {
-    "vscode": "^1.73.0"
+    "vscode": "^1.50.0"
   },
   "categories": [
     "Other"
   ],
   "activationEvents": [
-    "onCommand:aufgabe1.pruefen",
-    "onCommand:aufgabe2.pruefen",
     "onCommand:default.settingsjson",
     "onCommand:default.tasksjson",
-    "onCommand:exam.start",
-    "onCommand:exam.stop",
     "onCommand:extension.on",
     "onCommand:extension.off",
     "onCommand:open.link",
@@ -30,17 +26,6 @@
   ],
   "main": "./out/main.js",
   "contributes": {
-    "configuration": {
-      "title": "HSH_AddOn4VSC",
-      "properties": {
-        "addon4vsc.computerraum": {
-          "type": "boolean",
-          "description": "Hier die Einstellung aktivieren, falls VSCode aus dem RZ der Hochschule Hannover gestartet wird!",
-          "default": false,
-          "scope": "application"
-        }
-      }
-    },
     "viewsContainers": {
       "activitybar": [
         {
@@ -71,22 +56,6 @@
       {
         "command": "default.tasksjson",
         "title": "tasks.json zurücksetzen"
-      },
-      {
-        "command": "aufgabe1.pruefen",
-        "title": "Überprüfen der Aufgabe 1"
-      },
-      {
-        "command": "aufgabe2.pruefen",
-        "title": "Überprüfen der Aufgabe 2"
-      },
-      {
-        "command": "exam.start",
-        "title": "Starte die Übung!"
-      },
-      {
-        "command": "exam.stop",
-        "title": "Beende C-Quiz"
       },
       {
         "command": "extension.on",

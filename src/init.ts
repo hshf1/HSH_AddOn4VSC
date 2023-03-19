@@ -1,6 +1,7 @@
-import { extensions, commands, window, workspace, StatusBarAlignment, Uri } from 'vscode'
+import { extensions, commands, window, StatusBarAlignment, Uri } from 'vscode'
 import { homedir } from 'os'
 import { exec } from 'child_process'
+import { existsSync } from 'fs'
 
 export const IS_WINDOWS = process.platform.startsWith('win')
 export const IS_OSX = process.platform == 'darwin'
@@ -15,19 +16,17 @@ export let filePath_tasksjson: string
 export let filePath_testprog: string
 export let filesencoding_settingsjson: string
 export let gcc_command: string
-const config = workspace.getConfiguration('addon4vsc')
-export const computerraum_hsh = config.get('computerraum')
 
-export const compilerpath: string = !computerraum_hsh ? 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe' : 'C:\\\\Program Files (x86)\\\\Dev-Cpp\\\\MinGW64\\\\bin\\\\gcc.exe';
+export const compilerpath: string = !existsSync('U:\\Systemordner') ? 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe' : 'C:\\\\Program Files (x86)\\\\Dev-Cpp\\\\MinGW64\\\\bin\\\\gcc.exe';
 
-if (IS_WINDOWS && !computerraum_hsh) {
+if (IS_WINDOWS && !existsSync('U:\\Systemordner')) {
     folderPath_C_Uebung = `${userhomefolder}\\Documents\\C_Uebung`
     filePath_settingsjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\settings.json`
     filePath_tasksjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
     filePath_testprog = `${folderPath_C_Uebung}\\testprog.c`
     filesencoding_settingsjson = 'cp437'
     gcc_command = 'C:\\ProgramData\\chocolatey\\bin\\gcc.exe'
-} else if (IS_WINDOWS && computerraum_hsh) {
+} else if (IS_WINDOWS && existsSync('U:\\Systemordner')) {
     folderPath_C_Uebung = `U:\\C_Uebung`
     filePath_settingsjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\settings.json`
     filePath_tasksjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
@@ -72,10 +71,10 @@ export function compiler_init() {
     exec('gcc --version', (error, stdout) => {
         if (error) {
             commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(userhomefolder)).then(() => {
-                if (IS_WINDOWS && !computerraum_hsh) {
+                if (IS_WINDOWS && !existsSync('U:\\Systemordner')) {
                     commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb runAs -ArgumentList \'/k curl -o %temp%\\vsc.cmd https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/vscwindows.cmd && %temp%\\vsc.cmd\'\"\n' })
-                } else if (IS_WINDOWS && computerraum_hsh) {
-                    commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'curl https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/VSCodeCR.cmd -o %temp%\\VSCodeCR.cmd && %temp%\\VSCodeCR.cmd\n' })
+                } else if (IS_WINDOWS && existsSync('U:\\Systemordner')) {
+                    commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'setx Path "%USERPROFILE%\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin"' })
                 } else if (IS_OSX) {
                     commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'curl -sL https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/vsclinuxosx.sh | bash\n' })
                 } else if (IS_LINUX) {
@@ -89,7 +88,7 @@ export function compiler_init() {
             })
         } else {
             if (compiler_stat) {
-                window.showInformationMessage(`Compiler bereits installiert`)
+                window.showInformationMessage(`Compiler bereits installiert! Informationen zum Compiler: ${stdout}`)
             }
             if (!compiler_stat) {
                 compiler_stat = true

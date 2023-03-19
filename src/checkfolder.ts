@@ -1,7 +1,7 @@
 import { Uri, OpenDialogOptions, commands, window } from 'vscode'
 import { existsSync, mkdirSync, writeFileSync } from 'fs'
 
-import { computerraum_hsh, filePath_testprog, folderPath_C_Uebung, IS_WINDOWS } from './init'
+import { filePath_testprog, folderPath_C_Uebung } from './init'
 import { testprogc } from './constants'
 
 function openfolder() {
@@ -22,24 +22,7 @@ function openfolder() {
 
 export async function openprefolder() {
 	const folderUri = Uri.file(folderPath_C_Uebung)
-	let selectedOption: boolean = false
-	if (IS_WINDOWS && !computerraum_hsh && existsSync('U:\\Systemordner')) {
-		window.showErrorMessage('Wird VSCode im RZ der Hochschule Hannover gestartet?', 'VSCode wird im RZ der Hochschule Hannover gestartet', 'Nein').then(async selected => {
-			if (selected === 'VSCode wird im RZ der Hochschule Hannover gestartet') {
-				commands.executeCommand('workbench.action.openSettings', 'addon4vsc.computerraum')
-				while (!computerraum_hsh) {
-					await new Promise(resolve => setTimeout(resolve, 1000))
-				}
-				selectedOption = true
-				return
-			} else if (selected === 'Nein') {
-				selectedOption = true
-			}
-		})
-		while (!selectedOption) {
-			await new Promise(resolve => setTimeout(resolve, 1000))
-		}
-	}
+	
 	if (!existsSync(folderPath_C_Uebung)) {
 		try {
 			mkdirSync(folderPath_C_Uebung)

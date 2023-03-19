@@ -1,7 +1,8 @@
 import { Uri, workspace, window } from 'vscode'
 import { extname, dirname, basename, join, parse } from 'path'
-import { existsSync } from 'fs';
-import { IS_WINDOWS } from './init';
+import { existsSync } from 'fs'
+
+import { IS_WINDOWS } from './init'
 
 export async function checkname() {
     const filePath: string = window.activeTextEditor?.document.uri.fsPath || "no_file_defined"
