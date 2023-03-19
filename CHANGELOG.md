@@ -14,7 +14,7 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 
 - 
 
-## [1.4.0] 19.03.2023
+## [1.4.0] - [1.4.1] 19.03.2023
 
 ### geändert
 
@@ -23,6 +23,7 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 - Kompatibilität mit älteren VSCode Versionen angesetzt
 - Ausführung der Installationsskripts angepasst
 - Automatische Pfad-Zuordnung, wenn im RZ gestartet wird
+- Fehlerbehebung Links öffnen
 
 ## [1.3.0] 20.01.2023
 
