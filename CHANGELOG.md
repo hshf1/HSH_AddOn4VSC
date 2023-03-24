@@ -14,7 +14,7 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 
 - 
 
-## [1.4.0] - [1.4.1] 19.03.2023
+## [1.4.0] - [1.4.2] 19.03.2023 - 24.03.2023
 
 ### geändert
 
@@ -24,6 +24,7 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 - Ausführung der Installationsskripts angepasst
 - Automatische Pfad-Zuordnung, wenn im RZ gestartet wird
 - Fehlerbehebung Links öffnen
+- Windows: Skript wird nicht mehr automatisch ausgeführt, auswahl zwischen privaten und HsH Windows
 
 ## [1.3.0] 20.01.2023
 
