@@ -5,8 +5,6 @@ import { constcommands } from './constants'
 import { renewjsons } from './jsonfilescheck'
 import { compiler_init, filePath_settingsjson, filePath_tasksjson, statusbar_button } from './init'
 
-export let sum: number | undefined
-export let quiz_status = false
 export let active_addon: boolean = true
 
 export const constregistercommands = [

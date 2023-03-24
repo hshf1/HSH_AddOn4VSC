@@ -47,7 +47,7 @@ async function initialize() {
 				window.showWarningMessage('Einstellungen konnten nicht richtig initialisiert werden. Bei Problem VSCode neu starten.')
 			}
 			if (github_status === false) {
-				window.showWarningMessage(`Nützliche Links aus GitHub konnten nicht geladen werden. Bei Bedarf Internetverbindug prüfen und VSCode neu starten.`)
+				window.showWarningMessage(`Nützliche Links aus GitHub konnten nicht geladen werden. Bei Bedarf Internetverbindung prüfen und VSCode neu starten.`)
 			}
 			init_status = true
 		}
