@@ -22,6 +22,7 @@
     "onCommand:extension.on",
     "onCommand:extension.off",
     "onCommand:open.link",
+    "onCommand:setRZHsH.setting",
     "onStartupFinished"
   ],
   "main": "./out/main.js",
