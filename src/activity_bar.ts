@@ -1,6 +1,6 @@
 import {
     window, Command, TreeDataProvider, TreeViewOptions,
-    TreeItemCollapsibleState, EventEmitter, Event, TreeItem
+    TreeItemCollapsibleState, EventEmitter, Event, TreeItem, workspace
 } from 'vscode'
 
 import { constcommands } from './constants'
@@ -52,7 +52,7 @@ export class DepNodeProvider implements TreeDataProvider<Dependency> {
                 new Dependency('settings.json zurücksetzen', TreeItemCollapsibleState.None, constcommands[2]),
                 new Dependency('tasks.json zurücksetzen', TreeItemCollapsibleState.None, constcommands[3]),
                 new Dependency('Compiler prüfen', TreeItemCollapsibleState.None, constcommands[5]),
-                new Dependency('Standort für Windows-Rechner', TreeItemCollapsibleState.None, constcommands[6])
+                new Dependency(workspace.getConfiguration('addon4vsc').get('computerraum') ? 'Ändern auf privaten Windows-Rechner' : 'Ändern auf HsH Windows-Rechner', TreeItemCollapsibleState.None, constcommands[6])
             ]
         } else if (dependency.label === 'Nützliche Links') {
             return [

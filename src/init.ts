@@ -1,4 +1,4 @@
-import { extensions, commands, window, StatusBarAlignment, Uri, workspace } from 'vscode'
+import { extensions, commands, window, StatusBarAlignment, Uri, workspace, ConfigurationTarget } from 'vscode'
 import { homedir } from 'os'
 import { exec } from 'child_process'
 import { existsSync } from 'fs'
@@ -74,15 +74,15 @@ export function compiler_init() {
                 window.showInformationMessage(`Compiler nicht gefunden. Zum installieren bitte auswählen:`, 'Privater Windows-Rechner', 'HsH Windows-Rechner', 'Jetzt nicht').then(selected => {
                     if (selected === 'Privater Windows-Rechner') {
                         commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(userhomefolder)).then(() => {
-                            commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb runAs -ArgumentList \'/k curl -o %temp%\\vsc.cmd https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/vscwindows.cmd && %temp%\\vsc.cmd\'\" && taskkill /f /im Code.exe && code\n' })
+                            commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb runAs -ArgumentList \'/k curl -o %temp%\\vsc.cmd https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/vscwindows.cmd && %temp%\\vsc.cmd && taskkill /f /im Code.exe && code\'\"\n' })
                         })
-                        workspace.getConfiguration('addon4vsc').update('computerraum', false)
+                        workspace.getConfiguration('addon4vsc').update('computerraum', false, ConfigurationTarget.Global)
                     } else if (selected === 'HsH Windows-Rechner') {
                         commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(userhomefolder)).then(() => {
                             // after IT got the Environmentvariable done for all, unnecessary
-                            commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'setx Path \"%USERPROFILE%\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin\" && taskkill /f /im Code.exe && code\n' })
+                            commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb -ArgumentList \'/k setx Path \"%USERPROFILE%\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin\" && taskkill /f /im Code.exe && code\'\"\n' })
                         })
-                        workspace.getConfiguration('addon4vsc').update('computerraum', true)
+                        workspace.getConfiguration('addon4vsc').update('computerraum', true, ConfigurationTarget.Global)
                     } else {
                         // Input not correctly, no button or not now button clicked
                     }
@@ -119,7 +119,7 @@ export async function setRZHsH() {
         window.showInformationMessage('Derzeitige Einstellung des Standorts wird auf HsH Windows-Rechner im Rechenzentrum gestellt, VSCode wird in 5 Sekunden neu gestartet!')
     }
 
-    workspace.getConfiguration('addon4vsc').update('computerraum', !workspace.getConfiguration('addon4vsc').get('computerraum'))
+    workspace.getConfiguration('addon4vsc').update('computerraum', !workspace.getConfiguration('addon4vsc').get('computerraum'), ConfigurationTarget.Global)
 
     await new Promise(resolve => setTimeout(resolve, 5000))
 
