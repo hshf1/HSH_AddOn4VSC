@@ -3,7 +3,7 @@ import { env, Uri, window } from 'vscode'
 import { treeDataProvider } from './activity_bar'
 import { constcommands } from './constants'
 import { renewjsons } from './jsonfilescheck'
-import { compiler_init, filePath_settingsjson, filePath_tasksjson, statusbar_button } from './init'
+import { compiler_init, filePath_settingsjson, filePath_tasksjson, setRZHsH, statusbar_button } from './init'
 
 export let active_addon: boolean = true
 
@@ -56,6 +56,12 @@ export const constregistercommands = [
         name: constcommands[5].command,
         callback: async () => {
             compiler_init()
+        }
+    },
+    {
+        name: constcommands[6].command,
+        callback: async () => {
+            setRZHsH()
         }
     }
 ]

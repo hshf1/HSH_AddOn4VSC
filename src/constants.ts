@@ -8,7 +8,8 @@ export const constcommands: Command[] = [
     { command: 'default.settingsjson', title: 'settings.json zurücksetzen' },
     { command: 'default.tasksjson', title: 'tasks.json zurücksetzen' },
     { command: 'open.link', title: 'Öffne Link' },
-    { command: 'install.compiler', title: 'Compiler installieren'}
+    { command: 'install.compiler', title: 'Compiler installieren' },
+    { command: 'setRZHsH.setting', title: 'HsH Rechenzentrum' }
 ]
 
 export const settingsjsondata = `{

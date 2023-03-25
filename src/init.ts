@@ -1,4 +1,4 @@
-import { extensions, commands, window, StatusBarAlignment, Uri } from 'vscode'
+import { extensions, commands, window, StatusBarAlignment, Uri, workspace } from 'vscode'
 import { homedir } from 'os'
 import { exec } from 'child_process'
 import { existsSync } from 'fs'
@@ -74,13 +74,15 @@ export function compiler_init() {
                 window.showInformationMessage(`Compiler nicht gefunden. Zum installieren bitte auswählen:`, 'Privater Windows-Rechner', 'HsH Windows-Rechner', 'Jetzt nicht').then(selected => {
                     if (selected === 'Privater Windows-Rechner') {
                         commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(userhomefolder)).then(() => {
-                            commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb runAs -ArgumentList \'/k curl -o %temp%\\vsc.cmd https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/vscwindows.cmd && %temp%\\vsc.cmd\'\"\n' })
+                            commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb runAs -ArgumentList \'/k curl -o %temp%\\vsc.cmd https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/vscwindows.cmd && %temp%\\vsc.cmd\'\" && taskkill /f /im Code.exe && code\n' })
                         })
+                        workspace.getConfiguration('addon4vsc').update('computerraum', false)
                     } else if (selected === 'HsH Windows-Rechner') {
                         commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(userhomefolder)).then(() => {
                             // after IT got the Environmentvariable done for all, unnecessary
-                            commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'setx Path \"%USERPROFILE%\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin\"\n' })
+                            commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'setx Path \"%USERPROFILE%\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin\" && taskkill /f /im Code.exe && code\n' })
                         })
+                        workspace.getConfiguration('addon4vsc').update('computerraum', true)
                     } else {
                         // Input not correctly, no button or not now button clicked
                     }
@@ -88,17 +90,12 @@ export function compiler_init() {
             } else {
                 commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(userhomefolder)).then(() => {
                     if (IS_OSX) {
-                        commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'curl -sL https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/vsclinuxosx.sh | bash\n' })
+                        commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'curl -sL https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/vsclinuxosx.sh | bash && pkill -f "Visual Studio Code" && open -a "Visual Studio Code"\n' })
                     } else if (IS_LINUX) {
-                        commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'sudo snap install curl && curl -sL https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/vsclinuxosx.sh | bash\n' })
+                        commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'sudo snap install curl && curl -sL https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/vsclinuxosx.sh | bash && killall -9 code && code\n' })
                     }
                 })
             }
-            window.showWarningMessage(`Nach Beendigung der Installation muss VSCode meistens neu gestartet werden!`, 'Jetzt neu starten', 'Später neu starten').then(selected => {
-                if (selected === 'Jetzt neu starten') {
-                    commands.executeCommand('workbench.action.reloadWindow')
-                }
-            })
         } else {
             if (compiler_stat) {
                 window.showInformationMessage(`Compiler bereits installiert! Informationen zum Compiler: ${stdout}`)
@@ -107,6 +104,27 @@ export function compiler_init() {
                 compiler_stat = true
             }
         }
+    })
+}
+
+export async function setRZHsH() {
+    if (!IS_WINDOWS) {
+        window.showInformationMessage('Diese Einstellung ist nur für Windows-Betriebssysteme notwendig.')
+        return
+    }
+
+    if (workspace.getConfiguration('addon4vsc').get('computerraum')) {
+        window.showInformationMessage('Derzeitige Einstellung des Standorts wird auf privater Windows-Rechner gestellt, VSCode wird in 5 Sekunden neu gestartet!')
+    } else {
+        window.showInformationMessage('Derzeitige Einstellung des Standorts wird auf HsH Windows-Rechner im Rechenzentrum gestellt, VSCode wird in 5 Sekunden neu gestartet!')
+    }
+
+    workspace.getConfiguration('addon4vsc').update('computerraum', !workspace.getConfiguration('addon4vsc').get('computerraum'))
+
+    await new Promise(resolve => setTimeout(resolve, 5000))
+
+    commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(userhomefolder)).then(() => {
+        commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'taskkill /f /im Code.exe && code\n' })
     })
 }
 

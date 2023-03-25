@@ -5,7 +5,7 @@ import {
 
 import { constcommands } from './constants'
 import { githublinks, github_status } from './github'
-import { statusbar_button } from './init'
+import { IS_WINDOWS, statusbar_button } from './init'
 
 export let dependencies_link: any = [], dependencies_main: any = []
 
@@ -51,7 +51,8 @@ export class DepNodeProvider implements TreeDataProvider<Dependency> {
             return [
                 new Dependency('settings.json zurücksetzen', TreeItemCollapsibleState.None, constcommands[2]),
                 new Dependency('tasks.json zurücksetzen', TreeItemCollapsibleState.None, constcommands[3]),
-                new Dependency('Compiler prüfen', TreeItemCollapsibleState.None, constcommands[5])
+                new Dependency('Compiler prüfen', TreeItemCollapsibleState.None, constcommands[5]),
+                new Dependency('Standort für Windows-Rechner', TreeItemCollapsibleState.None, constcommands[6])
             ]
         } else if (dependency.label === 'Nützliche Links') {
             return [
