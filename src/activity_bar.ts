@@ -90,10 +90,8 @@ async function build_activity_bar() {
 function aktualisieren() {
     dependencies_main = [
         new Dependency('GitHub: Vorlesung C', TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: ['https://github.com/hshf1/VorlesungC', ''] }),
-
         new Dependency((statusbar_button.command === 'extension.off') ? 'Erweiterung pausieren' : 'Erweiterung wieder aktivieren', TreeItemCollapsibleState.None, constcommands[(statusbar_button.command === 'extension.off') ? 1 : 0]),
         new Dependency('Einstellungen', TreeItemCollapsibleState.Collapsed),
-
         new Dependency('Nützliche Links', TreeItemCollapsibleState.Expanded)
     ]
 }

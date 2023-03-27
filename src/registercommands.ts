@@ -62,6 +62,7 @@ export const constregistercommands = [
         name: constcommands[6].command,
         callback: async () => {
             setRZHsH()
+            treeDataProvider.refresh()
         }
     }
 ]

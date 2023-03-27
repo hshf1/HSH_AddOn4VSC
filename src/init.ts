@@ -2,6 +2,7 @@ import { extensions, commands, window, StatusBarAlignment, Uri, workspace, Confi
 import { homedir } from 'os'
 import { exec } from 'child_process'
 import { existsSync } from 'fs'
+import { isExternal } from 'util/types'
 
 export const IS_WINDOWS = process.platform.startsWith('win')
 const IS_OSX = process.platform == 'darwin'
@@ -17,16 +18,16 @@ export let filePath_testprog: string
 export let filesencoding_settingsjson: string
 let gcc_command: string
 
-export const compilerpath: string = !existsSync('U:\\Systemordner') ? 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe' : 'C:\\\\Program Files (x86)\\\\Dev-Cpp\\\\MinGW64\\\\bin\\\\gcc.exe';
+export const compilerpath: string = !workspace.getConfiguration('addon4vsc').get('computerraum') ? 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe' : 'C:\\\\Program Files (x86)\\\\Dev-Cpp\\\\MinGW64\\\\bin\\\\gcc.exe';
 
-if (IS_WINDOWS && !existsSync('U:\\Systemordner')) {
+if (IS_WINDOWS && !workspace.getConfiguration('addon4vsc').get('computerraum')) {
     folderPath_C_Uebung = `${userhomefolder}\\Documents\\C_Uebung`
     filePath_settingsjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\settings.json`
     filePath_tasksjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
     filePath_testprog = `${folderPath_C_Uebung}\\testprog.c`
     filesencoding_settingsjson = 'cp437'
     gcc_command = 'C:\\ProgramData\\chocolatey\\bin\\gcc.exe'
-} else if (IS_WINDOWS && existsSync('U:\\Systemordner')) {
+} else if (IS_WINDOWS && workspace.getConfiguration('addon4vsc').get('computerraum')) {
     folderPath_C_Uebung = `U:\\C_Uebung`
     filePath_settingsjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\settings.json`
     filePath_tasksjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
@@ -80,7 +81,7 @@ export function compiler_init() {
                     } else if (selected === 'HsH Windows-Rechner') {
                         commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(userhomefolder)).then(() => {
                             // after IT got the Environmentvariable done for all, unnecessary
-                            commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb -ArgumentList \'/k setx Path \"%USERPROFILE%\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin\" && taskkill /f /im Code.exe && code\'\"\n' })
+                            commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \`Start-Process cmd -Verb -ArgumentList \'/k setx Path \"%USERPROFILE%\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin\" && taskkill /f /im Code.exe && code\'\`\n' })
                         })
                         workspace.getConfiguration('addon4vsc').update('computerraum', true, ConfigurationTarget.Global)
                     } else {
@@ -124,7 +125,7 @@ export async function setRZHsH() {
     await new Promise(resolve => setTimeout(resolve, 5000))
 
     commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(userhomefolder)).then(() => {
-        commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'taskkill /f /im Code.exe && code\n' })
+        commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb -ArgumentList \'/k taskkill /f /im Code.exe && code\'\"\n' })
     })
 }
 

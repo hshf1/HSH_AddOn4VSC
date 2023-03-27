@@ -14,11 +14,12 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 
 - 
 
-## [1.4.0] - [1.4.5] 19.03.2023 - 25.03.2023
+## [1.4.0] - [1.4.6] 19.03.2023 - 27.03.2023
 
 ### neu hinzugefügt
 
 - Möglichkeit zur Speicherung der Einstellung, welcher Pfad genutzt werden soll (privater Windows oder HsH RZ Windows)
+- Einstellung, das speichert, ob HsH oder Privat Nutzung
 
 ### geändert
 
