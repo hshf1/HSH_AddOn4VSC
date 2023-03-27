@@ -5,7 +5,7 @@ import {
 
 import { constcommands } from './constants'
 import { githublinks, github_status } from './github'
-import { IS_WINDOWS, statusbar_button } from './init'
+import { statusbar_button } from './init'
 
 export let dependencies_link: any = [], dependencies_main: any = []
 
@@ -85,6 +85,7 @@ async function build_activity_bar() {
     }
     window.registerTreeDataProvider('menue_bar_activity', treeDataProvider)
     window.createTreeView('menue_bar_activity', treeViewOptions)
+    
 }
 
 function aktualisieren() {

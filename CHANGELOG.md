@@ -20,6 +20,7 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 
 - Möglichkeit zur Speicherung der Einstellung, welcher Pfad genutzt werden soll (privater Windows oder HsH RZ Windows)
 - Einstellung, das speichert, ob HsH oder Privat Nutzung
+- HsH Text-Logo in der Activity Bar zur besseren Übersicht
 
 ### geändert
 
@@ -30,8 +31,6 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 - Automatische Pfad-Zuordnung, wenn im RZ gestartet wird
 - Fehlerbehebung Links öffnen
 - Windows: Skript wird nicht mehr automatisch ausgeführt, auswahl zwischen privaten und HsH Windows
-- VSCode lädt nicht mehr Fenster neu sondern schließt komplett und startet neu
-
 
 ## [1.3.0] 20.01.2023
 

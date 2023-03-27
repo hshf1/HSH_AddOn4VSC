@@ -54,14 +54,14 @@ export const constregistercommands = [
     },
     {
         name: constcommands[5].command,
-        callback: async () => {
+        callback: () => {
             compiler_init()
         }
     },
     {
         name: constcommands[6].command,
         callback: async () => {
-            setRZHsH()
+            await setRZHsH()
             treeDataProvider.refresh()
         }
     }
