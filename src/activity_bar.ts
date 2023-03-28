@@ -85,7 +85,6 @@ async function build_activity_bar() {
     }
     window.registerTreeDataProvider('menue_bar_activity', treeDataProvider)
     window.createTreeView('menue_bar_activity', treeViewOptions)
-    
 }
 
 function aktualisieren() {

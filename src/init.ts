@@ -71,7 +71,7 @@ export function compiler_init() {
         if (error) {
             commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(userhomefolder)).then(() => {
                 if (IS_WINDOWS) {
-                    window.showInformationMessage(`Compiler nicht gefunden. Zum installieren bitte auswählen:`, 'Privater Windows-Rechner', 'HsH Windows-Rechner', 'Jetzt nicht').then(selected => {
+                    window.showInformationMessage(`Compiler nicht gefunden. Zum installieren bitte auswählen:`, 'Privater Windows-Rechner', 'HsH Windows-Rechner', 'Jetzt nicht').then(async selected => {
                         if (selected === 'Privater Windows-Rechner') {
                             workspace.getConfiguration('addon4vsc').update('computerraum', false, ConfigurationTarget.Global)
                             commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb runAs -ArgumentList \'/k curl -o %temp%\\vsc.cmd https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/vscwindows.cmd && %temp%\\vsc.cmd\'\"\n' })
@@ -79,6 +79,8 @@ export function compiler_init() {
                             workspace.getConfiguration('addon4vsc').update('computerraum', true, ConfigurationTarget.Global)
                             // after IT got the Environmentvariable done for all, unnecessary
                             commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'setx Path \"%USERPROFILE%\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin\"\n' })
+                            await new Promise(resolve => setTimeout(resolve, 1000))
+                            commands.executeCommand('workbench.action.reloadWindow')
                         }
                     })
                 } else if (IS_OSX) {
@@ -87,8 +89,6 @@ export function compiler_init() {
                     commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'sudo snap install curl && curl -sL https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/vsclinuxosx.sh | bash\n' })
                 }
             })
-
-            commands.executeCommand('workbench.action.reloadWindow')
         } else {
             if (compiler_stat) {
                 window.showInformationMessage(`Compiler bereits installiert! Informationen zum Compiler: ${stdout}`)
@@ -99,7 +99,7 @@ export function compiler_init() {
     })
 }
 
-export async function setRZHsH() {
+export function setRZHsH() {
     if (!IS_WINDOWS) {
         window.showInformationMessage('Diese Einstellung ist nur für Windows-Betriebssysteme notwendig.')
         return
