@@ -17,10 +17,10 @@ export let filePath_settingsjson: string
 export let filePath_tasksjson: string
 export let filePath_testprog: string
 export let filesencoding_settingsjson: string
-
-export const compilerpath: string = !workspace.getConfiguration('addon4vsc').get('computerraum') ? 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe' : 'C:\\\\Program Files (x86)\\\\Dev-Cpp\\\\MinGW64\\\\bin\\\\gcc.exe';
+export let compilerpath: string
 
 function pathinit() {
+
     if (IS_WINDOWS && !workspace.getConfiguration('addon4vsc').get('computerraum')) {
         folderPath_C_Uebung = `${userhomefolder}\\Documents\\C_Uebung`
         filePath_settingsjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\settings.json`
@@ -28,6 +28,7 @@ function pathinit() {
         filePath_testprog = `${folderPath_C_Uebung}\\testprog.c`
         filesencoding_settingsjson = 'cp437'
         gcc_command = 'C:\\ProgramData\\chocolatey\\bin\\gcc.exe'
+        compilerpath = 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe'
     } else if (IS_WINDOWS && workspace.getConfiguration('addon4vsc').get('computerraum')) {
         folderPath_C_Uebung = `U:\\C_Uebung`
         filePath_settingsjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\settings.json`
@@ -35,6 +36,7 @@ function pathinit() {
         filePath_testprog = `${folderPath_C_Uebung}\\testprog.c`
         filesencoding_settingsjson = 'cp437'
         gcc_command = ''
+        compilerpath = 'C:\\\\Program Files (x86)\\\\Dev-Cpp\\\\MinGW64\\\\bin\\\\gcc.exe'
     } else if (IS_OSX) {
         folderPath_C_Uebung = `${userhomefolder}/Documents/C_Uebung`
         filePath_settingsjson = `${userhomefolder}/Library/Application Support/Code/User/settings.json`
@@ -49,7 +51,7 @@ function pathinit() {
         folderPath_C_Uebung = `${userhomefolder}/Documents/C_Uebung`
         filePath_settingsjson = `${userhomefolder}/.config/Code/User/settings.json`
         filePath_tasksjson = `${userhomefolder}/.config/Code/User/tasks.json`
-        filePath_testprog = `$${folderPath_C_Uebung}/testprog.c`
+        filePath_testprog = `${folderPath_C_Uebung}/testprog.c`
         filesencoding_settingsjson = 'utf8'
         gcc_command = '/usr/bin/gcc'
         if (!extensions.getExtension('vadimcn.vscode-lldb')) {

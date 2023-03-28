@@ -2,7 +2,7 @@
 
 ## Features
 
-Dies ist ein kleiner Schritt um die C-Vorlesung besser zu unterstützen. 
+Dies ist ein kleiner Schritt, um die C-Vorlesung besser zu unterstützen. 
 
 * Für Linux, MacOS, Windows und RZ der HsH
 * Automatisches installieren des Compilers, wenn noch nicht erfolgt
