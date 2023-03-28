@@ -2,59 +2,65 @@ import { extensions, commands, window, StatusBarAlignment, Uri, workspace, Confi
 import { homedir } from 'os'
 import { exec } from 'child_process'
 
+import { renewjsons } from './jsonfilescheck'
+
 export const IS_WINDOWS = process.platform.startsWith('win')
 const IS_OSX = process.platform == 'darwin'
 const IS_LINUX = !IS_WINDOWS && !IS_OSX
 const userhomefolder = homedir()
 
 let compiler_stat: boolean = false
+let gcc_command: string // is it still needed?
 export let setting_init: boolean | undefined = undefined
 export let folderPath_C_Uebung: string
 export let filePath_settingsjson: string
 export let filePath_tasksjson: string
 export let filePath_testprog: string
 export let filesencoding_settingsjson: string
-let gcc_command: string
 
 export const compilerpath: string = !workspace.getConfiguration('addon4vsc').get('computerraum') ? 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe' : 'C:\\\\Program Files (x86)\\\\Dev-Cpp\\\\MinGW64\\\\bin\\\\gcc.exe';
 
-if (IS_WINDOWS && !workspace.getConfiguration('addon4vsc').get('computerraum')) {
-    folderPath_C_Uebung = `${userhomefolder}\\Documents\\C_Uebung`
-    filePath_settingsjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\settings.json`
-    filePath_tasksjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
-    filePath_testprog = `${folderPath_C_Uebung}\\testprog.c`
-    filesencoding_settingsjson = 'cp437'
-    gcc_command = 'C:\\ProgramData\\chocolatey\\bin\\gcc.exe'
-} else if (IS_WINDOWS && workspace.getConfiguration('addon4vsc').get('computerraum')) {
-    folderPath_C_Uebung = `U:\\C_Uebung`
-    filePath_settingsjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\settings.json`
-    filePath_tasksjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
-    filePath_testprog = `${folderPath_C_Uebung}\\testprog.c`
-    filesencoding_settingsjson = 'cp437'
-    gcc_command = ''
-} else if (IS_OSX) {
-    folderPath_C_Uebung = `${userhomefolder}/Documents/C_Uebung`
-    filePath_settingsjson = `${userhomefolder}/Library/Application Support/Code/User/settings.json`
-    filePath_tasksjson = `${userhomefolder}/Library/Application Support/Code/User/tasks.json`
-    filePath_testprog = `${folderPath_C_Uebung}/testprog.c`
-    filesencoding_settingsjson = 'utf8'
-    gcc_command = '/usr/bin/gcc'
-    if (!extensions.getExtension('vadimcn.vscode-lldb')) {
-        commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb')
+function pathinit() {
+    if (IS_WINDOWS && !workspace.getConfiguration('addon4vsc').get('computerraum')) {
+        folderPath_C_Uebung = `${userhomefolder}\\Documents\\C_Uebung`
+        filePath_settingsjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\settings.json`
+        filePath_tasksjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
+        filePath_testprog = `${folderPath_C_Uebung}\\testprog.c`
+        filesencoding_settingsjson = 'cp437'
+        gcc_command = 'C:\\ProgramData\\chocolatey\\bin\\gcc.exe'
+    } else if (IS_WINDOWS && workspace.getConfiguration('addon4vsc').get('computerraum')) {
+        folderPath_C_Uebung = `U:\\C_Uebung`
+        filePath_settingsjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\settings.json`
+        filePath_tasksjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
+        filePath_testprog = `${folderPath_C_Uebung}\\testprog.c`
+        filesencoding_settingsjson = 'cp437'
+        gcc_command = ''
+    } else if (IS_OSX) {
+        folderPath_C_Uebung = `${userhomefolder}/Documents/C_Uebung`
+        filePath_settingsjson = `${userhomefolder}/Library/Application Support/Code/User/settings.json`
+        filePath_tasksjson = `${userhomefolder}/Library/Application Support/Code/User/tasks.json`
+        filePath_testprog = `${folderPath_C_Uebung}/testprog.c`
+        filesencoding_settingsjson = 'utf8'
+        gcc_command = '/usr/bin/gcc'
+        if (!extensions.getExtension('vadimcn.vscode-lldb')) {
+            commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb')
+        }
+    } else if (IS_LINUX) {
+        folderPath_C_Uebung = `${userhomefolder}/Documents/C_Uebung`
+        filePath_settingsjson = `${userhomefolder}/.config/Code/User/settings.json`
+        filePath_tasksjson = `${userhomefolder}/.config/Code/User/tasks.json`
+        filePath_testprog = `$${folderPath_C_Uebung}/testprog.c`
+        filesencoding_settingsjson = 'utf8'
+        gcc_command = '/usr/bin/gcc'
+        if (!extensions.getExtension('vadimcn.vscode-lldb')) {
+            commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb')
+        }
+    } else {
+        window.showErrorMessage(`Betriebssystem wurde nicht erkannt! Einige Funktionen werden nicht richtig ausgeführt.`)
     }
-} else if (IS_LINUX) {
-    folderPath_C_Uebung = `${userhomefolder}/Documents/C_Uebung`
-    filePath_settingsjson = `${userhomefolder}/.config/Code/User/settings.json`
-    filePath_tasksjson = `${userhomefolder}/.config/Code/User/tasks.json`
-    filePath_testprog = `$${folderPath_C_Uebung}/testprog.c`
-    filesencoding_settingsjson = 'utf8'
-    gcc_command = '/usr/bin/gcc'
-    if (!extensions.getExtension('vadimcn.vscode-lldb')) {
-        commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb')
-    }
-} else {
-    window.showErrorMessage(`Betriebssystem wurde nicht erkannt! Einige Funktionen werden nicht richtig ausgeführt.`)
 }
+
+pathinit()
 
 export const statusbar_button = window.createStatusBarItem(StatusBarAlignment.Right, 100)
 statusbar_button.text = 'HSH_AddOn4VSC pausieren'
@@ -79,7 +85,9 @@ export function compiler_init() {
                             workspace.getConfiguration('addon4vsc').update('computerraum', true, ConfigurationTarget.Global)
                             // after IT got the Environmentvariable done for all, unnecessary
                             commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'setx Path \"%USERPROFILE%\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin\"\n' })
-                            await new Promise(resolve => setTimeout(resolve, 1000))
+                            pathinit()
+                            renewjsons(filePath_tasksjson)
+                            await new Promise(resolve => setTimeout(resolve, 5000))
                             commands.executeCommand('workbench.action.reloadWindow')
                         }
                     })
@@ -99,7 +107,7 @@ export function compiler_init() {
     })
 }
 
-export function setRZHsH() {
+export async function setRZHsH() {
     if (!IS_WINDOWS) {
         window.showInformationMessage('Diese Einstellung ist nur für Windows-Betriebssysteme notwendig.')
         return
@@ -111,6 +119,9 @@ export function setRZHsH() {
         }
 
         workspace.getConfiguration('addon4vsc').update('computerraum', !workspace.getConfiguration('addon4vsc').get('computerraum'), ConfigurationTarget.Global)
+        pathinit()
+        renewjsons(filePath_tasksjson)
+        await new Promise(resolve => setTimeout(resolve, 5000))
         commands.executeCommand('workbench.action.reloadWindow')
     }
 }
