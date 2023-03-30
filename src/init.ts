@@ -19,50 +19,45 @@ export let filePath_testprog: string
 export let filesencoding_settingsjson: string
 export let compilerpath: string = workspace.getConfiguration('addon4vsc').get('computerraum') ? 'C:\\\\Program Files (x86)\\\\Dev-Cpp\\\\MinGW64\\\\bin\\\\gcc.exe' : 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe'
 
-function pathinit() {
-
-    if (IS_WINDOWS && !workspace.getConfiguration('addon4vsc').get('computerraum')) {
-        folderPath_C_Uebung = `${userhomefolder}\\Documents\\C_Uebung`
-        filePath_settingsjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\settings.json`
-        filePath_tasksjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
-        filePath_testprog = `${folderPath_C_Uebung}\\testprog.c`
-        filesencoding_settingsjson = 'cp437'
-        gcc_command = 'C:\\ProgramData\\chocolatey\\bin\\gcc.exe'
-        compilerpath = 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe'
-    } else if (IS_WINDOWS && workspace.getConfiguration('addon4vsc').get('computerraum')) {
-        folderPath_C_Uebung = `U:\\C_Uebung`
-        filePath_settingsjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\settings.json`
-        filePath_tasksjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
-        filePath_testprog = `${folderPath_C_Uebung}\\testprog.c`
-        filesencoding_settingsjson = 'cp437'
-        gcc_command = ''
-        compilerpath = 'C:\\\\Program Files (x86)\\\\Dev-Cpp\\\\MinGW64\\\\bin\\\\gcc.exe'
-    } else if (IS_OSX) {
-        folderPath_C_Uebung = `${userhomefolder}/Documents/C_Uebung`
-        filePath_settingsjson = `${userhomefolder}/Library/Application Support/Code/User/settings.json`
-        filePath_tasksjson = `${userhomefolder}/Library/Application Support/Code/User/tasks.json`
-        filePath_testprog = `${folderPath_C_Uebung}/testprog.c`
-        filesencoding_settingsjson = 'utf8'
-        gcc_command = '/usr/bin/gcc'
-        if (!extensions.getExtension('vadimcn.vscode-lldb')) {
-            commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb')
-        }
-    } else if (IS_LINUX) {
-        folderPath_C_Uebung = `${userhomefolder}/Documents/C_Uebung`
-        filePath_settingsjson = `${userhomefolder}/.config/Code/User/settings.json`
-        filePath_tasksjson = `${userhomefolder}/.config/Code/User/tasks.json`
-        filePath_testprog = `${folderPath_C_Uebung}/testprog.c`
-        filesencoding_settingsjson = 'utf8'
-        gcc_command = '/usr/bin/gcc'
-        if (!extensions.getExtension('vadimcn.vscode-lldb')) {
-            commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb')
-        }
-    } else {
-        window.showErrorMessage(`Betriebssystem wurde nicht erkannt! Einige Funktionen werden nicht richtig ausgeführt.`)
+if (IS_WINDOWS && !workspace.getConfiguration('addon4vsc').get('computerraum')) {
+    folderPath_C_Uebung = `${userhomefolder}\\Documents\\C_Uebung`
+    filePath_settingsjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\settings.json`
+    filePath_tasksjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
+    filePath_testprog = `${folderPath_C_Uebung}\\testprog.c`
+    filesencoding_settingsjson = 'cp437'
+    gcc_command = 'C:\\ProgramData\\chocolatey\\bin\\gcc.exe'
+    compilerpath = 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe'
+} else if (IS_WINDOWS && workspace.getConfiguration('addon4vsc').get('computerraum')) {
+    folderPath_C_Uebung = `U:\\C_Uebung`
+    filePath_settingsjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\settings.json`
+    filePath_tasksjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
+    filePath_testprog = `${folderPath_C_Uebung}\\testprog.c`
+    filesencoding_settingsjson = 'cp437'
+    gcc_command = ''
+    compilerpath = 'C:\\\\Program Files (x86)\\\\Dev-Cpp\\\\MinGW64\\\\bin\\\\gcc.exe'
+} else if (IS_OSX) {
+    folderPath_C_Uebung = `${userhomefolder}/Documents/C_Uebung`
+    filePath_settingsjson = `${userhomefolder}/Library/Application Support/Code/User/settings.json`
+    filePath_tasksjson = `${userhomefolder}/Library/Application Support/Code/User/tasks.json`
+    filePath_testprog = `${folderPath_C_Uebung}/testprog.c`
+    filesencoding_settingsjson = 'utf8'
+    gcc_command = '/usr/bin/gcc'
+    if (!extensions.getExtension('vadimcn.vscode-lldb')) {
+        commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb')
     }
+} else if (IS_LINUX) {
+    folderPath_C_Uebung = `${userhomefolder}/Documents/C_Uebung`
+    filePath_settingsjson = `${userhomefolder}/.config/Code/User/settings.json`
+    filePath_tasksjson = `${userhomefolder}/.config/Code/User/tasks.json`
+    filePath_testprog = `${folderPath_C_Uebung}/testprog.c`
+    filesencoding_settingsjson = 'utf8'
+    gcc_command = '/usr/bin/gcc'
+    if (!extensions.getExtension('vadimcn.vscode-lldb')) {
+        commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb')
+    }
+} else {
+    window.showErrorMessage(`Betriebssystem wurde nicht erkannt! Einige Funktionen werden nicht richtig ausgeführt.`)
 }
-
-pathinit()
 
 export const statusbar_button = window.createStatusBarItem(StatusBarAlignment.Right, 100)
 statusbar_button.text = 'HSH_AddOn4VSC pausieren'
@@ -87,7 +82,7 @@ export function compiler_init() {
                             workspace.getConfiguration('addon4vsc').update('computerraum', true, ConfigurationTarget.Global)
                             // after IT got the Environmentvariable done for all, unnecessary
                             commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'setx Path \"%USERPROFILE%\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin\"\n' })
-                            pathinit()
+                            compilerpath = 'C:\\\\Program Files (x86)\\\\Dev-Cpp\\\\MinGW64\\\\bin\\\\gcc.exe'
                             renewjsons(filePath_tasksjson)
                             await new Promise(resolve => setTimeout(resolve, 5000))
                             commands.executeCommand('workbench.action.reloadWindow')
@@ -121,7 +116,7 @@ export async function setRZHsH() {
         }
 
         workspace.getConfiguration('addon4vsc').update('computerraum', !workspace.getConfiguration('addon4vsc').get('computerraum'), ConfigurationTarget.Global)
-        pathinit()
+        compilerpath = workspace.getConfiguration('addon4vsc').get('computerraum') ? 'C:\\\\Program Files (x86)\\\\Dev-Cpp\\\\MinGW64\\\\bin\\\\gcc.exe' : 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe'
         renewjsons(filePath_tasksjson)
         await new Promise(resolve => setTimeout(resolve, 5000))
         commands.executeCommand('workbench.action.reloadWindow')
