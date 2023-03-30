@@ -1,6 +1,7 @@
 import { promises, unlinkSync } from 'fs'
+import { workspace } from 'vscode'
 
-import { settingsjsondata, tasksjsondata } from './constants'
+import { settingsjsondata, tasksjsondata, tasksjsondata_RZ } from './constants'
 import { filePath_settingsjson, filePath_tasksjson } from './init'
 
 export async function renewjsons(filePath_todelete: string) {
@@ -43,9 +44,17 @@ async function setsettingsjson() {
 }
 
 async function settasksjson() {
-	try {
-		await promises.writeFile(filePath_tasksjson, tasksjsondata)
-	} catch (err) {
-		console.error(err)
+	if (!workspace.getConfiguration('addon4vsc').get('computerraum')) {
+		try {
+			await promises.writeFile(filePath_tasksjson, tasksjsondata)
+		} catch (err) {
+			console.error(err)
+		}
+	} else {
+		try {
+			await promises.writeFile(filePath_tasksjson, tasksjsondata_RZ)
+		} catch (err) {
+			console.error(err)
+		}
 	}
 }

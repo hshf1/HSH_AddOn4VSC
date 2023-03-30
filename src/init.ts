@@ -17,7 +17,7 @@ export let filePath_settingsjson: string
 export let filePath_tasksjson: string
 export let filePath_testprog: string
 export let filesencoding_settingsjson: string
-export let compilerpath: string = workspace.getConfiguration('addon4vsc').get('computerraum') ? 'C:\\\\Program Files (x86)\\\\Dev-Cpp\\\\MinGW64\\\\bin\\\\gcc.exe' : 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe'
+export let compilerpath = 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe'
 
 if (IS_WINDOWS && !workspace.getConfiguration('addon4vsc').get('computerraum')) {
     folderPath_C_Uebung = `${userhomefolder}\\Documents\\C_Uebung`

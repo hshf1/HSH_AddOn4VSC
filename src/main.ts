@@ -9,6 +9,7 @@ import { github_status } from './github'
 
 export async function activate(context: ExtensionContext) {
 
+	await new Promise(resolve => setTimeout(resolve, 1000))
 	initialize()
 
 	checkjsons()

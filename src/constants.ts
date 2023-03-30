@@ -96,7 +96,7 @@ export const tasksjsondata = `{
         {
             "type": "cppbuild",
             "label": "C/C++: gcc.exe Aktive Datei kompilieren",
-            "command": "${compilerpath}",
+            "command": "C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe",
             "args": [
                 "-g",
                 "\${file}",
@@ -113,7 +113,57 @@ export const tasksjsondata = `{
                 "kind": "build",
                 "isDefault": true
             },
-            "detail": "Compiler: ${compilerpath}"
+            "detail": "Compiler: C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe"
+        }
+    ]
+}`
+
+export const tasksjsondata_RZ = `{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "C/C++: gcc Aktive Datei kompilieren",
+            "command": "/usr/bin/gcc",
+            "args": [
+                "-g",
+                "\${file}",
+                "-o",
+                "\${fileDirname}/\${fileBasenameNoExtension}"
+            ],
+            "options": {
+                "cwd": "\${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Vom Debugger generierte Aufgabe."
+        },
+        {
+            "type": "cppbuild",
+            "label": "C/C++: gcc.exe Aktive Datei kompilieren",
+            "command": "C:\\\\Program Files (x86)\\\\Dev-Cpp\\\\MinGW64\\\\bin\\\\gcc.exe",
+            "args": [
+                "-g",
+                "\${file}",
+                "-o",
+                "\${fileDirname}\\\\\${fileBasenameNoExtension}.exe"
+            ],
+            "options": {
+                "cwd": "\${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Compiler: C:\\\\Program Files (x86)\\\\Dev-Cpp\\\\MinGW64\\\\bin\\\\gcc.exe"
         }
     ]
 }`
