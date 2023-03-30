@@ -17,7 +17,7 @@ export let filePath_settingsjson: string
 export let filePath_tasksjson: string
 export let filePath_testprog: string
 export let filesencoding_settingsjson: string
-export let compilerpath: string
+export let compilerpath: string = workspace.getConfiguration('addon4vsc').get('computerraum') ? 'C:\\\\Program Files (x86)\\\\Dev-Cpp\\\\MinGW64\\\\bin\\\\gcc.exe' : 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe'
 
 function pathinit() {
 
