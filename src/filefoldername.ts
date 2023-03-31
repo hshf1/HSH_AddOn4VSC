@@ -15,6 +15,9 @@ export async function checkname() {
     }
 
     if (constbasename.indexOf('ä') !== -1 || constbasename.indexOf('ö') !== -1 || constbasename.indexOf('ü') !== -1 || constbasename.indexOf(' ') !== -1 || constextname !== '.c') {
+        if (filePath === "no_file_defined") {
+            return
+        }
         await rename(filePath)
     }
 }

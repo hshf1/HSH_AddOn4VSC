@@ -1,15 +1,15 @@
-import { ExtensionContext, commands, workspace, debug, window } from 'vscode'
+import { ExtensionContext, commands, workspace, debug, window, ConfigurationChangeEvent } from 'vscode'
 
 import { openprefolder } from './checkfolder'
 import { checkname } from './filefoldername'
-import { checkjsons } from './jsonfilescheck'
+import { checkjsons, renewjsons } from './jsonfilescheck'
 import { constregistercommands } from './registercommands'
-import { setting_init, statusbar_button } from './init'
+import { filePath_tasksjson, hshRZ, IS_WINDOWS, sethshRZ, setPath, setting_init, statusbar_button } from './init'
 import { github_status } from './github'
+import { constcommands } from './constants'
 
 export async function activate(context: ExtensionContext) {
 
-	await new Promise(resolve => setTimeout(resolve, 1000))
 	initialize()
 
 	checkjsons()
@@ -25,6 +25,21 @@ export async function activate(context: ExtensionContext) {
 	}
 	workspace.onDidSaveTextDocument(eventHandler_checkname)
 	debug.onDidChangeBreakpoints(eventHandler_checkname)
+	workspace.onDidChangeConfiguration((event: ConfigurationChangeEvent) => {
+		if (event.affectsConfiguration('addon4vsc.computerraum')) {
+			if (IS_WINDOWS) {
+				let temp_hshRZ: boolean | undefined = undefined
+				while(temp_hshRZ === undefined) {
+					temp_hshRZ = workspace.getConfiguration('addon4vsc').get('computerraum')
+				}
+				if (temp_hshRZ != hshRZ) {
+					sethshRZ(temp_hshRZ)
+					setPath()
+					commands.executeCommand(constcommands[3].command)
+				}
+			}
+		}
+	})
 
 	constregistercommands.forEach(command => {
 		context.subscriptions.push(commands.registerCommand(command.name, command.callback))

@@ -7,9 +7,9 @@ import { constcommands } from './constants'
 import { githublinks, github_status } from './github'
 import { statusbar_button } from './init'
 
-export let dependencies_link: any = [], dependencies_main: any = []
+let dependencies_link: any = [], dependencies_main: any = []
 
-export class Dependency extends TreeItem {
+class Dependency extends TreeItem {
     constructor(
         public readonly label: string,
         public readonly collapsibleState: TreeItemCollapsibleState,
@@ -19,7 +19,7 @@ export class Dependency extends TreeItem {
     }
 }
 
-export class DepNodeProvider implements TreeDataProvider<Dependency> {
+class DepNodeProvider implements TreeDataProvider<Dependency> {
     private _onDidChangeTreeData: EventEmitter<any> = new EventEmitter<any>()
     readonly onDidChangeTreeData: Event<any> = this._onDidChangeTreeData.event
 
