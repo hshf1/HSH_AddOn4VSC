@@ -1,7 +1,7 @@
 /** Main Datei der Erweiterung.
  * Der Code importiert verschiedene Module aus der VS Code API und mehrere Funktionen aus anderen Dateien im gleichen Verzeichnis.
  * Die activate()-Funktion initialisiert die Erweiterung und überprüft, ob die erforderlichen Konfigurationsdateien vorhanden sind.
- * Sie �?ffnet auch einen voreingestellten Ordner, wenn kein Arbeitsbereich ge�?ffnet ist.
+ * Sie öffnet auch einen voreingestellten Ordner, wenn kein Arbeitsbereich geöffnet ist.
  * Darüber hinaus registriert sie mehrere "Event Handler", um Konfigurationsänderungen, Dateispeicherungen und Debugger-Breakpoints zu behandeln. 
  * Die activate()-Funktion registriert auch mehrere Befehle für die Benutzeroberfläche.
 */
@@ -12,10 +12,10 @@ import { ExtensionContext, commands, workspace, debug, window, ConfigurationChan
 																											   workspace: Ein Objekt, das verschiedene Methoden und Eigenschaften bereitstellt, um auf Workspace-Informationen und -Einstellungen zuzugreifen.
 																												   debug: Ein Objekt, das Methoden und Ereignisse bereitstellt, um Debugging-Funktionen in Visual Studio Code-Erweiterungen zu aktivieren.
 			   																									  window: Ein Objekt, das verschiedene Methoden und Eigenschaften bereitstellt, um auf die Visual Studio Code-UI zuzugreifen und sie zu manipulieren. 
-																								ConfigurationChangeEvent: Ein Ereignis, das ausgel�?st wird wenn sich eine Konfigurationseinstellung ändert. Enthält Informationen über die änderung */
+																								ConfigurationChangeEvent: Ein Ereignis, das ausgelöst wird wenn sich eine Konfigurationseinstellung ändert. Enthält Informationen über die änderung */
 
 
-import { openprefolder } from './checkfolder'								/** Importiert die Funktion zum �?ffnen des Vorgefertigten Ordner aus  checkfolder.ts */
+import { openprefolder } from './checkfolder'								/** Importiert die Funktion zum öffnen des Vorgefertigten Ordner aus  checkfolder.ts */
 import { checkname } from './filefoldername'								/** Importiert die Funktion zum überprüfen des Dateinames aus filefoldername.ts */
 import { checkjsons, renewjsons } from './jsonfilescheck'					/** Importiert die Funktion zum überprüfen der jsons-Datei aus jsonfilescheck.ts */
 import { constregistercommands } from './registercommands'					/** Importiert die Registerbefehle für die Anzeigen aus registercommands.ts */
@@ -29,7 +29,7 @@ export async function activate(context: ExtensionContext) {					/** die "activat
 
 	checkjsons()															/** Ruft die Funktion auf die, sicherstellt, dass die Konfigurationsdateien vorhanden sind */
 
-	if (!(workspace.workspaceFolders?.toString)) {							/** Funktion die schaut, ob Ordner in VS-Code ge�?ffnet ist und ggf. den Vorgefertigten Ordner �?ffnet */
+	if (!(workspace.workspaceFolders?.toString)) {							/** Funktion die schaut, ob Ordner in VS-Code geöffnet ist und ggf. den Vorgefertigten Ordner öffnet */
 		openprefolder()
 	}
 
@@ -42,7 +42,7 @@ export async function activate(context: ExtensionContext) {					/** die "activat
 	workspace.onDidSaveTextDocument(eventHandler_checkname)					/** Wenn der Benutzer eine Datei im Workspace speichert wird die Funktion aufgerufen, die den Namen auf Umlaute überprüft */
 	debug.onDidChangeBreakpoints(eventHandler_checkname)					/** Wenn der Benutzer die Debugger Breakpoints verändert wird die Funktion aufgerufen, die den Namen auf Umlaute überprüft */
 
-	workspace.onDidChangeConfiguration((event: ConfigurationChangeEvent) => {   /** Funktion wird ausgel�?st wenn sich Konfigurationseinstellungen geändert haben */
+	workspace.onDidChangeConfiguration((event: ConfigurationChangeEvent) => {   /** Funktion wird ausgelöst wenn sich Konfigurationseinstellungen geändert haben */
 		if (event.affectsConfiguration('addon4vsc.computerraum')) {				/** Fragt ob System ein PC aus Computerraum der HSH ist */	
 			if (IS_WINDOWS) {													/** überprüft ob Windows */
 				let temp_hshRZ: boolean | undefined = undefined					/** Deklareriert temporäre Variable die aussagt ob es erfolgreich war die Konfiguartion zu bekommen */
