@@ -4,8 +4,8 @@ import {
 } from 'vscode'
 
 import { constcommands } from './constants'
-import { githublinks, github_status } from './github'
-import { statusbar_button } from './init'
+import { getGithubLinks, getGithubStatus } from './github'
+import { getStatusBarItem } from './init'
 
 let dependencies_link: any = [], dependencies_main: any = []
 
@@ -70,17 +70,16 @@ const treeViewOptions: TreeViewOptions<Dependency> = {
     treeDataProvider: treeDataProvider
 }
 
-build_activity_bar()
-
-async function build_activity_bar() {
+export async function build_activity_bar() {
     aktualisieren()
-    while (github_status === undefined) {
+    while (getGithubStatus() === undefined) {
         await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
-    if (github_status === true) {
-        for (let i = 0; i < githublinks.length; i++) {
-            dependencies_link.push(new Dependency(githublinks[i].name, TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: [githublinks[i].link] }))
+    if (getGithubStatus() === true) {
+        let links = getGithubLinks()
+        for (let i = 0; i < links.length; i++) {
+            dependencies_link.push(new Dependency(links[i].name, TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: [links[i].link] }))
         }
     }
     window.registerTreeDataProvider('menue_bar_activity', treeDataProvider)
@@ -90,7 +89,7 @@ async function build_activity_bar() {
 function aktualisieren() {
     dependencies_main = [
         new Dependency('GitHub: Vorlesung C', TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: ['https://github.com/hshf1/VorlesungC', ''] }),
-        new Dependency((statusbar_button.command === 'extension.off') ? 'Erweiterung pausieren' : 'Erweiterung wieder aktivieren', TreeItemCollapsibleState.None, constcommands[(statusbar_button.command === 'extension.off') ? 1 : 0]),
+        new Dependency((getStatusBarItem().command === 'extension.off') ? 'Erweiterung pausieren' : 'Erweiterung wieder aktivieren', TreeItemCollapsibleState.None, constcommands[(getStatusBarItem().command === 'extension.off') ? 1 : 0]),
         new Dependency('Einstellungen', TreeItemCollapsibleState.Collapsed),
         new Dependency('Nützliche Links', TreeItemCollapsibleState.Expanded)
     ]

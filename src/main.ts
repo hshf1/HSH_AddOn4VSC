@@ -2,15 +2,15 @@ import { ExtensionContext, commands, workspace, debug, window, ConfigurationChan
 
 import { openprefolder } from './checkfolder'
 import { checkname } from './filefoldername'
-import { checkjsons, renewjsons } from './jsonfilescheck'
-import { constregistercommands } from './registercommands'
-import { filePath_tasksjson, hshRZ, IS_WINDOWS, sethshRZ, setPath, setting_init, statusbar_button } from './init'
-import { github_status } from './github'
+import { checkjsons } from './jsonfilescheck'
+import { getCommands } from './registercommands'
+import { hshRZ, getOS, sethshRZ, setPath, setting_init, getStatusBarItem, initMain } from './init'
+import { getGithubStatus } from './github'
 import { constcommands } from './constants'
 
 export async function activate(context: ExtensionContext) {
 
-	initialize()
+	initMain()
 
 	checkjsons()
 
@@ -19,7 +19,7 @@ export async function activate(context: ExtensionContext) {
 	}
 
 	const eventHandler_checkname = async () => {
-		if (statusbar_button.command === 'extension.off') {
+		if (getStatusBarItem().command === 'extension.off') {
 			await checkname()
 		}
 	}
@@ -27,7 +27,7 @@ export async function activate(context: ExtensionContext) {
 	debug.onDidChangeBreakpoints(eventHandler_checkname)
 	workspace.onDidChangeConfiguration((event: ConfigurationChangeEvent) => {
 		if (event.affectsConfiguration('addon4vsc.computerraum')) {
-			if (IS_WINDOWS) {
+			if (getOS('WIN')) {
 				let temp_hshRZ: boolean | undefined = undefined
 				while(temp_hshRZ === undefined) {
 					temp_hshRZ = workspace.getConfiguration('addon4vsc').get('computerraum')
@@ -41,7 +41,7 @@ export async function activate(context: ExtensionContext) {
 		}
 	})
 
-	constregistercommands.forEach(command => {
+	getCommands().forEach(command => {
 		context.subscriptions.push(commands.registerCommand(command.name, command.callback))
 	})
 
@@ -58,11 +58,11 @@ async function initialize() {
 		await initialize()
 	}
 	while (init_status === undefined) {
-		if (setting_init !== undefined && github_status !== undefined) {
+		if (setting_init !== undefined && getGithubStatus() !== undefined) {
 			if (setting_init === false) {
 				window.showWarningMessage('Einstellungen konnten nicht richtig initialisiert werden. Bei Problem VSCode neu starten.')
 			}
-			if (github_status === false) {
+			if (getGithubStatus() === false) {
 				window.showWarningMessage(`Nützliche Links aus GitHub konnten nicht geladen werden. Bei Bedarf Internetverbindung prüfen und VSCode neu starten.`)
 			}
 			init_status = true

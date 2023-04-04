@@ -1,7 +1,7 @@
 import { get } from 'request'
 
-export let githublinks: { link: string, name: string }[] = []
-export let github_status: boolean | undefined = undefined
+let githublinks: { link: string, name: string }[] = []
+let github_status: boolean | undefined = undefined
 
 get('https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/AddOn4VSC/links.txt', (error, response, body) => {
     if (error) {
@@ -23,3 +23,11 @@ get('https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/A
         github_status = true
     }
 })
+
+export function getGithubStatus() {
+    return github_status
+}
+
+export function getGithubLinks() {
+    return githublinks
+}

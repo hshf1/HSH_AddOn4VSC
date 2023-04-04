@@ -3,26 +3,24 @@ import { env, Uri, window } from 'vscode'
 import { treeDataProvider } from './activity_bar'
 import { constcommands } from './constants'
 import { renewjsons } from './jsonfilescheck'
-import { compiler_init, filePath_settingsjson, filePath_tasksjson, setRZHsH, statusbar_button } from './init'
+import { compiler_init, filePath_settingsjson, filePath_tasksjson, setRZHsH, getStatusBarItem } from './init'
 
-export let active_addon: boolean = true
-
-export const constregistercommands = [
+const constregistercommands = [
     {
         name: constcommands[0].command,
         callback: () => {
-            statusbar_button.text = 'AddOn4VSC pausieren'
-            statusbar_button.tooltip = 'Klicken, um die Erweiterung AddOn4VSC zu pausieren (spätestens, bis wenn VSCode neu startet)'
-            statusbar_button.command = 'extension.off'
+            getStatusBarItem().text = 'AddOn4VSC pausieren'
+            getStatusBarItem().tooltip = 'Klicken, um die Erweiterung AddOn4VSC zu pausieren (spätestens, bis wenn VSCode neu startet)'
+            getStatusBarItem().command = 'extension.off'
             treeDataProvider.refresh()
         }
     },
     {
         name: constcommands[1].command,
         callback: () => {
-            statusbar_button.text = 'AddOn4VSC wieder aktivieren'
-            statusbar_button.tooltip = 'Klicken, um die Erweiterung AddOn4VSC wieder zu aktivieren'
-            statusbar_button.command = 'extension.on'
+            getStatusBarItem().text = 'AddOn4VSC wieder aktivieren'
+            getStatusBarItem().tooltip = 'Klicken, um die Erweiterung AddOn4VSC wieder zu aktivieren'
+            getStatusBarItem().command = 'extension.on'
             treeDataProvider.refresh()
         }
     },
@@ -66,3 +64,7 @@ export const constregistercommands = [
         }
     }
 ]
+
+export function getCommands() {
+    return constregistercommands
+}
