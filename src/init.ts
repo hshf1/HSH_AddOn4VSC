@@ -1,13 +1,62 @@
-import { extensions, commands, window, StatusBarAlignment, Uri, workspace, ConfigurationTarget } from 'vscode'
+import { extensions, commands, window, StatusBarAlignment, Uri, workspace, ConfigurationTarget, StatusBarItem } from 'vscode'
 import { homedir } from 'os'
 import { exec } from 'child_process'
 
-import { checkjsons, renewjsons } from './jsonfilescheck'
+import { renewjsons } from './jsonfilescheck'
+import { build_activity_bar } from './activity_bar'
 
-export const IS_WINDOWS = process.platform.startsWith('win')
-const IS_OSX = process.platform == 'darwin'
-const IS_LINUX = !IS_WINDOWS && !IS_OSX
+let IS_WINDOWS: boolean
+let IS_OSX: boolean
+let IS_LINUX: boolean
+
 const userhomefolder = homedir()
+
+let statusbar_button: StatusBarItem
+
+export function initMain() {
+    setOS()
+    setPath()
+    setStatusBarItem()
+    build_activity_bar()
+    if (!compiler_stat) {
+        compiler_init()
+    }
+}
+
+function setOS() {
+    IS_WINDOWS = process.platform.startsWith('win')
+    IS_OSX = process.platform == 'darwin'
+    IS_LINUX = !IS_WINDOWS && !IS_OSX
+}
+
+export function getOS(os: string) {
+    switch(os) {
+        case 'WIN':
+            return IS_WINDOWS
+            break
+        case 'MAC':
+            return IS_OSX
+            break
+        case 'LIN':
+            return IS_LINUX
+            break
+        default:
+            return false
+            break
+    }
+}
+
+function setStatusBarItem() {
+    statusbar_button = window.createStatusBarItem(StatusBarAlignment.Right, 100)
+    statusbar_button.text = 'HSH_AddOn4VSC pausieren'
+    statusbar_button.tooltip = 'Klicken, um die Erweiterung AddOn4VSC zu pausieren (spätestens, bis wenn VSCode neu startet)'
+    statusbar_button.command = 'extension.off'
+    statusbar_button.show()
+}
+
+export function getStatusBarItem() {
+    return statusbar_button
+}
 
 let compiler_stat: boolean = false
 let gcc_command: string // is it still needed?
@@ -24,7 +73,7 @@ while (hshRZ === undefined) {
     hshRZ = workspace.getConfiguration('addon4vsc').get('computerraum')
 }
 
-if (!IS_WINDOWS) {
+if (!getOS('WIN')) {
     if (!extensions.getExtension('vadimcn.vscode-lldb')) {
         commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb')
     }
@@ -63,18 +112,6 @@ export function setPath() {
     }
 }
 
-setPath()
-
-export const statusbar_button = window.createStatusBarItem(StatusBarAlignment.Right, 100)
-statusbar_button.text = 'HSH_AddOn4VSC pausieren'
-statusbar_button.tooltip = 'Klicken, um die Erweiterung AddOn4VSC zu pausieren (spätestens, bis wenn VSCode neu startet)'
-statusbar_button.command = 'extension.off'
-statusbar_button.show()
-
-if (!compiler_stat) {
-    compiler_init()
-}
-
 export function compiler_init() {
     exec('gcc --version', (error, stdout) => {
         if (error) {
@@ -87,7 +124,6 @@ export function compiler_init() {
                             commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb runAs -ArgumentList \'/k curl -o %temp%\\vsc.cmd https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/vscwindows.cmd && %temp%\\vsc.cmd\'\"\n' })
                         } else if (selected === 'HsH Windows-Rechner') {
                             workspace.getConfiguration('addon4vsc').update('computerraum', true, ConfigurationTarget.Global)
-                            // after IT got the Environmentvariable done for all, unnecessary
                             commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'setx Path \"%USERPROFILE%\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin\"\n' })
                             compilerpath = 'C:\\\\Program Files (x86)\\\\Dev-Cpp\\\\MinGW64\\\\bin\\\\gcc.exe'
                             sethshRZ(true)
