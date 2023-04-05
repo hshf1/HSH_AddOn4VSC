@@ -14,7 +14,7 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 
 - 
 
-## [1.4.0] - [1.4.15] 19.03.2023 - 05.04.2023
+## [1.4.0] - [1.4.18] 19.03.2023 - 05.04.2023
 
 ### neu hinzugefügt
 
@@ -22,6 +22,7 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 - Einstellung, das speichert, ob HsH oder Privat Nutzung
 - HsH Text-Logo in der Activity Bar zur besseren Übersicht
 - Kommentare im Code
+- Skripte nun im HSH_AddOn4VSC - Links zu den Skripten in der Installationsanleitung auf GitHub wurden angepasst
 
 ### geändert
 

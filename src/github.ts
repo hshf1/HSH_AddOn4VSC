@@ -3,7 +3,7 @@ import { get } from 'request'
 let githublinks: { link: string, name: string }[] = []
 let github_status: boolean | undefined = undefined
 
-get('https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/AddOn4VSC/links.txt', (error, response, body) => {
+get('https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/links.txt', (error, response, body) => {
     if (error) {
         console.error(error)
         github_status = false
