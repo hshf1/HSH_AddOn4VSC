@@ -58,6 +58,10 @@
     },
     "commands": [
       {
+        "command": "setRZHsH.setting",
+        "title": "Path für RZHsH einstellen"
+      },
+      {
         "command": "open.link",
         "title": "Öffne Link '%link%'"
       },
