@@ -16,7 +16,7 @@ import {									/** Importiert die genannten Befehle aus der VS-Code Erweiterun
 
 import {
 	getHsHRZ, getOS, sethshRZ, setPath, getSettingInit,
-	getStatusBarItem, initMain
+	getStatusBarItem, initMain, changeHsHOrPrivate
 } from './init'										/** Importiert eine Reihe von Befehlen aus der init.ts */
 import { checkname } from './filefoldername'		/** Importiert die Funktion zum überprüfen des Dateinames aus filefoldername.ts */
 import { getCommands } from './registercommands'	/** Importiert die Registerbefehle für die Anzeigen aus registercommands.ts */
@@ -42,9 +42,7 @@ export function activate(context: ExtensionContext) {	/** die "activate" Funktio
 					temp_hshRZ = workspace.getConfiguration('addon4vsc').get('computerraum')
 				}
 				if (temp_hshRZ != getHsHRZ()) {								/** überprüft ob sich der Wert geändert hat der Aussagt ob man im Computerraum ist */
-					sethshRZ(temp_hshRZ)									/** Setzt den neuen Wert ein */
-					setPath()												/** Setzt die Pfade neu */
-					commands.executeCommand(constcommands[3].command)		/** Führt command 3 aus, "tasks.json zurücksetzen" */
+					changeHsHOrPrivate(temp_hshRZ)							/** Führt die Funktion aus, um die Pfade anzupassen */
 				}
 			}
 		}

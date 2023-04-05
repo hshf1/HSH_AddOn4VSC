@@ -9,6 +9,7 @@ import { renewjsons } from './jsonfilescheck'
 import { build_activity_bar } from './activity_bar'
 import { openprefolder } from './checkfolder'		/** Importiert die Funktion zum öffnen des Vorgefertigten Ordner aus  checkfolder.ts */
 import { checkjsons } from './jsonfilescheck'		/** Importiert die Funktion zum überprüfen der jsons-Datei aus jsonfilescheck.ts */
+import { constcommands } from './constants'
 
 const userhomefolder = homedir()
 
@@ -146,14 +147,13 @@ export function compiler_init() {
                     window.showInformationMessage(`Compiler nicht gefunden. Zum installieren bitte auswählen:`, 'Privater Windows-Rechner', 'HsH Windows-Rechner', 'Jetzt nicht').then(async selected => {
                         if (selected === 'Privater Windows-Rechner') {
                             workspace.getConfiguration('addon4vsc').update('computerraum', false, ConfigurationTarget.Global)
-                            sethshRZ(false)
+                            changeHsHOrPrivate(false)
                             commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb runAs -ArgumentList \'/k curl -o %temp%\\vsc.cmd https://raw.githubusercontent.com/hshf1/VorlesungC/main/VSCode/Quellcodes/vscwindows.cmd && %temp%\\vsc.cmd\'\"\n' })
                         } else if (selected === 'HsH Windows-Rechner') {
                             workspace.getConfiguration('addon4vsc').update('computerraum', true, ConfigurationTarget.Global)
                             commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'setx Path \"%USERPROFILE%\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin\"\n' })
                             compilerpath = 'C:\\\\Program Files (x86)\\\\Dev-Cpp\\\\MinGW64\\\\bin\\\\gcc.exe'
-                            sethshRZ(true)
-                            renewjsons(filePath_tasksjson)
+                            changeHsHOrPrivate(true)
                             await new Promise(resolve => setTimeout(resolve, 5000))
                             commands.executeCommand('workbench.action.reloadWindow')
                         }
@@ -203,4 +203,10 @@ export function getCompilerPath() {
 
 export function getFilesEncoding() {
     return filesencoding_settingsjson
+}
+
+export function changeHsHOrPrivate(temp_hshRZ: boolean) {
+    sethshRZ(temp_hshRZ)
+    setPath()
+    commands.executeCommand(constcommands[3].command)   /** Führt command 3 aus, "tasks.json zurücksetzen" */                        
 }
