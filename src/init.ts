@@ -1,26 +1,54 @@
-import { extensions, commands, window, StatusBarAlignment, Uri, workspace, ConfigurationTarget, StatusBarItem } from 'vscode'
+import {
+    extensions, commands, window, StatusBarAlignment,
+    Uri, workspace, ConfigurationTarget, StatusBarItem
+} from 'vscode'
 import { homedir } from 'os'
 import { exec } from 'child_process'
 
 import { renewjsons } from './jsonfilescheck'
 import { build_activity_bar } from './activity_bar'
-
-let IS_WINDOWS: boolean
-let IS_OSX: boolean
-let IS_LINUX: boolean
+import { openprefolder } from './checkfolder'		/** Importiert die Funktion zum öffnen des Vorgefertigten Ordner aus  checkfolder.ts */
+import { checkjsons } from './jsonfilescheck'		/** Importiert die Funktion zum überprüfen der jsons-Datei aus jsonfilescheck.ts */
 
 const userhomefolder = homedir()
 
+let IS_WINDOWS: boolean, IS_OSX: boolean, IS_LINUX: boolean
 let statusbar_button: StatusBarItem
+/** let gcc_command: string // is it still needed? */
+let folderPath_C_Uebung: string, filePath_settingsjson: string, filePath_tasksjson: string
+let filesencoding_settingsjson: string, compilerpath: string, filePath_testprog: string
+let setting_init: boolean | undefined = undefined
+let hshRZ: boolean | undefined = undefined
+let compiler_stat: boolean = false
 
 export function initMain() {
     setOS()
+
+    if (!getOS('WIN')) {
+        if (!extensions.getExtension('vadimcn.vscode-lldb')) {
+            commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb')
+        }
+    }
+
+    while (hshRZ === undefined) {
+        hshRZ = workspace.getConfiguration('addon4vsc').get('computerraum')
+    }
+
     setPath()
+    checkjsons()									/** Ruft die Funktion auf, die sicherstellt, dass die Konfigurationsdateien vorhanden sind */
+    
+    if (!(workspace.workspaceFolders?.toString)) {  /** Funktion die schaut, ob Ordner in VS-Code geöffnet ist und ggf. den vorgefertigten Ordner öffnet */
+		openprefolder()
+	}
+
     setStatusBarItem()
     build_activity_bar()
+    
     if (!compiler_stat) {
         compiler_init()
     }
+
+    setting_init = true
 }
 
 function setOS() {
@@ -33,16 +61,12 @@ export function getOS(os: string) {
     switch(os) {
         case 'WIN':
             return IS_WINDOWS
-            break
         case 'MAC':
             return IS_OSX
-            break
         case 'LIN':
             return IS_LINUX
-            break
         default:
             return false
-            break
     }
 }
 
@@ -58,24 +82,26 @@ export function getStatusBarItem() {
     return statusbar_button
 }
 
-let compiler_stat: boolean = false
-let gcc_command: string // is it still needed?
-export let setting_init: boolean | undefined = undefined
-export let folderPath_C_Uebung: string
-export let filePath_settingsjson: string
-export let filePath_tasksjson: string
-export let filePath_testprog: string
-export let filesencoding_settingsjson: string
-export let hshRZ: boolean | undefined = undefined
-export let compilerpath: string
-
-while (hshRZ === undefined) {
-    hshRZ = workspace.getConfiguration('addon4vsc').get('computerraum')
+export function getHsHRZ() {
+    return hshRZ
 }
 
-if (!getOS('WIN')) {
-    if (!extensions.getExtension('vadimcn.vscode-lldb')) {
-        commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb')
+export function getSettingInit() {
+    return setting_init
+}
+
+export function getPath(temp: string) {
+    switch(temp) {
+        case 'settingsjson':
+            return filePath_settingsjson
+        case 'tasksjson':
+            return filePath_tasksjson
+        case 'testprog':
+            return filePath_testprog
+        case 'CUebung':
+            return folderPath_C_Uebung
+        default:
+            return ''
     }
 }
 
@@ -88,25 +114,25 @@ export function setPath() {
         filePath_settingsjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\settings.json`
         filePath_tasksjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
         filePath_testprog = `${folderPath_C_Uebung}\\testprog.c`
-        gcc_command = 'C:\\ProgramData\\chocolatey\\bin\\gcc.exe'
+        /** gcc_command = 'C:\\ProgramData\\chocolatey\\bin\\gcc.exe' */
     } else if (IS_WINDOWS && hshRZ) {
         folderPath_C_Uebung = `U:\\C_Uebung`
         filePath_settingsjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\settings.json`
         filePath_tasksjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
         filePath_testprog = `${folderPath_C_Uebung}\\testprog.c`
-        gcc_command = ''
+        /** gcc_command = '' */
     } else if (IS_OSX) {
         folderPath_C_Uebung = `${userhomefolder}/Documents/C_Uebung`
         filePath_settingsjson = `${userhomefolder}/Library/Application Support/Code/User/settings.json`
         filePath_tasksjson = `${userhomefolder}/Library/Application Support/Code/User/tasks.json`
         filePath_testprog = `${folderPath_C_Uebung}/testprog.c`
-        gcc_command = '/usr/bin/gcc'
+        /** gcc_command = '/usr/bin/gcc' */
     } else if (IS_LINUX) {
         folderPath_C_Uebung = `${userhomefolder}/Documents/C_Uebung`
         filePath_settingsjson = `${userhomefolder}/.config/Code/User/settings.json`
         filePath_tasksjson = `${userhomefolder}/.config/Code/User/tasks.json`
         filePath_testprog = `${folderPath_C_Uebung}/testprog.c`
-        gcc_command = '/usr/bin/gcc'
+        /** gcc_command = '/usr/bin/gcc' */
     } else {
         window.showErrorMessage(`Betriebssystem wurde nicht erkannt! Einige Funktionen werden nicht richtig ausgeführt. Bitte neu starten!`)
     }
@@ -171,4 +197,10 @@ export function sethshRZ(ext_hshRZ: boolean) {
     hshRZ = ext_hshRZ
 }
 
-setting_init = true
+export function getCompilerPath() {
+    return compilerpath
+}
+
+export function getFilesEncoding() {
+    return filesencoding_settingsjson
+}

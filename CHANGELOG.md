@@ -14,17 +14,19 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 
 - 
 
-## [1.4.0] - [1.4.14] 19.03.2023 - 31.03.2023
+## [1.4.0] - [1.4.15] 19.03.2023 - 05.04.2023
 
 ### neu hinzugefügt
 
 - Möglichkeit zur Speicherung der Einstellung, welcher Pfad genutzt werden soll (privater Windows oder HsH RZ Windows)
 - Einstellung, das speichert, ob HsH oder Privat Nutzung
 - HsH Text-Logo in der Activity Bar zur besseren Übersicht
+- Kommentare im Code
 
 ### geändert
 
 - Quellcode der Extension nun im GitHub der HsH zu finden unter: [GitHub HSH_AddOn4VSC](https://github.com/hshf1/HSH_AddOn4VSC)
+- Code umgeschrieben zur besseren Lesbarkeit
 - Nicht benötigte Zeilen Code wurden entfernt
 - Kompatibilität mit älteren VSCode Versionen angesetzt
 - Ausführung der Installationsskripts angepasst

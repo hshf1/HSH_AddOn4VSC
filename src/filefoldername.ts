@@ -4,7 +4,7 @@ import { existsSync } from 'fs'
 
 import { getOS } from './init'
 
-let firstInit = false;
+let firstInit: boolean = false;
 
 export async function checkname() {
     const filePath: string = window.activeTextEditor?.document.uri.fsPath || "no_file_defined"

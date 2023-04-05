@@ -1,7 +1,7 @@
 import { promises, unlinkSync } from 'fs'
 
-import { getSettingsJsonData, getTasksJsonData, setSettingsjsondata, setTasksJsonData } from './constants'
-import { filePath_settingsjson, filePath_tasksjson } from './init'
+import { getSettingsJsonData, getTasksJsonData } from './constants'
+import { getPath } from './init'
 
 export async function renewjsons(filePath_todelete: string) {
 	try {
@@ -23,12 +23,12 @@ export async function renewjsons(filePath_todelete: string) {
 
 export async function checkjsons() {
 	try {
-		await promises.stat(filePath_settingsjson)
+		await promises.stat(getPath('settingsjson'))
 	} catch {
 		await setsettingsjson()
 	}
 	try {
-		await promises.stat(filePath_tasksjson)
+		await promises.stat(getPath('tasksjson'))
 	} catch {
 		await settasksjson()
 	}
@@ -36,8 +36,7 @@ export async function checkjsons() {
 
 async function setsettingsjson() {
 	try {
-		setSettingsjsondata()
-		await promises.writeFile(filePath_settingsjson, getSettingsJsonData())
+		await promises.writeFile(getPath('settingsjson'), getSettingsJsonData())
 	} catch (err) {
 		console.error(err)
 	}
@@ -45,8 +44,7 @@ async function setsettingsjson() {
 
 async function settasksjson() {
 	try {
-		setTasksJsonData()
-		await promises.writeFile(filePath_tasksjson, getTasksJsonData())
+		await promises.writeFile(getPath('tasksjson'), getTasksJsonData())
 	} catch (err) {
 		console.error(err)
 	}

@@ -1,9 +1,6 @@
 import { Command } from "vscode"
 
-import { compilerpath, filesencoding_settingsjson } from "./init"
-
-let settingsjsondata: string
-let tasksjsondata: string
+import { getCompilerPath, getFilesEncoding } from "./init"
 
 export const constcommands: Command[] = [
     { command: 'extension.on', title: "Erweiterung wieder aktivieren" },
@@ -34,14 +31,16 @@ int main()
     return 0;
 }`
 
-export function setSettingsjsondata() {
-    settingsjsondata = `{
+export function getSettingsJsonData() {
+    let temp = getFilesEncoding()
+
+    let settingsjsondata = `{
         // Allgemeine Nutzereinstellungen
         "addon4vsc.computerraum": false,                // Standort für Windows Rechner (Privat = false, HsH = true)
         "liveshare.anonymousGuestApproval": "accept",   // Live Share eingeladene Anonyme Nutzer automatisch akzeptieren
         "liveshare.guestApprovalRequired": false,       // Live Share um eingeladene Nutzer automatisch zu akzeptieren auf false einstellen
         "extensions.ignoreRecommendations": true,       // Keine Empfehlungen mehr Anzeigen
-        "files.encoding": "${filesencoding_settingsjson}",                       // Zur richtigen Darstellung von Umlauten
+        "files.encoding": "${temp}",                       // Zur richtigen Darstellung von Umlauten
         //"files.autoGuessEncoding": true,              // Zurzeit deaktiviert, da noch instabil! Automatische Anpassung der Encodierung, falls möglich
         "editor.unicodeHighlight.nonBasicASCII": false, // Nicht Basic ASCII Zeichen nicht hervorheben
         "files.autoSave": "onFocusChange",              // Dateien werden bei Änderungen des Fokus automatisch gespeichert
@@ -90,14 +89,14 @@ export function setSettingsjsondata() {
             ]
         }
     }`
-}
 
-export function getSettingsJsonData() {
     return settingsjsondata
 }
 
-export function setTasksJsonData() {
-    tasksjsondata = `{
+export function getTasksJsonData() {
+    let temp = getCompilerPath()
+
+    let tasksjsondata = `{
         "version": "2.0.0",
         "tasks": [
             {
@@ -125,7 +124,7 @@ export function setTasksJsonData() {
             {
                 "type": "cppbuild",
                 "label": "C/C++: gcc.exe Aktive Datei kompilieren",
-                "command": "${compilerpath}",
+                "command": "${temp}",
                 "args": [
                     "-g",
                     "\${file}",
@@ -142,12 +141,10 @@ export function setTasksJsonData() {
                     "kind": "build",
                     "isDefault": true
                 },
-                "detail": "Compiler: ${compilerpath}"
+                "detail": "Compiler: ${temp}"
             }
         ]
     }`
-}
 
-export function getTasksJsonData() {
     return tasksjsondata
 }

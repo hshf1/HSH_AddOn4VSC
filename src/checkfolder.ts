@@ -1,7 +1,7 @@
 import { Uri, OpenDialogOptions, commands, window } from 'vscode'
 import { existsSync, mkdirSync, writeFileSync } from 'fs'
 
-import { filePath_testprog, folderPath_C_Uebung } from './init'
+import { getPath } from './init'
 import { testprogc } from './constants'
 
 function openfolder() {
@@ -21,23 +21,23 @@ function openfolder() {
 }
 
 export async function openprefolder() {
-	const folderUri = Uri.file(folderPath_C_Uebung)
+	const folderUri = Uri.file(getPath('CUebung'))
 	
-	if (!existsSync(folderPath_C_Uebung)) {
+	if (!existsSync(getPath('CUebung'))) {
 		try {
-			mkdirSync(folderPath_C_Uebung)
+			mkdirSync(getPath('CUebung'))
 		} catch (error) {
 			console.error(error)
 		}
 	}
-	if (!existsSync(filePath_testprog)) {
+	if (!existsSync(getPath('testprog'))) {
 		try {
-			writeFileSync(filePath_testprog, testprogc)
+			writeFileSync(getPath('testprog'), testprogc)
 		} catch (error) {
 			console.error(error)
 		}
 	}
-	if (existsSync(folderPath_C_Uebung)) {
+	if (existsSync(getPath('CUebung'))) {
 		commands.executeCommand(`vscode.openFolder`, folderUri)
 	} else {
 		openfolder()

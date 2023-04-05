@@ -3,7 +3,7 @@ import { env, Uri, window } from 'vscode'
 import { treeDataProvider } from './activity_bar'
 import { constcommands } from './constants'
 import { renewjsons } from './jsonfilescheck'
-import { compiler_init, filePath_settingsjson, filePath_tasksjson, setRZHsH, getStatusBarItem } from './init'
+import { compiler_init, getPath, setRZHsH, getStatusBarItem } from './init'
 
 const constregistercommands = [
     {
@@ -27,7 +27,7 @@ const constregistercommands = [
     {
         name: constcommands[2].command,
         callback: () => {
-            renewjsons(filePath_settingsjson)
+            renewjsons(getPath('settingsjson'))
             window.showInformationMessage('settings.json wurde zurückgesetzt. Manchmal muss VSCode neu gestartet werden, um einige Änderungen wirksam zu machen.')
 
         }
@@ -35,7 +35,7 @@ const constregistercommands = [
     {
         name: constcommands[3].command,
         callback: () => {
-            renewjsons(filePath_tasksjson)
+            renewjsons(getPath('tasksjson'))
             window.showInformationMessage('tasks.json wurde zurückgesetzt. Manchmal muss VSCode neu gestartet werden, um einige Änderungen wirksam zu machen.')
         }
     },
