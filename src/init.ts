@@ -186,10 +186,7 @@ export async function setRZHsH() {
         }
         workspace.getConfiguration('addon4vsc').update('computerraum', !workspace.getConfiguration('addon4vsc').get('computerraum'), ConfigurationTarget.Global)
         compilerpath = workspace.getConfiguration('addon4vsc').get('computerraum') ? 'C:\\\\Program Files (x86)\\\\Dev-Cpp\\\\MinGW64\\\\bin\\\\gcc.exe' : 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe'
-        sethshRZ(!hshRZ)
-        renewjsons(filePath_tasksjson)
-        await new Promise(resolve => setTimeout(resolve, 5000))
-        commands.executeCommand('workbench.action.reloadWindow')
+        changeHsHOrPrivate(!hshRZ)
     }
 }
 
@@ -205,8 +202,8 @@ export function getFilesEncoding() {
     return filesencoding_settingsjson
 }
 
-export function changeHsHOrPrivate(temp_hshRZ: boolean) {
+export async function changeHsHOrPrivate(temp_hshRZ: boolean) {
     sethshRZ(temp_hshRZ)
     setPath()
-    commands.executeCommand(constcommands[3].command)   /** Führt command 3 aus, "tasks.json zurücksetzen" */                        
+    await commands.executeCommand(constcommands[3].command)   /** Führt command 3 aus, "tasks.json zurücksetzen" */                        
 }
