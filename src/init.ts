@@ -5,8 +5,7 @@ import {
 import { homedir } from 'os'
 import { exec } from 'child_process'
 
-import { renewjsons } from './jsonfilescheck'
-import { build_activity_bar } from './activity_bar'
+import { activityBarMain } from './activity_bar'
 import { openprefolder } from './checkfolder'		/** Importiert die Funktion zum öffnen des Vorgefertigten Ordner aus  checkfolder.ts */
 import { checkjsons } from './jsonfilescheck'		/** Importiert die Funktion zum überprüfen der jsons-Datei aus jsonfilescheck.ts */
 import { constcommands } from './constants'
@@ -43,7 +42,7 @@ export function initMain() {
 	}
 
     setStatusBarItem()
-    build_activity_bar()
+    activityBarMain()
     
     if (!compiler_stat) {
         compiler_init()

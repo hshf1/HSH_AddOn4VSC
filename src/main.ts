@@ -15,13 +15,13 @@ import {									/** Importiert die genannten Befehle aus der VS-Code Erweiterun
 										ConfigurationChangeEvent: Ein Ereignis, das ausgelöst wird wenn sich eine Konfigurationseinstellung ändert. Enthält Informationen über die änderung */
 
 import {
-	getHsHRZ, getOS, sethshRZ, setPath, getSettingInit,
+	getHsHRZ, getOS, getSettingInit,
 	getStatusBarItem, initMain, changeHsHOrPrivate
 } from './init'										/** Importiert eine Reihe von Befehlen aus der init.ts */
 import { checkname } from './filefoldername'		/** Importiert die Funktion zum überprüfen des Dateinames aus filefoldername.ts */
 import { getCommands } from './registercommands'	/** Importiert die Registerbefehle für die Anzeigen aus registercommands.ts */
 import { getGithubStatus } from './github'          /** Importiert den Status, ob Anfrage, nach .txt Datei mit nützlichen Links, an den GitHub Server erfolgreich war aus github.ts*/
-import { constcommands } from './constants'         /** Importiert die Namen und Beschreibungen der Commands aus constants.ts*/
+import { treeDataProvider } from './activity_bar'	/** Importiert Funktionen der Activity Bar */
 
 export function activate(context: ExtensionContext) {	/** die "activate" Funktion wird von VS-Code aufgerufen, wenn die Erweierung aktiviert wird */
   
@@ -41,9 +41,10 @@ export function activate(context: ExtensionContext) {	/** die "activate" Funktio
 				while(temp_hshRZ === undefined) {               				/** In jeder Iteration wird der Wert von temp_hshRZ mit dem aktuellen Wert der Konfiguration addon4vsc.computerraum aktualisiert, bis ein Wert gefunden wurde. */
 					temp_hshRZ = workspace.getConfiguration('addon4vsc').get('computerraum')
 				}
-				if (temp_hshRZ != getHsHRZ()) {								/** überprüft ob sich der Wert geändert hat der Aussagt ob man im Computerraum ist */
-					changeHsHOrPrivate(temp_hshRZ)							/** Führt die Funktion aus, um die Pfade anzupassen */
+				if (temp_hshRZ != getHsHRZ()) {		/** überprüft ob sich der Wert geändert hat der Aussagt ob man im Computerraum ist */
+					changeHsHOrPrivate(temp_hshRZ)	/** Führt die Funktion aus, um die Pfade anzupassen */
 				}
+				treeDataProvider.refresh()			/** Aktualisiert die Anzeige der Activity Bar */						
 			}
 		}
 	})

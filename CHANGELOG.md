@@ -8,11 +8,23 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 
 ### neu hinzugefügt 
 
-- 
+- Initialisierung anpassen
+- Code effizienter machen
 
 ### fertig
 
 - 
+
+## [1.5.0] 06.04.2023
+
+### neu hinzugefügt
+
+- Aktualisierung der Pfade und der tasksjson automatisch und ohne neustart von VSCode
+
+### geändert
+
+- Lesbarkeit des Codes angepasst
+- Kleinere Fehler behoben
 
 ## [1.4.0] - [1.4.18] 19.03.2023 - 05.04.2023
 

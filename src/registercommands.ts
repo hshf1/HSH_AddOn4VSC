@@ -1,7 +1,7 @@
 import { env, Uri, window } from 'vscode'
 
 import { treeDataProvider } from './activity_bar'
-import { constcommands } from './constants'
+import { constcommands } from './constants'         /** Importiert die Namen und Beschreibungen der Commands aus constants.ts*/
 import { renewjsons } from './jsonfilescheck'
 import { compiler_init, getPath, setRZHsH, getStatusBarItem } from './init'
 
