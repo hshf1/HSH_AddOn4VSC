@@ -24,7 +24,7 @@ let compiler_stat: boolean = false  /** Boolean die angibt ob Compiler initialis
 export function initMain() {    /** Hauptfunktion die die Initialisierung durchführt und wenn erfolgreich setting_init true setzt. */
     setOS() /** Setzt die entsprechende Boolean für das jeweilige Betriebssystem true */
 
-    if (!getOS('WIN')) { /** "Wenn nicht Windows" TODOOOO*/
+    if (!getOS('WIN')) { /** "Wenn die Boolean IS_Windows false ist */
         if (!extensions.getExtension('vadimcn.vscode-lldb')) { /** Wenn "vadimcn.vscode-lldb" nicht installiert ist */
             commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb') /** Installiere "vadimcn.vscode-lldb" */
         }   /** "vadimcn.vscode-lldb" ist eine Erweiterung, die für den Debbuger wichtig ist. */
@@ -57,7 +57,7 @@ function setOS() { /** Funktion die Überprüft welches Betriebssystem vorliegt,
     IS_LINUX = !IS_WINDOWS && !IS_OSX
 }
 
-export function getOS(os: string) { //TODOOOO
+export function getOS(os: string) { //Funktion die einen WIN, MAC, LIN als Eingabe bekommnt und entsprechend den Boolschen Status zruückhibt
     switch(os) {
         case 'WIN':
             return IS_WINDOWS
@@ -140,10 +140,10 @@ export function setPath() { /** Funktion die die Pfade abhängig vom Betriebssys
     }
 }
 
-export function compiler_init() { /** Funktion die den Compiler installiert */
+export function compiler_init() { /** Globale Funktion die den Compiler installiert */
     exec('gcc --version', (error, stdout) => { /** Prüft ob eine gcc version installiert ist */
         if (error) { /** Wenn Fehler auftritt (keine Version installiert ist) */
-            commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(userhomefolder)).then(() => { //TODOOOOO
+            commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(userhomefolder)).then(() => { /** Erzeugt neues Terminal und setzt das Verzeichnis auf das Heimatverzeichnis */
                 if (IS_WINDOWS) {
                     window.showInformationMessage(`Compiler nicht gefunden. Zum installieren bitte auswählen:`, 'Privater Windows-Rechner', 'HsH Windows-Rechner', 'Jetzt nicht').then(async selected => { /** Fragt ob HSH oder Privater Rechner und wartet auf Antwort */
                         if (selected === 'Privater Windows-Rechner') { /** Wenn Privater Rechner */
@@ -160,52 +160,53 @@ export function compiler_init() { /** Funktion die den Compiler installiert */
                             commands.executeCommand('workbench.action.reloadWindow') /** Lädt alle VS-Code Fenster neu, wodurch neue Änderungen aktiv werden*/
                         }
                     })
-                } else if (IS_OSX) {
+                } else if (IS_OSX) { /** wenn Mac, führt Skript zur installation aus */
                     commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'curl -sL https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/vsclinuxosx.sh | bash\n' })
-                } else if (IS_LINUX) {
+                } else if (IS_LINUX) { /** wenn Mac, führt Skript zur installation aus */
                     commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'sudo snap install curl && curl -sL https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/vsclinuxosx.sh | bash\n' })
                 }
             })
         } else {
-            if (compiler_stat) {
+            if (compiler_stat) { /** Falls compiler_stat schon true */
                 window.showInformationMessage(`Compiler bereits installiert! Informationen zum Compiler: ${stdout}`)
-            } else {
+            } else { /** Falls compiler_stat noch false, wird dann auf true gesetzt */
                 compiler_stat = true
             }
         }
     })
 }
 
-export async function setRZHsH() {
-    if (!IS_WINDOWS) {
+export async function setRZHsH() { /** Globale asynchrone Funktion die Ändert ob es sich um privaten oder HSH Rechner handelt */
+    if (!IS_WINDOWS) { /** Überprüft ob es sich um einen Windows PC handelt */
         window.showInformationMessage('Diese Einstellung ist nur für Windows-Betriebssysteme notwendig.')
         return
     } else {
-        if (workspace.getConfiguration('addon4vsc').get('computerraum')) {
-            window.showInformationMessage('Auf privater Windows-Rechner gestellt.')
+        if (workspace.getConfiguration('addon4vsc').get('computerraum')) { /** Überprüft ob die Einstellung computerraum in settings.json true ist */
+            window.showInformationMessage('Auf privater Windows-Rechner gestellt.') 
         } else {
             window.showInformationMessage('Auf HsH Windows-Rechner im Rechenzentrum gestellt.')
         }
-        workspace.getConfiguration('addon4vsc').update('computerraum', !workspace.getConfiguration('addon4vsc').get('computerraum'), ConfigurationTarget.Global)
+        workspace.getConfiguration('addon4vsc').update('computerraum', !workspace.getConfiguration('addon4vsc').get('computerraum'), ConfigurationTarget.Global) /** Invertiert die Einstellung in settings.json Computerraum */
         compilerpath = workspace.getConfiguration('addon4vsc').get('computerraum') ? 'C:\\\\Program Files (x86)\\\\Dev-Cpp\\\\MinGW64\\\\bin\\\\gcc.exe' : 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe'
-        changeHsHOrPrivate(!hshRZ)
+        /** Speichert den neuen Compilerpfad ein */
+        changeHsHOrPrivate(!hshRZ) /** Ruft Funktion auf die die Boolean ändert die für privat oder HSH Rechner steht */
     }
 }
 
-export function sethshRZ(ext_hshRZ: boolean) {
+export function sethshRZ(ext_hshRZ: boolean) { /** Globale Funktion die die hshRZ Boolean überschreibt*/
     hshRZ = ext_hshRZ
 }
 
-export function getCompilerPath() {
+export function getCompilerPath() { /** Globale Funktion die den Compilerpfad zurückgibt */
     return compilerpath
 }
 
-export function getFilesEncoding() {
+export function getFilesEncoding() {    /** Globale Funktion die zurückgbit um welche Art der Codierung es sich handelt */
     return filesencoding_settingsjson
 }
 
-export async function changeHsHOrPrivate(temp_hshRZ: boolean) {
+export async function changeHsHOrPrivate(temp_hshRZ: boolean) { /** Funktion die die Einstellung der Boolean anwendet und den Compiler-Pfad + task.json aktualisiert  */
     sethshRZ(temp_hshRZ)
-    setPath()
+    setPath()   /** Setzt Compilerpfad neu */
     await commands.executeCommand(constcommands[3].command)   /** Führt command 3 aus, "tasks.json zurücksetzen" */                        
 }
