@@ -1,4 +1,4 @@
-/** Deise Modul enthält Funktionen, die die Namen der Dateien und PFade zu kontrollieren und ggf. zu ersetzen */
+/** Dieses Modul enthält Funktionen um, die Namen der Dateien und Pfade zu kontrollieren und ggf. zu ersetzen */
 
 import { Uri, workspace, window } from 'vscode' /** Importiert die genannten Befehle aus der VS-Code Erweiterung */
 import { extname, dirname, basename, join, parse } from 'path' 
@@ -55,7 +55,7 @@ async function rename(currentPath: string) {
         const constbasename = basename(currentPath) /** Übergibt Dateinamen */ 
 
         const replacedBasename = constbasename.replace(invalidChars, (char: string) => {
-        /** Defniert neue Konstante die den neuen umgeschriebenen Dateinamen enthält */
+        /** Definiert neue Konstante die den neuen umgeschriebenen Dateinamen enthält */
             return {
                 ' ': '_',
                 'ä': 'ae',
