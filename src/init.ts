@@ -1,3 +1,9 @@
+/** Disese Modul enthält Funktionen die für die Initialisierung. Mit diesem Modul werden die Pfade für 
+ *  die .jsons, den Übungsordner und den compiler erstellt. Desweitern wird mithilfe des Skripts der 
+ *  Compiler gedownloadet. Darüber hinaus enthält das Modul Funktion die bestimmen ob es sich um ein
+ *  privaten oder HSH Rechner handelt.
+ */
+
 import {
     extensions, commands, window, StatusBarAlignment,
     Uri, workspace, ConfigurationTarget, StatusBarItem
