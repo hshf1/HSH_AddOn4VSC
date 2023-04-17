@@ -57,7 +57,7 @@ function setOS() { /** Funktion die Überprüft welches Betriebssystem vorliegt,
     IS_LINUX = !IS_WINDOWS && !IS_OSX
 }
 
-export function getOS(os: string) { //Funktion die einen WIN, MAC, LIN als Eingabe bekommnt und entsprechend den Boolschen Status zruückhibt
+export function getOS(os: string) { /** Funktion die  WIN, MAC oder LIN als Eingabe bekommnt und entsprechend den Boolschen Status zurückgibt */
     switch(os) {
         case 'WIN':
             return IS_WINDOWS
