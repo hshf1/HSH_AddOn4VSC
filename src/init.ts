@@ -162,7 +162,7 @@ export function compiler_init() { /** Globale Funktion die den Compiler installi
                     })
                 } else if (IS_OSX) { /** wenn Mac, führt Skript zur installation aus */
                     commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'curl -sL https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/vsclinuxosx.sh | bash\n' })
-                } else if (IS_LINUX) { /** wenn Mac, führt Skript zur installation aus */
+                } else if (IS_LINUX) { /** wenn Linux, führt Skript zur installation aus */
                     commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'sudo snap install curl && curl -sL https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/vsclinuxosx.sh | bash\n' })
                 }
             })
