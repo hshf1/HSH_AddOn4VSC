@@ -8,7 +8,7 @@ import {
     extensions, commands, window, StatusBarAlignment,
     Uri, workspace, ConfigurationTarget, StatusBarItem
 } from 'vscode'     /** Importiert die genannten Befehle aus der VS-Code Erweiterung */
-import { homedir } from 'os'    /** Importiert die homedir Funktion aus dem Node.js Modul.  Die homedir-Funktion gibt das Heimatverzeichnis des aktuellen Benutzers als Zeichenfolge zurück. */ */
+import { homedir } from 'os'    /** Importiert die homedir Funktion aus dem Node.js Modul.  Die homedir-Funktion gibt das Heimatverzeichnis des aktuellen Benutzers als Zeichenfolge zurück. */
 import { exec } from 'child_process'    /** Importiert die exec Funktion aus dem Node.js Modul. Die exec-Funktion wird verwendet, um einen Befehl in der Befehlszeile auszuführen. */
 
 import { activityBarMain } from './activity_bar'    /** Importiert die Funktion die in der Activitybar die Links einfügt */
