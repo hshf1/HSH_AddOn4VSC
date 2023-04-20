@@ -111,7 +111,6 @@
   },
   "dependencies": {
     "@types/request": "^2.48.8",
-    "request": "^2.88.2",
-    "vscode": "^1.1.34"
+    "request": "^2.88.2"
   }
 }
