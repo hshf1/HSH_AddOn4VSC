@@ -8,17 +8,17 @@ import { getPath } from './init' /** Importiert die Funktion die verschiedene Pf
 import { testprogc } from './constants' /** Impoertiert den Inhalt des testprogramms aus constants.ts */
 
 function openfolder() {
-	const options: OpenDialogOptions = {
+	const options: OpenDialogOptions = { /** Übernimmt die Einstellungen für das Dialog Fenster in dem der Ordner ausgewählt werden kann */
 		canSelectMany: false,
 		openLabel: 'Ordner öffnen',
 		canSelectFiles: false,
 		canSelectFolders: true,
 	}
 
-	window.showOpenDialog(options).then(fileUri => {
+	window.showOpenDialog(options).then(fileUri => {	/** Erstellt Fenster in dem ein Ordner ausgewählt werden kann */
 		if (fileUri && fileUri[0]) {
-			console.log('Ausgewählter Ordner: ' + fileUri[0].fsPath);
-			commands.executeCommand(`vscode.openFolder`, fileUri[0]);
+			console.log('Ausgewählter Ordner: ' + fileUri[0].fsPath);	/** Gibt den Ordnerpfad in der Konsole aus */
+			commands.executeCommand(`vscode.openFolder`, fileUri[0]);	/** Öffnet den Ordner */
 		}
 	})
 }
@@ -43,6 +43,6 @@ export async function openprefolder() {
 	if (existsSync(getPath('CUebung'))) {	/** Überprüft ob der Pfad inklusive des Ordners schon existiert */
 		commands.executeCommand(`vscode.openFolder`, folderUri) /** VSCode Befehl der einen Ordner öffnet, übergeben wird der Pfad des Übungsordners  */
 	} else {
-		openfolder()
+		openfolder()	/** Ruft Funktion auf die den Nutzer einen Ordner auswählen lässt */
 	}
 }
