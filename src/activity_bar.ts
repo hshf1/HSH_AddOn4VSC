@@ -41,9 +41,10 @@ class Dependency extends TreeItem {
 /** Diese Klasse implementiert die TreeDataProvider-Schnittstelle und definiert Methoden, um Daten anzuzeigen, wenn der Benutzer auf den Baum klickt oder ihn erweitert. */
 class DepNodeProvider implements TreeDataProvider<Dependency> {
 
-    /** _onDidChangeTreeData ist ein Event-Emitter, der ein Event auslöst, wenn sich der Baum ändert. */
+    /** _onDidChangeTreeData ist ein Event-Emitter, der verwendet wird um andere Teile des Codes zu benachrichtigen, dass sich die Baumdaten geändert haben. */
     private _onDidChangeTreeData: EventEmitter<any> = new EventEmitter<any>()
-    
+    /** onDidChangeTreeData ist eine öffentliche Instanz der Event-Klasse, die das _onDidChangeTreeData Ereignis auslöst, um registrierten Listenern 
+     * (z. B. der createTreeView-Funktion) mitzuteilen, dass sich die Baumdaten geändert haben. */
     readonly onDidChangeTreeData: Event<any> = this._onDidChangeTreeData.event
 
     
@@ -52,7 +53,7 @@ class DepNodeProvider implements TreeDataProvider<Dependency> {
         this._onDidChangeTreeData.fire(undefined) /** Löst Event aus, sorgt dafür, dass alle TreeItems neu gerendert werden müssen */
     }
 
-    /** Funktion die das TreeItem-Objekt der Dependency zurück gibt */
+    /** Funktion die eine Dependency als Eingabe erwartet und es als TreeItem ausgibt */
     getTreeItem(element: Dependency): TreeItem {
         return element
     }
@@ -92,13 +93,13 @@ class DepNodeProvider implements TreeDataProvider<Dependency> {
 export async function activityBarMain() { /** Globale asynchrone Funktion die für die Seitenleiste zuständig ist*/
     aktualisieren() /** Ruft Funktion auf die die Seitenleiste aktualisiert */
 
-    treeDataProvider = new DepNodeProvider();
+    treeDataProvider = new DepNodeProvider();/** Erstellt neue Instanz der DepNodeProvider die eine Implementierung des TreeDataProvider-Interafaces ist und somit eine Baumstruktur von Objekten*/
     treeViewOptions = {
-        treeDataProvider: treeDataProvider
+        treeDataProvider: treeDataProvider /** Objekt wird so definiert das eine TreeDataProivder Eigenschaft hat, die auf die Variable gleichen Names verweist */
     }
 
     while (getGithubStatus() === undefined) {/** Versucht solange eine Verbindung zu Github aufzuabauem bis es entweder klappt oder fehlschlägt */
-        await new Promise(resolve => setTimeout(resolve, 1000)); /** Warte 1sec */
+        await new Promise(resolve => setTimeout(resolve, 1000)); /** Warte 1 sek */
     }
 
     if (getGithubStatus() === true) { /** Wenn Verbindung besteht */
@@ -108,8 +109,8 @@ export async function activityBarMain() { /** Globale asynchrone Funktion die f�
         }   /** Definiert die Links als neue Dependencys/Elemente die in der Seitenleiste unter Links auftauchen */
     }
     
-    window.registerTreeDataProvider('menue_bar_activity', treeDataProvider) /** Erstellt neue Baumansi */
-    window.createTreeView('menue_bar_activity', treeViewOptions)
+    window.registerTreeDataProvider('menue_bar_activity', treeDataProvider) /** Erstellt neuen TreeView mit dem Namen "menue_bar_activity" und den Daten aus TreeDataProvider*/
+    window.createTreeView('menue_bar_activity', treeViewOptions) /** Erstellt die grphische Oberfläche des TreeViews an der Seitenleiste */
 }
 
 function aktualisieren() { /** Funktion die die Seitenleiste aktualisiert */

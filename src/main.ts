@@ -6,13 +6,18 @@
  * Die activate()-Funktion registriert auch mehrere Befehle für die Benutzeroberfläche.
 */
 
-import {									/** Importiert die genannten Befehle aus der VS-Code Erweiterung */
-	ExtensionContext, commands, workspace,	/**	ExtensionContext: Eine Klasse, die Kontextinformationen zur Erweiterung enthält und verschiedene Erweiterungs-APIs bereitstellt. */
-	debug, window, ConfigurationChangeEvent	/**			commands: Ein Objekt, das verschiedene Methoden bereitstellt, um Befehle in der Visual Studio Code-UI zu registrieren und auszuführen. */
-} from 'vscode'			 					/**		   workspace: Ein Objekt, das verschiedene Methoden und Eigenschaften bereitstellt, um auf Workspace-Informationen und -Einstellungen zuzugreifen.
-														   debug: Ein Objekt, das Methoden und Ereignisse bereitstellt, um Debugging-Funktionen in Visual Studio Code-Erweiterungen zu aktivieren.
-														  window: Ein Objekt, das verschiedene Methoden und Eigenschaften bereitstellt, um auf die Visual Studio Code-UI zuzugreifen und sie zu manipulieren. 
-										ConfigurationChangeEvent: Ein Ereignis, das ausgelöst wird wenn sich eine Konfigurationseinstellung ändert. Enthält Informationen über die änderung */
+import {									
+	ExtensionContext, commands, workspace,	
+	debug, window, ConfigurationChangeEvent	
+} from 'vscode'		
+
+/** Importiert die genannten Befehle aus der VS-Code Erweiterung 
+ * ExtensionContext: Eine Klasse, die Kontextinformationen zur Erweiterung enthält und verschiedene Erweiterungs-APIs bereitstellt.
+ * commands: Ein Objekt, das verschiedene Methoden bereitstellt, um Befehle in der Visual Studio Code-UI zu registrieren und auszuführen.
+ *  workspace: Ein Objekt, das verschiedene Methoden und Eigenschaften bereitstellt, um auf Workspace-Informationen und -Einstellungen zuzugreifen.
+ *  debug: Ein Objekt, das Methoden und Ereignisse bereitstellt, um Debugging-Funktionen in Visual Studio Code-Erweiterungen zu aktivieren.
+ *	window: Ein Objekt, das verschiedene Methoden und Eigenschaften bereitstellt, um auf die Visual Studio Code-UI zuzugreifen und sie zu manipulieren. 
+ *	ConfigurationChangeEvent: Ein Ereignis, das ausgelöst wird wenn sich eine Konfigurationseinstellung ändert. Enthält Informationen über die änderung */
 
 import {
 	getHsHRZ, getOS, getSettingInit,
@@ -25,9 +30,9 @@ import { treeDataProvider } from './activity_bar'	/** Importiert Funktionen der 
 
 export function activate(context: ExtensionContext) {	/** die "activate" Funktion wird von VS-Code aufgerufen, wenn die Erweierung aktiviert wird */
   
-	initialize()										/** Ruft die Funktion auf, die die Initialisierung beginnt */
+	initialize()	/** Ruft die Funktion auf, die die Initialisierung beginnt */
 
-	const eventHandler_checkname = async () => {             	/**	Code definiert eine asynchrone Funktion die als Event Handler fungiert */
+	const eventHandler_checkname = async () => {    /**	Code definiert eine asynchrone Funktion die als Event Handler fungiert */
 		if (getStatusBarItem().command === 'extension.off') {	/** überprüft ob der Statusleisten Button auf "pausiert" steht */
 			await checkname()                         			/**	Führt die Funktion aus die den Namen überprüft und wartet bis sie fertig ist */
 		}
