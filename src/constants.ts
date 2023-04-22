@@ -1,8 +1,11 @@
-import { Command } from "vscode"
+/** Dieses Modul enthält den Inhalt der .json Dateien, das testprogc und die Eigenschaften der Befehle  */
 
-import { getCompilerPath, getFilesEncoding } from "./init"
 
-export const constcommands: Command[] = [
+import { Command } from "vscode" /** Importiert die Command Schnittstelle aus der VSCode Modul */
+
+import { getCompilerPath, getFilesEncoding } from "./init" /** Importiert die Funktion die den CompilerPfad bestimmt und die Funktion die das Encoding Format bestimmt */
+
+export const constcommands: Command[] = [ /** Definiert die einzelnen Befehle in einem Array. */
     { command: 'extension.on', title: "Erweiterung wieder aktivieren" },
     { command: "extension.off", title: "Erweiterung bis zum nächsten (Neu-)Start von VSCode pausieren" },
     { command: 'default.settingsjson', title: 'settings.json zurücksetzen' },
@@ -12,6 +15,7 @@ export const constcommands: Command[] = [
     { command: 'setRZHsH.setting', title: 'HsH Rechenzentrum' }
 ]
 
+/** Globale Konstante die das Testprogramm enthält */
 export const testprogc = `#include <stdio.h>
 
 int main()
@@ -31,8 +35,9 @@ int main()
     return 0;
 }`
 
+/** Globale Funktion die den Inhalt für Settings.json zurückgibt */
 export function getSettingsJsonData() {
-    let temp = getFilesEncoding()
+    let temp = getFilesEncoding() /** Speichert das Encoding Format und baut es in den Inhalt ein*/
 
     let settingsjsondata = `{
         // Allgemeine Nutzereinstellungen
@@ -93,8 +98,9 @@ export function getSettingsJsonData() {
     return settingsjsondata
 }
 
+/** Globale Funktion die den Inhalt für Task.json zurückgibt */
 export function getTasksJsonData() {
-    let temp = getCompilerPath()
+    let temp = getCompilerPath() /** Speichert Compilerpfad zwischen und baut ihn in den Inhalt ein */
 
     let tasksjsondata = `{
         "version": "2.0.0",
