@@ -1,8 +1,8 @@
 /** Noch nicht kommentieren, Funktion noch nicht fertig - CK */
 
 import {
-    Terminal, commands, env,
-    window
+    Terminal, commands,
+    env, window
 } from "vscode"
 import { promisify } from 'util'
 import { exec } from 'child_process'
@@ -17,7 +17,6 @@ import { getOS } from "./init"
 const execAsync = promisify(exec)
 
 export async function reportAProblem() {
-    const userEmail = 'example@example.com'
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
     const userMail = await window.showInputBox({
@@ -27,10 +26,10 @@ export async function reportAProblem() {
         (Zum Bestätigen die ENTER-Taste oder zum Abbrechen ESC-Taste drücken)`,
         placeHolder: "Hier reinschreiben...",
         ignoreFocusOut: true
-    })
+    }) || ''
 
-    if(!userMail || !emailPattern.test(userEmail)) {
-        window.showInformationMessage("Problem melden wurde abgebrochen. Bitte eine richtige E-Mail Adresse angeben!")
+    if(!emailPattern.test(userMail)) {
+        window.showWarningMessage("Problem melden wurde abgebrochen. Bitte eine richtige E-Mail Adresse angeben!")
         return
     }
 
@@ -44,7 +43,7 @@ export async function reportAProblem() {
 
     const scPermissionText = await window.showQuickPick(['Ja', 'Nein'], {
         canPickMany: false,
-        placeHolder: 'Soll ein Screenshot von VSCode mitangehängt werden?',
+        placeHolder: 'Soll ein Screenshot von VSCode mitangehängt werden? (Nur der aktualle VSCode Window ist sichtbar!)',
         ignoreFocusOut: true
     })
 
@@ -123,7 +122,7 @@ async function sendProblemReport(userMail: string, problem: string, screenshotPe
             await transporter.sendMail(mailOptions)
             window.showInformationMessage('Problem erfolgreich gemeldet!')
         } else {
-            window.showInformationMessage('Problem melden abgebrochen!')
+            window.showInformationMessage('Problem melden erfolgreich abgebrochen!')
             return
         }
   
@@ -167,5 +166,5 @@ async function getTerminalContent(terminal: Terminal): Promise<string> {
 
     const text = await env.clipboard.readText()
 
-    return text || 'Dieser Terminal hat kein Inhalt'
+    return text || 'Dieses Terminal hat keinen Inhalt'
 }
