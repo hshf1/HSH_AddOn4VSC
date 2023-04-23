@@ -28,7 +28,7 @@ export async function openprefolder() {
 	
 	if (!existsSync(getPath('CUebung'))) {	/** Überprüft ob der Pfad inklusive des Ordners noch nicht existiert */
 		try {
-			mkdirSync(getPath('CUebung'))	/** Verucht CUebung zu erstellen */
+			mkdirSync(getPath('CUebung'))	/** Versucht CUebung zu erstellen */
 		} catch (error) {
 			console.error(error)	/** Falls ein Fehler entsteht wird dieser in die Konsole geschrieben */
 		}
