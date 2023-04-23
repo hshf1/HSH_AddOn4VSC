@@ -50,15 +50,10 @@ export async function reportAProblem() {
 
     const scPermissionBoolean = scPermissionText === 'Ja'
     
-    if (userMail || problem) {
-        sendProblemReport(userMail, problem, scPermissionBoolean)
-    } else {
-        window.showInformationMessage("Problem melden wurde abgebrochen.")
-        return
-    }
+    sendProblemReport(userMail, problem, scPermissionBoolean)
 }
 
-async function sendProblemReport(userMail?: string, problem?: string, screenshotPermission?: boolean) {
+async function sendProblemReport(userMail: string, problem: string, screenshotPermission: boolean) {
 
     try {
         let screenshotFilePath: any
@@ -69,7 +64,6 @@ async function sendProblemReport(userMail?: string, problem?: string, screenshot
                 await execAsync(screenshotCommand)
             } catch(error) {
                 window.showWarningMessage("Screenshot konnte nicht automatisch aufgenommen werden. Geben Sie die Rechte für VSCode frei und versuchen Sie es erneut!")
-                return
             }
         }
 
