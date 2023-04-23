@@ -1,3 +1,5 @@
+/** Noch nicht kommentieren, Funktion noch nicht fertig - CK */
+
 import {
     Terminal, commands, env,
     window
