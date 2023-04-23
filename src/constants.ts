@@ -12,7 +12,8 @@ export const constcommands: Command[] = [ /** Definiert die einzelnen Befehle in
     { command: 'default.tasksjson', title: 'tasks.json zurücksetzen' },
     { command: 'open.link', title: 'Öffne Link' },
     { command: 'install.compiler', title: 'Compiler installieren' },
-    { command: 'setRZHsH.setting', title: 'HsH Rechenzentrum' }
+    { command: 'setRZHsH.setting', title: 'HsH Rechenzentrum' },
+    { command: 'report.problem', title: 'Problem melden'}
 ]
 
 /** Globale Konstante die das Testprogramm enthält */

@@ -9,6 +9,7 @@ import { treeDataProvider } from './activity_bar'   /** Importiert den TreeDataP
 import { constcommands } from './constants'         /** Importiert die Namen und Beschreibungen der Commands aus constants.ts*/
 import { renewjsons } from './jsonfilescheck'       /** Importiert die Funktion zur Überprüfung und aktualisierung der .jsons Dateien aus jsonfilescheck.ts*/ 
 import { compiler_init, getPath, setRZHsH, getStatusBarItem } from './init' /** Importiert Funktionen aus init.ts */
+import { reportAProblem } from './reportaproblem'
 
 
 const constregistercommands = [             /** Die Befehle sind in einem Array gespeichert und beziehen ihre Namen und Beschreibungen aus der Datei constants.ts */
@@ -67,6 +68,12 @@ const constregistercommands = [             /** Die Befehle sind in einem Array 
         callback: async () => {     /** Erstellt asynchrone Funktion  */
             await setRZHsH()         /** Ruft Funktion auf die die Einstellungen für den HSH Rechner einstellt */
             treeDataProvider.refresh()
+        }
+    },
+    {
+        name: constcommands[7].command,
+        callback: async () => {
+            await reportAProblem()
         }
     }
 ]

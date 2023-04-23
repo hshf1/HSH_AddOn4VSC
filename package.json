@@ -23,6 +23,7 @@
     "onCommand:extension.off",
     "onCommand:open.link",
     "onCommand:setRZHsH.setting",
+    "onCommand:report.problem",
     "onStartupFinished"
   ],
   "main": "./out/main.js",
@@ -80,6 +81,10 @@
       {
         "command": "extension.off",
         "title": "Erweiterung pausieren"
+      },
+      {
+        "command": "report.problem",
+        "title": "Problem melden"
       }
     ]
   },
@@ -100,6 +105,7 @@
     "@types/glob": "^8.0.0",
     "@types/mocha": "^10.0.0",
     "@types/node": "16.x",
+    "@types/nodemailer": "^6.4.7",
     "@types/vscode": "^1.50.0",
     "@typescript-eslint/eslint-plugin": "^5.42.0",
     "@typescript-eslint/parser": "^5.42.0",
@@ -111,6 +117,7 @@
   },
   "dependencies": {
     "@types/request": "^2.48.8",
+    "nodemailer": "^6.9.1",
     "request": "^2.88.2"
   }
 }
