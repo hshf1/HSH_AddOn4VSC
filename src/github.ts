@@ -1,4 +1,4 @@
-/** Diese Modul hat die Aufgabe sich mit GitHub zu verbinden und die "nützlichen Links" zu kopieren und richtig einzuspeichern */
+/** Dieses Modul hat die Aufgabe sich mit GitHub zu verbinden und die "nützlichen Links" zu kopieren und richtig einzuspeichern */
 
 import { get } from 'request' /** Importiert die get Funktion aus dem Node.js Modul, damit lassen sich URL's aufrufen */
 
