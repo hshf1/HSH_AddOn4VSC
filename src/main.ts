@@ -61,7 +61,8 @@ export function activate(context: ExtensionContext) {
 
 }
 
-async function initialize() {							/** Der Zweck dieser Funktion ist es, die Module init.ts und github.ts zu initialisieren */
+/** Der Zweck dieser Funktion ist es, die Module init.ts und github.ts zu initialisieren */
+async function initialize() {
 	let init_status: boolean | undefined = undefined	/** Deklaration von init_status, Variable gibt an ob die Initialisierung erfolgreich war */
 	try {
 		await require('./init')									/** Versucht Modul init.ts zu laden */
