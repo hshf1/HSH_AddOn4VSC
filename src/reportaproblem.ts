@@ -55,6 +55,8 @@ export async function reportAProblem() {
     })
 
     const codeAttachBoolean = codeAttachText === 'Ja'
+
+    // TODO: Soll gefragt werden, ob settings.json und tasks.json mitgesendet werden? Oder soll das automatisch mitgesendet werden?
     
     sendProblemReport(userMail, problem, scPermissionBoolean, codeAttachBoolean)
 }
