@@ -14,7 +14,7 @@ import { existsSync } from 'fs' /** Importiert das existsSync Modul aus node.js,
 import { getOS } from './init' /** Importiert die Funktion zur bestimmung des Betriebssystems aus init.ts */
 
 let firstInit: boolean = false /** Deklariert eine Variable die auskunft darüber gibt ob eine erste Initalisierung schonmal statt gefunden hat */
-const dummy: boolean = false /** dummy var wartet bis die Funktion für Programmiersprachenerkennung vorhanden ist */
+const dummy: boolean = false // TODO: dummy var wartet bis die Funktion für Programmiersprachenerkennung vorhanden ist
 
 export async function checkname() {
     const filePath: string = window.activeTextEditor?.document.uri.fsPath || "no_file_defined" 
