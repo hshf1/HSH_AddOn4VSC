@@ -10,16 +10,22 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 
 - Initialisierung anpassen
 - Code effizienter machen
+- Java implementierung
 
 ### fertig
 
 - 
 
-## [1.5.1] 23.04.2023
+## [1.5.1] - [1.5.4] 23.04.2023 - 24.04.2023
 
 ### neu hinzugefügt
 
 - Problem melden als neue Funktion in der Activity Bar (linke Menüleiste)
+
+### geändert
+
+- Code der Funktion "Problem melden" angepasst
+- automatisches hinzufügen/ändern der '.c'-Dateiendung (vorerst) ausgeschaltet
 
 ## [1.5.0] 06.04.2023
 
