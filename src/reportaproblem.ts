@@ -1,4 +1,5 @@
 /** Noch nicht kommentieren, Funktion noch nicht fertig - CK */
+// TODO: Code effizienter und lessbarer schreiben
 
 import {
     Terminal, commands,
@@ -20,7 +21,7 @@ export async function reportAProblem() {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
     const userMail = await window.showInputBox({
-        prompt: `Bitte E-Mail Adresse für künftige Korrespondenz angeben. Eine Kopie des Problems wird an deine E-Mail gesendet.
+        prompt: `Bitte E-Mail Adresse für künftige Korrespondenz angeben. Eine Kopie dieser Problemmeldung wird an die angegebene E-Mail gesendet.
         (Zum Bestätigen die ENTER-Taste oder zum Abbrechen ESC-Taste drücken)`,
         placeHolder: "max@mustermail.de (Pflichtfeld)",
         ignoreFocusOut: true
@@ -48,7 +49,7 @@ export async function reportAProblem() {
 
     const codeAttachText = await window.showQuickPick(['Ja', 'Nein'], {
         canPickMany: false,
-        placeHolder: 'Sollen aktive geöffnete Dateien in VSCode mitgesendet werden? Schließe vorher Dateien in VSCode, die nicht mitgesendet werden sollen!',
+        placeHolder: 'Soll die aktiv geöffnete Datei in VSCode mitgesendet werden?',
         ignoreFocusOut: true
     })
 
@@ -103,7 +104,7 @@ async function sendProblemReport(userMail: string, problem: string, screenshotPe
           to: getSmtpEMail(),
           cc: userMail,
           subject: 'VSCode Problem',
-          text: `Bitte keine Dateien oder Programme ausführen! Sollte ein Code mitgeschickt worden sein, immer stets überprüfen vor dem Ausführen!\nFolgendes Problem wurde vom Nutzer ${userMail} gemeldet:\n\n${problem}`,
+          text: `Bitte keine Dateien oder Programme ausführen!\nSollte ein Code mitgeschickt worden sein, immer stets überprüfen vor dem Ausführen!\n\nFolgendes Problem wurde vom Nutzer ${userMail} gemeldet:\n\n${problem}`,
           attachments: [
             {
               filename: 'logs.txt',
@@ -184,19 +185,20 @@ async function getTerminalContent(terminal: Terminal): Promise<string> {
 }
 
 function getActiveEditorFilepaths(): { filename: string, path: string }[] {
-    const activeEditor = window.activeTextEditor;
+    // FIXME: Es werden nicht alle geöffneten Dateien im VSC Editor mitgeschickt
+    const activeEditor = window.activeTextEditor
     if (!activeEditor) {
-      return [];
+      return []
     }
-    const document = activeEditor.document;
-    const filePaths = [{ filename: document.fileName.split('\\').pop()!, path: document.fileName }];
+    const document = activeEditor.document
+    const filePaths = [{ filename: document.fileName.split('\\').pop()!, path: document.fileName }] //TODO: Ist es sinnvoll den Dateinamen ohne die vorherigen Ordnernamen anzugeben?
     for (let i = 0; i < window.visibleTextEditors.length; i++) {
-      const editor = window.visibleTextEditors[i];
+      const editor = window.visibleTextEditors[i]
       if (editor !== activeEditor) {
-        const document = editor.document;
-        filePaths.push({ filename: document.fileName.split('\\').pop()!, path: document.fileName });
+        const document = editor.document
+        filePaths.push({ filename: document.fileName.split('\\').pop()!, path: document.fileName }) //TODO: Ist es sinnvoll den Dateinamen ohne die vorherigen Ordnernamen anzugeben?
       }
     }
-    return filePaths;
+    return filePaths
   }
   
