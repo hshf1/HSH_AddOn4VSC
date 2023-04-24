@@ -26,6 +26,7 @@ export async function reportAProblem() {
         placeHolder: "max@mustermail.de (Pflichtfeld)",
         ignoreFocusOut: true
     }) || ''
+    // FIXME: Leerzeichen am Anfang und am Ende trimmen mit .trim()
 
     if(!emailPattern.test(userMail)) {
         window.showWarningMessage("Problem melden wurde abgebrochen. Bitte eine richtige E-Mail Adresse angeben!")
