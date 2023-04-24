@@ -28,7 +28,7 @@ import { getCommands } from './registercommands'	/** Importiert die Registerbefe
 import { getGithubStatus } from './github'          /** Importiert den Status, ob Anfrage, nach .txt Datei mit nützlichen Links, an den GitHub Server erfolgreich war aus github.ts*/
 import { treeDataProvider } from './activity_bar'	/** Importiert Funktionen der Activity Bar */
 
-/** die "activate" Funktion wird von VS-Code aufgerufen, wenn die Erweierung aktiviert wird */
+/** die "activate" Funktion wird von VS-Code aufgerufen, wenn die Erweiterung aktiviert wird */
 export function activate(context: ExtensionContext) {
   
 	initialize()	/** Ruft die Funktion auf, die die Initialisierung beginnt */
@@ -81,10 +81,11 @@ async function initialize() {
 			if (getGithubStatus() === false) {	/** Falls bei github.ts Fehler aufgetreten sind kommt dieses Meldung.  */
 				window.showWarningMessage(`Nützliche Links aus GitHub konnten nicht geladen werden. Bei Bedarf Internetverbindung prüfen und VSCode neu starten.`)
 			}
-			init_status = true					/** Wenn beide Module erfolgreich geladen worden, wird der init_status gestzt und somit die Initalisierung abgeschlossen */
+			init_status = true					/** Wenn beide Module erfolgreich geladen sind, wird der init_status gesetzt und somit die Initalisierung abgeschlossen */
 		}
 		await new Promise(resolve => setTimeout(resolve, 1000))	/** Wartet 1000ms bevor die Schleife wieder anfängt */
 	}
 }
 
-export function deactivate() { }	/** Funktion die Aufgerufen wird wenn die Erweiterung deaktiviert oder deinstalliert wird.*/
+/** Funktion die Aufgerufen wird wenn die Erweiterung deaktiviert oder deinstalliert wird.*/
+export function deactivate() { }
