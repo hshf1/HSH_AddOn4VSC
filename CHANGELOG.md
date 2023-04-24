@@ -16,7 +16,7 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 
 - 
 
-## [1.5.1] - [1.5.4] 23.04.2023 - 24.04.2023
+## [1.5.1] - [1.5.5] 23.04.2023 - 24.04.2023
 
 ### neu hinzugefügt
 
@@ -26,6 +26,7 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 
 - Code der Funktion "Problem melden" angepasst
 - automatisches hinzufügen/ändern der '.c'-Dateiendung (vorerst) ausgeschaltet
+- Problem melden: Screenshot, Inhalt aus Terminals und Code kann angehängt werden
 
 ## [1.5.0] 06.04.2023
 
