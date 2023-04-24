@@ -28,7 +28,8 @@ import { getCommands } from './registercommands'	/** Importiert die Registerbefe
 import { getGithubStatus } from './github'          /** Importiert den Status, ob Anfrage, nach .txt Datei mit nützlichen Links, an den GitHub Server erfolgreich war aus github.ts*/
 import { treeDataProvider } from './activity_bar'	/** Importiert Funktionen der Activity Bar */
 
-export function activate(context: ExtensionContext) {	/** die "activate" Funktion wird von VS-Code aufgerufen, wenn die Erweierung aktiviert wird */
+/** die "activate" Funktion wird von VS-Code aufgerufen, wenn die Erweierung aktiviert wird */
+export function activate(context: ExtensionContext) {
   
 	initialize()	/** Ruft die Funktion auf, die die Initialisierung beginnt */
 

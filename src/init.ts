@@ -4,6 +4,8 @@
  *  privaten oder HSH Rechner handelt.
  */
 
+// TODO: Nach update im HsH Computerraum müssen Variablen und Funktionen hier angepasst werden
+
 import {
     extensions, commands, window, StatusBarAlignment,
     Uri, workspace, ConfigurationTarget, StatusBarItem
@@ -27,7 +29,8 @@ let setting_init: boolean | undefined = undefined   /** Boolean die zurück gibt
 let hshRZ: boolean | undefined = undefined  /** Boolean die angibt ob es sich um einen PC im Rechnerraum handelt*/
 let compiler_stat: boolean = false  /** Boolean die angibt ob Compiler initialisiert wurde und keinen Fehler ausgibt */
 
-export function initMain() {    /** Hauptfunktion die die Initialisierung durchführt und wenn erfolgreich setting_init true setzt. */
+/** Hauptfunktion die die Initialisierung durchführt und wenn erfolgreich setting_init true setzt. */
+export function initMain() {
     setOS() /** Setzt die entsprechende Boolean für das jeweilige Betriebssystem true */
 
     if (!getOS('WIN')) { /** "Wenn die Boolean IS_Windows false ist */
@@ -56,14 +59,17 @@ export function initMain() {    /** Hauptfunktion die die Initialisierung durchf
 
     setting_init = true /** Setzt true um zu zeigen, dass initMain abgeschlossen ist */
 }
-
-function setOS() { /** Funktion die Überprüft welches Betriebssystem vorliegt, und entsprechnd die Boolean setzt */
+/** Funktion die Überprüft welches Betriebssystem vorliegt
+ * und entsprechend die Boolean setzt */
+function setOS() {
     IS_WINDOWS = process.platform.startsWith('win')
     IS_OSX = process.platform == 'darwin'
     IS_LINUX = !IS_WINDOWS && !IS_OSX
 }
 
-export function getOS(os: string) { /** Funktion die  WIN, MAC oder LIN als Eingabe bekommnt und entsprechend den Boolschen Status zurückgibt */
+/** Funktion die  WIN, MAC oder LIN als Eingabe bekommnt
+ * und entsprechend den Boolschen Status zurückgibt */
+export function getOS(os: string) {
     switch(os) {
         case 'WIN':
             return IS_WINDOWS
@@ -76,7 +82,8 @@ export function getOS(os: string) { /** Funktion die  WIN, MAC oder LIN als Eing
     }
 }
 
-function setStatusBarItem() { /** Funktion die den Button in der Statusbar definiert */
+/** Funktion die den Button in der Statusbar definiert */
+function setStatusBarItem() {
     statusbar_button = window.createStatusBarItem(StatusBarAlignment.Right, 100)
     statusbar_button.text = 'HSH_AddOn4VSC pausieren'
     statusbar_button.tooltip = 'Klicken, um die Erweiterung AddOn4VSC zu pausieren (spätestens, bis wenn VSCode neu startet)'
@@ -84,19 +91,23 @@ function setStatusBarItem() { /** Funktion die den Button in der Statusbar defin
     statusbar_button.show()
 }
 
-export function getStatusBarItem() { /** Funktion die statusbar_button Variable zurückgibt und somit global verfügbar macht */
+/** Funktion die statusbar_button Variable zurückgibt und somit global verfügbar macht */
+export function getStatusBarItem() {
     return statusbar_button 
 }
 
-export function getHsHRZ() {    /** Funktion die hshRZ Variable zurückgibt und somit global verfügbar macht */
+/** Funktion die hshRZ Variable zurückgibt und somit global verfügbar macht */
+export function getHsHRZ() {
     return hshRZ
 }
 
-export function getSettingInit() {  /** Funktion die setting_init Variable zurückgibt und somit global verfügbar macht */
+/** Funktion die setting_init Variable zurückgibt und somit global verfügbar macht */
+export function getSettingInit() {
     return setting_init
 }
 
-export function getPath(temp: string) {     /** Funktion die die Pfade zurückgibt und somit global verfügbar macht */
+/** Funktion die die Pfade zurückgibt und somit global verfügbar macht */
+export function getPath(temp: string) {
     switch(temp) {
         case 'settingsjson':
             return filePath_settingsjson
@@ -111,7 +122,8 @@ export function getPath(temp: string) {     /** Funktion die die Pfade zurückgi
     }
 }
 
-export function setPath() { /** Funktion die die Pfade abhängig vom Betriebssystem bestimmt und in Variablen speichert */
+/** Funktion die die Pfade abhängig vom Betriebssystem bestimmt und in Variablen speichert */
+export function setPath() {
     compilerpath = hshRZ ? 'C:\\\\Program Files (x86)\\\\Dev-Cpp\\\\MinGW64\\\\bin\\\\gcc.exe' : 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe'
     /** Je nach dem ob im Rechneraum oder nicht wird der enstprechende Compiler-Pfad gespeichert */
     filesencoding_settingsjson = IS_WINDOWS ? `cp437` : `utf8`
@@ -146,7 +158,8 @@ export function setPath() { /** Funktion die die Pfade abhängig vom Betriebssys
     }
 }
 
-export function compiler_init() { /** Globale Funktion die den Compiler installiert */
+/** Globale Funktion die den Compiler installiert */
+export function compiler_init() {
     exec('gcc --version', (error, stdout) => { /** Prüft ob eine gcc version installiert ist */
         if (error) { /** Wenn Fehler auftritt (keine Version installiert ist) */
             commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(userhomefolder)).then(() => { /** Erzeugt neues Terminal und setzt das Verzeichnis auf das Heimatverzeichnis */
@@ -182,7 +195,8 @@ export function compiler_init() { /** Globale Funktion die den Compiler installi
     })
 }
 
-export async function setRZHsH() { /** Globale asynchrone Funktion die Ändert ob es sich um privaten oder HSH Rechner handelt */
+/** Globale asynchrone Funktion die Ändert ob es sich um privaten oder HSH Rechner handelt */
+export async function setRZHsH() {
     if (!IS_WINDOWS) { /** Überprüft ob es sich um einen Windows PC handelt */
         window.showInformationMessage('Diese Einstellung ist nur für Windows-Betriebssysteme notwendig.')
         return
@@ -199,19 +213,23 @@ export async function setRZHsH() { /** Globale asynchrone Funktion die Ändert o
     }
 }
 
-export function sethshRZ(ext_hshRZ: boolean) { /** Globale Funktion die die hshRZ Boolean überschreibt*/
+/** Globale Funktion die die hshRZ Boolean überschreibt */
+export function sethshRZ(ext_hshRZ: boolean) {
     hshRZ = ext_hshRZ
 }
 
-export function getCompilerPath() { /** Globale Funktion die den Compilerpfad zurückgibt */
+/** Globale Funktion die den Compilerpfad zurückgibt */
+export function getCompilerPath() {
     return compilerpath
 }
 
-export function getFilesEncoding() {    /** Globale Funktion die zurückgbit um welche Art der Codierung es sich handelt */
+/** Globale Funktion die zurückgibt um welche Art der Codierung es sich handelt */
+export function getFilesEncoding() {
     return filesencoding_settingsjson
 }
 
-export async function changeHsHOrPrivate(temp_hshRZ: boolean) { /** Funktion die die Einstellung der Boolean anwendet und den Compiler-Pfad + task.json aktualisiert  */
+/** Funktion die die Einstellung der Boolean anwendet und den Compiler-Pfad + task.json aktualisiert */
+export async function changeHsHOrPrivate(temp_hshRZ: boolean) {
     sethshRZ(temp_hshRZ)
     setPath()   /** Setzt Compilerpfad neu */
     await commands.executeCommand(constcommands[3].command)   /** Führt command 3 aus, "tasks.json zurücksetzen" */                        

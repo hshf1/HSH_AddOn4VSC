@@ -21,7 +21,7 @@ export async function reportAProblem() {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
     const userMail = await window.showInputBox({
-        prompt: `Bitte E-Mail Adresse für künftige Korrespondenz angeben. Eine Kopie dieser Problemmeldung wird an die angegebene E-Mail gesendet.
+        prompt: `Bitte E-Mail Adresse für künftige Korrespondenz angeben. Eine Kopie dieser Problemmeldung wird an die angegebene E-Mail Adresse gesendet.
         (Zum Bestätigen die ENTER-Taste oder zum Abbrechen ESC-Taste drücken)`,
         placeHolder: "max@mustermail.de (Pflichtfeld)",
         ignoreFocusOut: true

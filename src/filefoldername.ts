@@ -27,8 +27,8 @@ export async function checkname() {
         window.showErrorMessage(`${constdirname} enthält Umlaute oder Leerzeichen! Diese müssen manuell umbenannt werden!`)
     }
 
-    if (constbasename.indexOf('ä') !== -1 || constbasename.indexOf('ö') !== -1 || constbasename.indexOf('ü') !== -1 || constbasename.indexOf(' ') !== -1 || constextname !== '.c') {
-        /** Überprüft ob der Dateiname Umlaute enthält oder nicht mit .c endet */
+    if (constbasename.indexOf('ä') !== -1 || constbasename.indexOf('ö') !== -1 || constbasename.indexOf('ü') !== -1 || constbasename.indexOf(' ') !== -1 /*+ || constextname !== '.c' */) {
+        /** Überprüft ob der Dateiname Umlaute enthält (oder nicht mit .c endet )*/
         if (filePath === "no_file_defined" || filePath === undefined || filePath.includes('settings.json') || filePath.includes('tasks.json')) {
             /** Falls nicht definiert oder eine .json wird Funktion abgebrochen */
             return
@@ -81,7 +81,8 @@ async function rename(currentPath: string) {
     }
 }
 
-async function save_rename(currentPath: string, newfullname: any) { /** Funktion die den neuen Namen einspeichert, bekommt den alten und den neuen Namen+Pfad */
+/** Funktion die den neuen Namen einspeichert, bekommt den alten und den neuen Namen+Pfad */
+async function save_rename(currentPath: string, newfullname: any) {
     if (existsSync(newfullname)) {  /** Überprüft ob der neue Name der Datei schon existiert */
         let parsedPath = parse(newfullname)
         let newName = join(parsedPath.dir, `${parsedPath.name}_1${parsedPath.ext}`) /** Hängt an den Namen ein "_1" */

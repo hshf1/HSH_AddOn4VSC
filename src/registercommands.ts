@@ -78,6 +78,7 @@ const constregistercommands = [             /** Die Befehle sind in einem Array 
     }
 ]
 
-export function getCommands() {            /**  Exportiert Funktion die das Array an Befehls-Objekten für andere Module des Codes verfügbar macht  */
+/** Exportiert Funktion die das Array an Befehls-Objekten für andere Module des Codes verfügbar macht */
+export function getCommands() {
     return constregistercommands
 }

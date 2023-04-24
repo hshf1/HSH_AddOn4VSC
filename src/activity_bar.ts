@@ -90,7 +90,8 @@ class DepNodeProvider implements TreeDataProvider<Dependency> {
     }
 }
 
-export async function activityBarMain() { /** Globale asynchrone Funktion die für die Seitenleiste zuständig ist*/
+/** Globale asynchrone Funktion die für die Seitenleiste zuständig ist*/
+export async function activityBarMain() {
     aktualisieren() /** Ruft Funktion auf die die Seitenleiste aktualisiert */
 
     treeDataProvider = new DepNodeProvider();/** Erstellt neue Instanz der DepNodeProvider die eine Implementierung des TreeDataProvider-Interafaces ist und somit eine Baumstruktur von Objekten*/
@@ -113,7 +114,8 @@ export async function activityBarMain() { /** Globale asynchrone Funktion die f�
     window.createTreeView('menue_bar_activity', treeViewOptions) /** Erstellt die grphische Oberfläche des TreeViews an der Seitenleiste */
 }
 
-function aktualisieren() { /** Funktion die die Seitenleiste aktualisiert */
+/** Funktion die die Seitenleiste aktualisiert */
+function aktualisieren() {
     dependencies_main = [ /** Definiert die Dependencies des Main Arrays neu */
         new Dependency('GitHub: Vorlesung C', TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: ['https://github.com/hshf1/VorlesungC', ''] }),
         new Dependency((getStatusBarItem().command === 'extension.off') ? 'Erweiterung pausieren' : 'Erweiterung wieder aktivieren', TreeItemCollapsibleState.None, constcommands[(getStatusBarItem().command === 'extension.off') ? 1 : 0]),
