@@ -35,7 +35,7 @@ export async function reportAProblem() {
     }
 
     const problem = await window.showInputBox({
-        prompt: `Bitte beschreib dein Problem und gib deine E-Mail Adresse für künftige Korrespondenz an.
+        prompt: `Bitte beschreibe dein Problem.
         Bisher nur an MacOS getestet!
         (Zum Bestätigen die ENTER-Taste oder zum Abbrechen ESC-Taste drücken)`,
         placeHolder: "Hier reinschreiben...",

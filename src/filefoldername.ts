@@ -27,7 +27,7 @@ export async function checkname() {
         window.showErrorMessage(`${constdirname} enthält Umlaute oder Leerzeichen! Diese müssen manuell umbenannt werden!`)
     }
 
-    if (constbasename.indexOf('ä') !== -1 || constbasename.indexOf('ö') !== -1 || constbasename.indexOf('ü') !== -1 || constbasename.indexOf(' ') !== -1 || constextname !== '.c') {
+    if (constbasename.indexOf('ä') !== -1 || constbasename.indexOf('ö') !== -1 || constbasename.indexOf('ü') !== -1 || constbasename.indexOf(' ') !== -1 /*|| constextname !== '.c'*/) {
         /** Überprüft ob der Dateiname Umlaute enthält oder nicht mit .c endet */
         if (filePath === "no_file_defined" || filePath === undefined || filePath.includes('settings.json') || filePath.includes('tasks.json')) {
             /** Falls nicht definiert oder eine .json wird Funktion abgebrochen */

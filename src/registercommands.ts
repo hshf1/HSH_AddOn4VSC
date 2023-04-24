@@ -10,6 +10,7 @@ import { constcommands } from './constants'         /** Importiert die Namen und
 import { renewjsons } from './jsonfilescheck'       /** Importiert die Funktion zur Überprüfung und aktualisierung der .jsons Dateien aus jsonfilescheck.ts*/ 
 import { compiler_init, getPath, setRZHsH, getStatusBarItem } from './init' /** Importiert Funktionen aus init.ts */
 import { reportAProblem } from './reportaproblem'
+import { set_language } from './language_handler'
 
 
 const constregistercommands = [             /** Die Befehle sind in einem Array gespeichert und beziehen ihre Namen und Beschreibungen aus der Datei constants.ts */
@@ -75,7 +76,20 @@ const constregistercommands = [             /** Die Befehle sind in einem Array 
         callback: async () => {
             await reportAProblem()
         }
-    }
+    },
+    {
+        name: constcommands[8].command,
+        callback: async () => {
+            await set_language("C") /** Ruft Funktion auf die die Sprache neu einstellt und ändert den Offenen Ordner ggf. */
+        }
+    },
+    {
+        name: constcommands[9].command,
+        callback: async () => {
+            await set_language("Java") /** Ruft Funktion auf die die Sprache neu einstellt und ändert den Offenen Ordner ggf. */
+        }
+    },
+
 ]
 
 export function getCommands() {            /**  Exportiert Funktion die das Array an Befehls-Objekten für andere Module des Codes verfügbar macht  */

@@ -24,7 +24,7 @@ import { getHsHRZ, getStatusBarItem } from './init' /** Importiert Funktionen au
 
 export let treeDataProvider: DepNodeProvider /** Deklariert Globale Variable treeDataProvider, die für die Baumstruktur der Seitenleiste wichtig ist  */
 let treeViewOptions: TreeViewOptions<Dependency> 
-let dependencies_link: Dependency[] = [], dependencies_main: Dependency[] = [], dependencies_settings: Dependency[] = []
+let dependencies_link: Dependency[] = [], dependencies_main: Dependency[] = [], dependencies_settings: Dependency[] = [], dependencies_program_languages: Dependency[] = []
 /** Definiert leere Dependency Arrays, die später die Elemente enthalten die in der Seitenleiste angezeigt werden */
 
 /** Dependency Erweitert die TreeItem Klasse */
@@ -84,6 +84,10 @@ class DepNodeProvider implements TreeDataProvider<Dependency> {
             return [
                 ...dependencies_link    /** Gibt die links Dependencies zurück */
             ]
+        } else if (dependency.label === 'Programmiersprache ändern') { /** Programmiersprache ändern  */
+            return [
+            ...dependencies_program_languages   /** Gibt die program_languages Dependencies zurück */
+        ]    
         } else {
             return [] /** Falls keins der beiden Labels zutrifft übergebe nichts */
         }
@@ -117,6 +121,7 @@ function aktualisieren() { /** Funktion die die Seitenleiste aktualisiert */
     dependencies_main = [ /** Definiert die Dependencies des Main Arrays neu */
         new Dependency('GitHub: Vorlesung C', TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: ['https://github.com/hshf1/VorlesungC', ''] }),
         new Dependency((getStatusBarItem().command === 'extension.off') ? 'Erweiterung pausieren' : 'Erweiterung wieder aktivieren', TreeItemCollapsibleState.None, constcommands[(getStatusBarItem().command === 'extension.off') ? 1 : 0]),
+        new Dependency('Programmiersprache ändern', TreeItemCollapsibleState.Collapsed),
         new Dependency('Einstellungen', TreeItemCollapsibleState.Collapsed),
         new Dependency('Nützliche Links', TreeItemCollapsibleState.Expanded),
         new Dependency('Problem melden', TreeItemCollapsibleState.None, constcommands[7])
@@ -127,5 +132,10 @@ function aktualisieren() { /** Funktion die die Seitenleiste aktualisiert */
         new Dependency('tasks.json zurücksetzen', TreeItemCollapsibleState.None, constcommands[3]),
         new Dependency('Compiler prüfen', TreeItemCollapsibleState.None, constcommands[5]),
         new Dependency(getHsHRZ() ? 'Ändern auf privaten Windows-Rechner' : 'Ändern auf HsH Windows-Rechner', TreeItemCollapsibleState.None, constcommands[6])
+    ]
+
+    dependencies_program_languages = [ /** Definiert die Dependencies des program_languages Arrays neu */
+        new Dependency('C', TreeItemCollapsibleState.None, constcommands[8]),
+        new Dependency('Java', TreeItemCollapsibleState.None, constcommands[9]),
     ]
 }

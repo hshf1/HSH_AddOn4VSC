@@ -6,6 +6,17 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 
 ## [Unreleased]
 
+### Branch code_kommentare_main
+- in der Activity bar Reiter "Programmiersprache ändern" hinzugefügt. Unterpunkte "C" und "Java" um zwischen verschiedenen Prog.sprachen wechseln zu können
+- entsprechend die registercommands erweitert
+- HelloWorld.java hinzugefügt
+- Addon erstellt eigenen Übungsordner für Java, wenn ausgewählt
+- OpenPreFolder() angepasst und variabler gestaltet
+- die Kontrolle ob .c am Ende erst mal auskommentiert (Kann später vlt, schauen ob entprechend .c oder .java und co ist)
+- neue Datei Language_Handler.ts hinzugefügt. Aufgabe ist es zu managen welche Prog.sprache gerade benutzt werden/wird soll.
+- die Folderpaths angegeben für den neuen Ordner + Datei
+- in Reportporblems eine Nachricht gekürzt um Verwirrung zu vermeiden.
+
 ### neu hinzugefügt 
 
 - Initialisierung anpassen
@@ -14,6 +25,7 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 ### fertig
 
 - 
+
 
 ## [1.5.1] 23.04.2023
 

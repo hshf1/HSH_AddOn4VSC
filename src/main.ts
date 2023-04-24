@@ -27,6 +27,8 @@ import { checkname } from './filefoldername'		/** Importiert die Funktion zum ü
 import { getCommands } from './registercommands'	/** Importiert die Registerbefehle für die Anzeigen aus registercommands.ts */
 import { getGithubStatus } from './github'          /** Importiert den Status, ob Anfrage, nach .txt Datei mit nützlichen Links, an den GitHub Server erfolgreich war aus github.ts*/
 import { treeDataProvider } from './activity_bar'	/** Importiert Funktionen der Activity Bar */
+import { init_language } from './language_handler'
+
 
 export function activate(context: ExtensionContext) {	/** die "activate" Funktion wird von VS-Code aufgerufen, wenn die Erweierung aktiviert wird */
   
@@ -61,7 +63,10 @@ export function activate(context: ExtensionContext) {	/** die "activate" Funktio
 }
 
 async function initialize() {							/** Der Zweck dieser Funktion ist es, die Module init.ts und github.ts zu initialisieren */
-	let init_status: boolean | undefined = undefined	/** Deklaration von init_status, Variable gibt an ob die Initialisierung erfolgreich war */
+	let init_status: boolean | undefined = undefined	/** Deklaration von init_status, Variable gibt an ob die Initialisierung erfolgreich war */	
+
+	init_language();
+
 	try {
 		await require('./init')									/** Versucht Modul init.ts zu laden */
 		await require('./github')								/** Versucht Modul github.ts zu laden */

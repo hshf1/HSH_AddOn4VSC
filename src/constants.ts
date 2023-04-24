@@ -13,10 +13,12 @@ export const constcommands: Command[] = [ /** Definiert die einzelnen Befehle in
     { command: 'open.link', title: 'Öffne Link' },
     { command: 'install.compiler', title: 'Compiler installieren' },
     { command: 'setRZHsH.setting', title: 'HsH Rechenzentrum' },
-    { command: 'report.problem', title: 'Problem melden'}
+    { command: 'report.problem', title: 'Problem melden'},
+    { command: 'switch.language_c', title: 'C'},
+    { command: 'switch.language_java', title: 'Java'}
 ]
 
-/** Globale Konstante die das Testprogramm enthält */
+/** Globale Konstante die das Testprogramm für c enthält */
 export const testprogc = `#include <stdio.h>
 
 int main()
@@ -34,6 +36,23 @@ int main()
     printf("Hallo 3!\\n");
     y = 12 + 4 % 3 * 7 / 8;
     return 0;
+}`
+
+/** Globale Konstante die das Testprogramm für java enthält */
+export const testprogjava = `public class HelloWorld {
+    public static void main(String[] args) {
+
+        System.out.println("Hello, World!");
+        int i = 1;
+        System.out.println(i);
+        i++;
+        System.out.println(i);
+        i++;
+        System.out.println(i);
+        i++;
+        System.out.println(i);
+
+    }
 }`
 
 /** Globale Funktion die den Inhalt für Settings.json zurückgibt */

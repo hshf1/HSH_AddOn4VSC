@@ -15,14 +15,15 @@ import { activityBarMain } from './activity_bar'    /** Importiert die Funktion 
 import { openprefolder } from './checkfolder'		/** Importiert die Funktion zum öffnen des Vorgefertigten Ordner aus  checkfolder.ts */
 import { checkjsons } from './jsonfilescheck'		/** Importiert die Funktion zum überprüfen der jsons-Datei aus jsonfilescheck.ts */
 import { constcommands } from './constants'         /** Importiert die Namen und Beschreibungen der Commands aus constants.ts*/
+import { get_active_prog_language } from './language_handler' 
 
 const userhomefolder = homedir()    /** Speichert das Heimatvereichnis des Benutzers */
 
 let IS_WINDOWS: boolean, IS_OSX: boolean, IS_LINUX: boolean /** Definiert Bool's für die einzelnen Betriebssysteme */
 let statusbar_button: StatusBarItem /** Definiert statusbar_button als StatusBarItem */
 /** let gcc_command: string // is it still needed? */
-let folderPath_C_Uebung: string, filePath_settingsjson: string, filePath_tasksjson: string /** Definiert eine Reihe von String-Vaariablen */
-let filesencoding_settingsjson: string, compilerpath: string, filePath_testprog: string /** Definiert eine Reihe von String-Vaariablen */
+let folderPath_C_Uebung: string, folderPath_Java_Uebung: string,filePath_settingsjson: string, filePath_tasksjson: string /** Definiert eine Reihe von String-Vaariablen */
+let filesencoding_settingsjson: string, compilerpath: string, filePath_testprog: string, filePath_testprogjava: string /** Definiert eine Reihe von String-Vaariablen */
 let setting_init: boolean | undefined = undefined   /** Boolean die zurück gibt ob, initMain erfolgreich war */
 let hshRZ: boolean | undefined = undefined  /** Boolean die angibt ob es sich um einen PC im Rechnerraum handelt*/
 let compiler_stat: boolean = false  /** Boolean die angibt ob Compiler initialisiert wurde und keinen Fehler ausgibt */
@@ -44,7 +45,7 @@ export function initMain() {    /** Hauptfunktion die die Initialisierung durchf
     checkjsons()    /** Ruft die Funktion auf, die sicherstellt, dass die Konfigurationsdateien vorhanden sind */
     
     if (!(workspace.workspaceFolders?.toString)) {  /** Funktion die schaut, ob Ordner in VS-Code geöffnet ist und ggf. den vorgefertigten Ordner öffnet */
-		openprefolder()
+		openprefolder(get_active_prog_language()) /** Öffnet Ordner je nach dem welche Prog.sprache aktiv ist */
 	}
 
     setStatusBarItem()  /** Initialisiert den Button in der Statusleiste */
@@ -104,8 +105,12 @@ export function getPath(temp: string) {     /** Funktion die die Pfade zurückgi
             return filePath_tasksjson
         case 'testprog':
             return filePath_testprog
+        case 'testprogjava':
+            return filePath_testprogjava
         case 'CUebung':
             return folderPath_C_Uebung
+        case 'JavaUebung':
+            return folderPath_Java_Uebung
         default:
             return ''
     }
@@ -119,15 +124,19 @@ export function setPath() { /** Funktion die die Pfade abhängig vom Betriebssys
 
     if (IS_WINDOWS && !hshRZ) { /** Wenn windows und privater Rechner */
         folderPath_C_Uebung = `${userhomefolder}\\Documents\\C_Uebung`
+        folderPath_Java_Uebung = `${userhomefolder}\\Documents\\Java_Uebung`
         filePath_settingsjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\settings.json`
         filePath_tasksjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
         filePath_testprog = `${folderPath_C_Uebung}\\testprog.c`
+        filePath_testprogjava = `${folderPath_Java_Uebung}\\HelloWorld.java`
         /** gcc_command = 'C:\\ProgramData\\chocolatey\\bin\\gcc.exe' */
     } else if (IS_WINDOWS && hshRZ) { /** Wenn windows und HSH Rechner */
         folderPath_C_Uebung = `U:\\C_Uebung`
+        folderPath_Java_Uebung = `U:\\Java_Uebung`
         filePath_settingsjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\settings.json`
         filePath_tasksjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
         filePath_testprog = `${folderPath_C_Uebung}\\testprog.c`
+        filePath_testprogjava = `${folderPath_Java_Uebung}\\HelloWorld.java`
         /** gcc_command = '' */
     } else if (IS_OSX) { /** Wenn MAC */
         folderPath_C_Uebung = `${userhomefolder}/Documents/C_Uebung`
