@@ -13,7 +13,8 @@ import { existsSync } from 'fs' /** Importiert das existsSync Modul aus node.js,
 
 import { getOS } from './init' /** Importiert die Funktion zur bestimmung des Betriebssystems aus init.ts */
 
-let firstInit: boolean = false; /** Deklariert eine Variable die auskunft darüber gibt ob eine erste Initalisierung schonmal statt gefunden hat */
+let firstInit: boolean = false /** Deklariert eine Variable die auskunft darüber gibt ob eine erste Initalisierung schonmal statt gefunden hat */
+const dummy: boolean = false /** dummy var wartet bis die Funktion für Programmiersprachenerkennung vorhanden ist */
 
 export async function checkname() {
     const filePath: string = window.activeTextEditor?.document.uri.fsPath || "no_file_defined" 
@@ -69,7 +70,8 @@ async function rename(currentPath: string) {
 
         newfullname = join(constdirname, replacedBasename) /** Verbindet den Ordnerpfad und den neuen Dateinamen und speichert ihn */
 
-        if (extname(currentPath) !== '.c') { /** Überprüft ob der aktuelle Pfad nicht .c enthält*/
+        //TODO: später muss dummy ersetzt werden mit dem boolean der angibt, welche sprache verwendet wird
+        if (extname(currentPath) !== '.c' && dummy) { /** Überprüft ob der aktuelle Pfad nicht .c enthält*/
             if (extname(currentPath) === '') { /** Falls gar keine Endung existiert wird .c drangehängt */
                 newfullname = newfullname + '.c'
             } else {

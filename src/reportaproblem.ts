@@ -20,11 +20,9 @@ export async function reportAProblem() {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
     const userMail = await window.showInputBox({
-        prompt: `Bitte gib deine E-Mail Adresse für künftige Korrespondenz an. (max@mustermail.de)
-        Eine Kopie des Problems wird an deine E-Mail gesendet.
-        Bisher nur an MacOS getestet!
+        prompt: `Bitte E-Mail Adresse für künftige Korrespondenz angeben. Eine Kopie des Problems wird an deine E-Mail gesendet.
         (Zum Bestätigen die ENTER-Taste oder zum Abbrechen ESC-Taste drücken)`,
-        placeHolder: "Hier reinschreiben...",
+        placeHolder: "max@mustermail.de (Pflichtfeld)",
         ignoreFocusOut: true
     }) || ''
 
@@ -61,6 +59,7 @@ async function sendProblemReport(userMail: string, problem: string, screenshotPe
                 const screenshotCommand = getScreenshotCommand(screenshotFilePath)
                 await execAsync(screenshotCommand)
             } catch(error) {
+                // TODO: vll error message mit ausgeben lassen? 
                 window.showWarningMessage("Screenshot konnte nicht automatisch aufgenommen werden. Geben Sie die Rechte für VSCode frei und versuchen Sie es erneut!")
             }
         }
@@ -81,7 +80,7 @@ async function sendProblemReport(userMail: string, problem: string, screenshotPe
         }
   
         const transporter = createTransport({
-            host: 'smtp.gmail.com',
+            host: 'smtp.gmail.com', // TODO: ebenfalls privatisieren und in smtpconfig packen
             port: 465,
             secure: true,
             auth: {
@@ -95,7 +94,7 @@ async function sendProblemReport(userMail: string, problem: string, screenshotPe
           to: getSmtpEMail(),
           cc: userMail,
           subject: 'VSCode Problem',
-          text: `Folgendes Problem wurde vom Nutzer ${userMail} gemeldet:\n\n${problem}`,
+          text: `Bitte keine Dateien oder Programme ausführen! Sollte ein Code mitgeschickt worden sein, immer stets überprüfen vor dem Ausführen!\nFolgendes Problem wurde vom Nutzer ${userMail} gemeldet:\n\n${problem}`,
           attachments: [
             {
               filename: 'logs.txt',
@@ -108,7 +107,7 @@ async function sendProblemReport(userMail: string, problem: string, screenshotPe
                         path: screenshotFilePath,
                     },
                 ] : []),
-            ],
+            ], // TODO: Wenn vorhanden Code aus activen Editor mit anhängen
         }
 
         const sendPermission = await window.showQuickPick(['Ja', 'Nein'], {
@@ -137,7 +136,7 @@ function getScreenshotCommand(filePath: string) {
     } else if(getOS("MAC")) {
         return `screencapture "${filePath}"`
     } else if (getOS("LIN")) {
-        return `gnome-screenshot -f "${filePath}"`
+        return `gnome-screenshot -f "${filePath}"` // TODO: Linux muss noch getestet werden
     } else {
         throw new Error(`Ungültige Plattform: ${process.platform}`)
     }
