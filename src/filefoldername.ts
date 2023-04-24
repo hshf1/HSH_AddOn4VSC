@@ -69,7 +69,7 @@ async function rename(currentPath: string) {
 
         newfullname = join(constdirname, replacedBasename) /** Verbindet den Ordnerpfad und den neuen Dateinamen und speichert ihn */
 
-        //TODO: später muss dummy ersetzt werden mit dem boolean der angibt, welche sprache verwendet wird
+        //TODO: später anpassen je nach eingestellter programmiersprache
         // if (extname(currentPath) !== '.c') { /** Überprüft ob der aktuelle Pfad nicht .c enthält*/
         //     if (extname(currentPath) === '') { /** Falls gar keine Endung existiert wird .c drangehängt */
         //         newfullname = newfullname + '.c'
