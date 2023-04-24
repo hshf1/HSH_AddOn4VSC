@@ -140,15 +140,19 @@ export function setPath() { /** Funktion die die Pfade abhängig vom Betriebssys
         /** gcc_command = '' */
     } else if (IS_OSX) { /** Wenn MAC */
         folderPath_C_Uebung = `${userhomefolder}/Documents/C_Uebung`
+        folderPath_Java_Uebung = `${userhomefolder}/Documents/Java_Uebung`
         filePath_settingsjson = `${userhomefolder}/Library/Application Support/Code/User/settings.json`
         filePath_tasksjson = `${userhomefolder}/Library/Application Support/Code/User/tasks.json`
         filePath_testprog = `${folderPath_C_Uebung}/testprog.c`
+        filePath_testprogjava = `${folderPath_C_Uebung}/HelloWorld.java`
         /** gcc_command = '/usr/bin/gcc' */
     } else if (IS_LINUX) { /** Wenn Linux */
         folderPath_C_Uebung = `${userhomefolder}/Documents/C_Uebung`
+        folderPath_Java_Uebung = `${userhomefolder}/Documents/Java_Uebung`
         filePath_settingsjson = `${userhomefolder}/.config/Code/User/settings.json`
         filePath_tasksjson = `${userhomefolder}/.config/Code/User/tasks.json`
         filePath_testprog = `${folderPath_C_Uebung}/testprog.c`
+        filePath_testprogjava = `${folderPath_C_Uebung}/HelloWorld.java`
         /** gcc_command = '/usr/bin/gcc' */
     } else {
         window.showErrorMessage(`Betriebssystem wurde nicht erkannt! Einige Funktionen werden nicht richtig ausgeführt. Bitte neu starten!`) /** Falls kein Betriebssystem gefunden worde */
