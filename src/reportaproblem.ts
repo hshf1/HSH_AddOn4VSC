@@ -11,7 +11,7 @@ import { promises } from "fs"
 import { tmpdir } from "os"
 import { createTransport } from "nodemailer"
 
-import { getSmtpEMail, getSmtpPW } from "./smtpconfig"
+import { getSmtpEMail, getSmtpHost, getSmtpPW, getSmtpPort } from "./smtpconfig"
 import { getOS } from "./init"
 
 const execAsync = promisify(exec)
@@ -80,8 +80,8 @@ async function sendProblemReport(userMail: string, problem: string, screenshotPe
         }
   
         const transporter = createTransport({
-            host: 'smtp.gmail.com', // TODO: ebenfalls privatisieren und in smtpconfig packen
-            port: 465,
+            host: getSmtpHost(),
+            port: getSmtpPort(),
             secure: true,
             auth: {
                 user: getSmtpEMail(),
