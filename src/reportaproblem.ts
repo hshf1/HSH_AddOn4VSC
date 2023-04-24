@@ -134,7 +134,7 @@ async function sendProblemReport(userMail: string, problem: string, screenshotPe
 
 function getScreenshotCommand(filePath: string) {
     if(getOS("WIN")) {
-        return `nircmd.exe savescreenshot "${filePath}"`
+        return `powershell -Command "$src = Get-Process | Where-Object { $_.MainWindowHandle -ne 0 -and $_.MainWindowTitle -ne '' } | Select-Object -First 1; Add-Type -AssemblyName System.Windows.Forms; $form = [System.Windows.Forms.Form]::FromHandle($src.MainWindowHandle); $bounds = [System.Drawing.Rectangle]$form.Bounds; $bitmap = New-Object System.Drawing.Bitmap $bounds.Width, $bounds.Height; $graphics = [System.Drawing.Graphics]::FromImage($bitmap); $graphics.CopyFromScreen($bounds.X, $bounds.Y, 0, 0, $bounds.Size); $graphics.Dispose(); $bitmap.Save('${filePath}')"`
     } else if(getOS("MAC")) {
         return `screencapture "${filePath}"`
     } else if (getOS("LIN")) {
