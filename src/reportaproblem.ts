@@ -40,18 +40,27 @@ export async function reportAProblem() {
 
     const scPermissionText = await window.showQuickPick(['Ja', 'Nein'], {
         canPickMany: false,
-        placeHolder: 'Soll ein Screenshot von VSCode mitangehängt werden? (Nur der aktualle VSCode Window ist sichtbar!)',
+        placeHolder: 'Soll ein Screenshot von VSCode mitangehängt werden? (gesamter Bildschirm wird gecaptured!)',
         ignoreFocusOut: true
     })
 
     const scPermissionBoolean = scPermissionText === 'Ja'
+
+    const codeAttachText = await window.showQuickPick(['Ja', 'Nein'], {
+        canPickMany: false,
+        placeHolder: 'Sollen aktive geöffnete Dateien in VSCode mitgesendet werden? Schließe vorher Dateien in VSCode, die nicht mitgesendet werden sollen!',
+        ignoreFocusOut: true
+    })
+
+    const codeAttachBoolean = codeAttachText === 'Ja'
     
-    sendProblemReport(userMail, problem, scPermissionBoolean)
+    sendProblemReport(userMail, problem, scPermissionBoolean, codeAttachBoolean)
 }
 
-async function sendProblemReport(userMail: string, problem: string, screenshotPermission: boolean) {
+async function sendProblemReport(userMail: string, problem: string, screenshotPermission: boolean, codeAttachPermission: boolean) {
 
     try {
+        const activeFilePaths: {filename: string, path: string}[] = getActiveEditorFilepaths()
         let screenshotFilePath: any
         if (screenshotPermission){
             try {
@@ -107,7 +116,13 @@ async function sendProblemReport(userMail: string, problem: string, screenshotPe
                         path: screenshotFilePath,
                     },
                 ] : []),
+            ...(codeAttachPermission
+                ? [
+                    ...activeFilePaths
+                ]
+                 : []),
             ], // TODO: Wenn vorhanden Code aus activen Editor mit anhängen
+            // TODO: eigene Dateien anhängen erlauben? Wozu? Sicherheitsbedenken?
         }
 
         const sendPermission = await window.showQuickPick(['Ja', 'Nein'], {
@@ -131,10 +146,11 @@ async function sendProblemReport(userMail: string, problem: string, screenshotPe
 }
 
 function getScreenshotCommand(filePath: string) {
+    // TODO: ggf. möglichkeit bieten, ganzen Bildschirm oder nur VSC Window zu screenshotten?
     if(getOS("WIN")) {
         return `powershell -Command "& { Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('%{PRTSC}'); Start-Sleep -Milliseconds 250; $image = [System.Windows.Forms.Clipboard]::GetImage(); $image.Save('${filePath}'); }"`
     } else if(getOS("MAC")) {
-        return `screencapture "${filePath}"`
+        return `screencapture "${filePath}"` // TODO: Derzeit gesamter Bildschirm - ändern, dass nur VSC Window gecaptured wird
     } else if (getOS("LIN")) {
         return `gnome-screenshot -f "${filePath}"` // TODO: Linux muss noch getestet werden
     } else {
@@ -166,3 +182,21 @@ async function getTerminalContent(terminal: Terminal): Promise<string> {
 
     return text || 'Dieses Terminal hat keinen Inhalt'
 }
+
+function getActiveEditorFilepaths(): { filename: string, path: string }[] {
+    const activeEditor = window.activeTextEditor;
+    if (!activeEditor) {
+      return [];
+    }
+    const document = activeEditor.document;
+    const filePaths = [{ filename: document.fileName.split('\\').pop()!, path: document.fileName }];
+    for (let i = 0; i < window.visibleTextEditors.length; i++) {
+      const editor = window.visibleTextEditors[i];
+      if (editor !== activeEditor) {
+        const document = editor.document;
+        filePaths.push({ filename: document.fileName.split('\\').pop()!, path: document.fileName });
+      }
+    }
+    return filePaths;
+  }
+  
