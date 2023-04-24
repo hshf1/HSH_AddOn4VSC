@@ -16,7 +16,7 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 
 - 
 
-## [1.5.1] - [1.5.5] 23.04.2023 - 24.04.2023
+## [1.5.1] - [1.5.6] 23.04.2023 - 24.04.2023
 
 ### neu hinzugefügt
 
