@@ -29,6 +29,7 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 - automatisches hinzufügen/ändern der '.c'-Dateiendung (vorerst) ausgeschaltet
 - Problem melden: Screenshot, Inhalt aus Terminals und Code kann angehängt werden
 - Problem melden angepasst
+- LogFile angepasst
 
 ## [1.5.0] 06.04.2023
 
