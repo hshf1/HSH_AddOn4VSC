@@ -39,8 +39,8 @@ export async function reportAProblem() {
         }
         await getTerminalContent(userReport)
         await sendReport(userReport)
-    } catch(error) {
-
+    } catch(error: any) {
+        writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')
     }
 }
 
@@ -180,7 +180,7 @@ async function getTerminalContent(userReport: { mail: string; problem: string; s
 
         await promises.writeFile(userReport.terminalContentPath, fileContents)
     } catch (error: any) {
-        writeLog(`[${__filename}:${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')
+        writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')
     }
 }
 

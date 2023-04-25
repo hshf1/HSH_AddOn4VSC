@@ -12,9 +12,9 @@ export async function renewjsons(filePath_todelete: string) {
 		unlinkSync(filePath_todelete)	/** Versucht den Pfad der zu löschenden Datei zu finden*/
 	} catch (err: any) {				/** Bei Fehler, werden Fehlermeldungen ausgegeben */
 		if (err.code === 'ENOENT') {
-			writeLog(`[${__filename}:${err.stack?.split('\n')[2]?.trim()}] ${filePath_todelete} ${err}`, 'ERROR')
+			writeLog(`[${err.stack?.split('\n')[2]?.trim()}] ${filePath_todelete} ${err}`, 'ERROR')
 		} else {
-			writeLog(`[${__filename}:${err.stack?.split('\n')[2]?.trim()}] ${filePath_todelete} ${err}`, 'ERROR')
+			writeLog(`[${err.stack?.split('\n')[2]?.trim()}] ${filePath_todelete} ${err}`, 'ERROR')
 		}
 	}
 	if (filePath_todelete.includes("settings")) { /** Wenn der Dateipfad "settings" enthält soll die settings.json erneuert werden */
@@ -43,7 +43,7 @@ async function setsettingsjson() {
 	try {
 		await promises.writeFile(getPath('settingsjson'), getSettingsJsonData()) /**Erstellt die settings.json in dem Pfad von getPath() und mit dem Inhalt aus constants.ts */
 	} catch (err: any) {
-		writeLog(`[${__filename}:${err.stack?.split('\n')[2]?.trim()}] ${err}`, 'ERROR')	/** Falls Fehler auftritt wird Fehler ausgegeben */
+		writeLog(`[${err.stack?.split('\n')[2]?.trim()}] ${err}`, 'ERROR')	/** Falls Fehler auftritt wird Fehler ausgegeben */
 	}
 }
 
@@ -51,6 +51,6 @@ async function settasksjson() {
 	try {
 		await promises.writeFile(getPath('tasksjson'), getTasksJsonData())	/**Erstellt die tasks.json in dem Pfad von getPath() und mit dem Inhalt aus constants.ts */
 	} catch (err: any) {
-		writeLog(`[${__filename}:${err.stack?.split('\n')[2]?.trim()}] ${err}`, 'ERROR') /** Falls Fehler auftritt wird Fehler ausgegeben */
+		writeLog(`[${err.stack?.split('\n')[2]?.trim()}] ${err}`, 'ERROR') /** Falls Fehler auftritt wird Fehler ausgegeben */
 	}
 }

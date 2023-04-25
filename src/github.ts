@@ -9,7 +9,7 @@ let github_status: boolean | undefined = undefined  /** Definiert eine Variable 
 get('https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/links.txt', (error, response, body) => {
 /** Versucht die URL aufzurufen, falls ein Fehler entsteht wird der in Error gespeichert, response enthält das HTTP response Objekt und der Body enthält den body als String */
     if (error) { /** Wenn ein Fehler aufgetreten ist, wird der ausgegeben und der Status wird auf false gesetzt */
-        writeLog(`[${__filename}:${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')
+        writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')
         github_status = false
     } else {
         const elements = body.replace(/[\n]/g, '').split('<-') /** Entfernt die Zeilenumbrüche und trennt die Kette an den Stellen "<-" in ein Array auf  */

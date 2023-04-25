@@ -64,13 +64,12 @@ export function activate(context: ExtensionContext) {
 /** Der Zweck dieser Funktion ist es, die Module init.ts und github.ts zu initialisieren */
 async function initialize() {
 	let init_status: boolean | undefined = undefined	/** Deklaration von init_status, Variable gibt an ob die Initialisierung erfolgreich war */
-	writeLog(`HSH_AddOn4VSC gestartet - initialisiert!`, 'INFO')
 	try {
 		await require('./init')		/** Versucht Modul init.ts zu laden */
 		await require('./github')	/** Versucht Modul github.ts zu laden */
 		await require('./logfile')
 	} catch (error: any) {			/** Wenn ein Fehler während des Ladevorgangs auftritt, wird der catch-Block ausgeführt. */
-		writeLog(`[${__filename}:${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')	/** Fehler wird in der Konsole ausgegeben */
+		writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')	/** Fehler wird in der Konsole ausgegeben */
 		await new Promise(resolve => setTimeout(resolve, 1000))	/** Funktion wartet eine Sekunde mit setTimeout(), bevor sie sich selbst rekursiv aufruft, um es erneut zu versuchen.*/
 		await initialize()												
 	}
@@ -87,7 +86,6 @@ async function initialize() {
 		}
 		await new Promise(resolve => setTimeout(resolve, 1000))	/** Wartet 1000ms bevor die Schleife wieder anfängt */
 	}
-	writeLog(`Initialisierung beendet!`, 'INFO')
 }
 
 /** Funktion die Aufgerufen wird wenn die Erweiterung deaktiviert oder deinstalliert wird.*/

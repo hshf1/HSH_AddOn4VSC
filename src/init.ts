@@ -56,6 +56,7 @@ export function initMain() {
     compiler_init()     /** Compiler initialisieren */
     logFileMain()
 
+    writeLog(`HSH_AddOn4VSC gestartet - Initialisierung beendet!`, 'INFO')
     setting_init = true /** Setzt true um zu zeigen, dass initMain abgeschlossen ist */
 }
 /** Funktion die Überprüft welches Betriebssystem vorliegt

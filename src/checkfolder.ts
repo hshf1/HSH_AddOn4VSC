@@ -31,14 +31,14 @@ export async function openprefolder() {
 		try {
 			mkdirSync(getPath('CUebung'))	/** Versucht CUebung zu erstellen */
 		} catch (error: any) {
-			writeLog(`[${__filename}:${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')	/** Falls ein Fehler entsteht wird dieser in die Konsole geschrieben */
+			writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')	/** Falls ein Fehler entsteht wird dieser in die Konsole geschrieben */
 		}
 	}
 	if (!existsSync(getPath('testprog'))) {	/** Überprüft ob der Pfad inklusive der Datei noch nicht existiert */
 		try {
 			writeFileSync(getPath('testprog'), testprogc) /** Erstellt das testprog und schreibt den inhalt aus constants.ts hinein*/ 
 		} catch (error: any) {
-			writeLog(`[${__filename}:${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR') /** Falls ein Fehler entsteht wird dieser in die Konsole geschrieben */
+			writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR') /** Falls ein Fehler entsteht wird dieser in die Konsole geschrieben */
 		}
 	}
 	if (existsSync(getPath('CUebung'))) {	/** Überprüft ob der Pfad inklusive des Ordners schon existiert */
