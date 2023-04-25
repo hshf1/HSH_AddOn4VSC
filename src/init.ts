@@ -17,6 +17,7 @@ import { activityBarMain } from './activity_bar'    /** Importiert die Funktion 
 import { openprefolder } from './checkfolder'		/** Importiert die Funktion zum öffnen des Vorgefertigten Ordner aus  checkfolder.ts */
 import { checkjsons } from './jsonfilescheck'		/** Importiert die Funktion zum überprüfen der jsons-Datei aus jsonfilescheck.ts */
 import { constcommands } from './constants'         /** Importiert die Namen und Beschreibungen der Commands aus constants.ts*/
+import { logFileMain } from './logfile'
 
 const userhomefolder = homedir()    /** Speichert das Heimatvereichnis des Benutzers */
 
@@ -24,7 +25,7 @@ let IS_WINDOWS: boolean, IS_OSX: boolean, IS_LINUX: boolean /** Definiert Bool's
 let statusbar_button: StatusBarItem /** Definiert statusbar_button als StatusBarItem */
 /** let gcc_command: string // is it still needed? */
 let folderPath_C_Uebung: string, filePath_settingsjson: string, filePath_tasksjson: string /** Definiert eine Reihe von String-Vaariablen */
-let filesencoding_settingsjson: string, compilerpath: string, filePath_testprog: string /** Definiert eine Reihe von String-Vaariablen */
+let filesencoding_settingsjson: string, compilerpath: string, filePath_testprog: string, logFileDir: string /** Definiert eine Reihe von String-Vaariablen */
 let setting_init: boolean | undefined = undefined   /** Boolean die zurück gibt ob, initMain erfolgreich war */
 let hshRZ: boolean | undefined = undefined  /** Boolean die angibt ob es sich um einen PC im Rechnerraum handelt*/
 let compiler_stat: boolean = false  /** Boolean die angibt ob Compiler initialisiert wurde und keinen Fehler ausgibt */
@@ -56,7 +57,8 @@ export function initMain() {
     if (!compiler_stat) { /** Überprüft ob Compiler schon initialisiert wurde, falls nicht wird Compiler initialisiert */
         compiler_init()
     }
-
+    console.log(logFileDir)
+    logFileMain()
     setting_init = true /** Setzt true um zu zeigen, dass initMain abgeschlossen ist */
 }
 /** Funktion die Überprüft welches Betriebssystem vorliegt
@@ -106,7 +108,15 @@ export function getSettingInit() {
     return setting_init
 }
 
-/** Funktion die die Pfade zurückgibt und somit global verfügbar macht */
+/** Funktion die die Pfade zurückgibt und somit global verfügbar macht
+ * 
+ * Verfügbare Argumente:
+ * - settingsjson
+ * - tasksjson
+ * - testprog
+ * - CUebung
+ * - logfiledir
+*/
 export function getPath(temp: string) {
     switch(temp) {
         case 'settingsjson':
@@ -117,6 +127,8 @@ export function getPath(temp: string) {
             return filePath_testprog
         case 'CUebung':
             return folderPath_C_Uebung
+        case 'logfiledir':
+            return logFileDir
         default:
             return ''
     }
@@ -130,24 +142,29 @@ export function setPath() {
     /** Je nach dem ob Windows oder nicht wird Codierung gespeichert*/
 
     if (IS_WINDOWS && !hshRZ) { /** Wenn windows und privater Rechner */
+        logFileDir = `${userhomefolder}\\AppData\\Roaming\\Code\\User`
         folderPath_C_Uebung = `${userhomefolder}\\Documents\\C_Uebung`
         filePath_settingsjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\settings.json`
         filePath_tasksjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
         filePath_testprog = `${folderPath_C_Uebung}\\testprog.c`
         /** gcc_command = 'C:\\ProgramData\\chocolatey\\bin\\gcc.exe' */
     } else if (IS_WINDOWS && hshRZ) { /** Wenn windows und HSH Rechner */
+        logFileDir = `${userhomefolder}\\AppData\\Roaming\\Code\\User`
         folderPath_C_Uebung = `U:\\C_Uebung`
         filePath_settingsjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\settings.json`
         filePath_tasksjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
         filePath_testprog = `${folderPath_C_Uebung}\\testprog.c`
         /** gcc_command = '' */
     } else if (IS_OSX) { /** Wenn MAC */
+        logFileDir = `${userhomefolder}/Library/Application Support/Code/User`
         folderPath_C_Uebung = `${userhomefolder}/Documents/C_Uebung`
         filePath_settingsjson = `${userhomefolder}/Library/Application Support/Code/User/settings.json`
         filePath_tasksjson = `${userhomefolder}/Library/Application Support/Code/User/tasks.json`
         filePath_testprog = `${folderPath_C_Uebung}/testprog.c`
+        console.log('logfile set to: '+logFileDir)
         /** gcc_command = '/usr/bin/gcc' */
     } else if (IS_LINUX) { /** Wenn Linux */
+        logFileDir = `${userhomefolder}/.config/Code/User`
         folderPath_C_Uebung = `${userhomefolder}/Documents/C_Uebung`
         filePath_settingsjson = `${userhomefolder}/.config/Code/User/settings.json`
         filePath_tasksjson = `${userhomefolder}/.config/Code/User/tasks.json`
