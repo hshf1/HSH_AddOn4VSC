@@ -15,7 +15,7 @@ import { createTransport } from "nodemailer"
 
 import { getSmtpEMail, getSmtpHost, getSmtpPW, getSmtpPort } from "./smtpconfig"
 import { getOS, getPath } from "./init"
-import { logFileName, logFilePath } from "./logfile"
+import { logFileName, logFilePath, writeLog } from "./logfile"
 
 const execAsync = promisify(exec)
 
@@ -164,7 +164,8 @@ async function sendReport(userReport: { mail: string; problem: string; scPermiss
     }
 
     await transporter.sendMail(mailOptions)
-    window.showInformationMessage('Problem erfolgreich gemeldet!')
+    
+    window.showInformationMessage(writeLog('Problem erfolgreich gemeldet!'))
 }
 
 async function getTerminalContent(userReport: { mail: string; problem: string; scPermission: string; codeAttachPermission: string; scFilePath: string; terminalContentPath: string }) {
