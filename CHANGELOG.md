@@ -16,17 +16,19 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 
 - 
 
-## [1.5.1] - [1.5.6] 23.04.2023 - 24.04.2023
+## [1.5.1] - [1.5.7] 23.04.2023 - 25.04.2023
 
 ### neu hinzugefügt
 
 - Problem melden als neue Funktion in der Activity Bar (linke Menüleiste)
+- LogFile-System hinzugefügt
 
 ### geändert
 
 - Code der Funktion "Problem melden" angepasst
 - automatisches hinzufügen/ändern der '.c'-Dateiendung (vorerst) ausgeschaltet
 - Problem melden: Screenshot, Inhalt aus Terminals und Code kann angehängt werden
+- Problem melden angepasst
 
 ## [1.5.0] 06.04.2023
 
