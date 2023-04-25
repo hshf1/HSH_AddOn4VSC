@@ -21,6 +21,7 @@ import {
 import { constcommands } from './constants' /** Importiert die Befehle aus der constants.ts  */
 import { getGithubLinks, getGithubStatus } from './github' /** Importiert die Links und den GitHubStatus aus github.ts */
 import { getHsHRZ, getStatusBarItem } from './init' /** Importiert Funktionen aus init.ts */
+import { writeLog } from './logfile'
 
 export let treeDataProvider: DepNodeProvider /** Deklariert Globale Variable treeDataProvider, die für die Baumstruktur der Seitenleiste wichtig ist  */
 let treeViewOptions: TreeViewOptions<Dependency> 
@@ -112,6 +113,7 @@ export async function activityBarMain() {
     
     window.registerTreeDataProvider('menue_bar_activity', treeDataProvider) /** Erstellt neuen TreeView mit dem Namen "menue_bar_activity" und den Daten aus TreeDataProvider*/
     window.createTreeView('menue_bar_activity', treeViewOptions) /** Erstellt die grphische Oberfläche des TreeViews an der Seitenleiste */
+    writeLog(`Activity Bar geladen!`, 'INFO')
 }
 
 /** Funktion die die Seitenleiste aktualisiert */

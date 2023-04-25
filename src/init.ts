@@ -17,7 +17,7 @@ import { activityBarMain } from './activity_bar'    /** Importiert die Funktion 
 import { openprefolder } from './checkfolder'		/** Importiert die Funktion zum öffnen des Vorgefertigten Ordner aus  checkfolder.ts */
 import { checkjsons } from './jsonfilescheck'		/** Importiert die Funktion zum überprüfen der jsons-Datei aus jsonfilescheck.ts */
 import { constcommands } from './constants'         /** Importiert die Namen und Beschreibungen der Commands aus constants.ts*/
-import { logFileMain } from './logfile'
+import { logFileMain, writeLog } from './logfile'
 
 const userhomefolder = homedir()    /** Speichert das Heimatvereichnis des Benutzers */
 
@@ -53,12 +53,9 @@ export function initMain() {
 
     setStatusBarItem()  /** Initialisiert den Button in der Statusleiste */
     activityBarMain()   /** Ruft Funktion auf die für die Activitybar zuständig ist */
-    
-    if (!compiler_stat) { /** Überprüft ob Compiler schon initialisiert wurde, falls nicht wird Compiler initialisiert */
-        compiler_init()
-    }
-    console.log(logFileDir)
+    compiler_init()     /** Compiler initialisieren */
     logFileMain()
+
     setting_init = true /** Setzt true um zu zeigen, dass initMain abgeschlossen ist */
 }
 /** Funktion die Überprüft welches Betriebssystem vorliegt
@@ -161,7 +158,6 @@ export function setPath() {
         filePath_settingsjson = `${userhomefolder}/Library/Application Support/Code/User/settings.json`
         filePath_tasksjson = `${userhomefolder}/Library/Application Support/Code/User/tasks.json`
         filePath_testprog = `${folderPath_C_Uebung}/testprog.c`
-        console.log('logfile set to: '+logFileDir)
         /** gcc_command = '/usr/bin/gcc' */
     } else if (IS_LINUX) { /** Wenn Linux */
         logFileDir = `${userhomefolder}/.config/Code/User`
@@ -171,7 +167,7 @@ export function setPath() {
         filePath_testprog = `${folderPath_C_Uebung}/testprog.c`
         /** gcc_command = '/usr/bin/gcc' */
     } else {
-        window.showErrorMessage(`Betriebssystem wurde nicht erkannt! Einige Funktionen werden nicht richtig ausgeführt. Bitte neu starten!`) /** Falls kein Betriebssystem gefunden worde */
+        window.showErrorMessage(writeLog(`Betriebssystem wurde nicht erkannt! Einige Funktionen werden nicht richtig ausgeführt. Bitte neu starten!`, 'ERROR')) /** Falls kein Betriebssystem gefunden worde */
     }
 }
 
@@ -181,7 +177,7 @@ export function compiler_init() {
         if (error) { /** Wenn Fehler auftritt (keine Version installiert ist) */
             commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(userhomefolder)).then(() => { /** Erzeugt neues Terminal und setzt das Verzeichnis auf das Heimatverzeichnis */
                 if (IS_WINDOWS) {
-                    window.showInformationMessage(`Compiler nicht gefunden. Zum installieren bitte auswählen:`, 'Privater Windows-Rechner', 'HsH Windows-Rechner', 'Jetzt nicht').then(async selected => { /** Fragt ob HSH oder Privater Rechner und wartet auf Antwort */
+                    window.showInformationMessage(writeLog(`Compiler nicht gefunden.`, 'INFO') + ` Zum installieren bitte auswählen:`, 'Privater Windows-Rechner', 'HsH Windows-Rechner', 'Jetzt nicht').then(async selected => { /** Fragt ob HSH oder Privater Rechner und wartet auf Antwort */
                         if (selected === 'Privater Windows-Rechner') { /** Wenn Privater Rechner */
                             workspace.getConfiguration('addon4vsc').update('computerraum', false, ConfigurationTarget.Global) /** Setzt in Settings.json die computerraum Variable false */
                             changeHsHOrPrivate(false) /** Ruft Funktion auf die die Einstellung ob HSH oder Privater Rechner einstellt */
@@ -203,6 +199,7 @@ export function compiler_init() {
                 }
             })
         } else {
+            writeLog(`Compiler gefunden!`, 'INFO')
             if (compiler_stat) { /** Falls compiler_stat schon true */
                 window.showInformationMessage(`Compiler bereits installiert! Informationen zum Compiler: ${stdout}`)
             } else { /** Falls compiler_stat noch false, wird dann auf true gesetzt */

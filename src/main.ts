@@ -49,8 +49,9 @@ export function activate(context: ExtensionContext) {
 				}
 				if (temp_hshRZ != getHsHRZ()) {		/** überprüft ob sich der Wert geändert hat der Aussagt ob man im Computerraum ist */
 					changeHsHOrPrivate(temp_hshRZ)	/** Führt die Funktion aus, um die Pfade anzupassen */
-				}
-				treeDataProvider.refresh()			/** Aktualisiert die Anzeige der Activity Bar */						
+					treeDataProvider.refresh()		/** Aktualisiert die Anzeige der Activity Bar */
+					writeLog(`Einstellung auf ${temp_hshRZ ? 'HsH-Rechner' : 'privaten Rechner'} geändert!`, 'INFO')
+				}						
 			}
 		}
 	})
@@ -58,18 +59,18 @@ export function activate(context: ExtensionContext) {
 	getCommands().forEach(command => {															/** For Schleife durch alle "command" Objekte in "registercommands.ts". name: name des commands, callback: Funktion die ausgeführt wird */
 		context.subscriptions.push(commands.registerCommand(command.name, command.callback))	/** Durch "context.subscriptions.push" wird das Objekt nach deaktivieren der Erweiterung ordnungsgemäss aufgeräumt */
 	})
-
 }
 
 /** Der Zweck dieser Funktion ist es, die Module init.ts und github.ts zu initialisieren */
 async function initialize() {
 	let init_status: boolean | undefined = undefined	/** Deklaration von init_status, Variable gibt an ob die Initialisierung erfolgreich war */
+	writeLog(`HSH_AddOn4VSC gestartet - initialisiert!`, 'INFO')
 	try {
-		await require('./init')									/** Versucht Modul init.ts zu laden */
-		await require('./github')								/** Versucht Modul github.ts zu laden */
+		await require('./init')		/** Versucht Modul init.ts zu laden */
+		await require('./github')	/** Versucht Modul github.ts zu laden */
 		await require('./logfile')
-	} catch (error) {											/** Wenn ein Fehler während des Ladevorgangs auftritt, wird der catch-Block ausgeführt. */
-		console.error(error);									/** Fehler wird in der Konsole ausgegeben */
+	} catch (error: any) {			/** Wenn ein Fehler während des Ladevorgangs auftritt, wird der catch-Block ausgeführt. */
+		writeLog(`[${__filename}:${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')	/** Fehler wird in der Konsole ausgegeben */
 		await new Promise(resolve => setTimeout(resolve, 1000))	/** Funktion wartet eine Sekunde mit setTimeout(), bevor sie sich selbst rekursiv aufruft, um es erneut zu versuchen.*/
 		await initialize()												
 	}
@@ -82,12 +83,12 @@ async function initialize() {
 			if (getGithubStatus() === false) {	/** Falls bei github.ts Fehler aufgetreten sind kommt dieses Meldung.  */
 				window.showWarningMessage(`Nützliche Links aus GitHub konnten nicht geladen werden. Bei Bedarf Internetverbindung prüfen und VSCode neu starten.`)
 			}
-			writeLog(`HSH_AddOn4VSC gestartet!`)
 			init_status = true					/** Wenn beide Module erfolgreich geladen sind, wird der init_status gesetzt und somit die Initalisierung abgeschlossen */
 		}
 		await new Promise(resolve => setTimeout(resolve, 1000))	/** Wartet 1000ms bevor die Schleife wieder anfängt */
 	}
+	writeLog(`Initialisierung beendet!`, 'INFO')
 }
 
 /** Funktion die Aufgerufen wird wenn die Erweiterung deaktiviert oder deinstalliert wird.*/
-export function deactivate() { }
+export function deactivate() {}

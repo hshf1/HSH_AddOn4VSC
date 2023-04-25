@@ -4,6 +4,7 @@ import { promises, unlinkSync } from 'fs' /** Importiert Funktionen zum Arbeiten
 
 import { getSettingsJsonData, getTasksJsonData } from './constants'	/** Importiert den Inhalt der Jsons aus dem Modul constants.ts */
 import { getPath } from './init' /** Importiert die Funktion die Pfade für .JSON und den Ordner + Bsp. Prog.  */
+import { writeLog } from './logfile'
 
 /** Funktion die die settings.json und task.json aktualisiert */
 export async function renewjsons(filePath_todelete: string) {
@@ -11,10 +12,9 @@ export async function renewjsons(filePath_todelete: string) {
 		unlinkSync(filePath_todelete)	/** Versucht den Pfad der zu löschenden Datei zu finden*/
 	} catch (err: any) {				/** Bei Fehler, werden Fehlermeldungen ausgegeben */
 		if (err.code === 'ENOENT') {
-			console.error(`Datei existiert nicht: ${filePath_todelete}`)
+			writeLog(`[${__filename}:${err.stack?.split('\n')[2]?.trim()}] ${filePath_todelete} ${err}`, 'ERROR')
 		} else {
-			console.error(`Ein Problem ist beim löschen der Datei aufgetreten: ${filePath_todelete}`)
-			console.error(err)
+			writeLog(`[${__filename}:${err.stack?.split('\n')[2]?.trim()}] ${filePath_todelete} ${err}`, 'ERROR')
 		}
 	}
 	if (filePath_todelete.includes("settings")) { /** Wenn der Dateipfad "settings" enthält soll die settings.json erneuert werden */
@@ -42,15 +42,15 @@ export async function checkjsons() {
 async function setsettingsjson() {
 	try {
 		await promises.writeFile(getPath('settingsjson'), getSettingsJsonData()) /**Erstellt die settings.json in dem Pfad von getPath() und mit dem Inhalt aus constants.ts */
-	} catch (err) {
-		console.error(err)	/** Falls Fehler auftritt wird Fehler ausgegeben */
+	} catch (err: any) {
+		writeLog(`[${__filename}:${err.stack?.split('\n')[2]?.trim()}] ${err}`, 'ERROR')	/** Falls Fehler auftritt wird Fehler ausgegeben */
 	}
 }
 
 async function settasksjson() {
 	try {
 		await promises.writeFile(getPath('tasksjson'), getTasksJsonData())	/**Erstellt die tasks.json in dem Pfad von getPath() und mit dem Inhalt aus constants.ts */
-	} catch (err) {
-		console.error(err) /** Falls Fehler auftritt wird Fehler ausgegeben */
+	} catch (err: any) {
+		writeLog(`[${__filename}:${err.stack?.split('\n')[2]?.trim()}] ${err}`, 'ERROR') /** Falls Fehler auftritt wird Fehler ausgegeben */
 	}
 }

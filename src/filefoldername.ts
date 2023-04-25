@@ -12,6 +12,7 @@ import { extname, dirname, basename, join, parse } from 'path'
 import { existsSync } from 'fs' /** Importiert das existsSync Modul aus node.js, dadurch ist es möglich zu überprüfen ob eine Datei auf dem Dateisystem vorhanden ist */
 
 import { getOS } from './init' /** Importiert die Funktion zur bestimmung des Betriebssystems aus init.ts */
+import { writeLog } from './logfile'
 
 let firstInit: boolean = false /** Deklariert eine Variable die auskunft darüber gibt ob eine erste Initalisierung schonmal statt gefunden hat */
 
@@ -24,7 +25,7 @@ export async function checkname() {
 
     if (getOS('WIN') && (constdirname.indexOf('ä') !== -1 || constdirname.indexOf('ö') !== -1 || constdirname.indexOf('ü') !== -1 || constdirname.indexOf(' ') !== -1)) {
     /** Überprüft ob der Ordnerpfad Umlaute enthält und ob es sich um einen Windows PC handelt */
-        window.showErrorMessage(`${constdirname} enthält Umlaute oder Leerzeichen! Diese müssen manuell umbenannt werden!`)
+        window.showWarningMessage(writeLog(`${constdirname} enthält Umlaute oder Leerzeichen! Diese müssen manuell umbenannt werden!`, 'WARNING'))
     }
 
     if (constbasename.indexOf('ä') !== -1 || constbasename.indexOf('ö') !== -1 || constbasename.indexOf('ü') !== -1 || constbasename.indexOf(' ') !== -1 /*+ || constextname !== '.c' */) {
@@ -44,7 +45,7 @@ export async function checkname() {
 async function rename(currentPath: string) {
     const invalidChars = /[äöü ÄÖÜ]/g; /** Definiert die ungültigen Chars */
     let renameanfrage = await window.showWarningMessage( /** Fragt Benutzer ob Fehler ausgebessert werden sollen */
-        `Es sind Fehler im Dateinamen vorhanden! Sollen diese automatisch angepasst werden?`,
+        writeLog(`Es sind Fehler im Dateinamen vorhanden!`, 'WARNING')+'Sollen diese automatisch angepasst werden?',
         'Ja',
         'Nein',
     ) || ''

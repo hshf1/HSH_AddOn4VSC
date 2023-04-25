@@ -165,7 +165,7 @@ async function sendReport(userReport: { mail: string; problem: string; scPermiss
 
     await transporter.sendMail(mailOptions)
     
-    window.showInformationMessage(writeLog('Problem erfolgreich gemeldet!'))
+    window.showInformationMessage(writeLog('Problem erfolgreich gemeldet!', 'INFO'))
 }
 
 async function getTerminalContent(userReport: { mail: string; problem: string; scPermission: string; codeAttachPermission: string; scFilePath: string; terminalContentPath: string }) {
@@ -179,8 +179,8 @@ async function getTerminalContent(userReport: { mail: string; problem: string; s
         }
 
         await promises.writeFile(userReport.terminalContentPath, fileContents)
-    } catch (error) {
-        console.error(error)
+    } catch (error: any) {
+        writeLog(`[${__filename}:${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')
     }
 }
 

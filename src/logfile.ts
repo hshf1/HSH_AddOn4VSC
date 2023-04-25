@@ -30,7 +30,6 @@ Error:
 export function logFileMain() {
     logFileName = `HSH_Addon4VSC_logFile-${currentDate}.txt`
     logFilePath = join(getPath('logfiledir'), logFileName)
-    console.log(logFilePath)
 
     if(!existsSync(logFilePath)) {
         writeFileSync(logFilePath, `Automatisch erzeugter LogFile - HSH_AddOn4VSC\n`)
@@ -39,25 +38,34 @@ export function logFileMain() {
     deleteLog()
 }
 
-export function writeLog(msg: string) {
-    // Write a log message to the file
-    appendFileSync(logFilePath, `${currentDate} ${moment().format('HH:mm:ss')} -> ${msg}\n`)
-
+/** Zu verwendende Level
+ * 
+ * - INFO
+ * - WARNING
+ * - ERROR
+ * 
+ * Beispiele:
+ * 
+ * `writeLog('AddOn wurde erfolgreich gestartet!', 'INFO')`
+ * 
+ * `writeLog('Folgende Meldung wurde ausgegeben: '+${error}, 'ERROR')`
+ */
+export function writeLog(msg: string, lvl: string) {
+    appendFileSync(logFilePath, `[${currentDate} ${moment().format('HH:mm:ss')}][${lvl}] - ${msg}\n`)
     return msg
 }
 
 function deleteLog() {
-    // Delete the log file from two days ago
-    const daysToKeep = 2;
+    const daysToKeep = 2 /** Anzahl Tage zum aufbewahren von Logs */
     const filesToDelete = readdirSync(getPath('logfiledir'))
     .filter((fileName) => {
-        const fileDate = moment(fileName.replace('HSH_Addon4VSC_logFile-', '').replace('.txt', ''));
-        return fileDate.isValid() && moment().diff(fileDate, 'days') >= daysToKeep;
+        const fileDate = moment(fileName.replace('HSH_Addon4VSC_logFile-', '').replace('.txt', ''))
+        return fileDate.isValid() && moment().diff(fileDate, 'days') >= daysToKeep
     })
-    .map((fileName) => join(getPath('logfiledir'), fileName));
+    .map((fileName) => join(getPath('logfiledir'), fileName))
 
     for (const fileToDelete of filesToDelete) {
-        unlinkSync(fileToDelete);
-        writeLog(`LogFile ${fileToDelete} erfolgreich gelöscht!`)
+        unlinkSync(fileToDelete)
+        writeLog(`LogFile ${fileToDelete} erfolgreich gelöscht!`, 'INFO')
     }
 }
