@@ -16,7 +16,7 @@ import { exec } from 'child_process'    /** Importiert die exec Funktion aus dem
 import { activityBarMain } from './activity_bar'    /** Importiert die Funktion die in der Activitybar die Links einfügt */
 import { openprefolder } from './checkfolder'		/** Importiert die Funktion zum öffnen des Vorgefertigten Ordner aus  checkfolder.ts */
 import { checkjsons } from './jsonfilescheck'		/** Importiert die Funktion zum überprüfen der jsons-Datei aus jsonfilescheck.ts */
-import { constcommands } from './constants'         /** Importiert die Namen und Beschreibungen der Commands aus constants.ts*/
+import { getConstCommands } from './constants'         /** Importiert die Namen und Beschreibungen der Commands aus constants.ts*/
 import { logFileMain, writeLog } from './logfile'
 
 interface IEnvironmentVariables {
@@ -28,46 +28,31 @@ interface IEnvironmentVariables {
     path: { /** Definiert eine Reihe von String-Vaariablen */
         userHomeFolder: string, /** Speichert das Heimatvereichnis des Benutzers */
         CUebung: string,
-        settingsjson: string,
-        tasksjson: string,
+        settingsJSON: string,
+        tasksJSON: string,
         compiler: string,
-        testprog: string,
+        testProg: string,
         logFileDir: string
     },
     settings: {
-        hshRZ: boolean | undefined /** Boolean die angibt ob es sich um einen PC im Rechnerraum handelt*/
+        hshRZ: boolean | undefined, /** Boolean die angibt ob es sich um einen PC im Rechnerraum handelt*/
+        encodingSettingsJSON: string
+    },
+    status: {
+        compiler: boolean /** Boolean die angibt ob Compiler initialisiert wurde und keinen Fehler ausgibt */
     }
 }
 
-let envVar: IEnvironmentVariables
+let envVar: IEnvironmentVariables = { 
+    os: { IS_WINDOWS: false, IS_OSX: false, IS_LINUX: false },
+    path: { userHomeFolder: "", CUebung: "", settingsJSON: "", tasksJSON: "", compiler: "", testProg: "", logFileDir: "" },
+    settings: { hshRZ: undefined, encodingSettingsJSON: "" }, status: { compiler: false }
+}
 
 let statusbar_button: StatusBarItem /** Definiert statusbar_button als StatusBarItem */
-let filesencoding_settingsjson: string /** Definiert eine Reihe von String-Vaariablen */
-let setting_init: boolean | undefined = undefined   /** Boolean die zurück gibt ob, initMain erfolgreich war */
-let compiler_stat: boolean = false  /** Boolean die angibt ob Compiler initialisiert wurde und keinen Fehler ausgibt */
 
 /** Hauptfunktion die die Initialisierung durchführt und wenn erfolgreich setting_init true setzt. */
 export function initMain() {
-    envVar = {
-        os: { 
-            IS_WINDOWS: false,
-            IS_OSX: false,
-            IS_LINUX: false
-        },
-        path: {
-            userHomeFolder: "",
-            CUebung: "",
-            settingsjson: "",
-            tasksjson: "",
-            compiler: "",
-            testprog: "",
-            logFileDir: ""
-        },
-        settings: {
-            hshRZ: undefined
-        }
-    }
-
     setOS() /** Setzt die entsprechende Boolean für das jeweilige Betriebssystem true */
 
     if (!getOS('WIN')) { /** "Wenn die Boolean IS_Windows false ist */
@@ -93,7 +78,6 @@ export function initMain() {
     logFileMain()
 
     writeLog(`HSH_AddOn4VSC gestartet - Initialisierung beendet!`, 'INFO')
-    setting_init = true /** Setzt true um zu zeigen, dass initMain abgeschlossen ist */
 }
 /** Funktion die Überprüft welches Betriebssystem vorliegt
  * und entsprechend die Boolean setzt */
@@ -137,11 +121,6 @@ export function getHsHRZ() {
     return envVar.settings.hshRZ
 }
 
-/** Funktion die setting_init Variable zurückgibt und somit global verfügbar macht */
-export function getSettingInit() {
-    return setting_init
-}
-
 /** Funktion die die Pfade zurückgibt und somit global verfügbar macht
  * 
  * Verfügbare Argumente:
@@ -154,11 +133,11 @@ export function getSettingInit() {
 export function getPath(temp: string) {
     switch(temp) {
         case 'settingsjson':
-            return envVar.path.settingsjson
+            return envVar.path.settingsJSON
         case 'tasksjson':
-            return envVar.path.tasksjson
+            return envVar.path.tasksJSON
         case 'testprog':
-            return envVar.path.testprog
+            return envVar.path.testProg
         case 'CUebung':
             return envVar.path.CUebung
         case 'logfiledir':
@@ -173,32 +152,32 @@ export function setPath() {
     envVar.path.userHomeFolder = homedir()
     /** Je nach dem ob im Rechneraum oder nicht wird der enstprechende Compiler-Pfad gespeichert */
     envVar.path.compiler = envVar.settings.hshRZ ? 'C:\\\\Program Files (x86)\\\\Dev-Cpp\\\\MinGW64\\\\bin\\\\gcc.exe' : 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe'
-    filesencoding_settingsjson = envVar.os.IS_WINDOWS ? `cp437` : `utf8` /** Je nach dem ob Windows oder nicht wird Codierung gespeichert*/
+    envVar.settings.encodingSettingsJSON = envVar.os.IS_WINDOWS ? `cp437` : `utf8` /** Je nach dem ob Windows oder nicht wird Codierung gespeichert*/
 
     if (envVar.os.IS_WINDOWS && !envVar.settings.hshRZ) { /** Wenn windows und privater Rechner */
         envVar.path.logFileDir = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User`
         envVar.path.CUebung = `${envVar.path.userHomeFolder}\\Documents\\C_Uebung`
-        envVar.path.settingsjson = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\settings.json`
-        envVar.path.tasksjson = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
-        envVar.path.testprog = `${envVar.path.CUebung}\\testprog.c`
+        envVar.path.settingsJSON = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\settings.json`
+        envVar.path.tasksJSON = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
+        envVar.path.testProg = `${envVar.path.CUebung}\\testprog.c`
     } else if (envVar.os.IS_WINDOWS && envVar.settings.hshRZ) { /** Wenn windows und HSH Rechner */
         envVar.path.logFileDir = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User`
         envVar.path.CUebung = `U:\\C_Uebung`
-        envVar.path.settingsjson = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\settings.json`
-        envVar.path.tasksjson = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
-        envVar.path.testprog = `${envVar.path.CUebung}\\testprog.c`
+        envVar.path.settingsJSON = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\settings.json`
+        envVar.path.tasksJSON = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
+        envVar.path.testProg = `${envVar.path.CUebung}\\testprog.c`
     } else if (envVar.os.IS_OSX) { /** Wenn MAC */
         envVar.path.logFileDir = `${envVar.path.userHomeFolder}/Library/Application Support/Code/User`
         envVar.path.CUebung = `${envVar.path.userHomeFolder}/Documents/C_Uebung`
-        envVar.path.settingsjson = `${envVar.path.userHomeFolder}/Library/Application Support/Code/User/settings.json`
-        envVar.path.tasksjson = `${envVar.path.userHomeFolder}/Library/Application Support/Code/User/tasks.json`
-        envVar.path.testprog = `${envVar.path.CUebung}/testprog.c`
+        envVar.path.settingsJSON = `${envVar.path.userHomeFolder}/Library/Application Support/Code/User/settings.json`
+        envVar.path.tasksJSON = `${envVar.path.userHomeFolder}/Library/Application Support/Code/User/tasks.json`
+        envVar.path.testProg = `${envVar.path.CUebung}/testprog.c`
     } else if (envVar.os.IS_LINUX) { /** Wenn Linux */
         envVar.path.logFileDir = `${envVar.path.userHomeFolder}/.config/Code/User`
         envVar.path.CUebung = `${envVar.path.userHomeFolder}/Documents/C_Uebung`
-        envVar.path.settingsjson = `${envVar.path.userHomeFolder}/.config/Code/User/settings.json`
-        envVar.path.tasksjson = `${envVar.path.userHomeFolder}/.config/Code/User/tasks.json`
-        envVar.path.testprog = `${envVar.path.CUebung}/testprog.c`
+        envVar.path.settingsJSON = `${envVar.path.userHomeFolder}/.config/Code/User/settings.json`
+        envVar.path.tasksJSON = `${envVar.path.userHomeFolder}/.config/Code/User/tasks.json`
+        envVar.path.testProg = `${envVar.path.CUebung}/testprog.c`
     } else {
         window.showErrorMessage(writeLog(`Betriebssystem wurde nicht erkannt! Einige Funktionen werden nicht richtig ausgeführt. Bitte neu starten!`, 'ERROR')) /** Falls kein Betriebssystem gefunden worde */
     }
@@ -233,10 +212,10 @@ export function compiler_init() {
             })
         } else {
             writeLog(`Compiler gefunden!`, 'INFO')
-            if (compiler_stat) { /** Falls compiler_stat schon true */
+            if (envVar.status.compiler) { /** Falls compiler_stat schon true */
                 window.showInformationMessage(`Compiler bereits installiert! Informationen zum Compiler: ${stdout}`)
             } else { /** Falls compiler_stat noch false, wird dann auf true gesetzt */
-                compiler_stat = true
+                envVar.status.compiler = true
             }
         }
     })
@@ -272,12 +251,12 @@ export function getCompilerPath() {
 
 /** Globale Funktion die zurückgibt um welche Art der Codierung es sich handelt */
 export function getFilesEncoding() {
-    return filesencoding_settingsjson
+    return envVar.settings.encodingSettingsJSON
 }
 
 /** Funktion die die Einstellung der Boolean anwendet und den Compiler-Pfad + task.json aktualisiert */
 export async function changeHsHOrPrivate(temp_hshRZ: boolean) {
     sethshRZ(temp_hshRZ)
     setPath()   /** Setzt Compilerpfad neu */
-    await commands.executeCommand(constcommands[3].command)   /** Führt command 3 aus, "tasks.json zurücksetzen" */                        
+    await commands.executeCommand(getConstCommands()[3].command)   /** Führt command 3 aus, "tasks.json zurücksetzen" */                        
 }

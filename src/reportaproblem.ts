@@ -1,4 +1,3 @@
-/** Noch nicht kommentieren, Funktion noch nicht fertig - CK */
 // TODO: Code effizienter und lessbarer schreiben
 // TODO: Try-Catch Blöcke definieren
 
@@ -15,31 +14,29 @@ import { createTransport } from "nodemailer"
 
 import { getSmtpEMail, getSmtpHost, getSmtpPW, getSmtpPort } from "./smtpconfig"
 import { getOS, getPath } from "./init"
-import { logFileName, logFilePath, writeLog } from "./logfile"
+import { getLogFileName, getLogFilePath, writeLog } from "./logfile"
 
 const execAsync = promisify(exec)
 
 interface UserReport {
-    mail: string,
-    problem: string,
-    codeAttachPermission: string,
+    mail: string
+    problem: string
+    codeAttachPermission: string
     terminalContentPath: string
     screenshot: {
-        permission: string,
+        permission: string
         filePath: string
     }
+    attachments: {
+        filename: string
+        path: string
+    }[]
 }
 
 export async function reportAProblem() {
     let userReport: UserReport = {
-        mail: "",
-        problem: "",
-        codeAttachPermission: "",
-        terminalContentPath: "",
-        screenshot: {
-            permission: "",
-            filePath: "",
-        }
+        mail: "", problem: "", codeAttachPermission: "", terminalContentPath: "",
+        screenshot: { permission: "", filePath: "" }, attachments: []
     }
 
     try {
@@ -48,6 +45,7 @@ export async function reportAProblem() {
             await getScreenshot(userReport)
         }
         await getTerminalContent(userReport)
+        await getAttachments(userReport)
         await sendReport(userReport)
     } catch(error: any) {
         writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')
@@ -66,7 +64,7 @@ async function userReportInput(userReport: UserReport) {
     userReport.mail = userReport.mail.trim()
     if (!emailPattern.test(userReport.mail)) {
         window.showWarningMessage("Problem melden wurde abgebrochen. Bitte eine richtige E-Mail Adresse angeben!")
-        throw new Error
+        throw new Error('Eingegebene E-Mail Adresse ist ungültig, melden eines Problems abgebrochen!')
     }
 
     userReport.problem = await window.showInputBox({
@@ -109,6 +107,25 @@ async function getScreenshot(userReport: UserReport) {
     }
 }
 
+function getAttachments(userReport: UserReport) {
+    userReport.attachments.push({ filename: getLogFileName(), path: getLogFilePath() })
+    userReport.attachments.push({ filename: 'terminalcontent.txt', path: userReport.terminalContentPath })
+    userReport.attachments.push({ filename: 'settings.json', path: getPath('settingsjson') })
+    userReport.attachments.push({ filename: 'tasks.json', path: getPath('tasksjson') })
+    
+    if (userReport.screenshot.permission) {
+        userReport.attachments.push({ filename: 'screenshot.png', path: userReport.screenshot.filePath })
+    }
+    
+    if (userReport.codeAttachPermission) {
+        const activeFilePaths: { filename: string, path: string }[] = getActiveEditorFilepaths()
+        const attachActiveFiles = activeFilePaths.map(obj => ({ filename: obj.filename, path: obj.path }))
+        for (const obj of attachActiveFiles) {
+            userReport.attachments.push(obj)
+        }
+    }
+}
+
 async function sendReport(userReport: UserReport) {
     const sendPermission = await window.showQuickPick(['Ja', 'Nein'], {
         canPickMany: false,
@@ -120,9 +137,6 @@ async function sendReport(userReport: UserReport) {
         window.showInformationMessage('Problem melden abgebrochen!')
         return
     }
-
-    const activeFilePaths: { filename: string, path: string }[] = getActiveEditorFilepaths()
-    const attachActiveFiles = activeFilePaths.map(obj => ({ filename: obj.filename, path: obj.path }))
 
     const transporter = createTransport({
         host: getSmtpHost(),
@@ -140,36 +154,7 @@ async function sendReport(userReport: UserReport) {
         cc: userReport.mail,
         subject: 'VSCode Problem',
         text: `Bitte keine Dateien oder Programme ausführen!\nSollte ein Code mitgeschickt worden sein, immer stets überprüfen vor dem Ausführen!\n\nFolgendes Problem wurde vom Nutzer ${userReport.mail} gemeldet:\n\n${userReport.problem}`,
-        attachments: [
-            {
-                filename: logFileName,
-                path: logFilePath
-            },
-            {
-                filename: 'terminalcontent.txt',
-                path: userReport.terminalContentPath,
-            },
-            {
-                filename: 'settings.json',
-                path: getPath('settingsjson')
-            },
-            {
-                filename: 'tasks.json',
-                path: getPath('tasksjson')
-            },
-            ...(userReport.screenshot.permission
-                ? [
-                    {
-                        filename: 'screenshot.png',
-                        path: userReport.screenshot.filePath,
-                    },
-                ] : []),
-            ...(userReport.codeAttachPermission
-                ? [
-                    ...attachActiveFiles,
-                ]
-                : []),
-        ]
+        attachments: userReport.attachments
         // TODO: eigene Dateien anhängen erlauben? Wozu? Sicherheitsbedenken?
     }
 

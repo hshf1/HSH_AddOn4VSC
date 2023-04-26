@@ -18,7 +18,7 @@ import {
 *   TreeItem: Die TreeItem-Klasse stellt ein Element in einem TreeView dar.
 */
 
-import { constcommands } from './constants' /** Importiert die Befehle aus der constants.ts  */
+import { getConstCommands } from './constants' /** Importiert die Befehle aus der constants.ts  */
 import { getGithubLinks, getGithubStatus } from './github' /** Importiert die Links und den GitHubStatus aus github.ts */
 import { getHsHRZ, getStatusBarItem } from './init' /** Importiert Funktionen aus init.ts */
 import { writeLog } from './logfile'
@@ -120,16 +120,16 @@ export async function activityBarMain() {
 function aktualisieren() {
     dependencies_main = [ /** Definiert die Dependencies des Main Arrays neu */
         new Dependency('GitHub: Vorlesung C', TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: ['https://github.com/hshf1/VorlesungC', ''] }),
-        new Dependency((getStatusBarItem().command === 'extension.off') ? 'Erweiterung pausieren' : 'Erweiterung wieder aktivieren', TreeItemCollapsibleState.None, constcommands[(getStatusBarItem().command === 'extension.off') ? 1 : 0]),
+        new Dependency((getStatusBarItem().command === 'extension.off') ? 'Erweiterung pausieren' : 'Erweiterung wieder aktivieren', TreeItemCollapsibleState.None, getConstCommands()[(getStatusBarItem().command === 'extension.off') ? 1 : 0]),
         new Dependency('Einstellungen', TreeItemCollapsibleState.Collapsed),
         new Dependency('Nützliche Links', TreeItemCollapsibleState.Expanded),
-        new Dependency('Problem melden', TreeItemCollapsibleState.None, constcommands[7])
+        new Dependency('Problem melden', TreeItemCollapsibleState.None, getConstCommands()[7])
     ]
 
     dependencies_settings = [ /** Definiert die Dependencies des settings Arrays neu */
-        new Dependency('settings.json zurücksetzen', TreeItemCollapsibleState.None, constcommands[2]),
-        new Dependency('tasks.json zurücksetzen', TreeItemCollapsibleState.None, constcommands[3]),
-        new Dependency('Compiler prüfen', TreeItemCollapsibleState.None, constcommands[5]),
-        new Dependency(getHsHRZ() ? 'Ändern auf privaten Windows-Rechner' : 'Ändern auf HsH Windows-Rechner', TreeItemCollapsibleState.None, constcommands[6])
+        new Dependency('settings.json zurücksetzen', TreeItemCollapsibleState.None, getConstCommands()[2]),
+        new Dependency('tasks.json zurücksetzen', TreeItemCollapsibleState.None, getConstCommands()[3]),
+        new Dependency('Compiler prüfen', TreeItemCollapsibleState.None, getConstCommands()[5]),
+        new Dependency(getHsHRZ() ? 'Ändern auf privaten Windows-Rechner' : 'Ändern auf HsH Windows-Rechner', TreeItemCollapsibleState.None, getConstCommands()[6])
     ]
 }

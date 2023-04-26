@@ -5,7 +5,7 @@ import { Uri, OpenDialogOptions, commands, window } from 'vscode' /** Importiert
 import { existsSync, mkdirSync, writeFileSync } from 'fs'	/** Importiert Funktionen zum Arbeiten mit Dateien (Filesystem) aus node.js*/
 
 import { getPath } from './init' /** Importiert die Funktion die verschiedene Pfade zurückgibt aus init.ts  */
-import { testprogc } from './constants' /** Impoertiert den Inhalt des testprogramms aus constants.ts */
+import { getTestProgC } from './constants' /** Impoertiert den Inhalt des testprogramms aus constants.ts */
 import { writeLog } from './logfile'
 
 function openfolder() {
@@ -13,13 +13,13 @@ function openfolder() {
 		canSelectMany: false,
 		openLabel: 'Ordner öffnen',
 		canSelectFiles: false,
-		canSelectFolders: true,
+		canSelectFolders: true
 	}
 
 	window.showOpenDialog(options).then(fileUri => {	/** Erstellt Fenster in dem ein Ordner ausgewählt werden kann */
 		if (fileUri && fileUri[0]) {
-			writeLog('Ausgewählter Ordner: ' + fileUri[0].fsPath, 'INFO');	/** Gibt den Ordnerpfad in der Konsole aus */
-			commands.executeCommand(`vscode.openFolder`, fileUri[0]);	/** Öffnet den Ordner */
+			writeLog('Ausgewählter Ordner: ' + fileUri[0].fsPath, 'INFO')	/** Gibt den Ordnerpfad in der Konsole aus */
+			commands.executeCommand(`vscode.openFolder`, fileUri[0])	/** Öffnet den Ordner */
 		}
 	})
 }
@@ -36,7 +36,7 @@ export async function openprefolder() {
 	}
 	if (!existsSync(getPath('testprog'))) {	/** Überprüft ob der Pfad inklusive der Datei noch nicht existiert */
 		try {
-			writeFileSync(getPath('testprog'), testprogc) /** Erstellt das testprog und schreibt den inhalt aus constants.ts hinein*/ 
+			writeFileSync(getPath('testprog'), getTestProgC()) /** Erstellt das testprog und schreibt den inhalt aus constants.ts hinein*/ 
 		} catch (error: any) {
 			writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR') /** Falls ein Fehler entsteht wird dieser in die Konsole geschrieben */
 		}

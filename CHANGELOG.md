@@ -8,7 +8,6 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 
 ### neu hinzugefügt 
 
-- Initialisierung anpassen
 - Code effizienter machen
 - Java implementierung
 
@@ -16,7 +15,7 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 
 - 
 
-## [1.5.1] - [1.5.7] 23.04.2023 - 25.04.2023
+## [1.5.1] - [1.5.8] 23.04.2023 - 26.04.2023
 
 ### neu hinzugefügt
 
@@ -30,6 +29,7 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 - Problem melden: Screenshot, Inhalt aus Terminals und Code kann angehängt werden
 - Problem melden angepasst
 - LogFile angepasst
+- Initialisierung vereinfacht
 
 ## [1.5.0] 06.04.2023
 
