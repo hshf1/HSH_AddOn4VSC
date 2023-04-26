@@ -64,6 +64,9 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 - Fehlerbehebungen
 - Beim ändern von HsH oder privaten Windows-Rechner wird tasks.json automatisch angepasst
 
+<details>
+<summary>[1.0.0] - [1.3.0]</summary>
+
 ## [1.3.0] 20.01.2023
 
 ### geändert
@@ -121,6 +124,11 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 - json-Dateien sind nun zusammengefasst und die Einstellungen in den jeweiligen einzelnen Dateien Plattform-spezifisch beschrieben.
 - Effizientere schreibweise vom Code.
 
+</details>
+
+<details>
+<summary>[0.0.1] - [0.0.10]</summary>
+
 ## [0.0.1] - [0.0.10] 26.12.2022 - 28.12.2022
 
 ### neu hinzugefügt
@@ -142,3 +150,5 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 - Überprüfung auf vorhandensein der benötigten Extensions wurde verbessert.
 - Methode, um zum Pfad des Ordners zu gelangen wurde angepasst. (MacOS)
 - Abfrage zum Ordner öffnen nur dann, wenn vordefinierter Ordner nicht gefunden wird.
+
+</details>
