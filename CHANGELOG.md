@@ -16,7 +16,7 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 - Benutzer kann nun auch Python auswählen
 - Addon erstellt Automatisch die Ordner und die HelloWorld Dateien (Java und Python).
 - Python Dependencie angegben ("ms-python.python")
-### geändert
+### sicherheit
 - Wechseln der Programmiersprache zu einer anderen Sprache als C ist auf privaten Rechner noch blockiert. (Skript muss vorher erweitert werden)
 
 
