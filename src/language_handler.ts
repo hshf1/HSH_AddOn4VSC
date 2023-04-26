@@ -12,22 +12,25 @@ export async function init_language() { //Initialisiert einmalig eine Sprache
 
     let init_status: boolean | undefined = undefined
 
-    if (init_status != true) { 
+    if (init_status != true) {
         init_status = true
 
         const folders = vscode.workspace.workspaceFolders; // Überprüft ob Ordner geöffnet ist und speichert den Namen falls vorhanden
         if (!folders || folders.length === 0) { // kein Ordner ist geöffnet wird einfach der C Ordner geöffnet            
-            active_language = "C"       
+            active_language = "C"
             openprefolder(active_language)
             return;
         }
 
-        const currentFolderName = folders[0].name; 
+        const currentFolderName = folders[0].name;
         if (currentFolderName === 'C_Uebung') { // wenn im C Ordner speicher C als aktive Sprache
             active_language = 'C';
             return
         } else if (currentFolderName === 'Java_Uebung') { // wenn im Java Ordner speicher java als aktive Sprache
             active_language = 'Java';
+            return
+        } else if (currentFolderName === 'Python_Uebung') { // wenn im Java Ordner speicher java als aktive Sprache
+            active_language = 'Python';
             return
         }
 
@@ -41,11 +44,10 @@ export async function init_language() { //Initialisiert einmalig eine Sprache
 
 export async function set_language(temp_language: String) {
 
-    /*if(getHsHRZ()==false){ //TODO ÄNDERN 
-        (window.showInformationMessage('Diese Funktion ist zurzeit nur an HSH Rechnern möglich'))
-        active_language = "C"; //Für alle Fälle
+    if (getHsHRZ() == false && temp_language != "C") { //Damit wird gewährleistet, dass an privaten Rechnern erstmal nur C ausgewählt werden kann.
+        window.showInformationMessage('Diese Funktion ist zurzeit nur an HSH Rechnern möglich')
         return
-    }*/
+    }
 
 
     if (temp_language == active_language) { /** Überprüft ob Sprache bereits aktiv ist */
@@ -64,7 +66,14 @@ export async function set_language(temp_language: String) {
         active_language = "Java";
         window.showInformationMessage('Java Ausgewählt')
         await openprefolder("Java")
+
+    } else if (temp_language == "Python") {
+
+        active_language = "Python";
+        window.showInformationMessage('Python Ausgewählt')
+        await openprefolder("Python")
     }
+
     return
 
 }

@@ -5,7 +5,7 @@ import { Uri, OpenDialogOptions, commands, window } from 'vscode' /** Importiert
 import { existsSync, mkdirSync, writeFileSync } from 'fs'	/** Importiert Funktionen zum Arbeiten mit Dateien (Filesystem) aus node.js*/
 
 import { getPath } from './init' /** Importiert die Funktion die verschiedene Pfade zurückgibt aus init.ts  */
-import { testprogc, testprogjava } from './constants' /** Impoertiert den Inhalt des testprogramms aus constants.ts */
+import { testprogc, testprogjava, testprogpython } from './constants' /** Impoertiert den Inhalt des testprogramms aus constants.ts */
 
 
 function openfolder() {
@@ -40,6 +40,12 @@ export async function openprefolder(temp_Folder: String) { /** Öffnet/Erstellt 
 		folder_path = getPath('JavaUebung')
 		prog_path = getPath('testprogjava')
 		programm = testprogjava
+		
+	} else if (temp_Folder == "Python") {
+
+		folder_path = getPath('PythonUebung')
+		prog_path = getPath('testprogpython')
+		programm = testprogpython
 		
 	}
 

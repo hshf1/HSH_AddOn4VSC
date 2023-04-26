@@ -15,8 +15,9 @@ export const constcommands: Command[] = [ /** Definiert die einzelnen Befehle in
     { command: 'setRZHsH.setting', title: 'HsH Rechenzentrum' },
     { command: 'report.problem', title: 'Problem melden'},
     { command: 'switch.language_c', title: 'C'},
-    { command: 'switch.language_java', title: 'Java'}
-    //TODO Compiler Check für Java
+    { command: 'switch.language_java', title: 'Java'},
+    { command: 'switch.language_python', title: 'Python'}
+    //TODO Compiler Check für C, Java und Python ohne automatischen Dowload ?
 ]
 
 /** Globale Konstante die das Testprogramm für c enthält */
@@ -43,7 +44,7 @@ int main()
 export const testprogjava = `public class HelloWorld {
     public static void main(String[] args) {
 
-        System.out.println("Hello, World!");
+        System.out.println("Java said, Hello, World!");
         int i = 1;
         System.out.println(i);
         i++;
@@ -55,6 +56,18 @@ export const testprogjava = `public class HelloWorld {
 
     }
 }`
+
+/** Globale Konstante die das Testprogramm für python enthält */
+export const testprogpython = `print("Python said, Hello World!")
+i = 1
+print(i)
+i += 1
+print(i)
+i += 1
+print(i)
+i += 1
+print(i)
+`
 
 /** Globale Funktion die den Inhalt für Settings.json zurückgibt */
 export function getSettingsJsonData() {

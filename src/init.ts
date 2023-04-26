@@ -15,15 +15,15 @@ import { activityBarMain } from './activity_bar'    /** Importiert die Funktion 
 import { openprefolder } from './checkfolder'		/** Importiert die Funktion zum öffnen des Vorgefertigten Ordner aus  checkfolder.ts */
 import { checkjsons } from './jsonfilescheck'		/** Importiert die Funktion zum überprüfen der jsons-Datei aus jsonfilescheck.ts */
 import { constcommands } from './constants'         /** Importiert die Namen und Beschreibungen der Commands aus constants.ts*/
-import { get_active_prog_language } from './language_handler' 
+import { get_active_prog_language } from './language_handler'
 
 const userhomefolder = homedir()    /** Speichert das Heimatvereichnis des Benutzers */
 
 let IS_WINDOWS: boolean, IS_OSX: boolean, IS_LINUX: boolean /** Definiert Bool's für die einzelnen Betriebssysteme */
 let statusbar_button: StatusBarItem /** Definiert statusbar_button als StatusBarItem */
 /** let gcc_command: string // is it still needed? */
-let folderPath_C_Uebung: string, folderPath_Java_Uebung: string,filePath_settingsjson: string, filePath_tasksjson: string /** Definiert eine Reihe von String-Vaariablen */
-let filesencoding_settingsjson: string, compilerpath: string, filePath_testprog: string, filePath_testprogjava: string /** Definiert eine Reihe von String-Vaariablen */
+let folderPath_C_Uebung: string, folderPath_Java_Uebung: string, folderPath_Python_Uebung: string, filePath_settingsjson: string, filePath_tasksjson: string /** Definiert eine Reihe von String-Vaariablen */
+let filesencoding_settingsjson: string, compilerpath: string, filePath_testprog: string, filePath_testprogjava: string, filePath_testprogpython: string/** Definiert eine Reihe von String-Vaariablen */
 let setting_init: boolean | undefined = undefined   /** Boolean die zurück gibt ob, initMain erfolgreich war */
 let hshRZ: boolean | undefined = undefined  /** Boolean die angibt ob es sich um einen PC im Rechnerraum handelt*/
 let compiler_stat: boolean = false  /** Boolean die angibt ob Compiler initialisiert wurde und keinen Fehler ausgibt */
@@ -43,14 +43,14 @@ export function initMain() {    /** Hauptfunktion die die Initialisierung durchf
 
     setPath()       /** Setzt die Pfade für .jsons und Übungsordner */
     checkjsons()    /** Ruft die Funktion auf, die sicherstellt, dass die Konfigurationsdateien vorhanden sind */
-    
+
     if (!(workspace.workspaceFolders?.toString)) {  /** Funktion die schaut, ob Ordner in VS-Code geöffnet ist und ggf. den vorgefertigten Ordner öffnet */
-		openprefolder(get_active_prog_language()) /** Öffnet Ordner je nach dem welche Prog.sprache aktiv ist */
-	}
+        openprefolder(get_active_prog_language()) /** Öffnet Ordner je nach dem welche Prog.sprache aktiv ist */
+    }
 
     setStatusBarItem()  /** Initialisiert den Button in der Statusleiste */
     activityBarMain()   /** Ruft Funktion auf die für die Activitybar zuständig ist */
-    
+
     if (!compiler_stat) { /** Überprüft ob Compiler schon initialisiert wurde, falls nicht wird Compiler initialisiert */
         compiler_init()
     }
@@ -65,7 +65,7 @@ function setOS() { /** Funktion die Überprüft welches Betriebssystem vorliegt,
 }
 
 export function getOS(os: string) { /** Funktion die  WIN, MAC oder LIN als Eingabe bekommnt und entsprechend den Boolschen Status zurückgibt */
-    switch(os) {
+    switch (os) {
         case 'WIN':
             return IS_WINDOWS
         case 'MAC':
@@ -86,7 +86,7 @@ function setStatusBarItem() { /** Funktion die den Button in der Statusbar defin
 }
 
 export function getStatusBarItem() { /** Funktion die statusbar_button Variable zurückgibt und somit global verfügbar macht */
-    return statusbar_button 
+    return statusbar_button
 }
 
 export function getHsHRZ() {    /** Funktion die hshRZ Variable zurückgibt und somit global verfügbar macht */
@@ -98,7 +98,7 @@ export function getSettingInit() {  /** Funktion die setting_init Variable zurü
 }
 
 export function getPath(temp: string) {     /** Funktion die die Pfade zurückgibt und somit global verfügbar macht */
-    switch(temp) {
+    switch (temp) {
         case 'settingsjson':
             return filePath_settingsjson
         case 'tasksjson':
@@ -107,10 +107,14 @@ export function getPath(temp: string) {     /** Funktion die die Pfade zurückgi
             return filePath_testprog
         case 'testprogjava':
             return filePath_testprogjava
+        case 'testprogpython':
+            return filePath_testprogpython
         case 'CUebung':
             return folderPath_C_Uebung
         case 'JavaUebung':
             return folderPath_Java_Uebung
+        case 'PythonUebung':
+            return folderPath_Python_Uebung
         default:
             return ''
     }
@@ -125,34 +129,42 @@ export function setPath() { /** Funktion die die Pfade abhängig vom Betriebssys
     if (IS_WINDOWS && !hshRZ) { /** Wenn windows und privater Rechner */
         folderPath_C_Uebung = `${userhomefolder}\\Documents\\C_Uebung`
         folderPath_Java_Uebung = `${userhomefolder}\\Documents\\Java_Uebung`
+        folderPath_Python_Uebung = `${userhomefolder}\\Documents\\Python_Uebung`
         filePath_settingsjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\settings.json`
         filePath_tasksjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
         filePath_testprog = `${folderPath_C_Uebung}\\testprog.c`
         filePath_testprogjava = `${folderPath_Java_Uebung}\\HelloWorld.java`
+        filePath_testprogpython = `${folderPath_Python_Uebung}\\HelloWorld.py`
         /** gcc_command = 'C:\\ProgramData\\chocolatey\\bin\\gcc.exe' */
     } else if (IS_WINDOWS && hshRZ) { /** Wenn windows und HSH Rechner */
         folderPath_C_Uebung = `U:\\C_Uebung`
         folderPath_Java_Uebung = `U:\\Java_Uebung`
+        folderPath_Python_Uebung = `U:\\Python_Uebung`
         filePath_settingsjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\settings.json`
         filePath_tasksjson = `${userhomefolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
         filePath_testprog = `${folderPath_C_Uebung}\\testprog.c`
         filePath_testprogjava = `${folderPath_Java_Uebung}\\HelloWorld.java`
+        filePath_testprogpython = `${folderPath_Python_Uebung}\\HelloWorld.py`
         /** gcc_command = '' */
     } else if (IS_OSX) { /** Wenn MAC */
         folderPath_C_Uebung = `${userhomefolder}/Documents/C_Uebung`
         folderPath_Java_Uebung = `${userhomefolder}/Documents/Java_Uebung`
+        folderPath_Python_Uebung = `${userhomefolder}/Documents/Python_Uebung`
         filePath_settingsjson = `${userhomefolder}/Library/Application Support/Code/User/settings.json`
         filePath_tasksjson = `${userhomefolder}/Library/Application Support/Code/User/tasks.json`
         filePath_testprog = `${folderPath_C_Uebung}/testprog.c`
-        filePath_testprogjava = `${folderPath_C_Uebung}/HelloWorld.java`
+        filePath_testprogjava = `${folderPath_Java_Uebung}/HelloWorld.java`
+        filePath_testprogpython = `${folderPath_Python_Uebung}/HelloWorld.py`
         /** gcc_command = '/usr/bin/gcc' */
     } else if (IS_LINUX) { /** Wenn Linux */
         folderPath_C_Uebung = `${userhomefolder}/Documents/C_Uebung`
         folderPath_Java_Uebung = `${userhomefolder}/Documents/Java_Uebung`
+        folderPath_Python_Uebung = `${userhomefolder}/Documents/Python_Uebung`
         filePath_settingsjson = `${userhomefolder}/.config/Code/User/settings.json`
         filePath_tasksjson = `${userhomefolder}/.config/Code/User/tasks.json`
         filePath_testprog = `${folderPath_C_Uebung}/testprog.c`
-        filePath_testprogjava = `${folderPath_C_Uebung}/HelloWorld.java`
+        filePath_testprogjava = `${folderPath_Java_Uebung}/HelloWorld.java`
+        filePath_testprogpython = `${folderPath_Python_Uebung}/HelloWorld.py`
         /** gcc_command = '/usr/bin/gcc' */
     } else {
         window.showErrorMessage(`Betriebssystem wurde nicht erkannt! Einige Funktionen werden nicht richtig ausgeführt. Bitte neu starten!`) /** Falls kein Betriebssystem gefunden worde */
@@ -201,7 +213,7 @@ export async function setRZHsH() { /** Globale asynchrone Funktion die Ändert o
         return
     } else {
         if (workspace.getConfiguration('addon4vsc').get('computerraum')) { /** Überprüft ob die Einstellung computerraum in settings.json true ist */
-            window.showInformationMessage('Auf privater Windows-Rechner gestellt.') 
+            window.showInformationMessage('Auf privater Windows-Rechner gestellt.')
         } else {
             window.showInformationMessage('Auf HsH Windows-Rechner im Rechenzentrum gestellt.')
         }
@@ -227,5 +239,5 @@ export function getFilesEncoding() {    /** Globale Funktion die zurückgbit um 
 export async function changeHsHOrPrivate(temp_hshRZ: boolean) { /** Funktion die die Einstellung der Boolean anwendet und den Compiler-Pfad + task.json aktualisiert  */
     sethshRZ(temp_hshRZ)
     setPath()   /** Setzt Compilerpfad neu */
-    await commands.executeCommand(constcommands[3].command)   /** Führt command 3 aus, "tasks.json zurücksetzen" */                        
+    await commands.executeCommand(constcommands[3].command)   /** Führt command 3 aus, "tasks.json zurücksetzen" */
 }
