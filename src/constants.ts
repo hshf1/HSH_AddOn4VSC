@@ -16,6 +16,7 @@ export const constcommands: Command[] = [ /** Definiert die einzelnen Befehle in
     { command: 'report.problem', title: 'Problem melden'},
     { command: 'switch.language_c', title: 'C'},
     { command: 'switch.language_java', title: 'Java'}
+    //TODO Compiler Check für Java
 ]
 
 /** Globale Konstante die das Testprogramm für c enthält */

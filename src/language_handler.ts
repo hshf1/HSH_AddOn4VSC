@@ -12,7 +12,7 @@ export async function init_language() { //Initialisiert einmalig eine Sprache
 
     let init_status: boolean | undefined = undefined
 
-    if (init_status != true) {
+    if (init_status != true) { 
         init_status = true
 
         const folders = vscode.workspace.workspaceFolders; // Überprüft ob Ordner geöffnet ist und speichert den Namen falls vorhanden
