@@ -19,22 +19,32 @@ import { logFileName, logFilePath, writeLog } from "./logfile"
 
 const execAsync = promisify(exec)
 
+interface UserReport {
+    mail: string,
+    problem: string,
+    codeAttachPermission: string,
+    terminalContentPath: string
+    screenshot: {
+        permission: string,
+        filePath: string
+    }
+}
+
 export async function reportAProblem() {
-    let userReport: {
-        mail: string, problem: string, scPermission: string, codeAttachPermission: string,
-        scFilePath: string, terminalContentPath: string
-    } = {
+    let userReport: UserReport = {
         mail: "",
         problem: "",
-        scPermission: "",
         codeAttachPermission: "",
-        scFilePath: "",
-        terminalContentPath: ""
+        terminalContentPath: "",
+        screenshot: {
+            permission: "",
+            filePath: "",
+        }
     }
 
     try {
         await userReportInput(userReport)
-        if (userReport.scPermission === 'Ja') {
+        if (userReport.screenshot.permission === 'Ja') {
             await getScreenshot(userReport)
         }
         await getTerminalContent(userReport)
@@ -44,7 +54,7 @@ export async function reportAProblem() {
     }
 }
 
-async function userReportInput(userReport: { mail: string; problem: string; scPermission: string; codeAttachPermission: string; scFilePath: string; terminalContentPath: string }) {
+async function userReportInput(userReport: UserReport) {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
     userReport.mail = await window.showInputBox({
@@ -66,7 +76,7 @@ async function userReportInput(userReport: { mail: string; problem: string; scPe
         ignoreFocusOut: true
     }) || ''
 
-    userReport.scPermission = await window.showQuickPick(['Ja', 'Nein'], {
+    userReport.screenshot.permission = await window.showQuickPick(['Ja', 'Nein'], {
         canPickMany: false,
         placeHolder: 'Soll ein Screenshot von VSCode mitangehängt werden? (gesamter Bildschirm wird gecaptured!)',
         ignoreFocusOut: true
@@ -80,16 +90,16 @@ async function userReportInput(userReport: { mail: string; problem: string; scPe
 
 }
 
-async function getScreenshot(userReport: { mail: string; problem: string; scPermission: string; codeAttachPermission: string; scFilePath: string; terminalContentPath: string }) {
+async function getScreenshot(userReport: UserReport) {
     try {
-        userReport.scFilePath = join(tmpdir(), `screenshot_${Date.now()}.png`)
+        userReport.screenshot.filePath = join(tmpdir(), `screenshot_${Date.now()}.png`)
         // TODO: ggf. möglichkeit bieten, ganzen Bildschirm oder nur VSC Window zu screenshotten?
         if (getOS("WIN")) {
-            await execAsync(`powershell -Command "& { Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('%{PRTSC}'); Start-Sleep -Milliseconds 250; $image = [System.Windows.Forms.Clipboard]::GetImage(); $image.Save('${userReport.scFilePath}'); }"`)
+            await execAsync(`powershell -Command "& { Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('%{PRTSC}'); Start-Sleep -Milliseconds 250; $image = [System.Windows.Forms.Clipboard]::GetImage(); $image.Save('${userReport.screenshot.filePath}'); }"`)
         } else if (getOS("MAC")) {
-            await execAsync(`screencapture "${userReport.scFilePath}"`) // TODO: Derzeit gesamter Bildschirm - ändern, dass nur VSC Window gecaptured wird
+            await execAsync(`screencapture "${userReport.screenshot.filePath}"`) // TODO: Derzeit gesamter Bildschirm - ändern, dass nur VSC Window gecaptured wird
         } else if (getOS("LIN")) {
-            await execAsync(`gnome-screenshot -f "${userReport.scFilePath}"`) // TODO: Linux muss noch getestet werden
+            await execAsync(`gnome-screenshot -f "${userReport.screenshot.filePath}"`) // TODO: Linux muss noch getestet werden
         } else {
             throw new Error(`Ungültige Plattform: ${process.platform}`)
         }
@@ -99,7 +109,7 @@ async function getScreenshot(userReport: { mail: string; problem: string; scPerm
     }
 }
 
-async function sendReport(userReport: { mail: string; problem: string; scPermission: string; codeAttachPermission: string; scFilePath: string; terminalContentPath: string }) {
+async function sendReport(userReport: UserReport) {
     const sendPermission = await window.showQuickPick(['Ja', 'Nein'], {
         canPickMany: false,
         placeHolder: 'Soll die Meldung des Problems nun abgeschickt werden?',
@@ -147,11 +157,11 @@ async function sendReport(userReport: { mail: string; problem: string; scPermiss
                 filename: 'tasks.json',
                 path: getPath('tasksjson')
             },
-            ...(userReport.scPermission
+            ...(userReport.screenshot.permission
                 ? [
                     {
                         filename: 'screenshot.png',
-                        path: userReport.scFilePath,
+                        path: userReport.screenshot.filePath,
                     },
                 ] : []),
             ...(userReport.codeAttachPermission
@@ -168,7 +178,7 @@ async function sendReport(userReport: { mail: string; problem: string; scPermiss
     window.showInformationMessage(writeLog('Problem erfolgreich gemeldet!', 'INFO'))
 }
 
-async function getTerminalContent(userReport: { mail: string; problem: string; scPermission: string; codeAttachPermission: string; scFilePath: string; terminalContentPath: string }) {
+async function getTerminalContent(userReport: UserReport) {
     try {
         userReport.terminalContentPath = join(tmpdir(), `logs_${Date.now()}.txt`)
         const terminalContents = await captureAllTerminalContents()
