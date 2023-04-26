@@ -6,14 +6,10 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 
 ## [Unreleased]
 
-### neu hinzugefügt 
+### neu hinzugefügt / geplant
 
-- Code effizienter machen
 - Java implementierung
-
-### fertig
-
-- 
+- Python implementierung
 
 ## [1.5.1] - [1.5.8] 23.04.2023 - 26.04.2023
 
