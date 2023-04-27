@@ -223,10 +223,10 @@ export function setPath() {
 }
 
 /** Globale Funktion die den Compiler installiert */
-export function compiler_init() {
+export async function compiler_init() {
     if (envVar.settings.hshRZ) {
         const pathToRemove = 'C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin'
-        let pathVar = process.env.PATH || ''
+        let pathVar = await getUserPath()
         const pathDirs = pathVar.split(';')
         const index = pathDirs.indexOf(pathToRemove)
         if (index !== -1) {
@@ -330,3 +330,20 @@ function initHshRz() {
         sethshRZ(false)
     }
 }
+
+function getUserPath(): Promise<string> {
+    return new Promise((resolve, reject) => {
+      exec('reg query HKCU\\Environment /v Path', (error, stdout) => {
+        if (error) {
+          reject(error);
+        } else {
+          const matches = stdout.match(/Path\s+REG_SZ\s+(.*)/);
+          if (matches) {
+            resolve(matches[1]);
+          } else {
+            resolve('');
+          }
+        }
+      });
+    });
+  }
