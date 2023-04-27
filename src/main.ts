@@ -57,7 +57,6 @@ export function activate(context: ExtensionContext) {
 	})
 	workspace.onDidChangeConfiguration(async (event: ConfigurationChangeEvent) => {	
 		if (event.affectsConfiguration('addon4vsc.sprache')) {
-			writeLog(`Folgendes Event wird ausgeführt: ${event}`, 'INFO')
 			let temp: string | undefined = undefined 
 			while(temp === undefined) {
 				temp = workspace.getConfiguration('addon4vsc').get('sprache')
