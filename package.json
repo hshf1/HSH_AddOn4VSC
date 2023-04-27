@@ -24,6 +24,7 @@
     "onCommand:open.link",
     "onCommand:setRZHsH.setting",
     "onCommand:report.problem",
+    "onCommand:switch.language",
     "onStartupFinished"
   ],
   "main": "./out/main.js",
@@ -35,6 +36,12 @@
           "type": "boolean",
           "description": "Hier die Einstellung aktivieren, falls VSCode aus dem RZ der Hochschule Hannover gestartet wird!",
           "default": false,
+          "scope": "application"
+        },
+        "addon4vsc.sprache": {
+          "type": "string",
+          "description": "Hier kann die Programmiersprache ausgewählt werden, die genutzt werden soll.",
+          "default": "C",
           "scope": "application"
         }
       }
@@ -85,6 +92,10 @@
       {
         "command": "report.problem",
         "title": "Problem melden"
+      },
+      {
+        "command": "switch.language",
+        "title": "Programmiersprache wechseln"
       }
     ]
   },

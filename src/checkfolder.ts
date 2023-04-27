@@ -1,11 +1,10 @@
 /** Dieses Modul stellt die Funktionen zur Verfügung, um in VS Code einen Ordner zu öffnen und einen vordefinierten Ordner zu erstellen, falls dieser noch nicht existiert. */
 
-
 import { Uri, OpenDialogOptions, commands, window } from 'vscode' /** Importiert die genannten Befehle aus der VS-Code Erweiterung */
 import { existsSync, mkdirSync, writeFileSync } from 'fs'	/** Importiert Funktionen zum Arbeiten mit Dateien (Filesystem) aus node.js*/
 
 import { getPath } from './init' /** Importiert die Funktion die verschiedene Pfade zurückgibt aus init.ts  */
-import { getTestProgC, testprogjava, testprogpython } from './constants' /** Importiert den Inhalt des testprogramms aus constants.ts */
+import { getTestProg } from './constants' /** Importiert den Inhalt des testprogramms aus constants.ts */
 import { writeLog } from './logfile'
 
 function openfolder() {
@@ -24,48 +23,27 @@ function openfolder() {
 	})
 }
 
-export async function openprefolder(temp_Folder: String) { /** Öffnet/Erstellt Ordner Verzeichnis, braucht als eingabe die Prog.Sprache */
-	let folder_path = "";
-	let prog_path = "";
-	let programm = "";
+/** Öffnet/Erstellt Ordner Verzeichnis */
+export async function openprefolder() {
+	const uebungsFolder = getPath('uebungfolder')
+	const testProg = getPath('testprog')
+	const folderUri = Uri.file(uebungsFolder) /** Kopiert den Pfad des CUebungs Ordners in eine Konstante */
 
-	if (temp_Folder == "C") { /** Speichert die relevanten Daten in Variablen */
-
-		folder_path = getPath('CUebung')
-		prog_path = getPath('testprog')
-		programm = testprogc
-
-	} else if (temp_Folder == "Java") {
-
-		folder_path = getPath('JavaUebung')
-		prog_path = getPath('testprogjava')
-		programm = testprogjava
-		
-	} else if (temp_Folder == "Python") {
-
-		folder_path = getPath('PythonUebung')
-		prog_path = getPath('testprogpython')
-		programm = testprogpython
-		
-	}
-
-	const folderUri = Uri.file(folder_path) /** Kopiert den Pfad des CUebungs Ordners in eine Konstante */
-
-	if (!existsSync(folder_path)) {	/** Überprüft ob der Pfad inklusive des Ordners noch nicht existiert */
+	if (!existsSync(uebungsFolder)) {	/** Überprüft ob der Pfad inklusive des Ordners noch nicht existiert */
 		try {
-			mkdirSync(getPath('CUebung'))	/** Versucht CUebung zu erstellen */
+			mkdirSync(uebungsFolder)	/** Versucht CUebung zu erstellen */
 		} catch (error: any) {
 			writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')	/** Falls ein Fehler entsteht wird dieser in die Konsole geschrieben */
 		}
 	}
-	if (!existsSync(prog_path)) {	/** Überprüft ob der Pfad inklusive der Datei noch nicht existiert */
+	if (!existsSync(testProg)) { /** Überprüft ob der Pfad inklusive der Datei noch nicht existiert */
 		try {
-			writeFileSync(getPath('testprog'), programm()) /** Erstellt das testprog und schreibt den inhalt aus constants.ts hinein*/ 
+			writeFileSync(testProg, getTestProg()) /** Erstellt das testprog und schreibt den inhalt aus constants.ts hinein*/ 
 		} catch (error: any) {
 			writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR') /** Falls ein Fehler entsteht wird dieser in die Konsole geschrieben */
 		}
 	}
-	if (existsSync(folder_path)) {	/** Überprüft ob der Pfad inklusive des Ordners schon existiert */
+	if (existsSync(uebungsFolder)) {	/** Überprüft ob der Pfad inklusive des Ordners schon existiert */
 		commands.executeCommand(`vscode.openFolder`, folderUri) /** VSCode Befehl der einen Ordner öffnet, übergeben wird der Pfad des Übungsordners  */
 	} else {
 		openfolder()	/** Ruft Funktion auf die den Nutzer einen Ordner auswählen lässt */

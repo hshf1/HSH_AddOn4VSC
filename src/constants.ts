@@ -2,7 +2,7 @@
 
 import { Command } from "vscode" /** Importiert die Command Schnittstelle aus der VSCode Modul */
 
-import { getCompilerPath, getFilesEncoding } from "./init" /** Importiert die Funktion die den CompilerPfad bestimmt und die Funktion die das Encoding Format bestimmt */
+import { getCompilerPath, getFilesEncoding, getProgLanguage } from "./init" /** Importiert die Funktion die den CompilerPfad bestimmt und die Funktion die das Encoding Format bestimmt */
 
 export function getConstCommands(): Command[] {
     return [ /** Definiert die einzelnen Befehle in einem Array. */
@@ -14,16 +14,16 @@ export function getConstCommands(): Command[] {
     { command: 'install.compiler', title: 'Compiler installieren' },
     { command: 'setRZHsH.setting', title: 'HsH Rechenzentrum' },
     { command: 'report.problem', title: 'Problem melden'},
-    { command: 'switch.language_c', title: 'C'},
-    { command: 'switch.language_java', title: 'Java'},
-    { command: 'switch.language_python', title: 'Python'}
+    { command: 'switch.language', title: 'C'}
     //TODO Compiler Check für C, Java und Python ohne automatischen Dowload ?
 ]
 }
 
 /** Globale Funktion die das Testprogramm zurückgibt */
-export function getTestProgC() {
-    return `#include <stdio.h>
+export function getTestProg() {
+    const language = getProgLanguage()
+    if (language === 'C') {
+        return `#include <stdio.h>
 
 int main()
 {
@@ -41,10 +41,8 @@ int main()
     y = 12 + 4 % 3 * 7 / 8;
     return 0;
 }`
-}
-
-/** Globale Konstante die das Testprogramm für java enthält */
-export const testprogjava = `public class HelloWorld {
+    } else if (language === 'Java') {
+        return `public class HelloWorld {
     public static void main(String[] args) {
 
         System.out.println("Java said, Hello, World!");
@@ -59,9 +57,8 @@ export const testprogjava = `public class HelloWorld {
 
     }
 }`
-
-/** Globale Konstante die das Testprogramm für python enthält */
-export const testprogpython = `print("Python said, Hello World!")
+    } else if (language === 'Python') {
+        return `print("Python said, Hello World!")
 i = 1
 print(i)
 i += 1
@@ -69,8 +66,11 @@ print(i)
 i += 1
 print(i)
 i += 1
-print(i)
-`
+print(i)`
+    } else {
+        return ''
+    }
+}
 
 /** Globale Funktion die den Inhalt für Settings.json zurückgibt */
 export function getSettingsJsonData() {
@@ -78,6 +78,7 @@ export function getSettingsJsonData() {
 
     let settingsjsondata = `{
         // Allgemeine Nutzereinstellungen
+        "addon4vsc.sprache": "C"                        // Programmiersprache auswählen (derzeit C, Java und Python)
         "addon4vsc.computerraum": false,                // Standort für Windows Rechner (Privat = false, HsH = true)
         "liveshare.anonymousGuestApproval": "accept",   // Live Share eingeladene Anonyme Nutzer automatisch akzeptieren
         "liveshare.guestApprovalRequired": false,       // Live Share um eingeladene Nutzer automatisch zu akzeptieren auf false einstellen

@@ -124,8 +124,8 @@ export async function activityBarMain() {
 function aktualisieren() {
     dependencies_main = [ /** Definiert die Dependencies des Main Arrays neu */
         new Dependency('GitHub: Vorlesung C', TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: ['https://github.com/hshf1/VorlesungC', ''] }),
-        new Dependency((getStatusBarItem().command === 'extension.off') ? 'Erweiterung pausieren' : 'Erweiterung wieder aktivieren', TreeItemCollapsibleState.None, constcommands[(getStatusBarItem().command === 'extension.off') ? 1 : 0]),
-        new Dependency('Programmiersprache ändern (Nur HSH Rechner!)', TreeItemCollapsibleState.Collapsed),
+        new Dependency((getStatusBarItem().command === 'extension.off') ? 'Erweiterung pausieren' : 'Erweiterung wieder aktivieren', TreeItemCollapsibleState.None, getConstCommands()[(getStatusBarItem().command === 'extension.off') ? 1 : 0]),
+        new Dependency('Programmiersprache ändern', TreeItemCollapsibleState.None, getConstCommands()[8]),
         new Dependency('Einstellungen', TreeItemCollapsibleState.Collapsed),
         new Dependency('Nützliche Links', TreeItemCollapsibleState.Expanded),
         new Dependency('Problem melden', TreeItemCollapsibleState.None, getConstCommands()[7])
@@ -136,11 +136,5 @@ function aktualisieren() {
         new Dependency('tasks.json zurücksetzen', TreeItemCollapsibleState.None, getConstCommands()[3]),
         new Dependency('Compiler prüfen', TreeItemCollapsibleState.None, getConstCommands()[5]),
         new Dependency(getHsHRZ() ? 'Ändern auf privaten Windows-Rechner' : 'Ändern auf HsH Windows-Rechner', TreeItemCollapsibleState.None, getConstCommands()[6])
-    ]
-
-    dependencies_program_languages = [ /** Definiert die Dependencies des program_languages Arrays neu */
-        new Dependency('C', TreeItemCollapsibleState.None, constcommands[8]),
-        new Dependency('Java', TreeItemCollapsibleState.None, constcommands[9]),
-        new Dependency('Python', TreeItemCollapsibleState.None, constcommands[10]),
     ]
 }

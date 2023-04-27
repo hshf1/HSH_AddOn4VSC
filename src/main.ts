@@ -21,18 +21,16 @@ import {
 
 import {
 	getHsHRZ, getOS, getStatusBarItem,
-	initMain, changeHsHOrPrivate
+	initMain, changeHsHOrPrivate, getProgLanguage
 } from './init'										/** Importiert eine Reihe von Befehlen aus der init.ts */
 import { checkname } from './filefoldername'		/** Importiert die Funktion zum überprüfen des Dateinames aus filefoldername.ts */
 import { getCommands } from './registercommands'	/** Importiert die Registerbefehle für die Anzeigen aus registercommands.ts */
 import { treeDataProvider } from './activity_bar'	/** Importiert Funktionen der Activity Bar */
-import { init_language } from './language_handler'
 import { writeLog } from './logfile'
 
 /** die "activate" Funktion wird von VS-Code aufgerufen, wenn die Erweiterung aktiviert wird */
 export function activate(context: ExtensionContext) {
 	initMain()	/** Ruft die Funktion auf, die die Initialisierung beginnt */
-  init_language()
 
 	const eventHandler_checkname = async () => {    /**	Code definiert eine asynchrone Funktion die als Event Handler fungiert */
 		if (getStatusBarItem().command === 'extension.off') {	/** überprüft ob der Statusleisten Button auf "pausiert" steht */
@@ -56,9 +54,20 @@ export function activate(context: ExtensionContext) {
 			}
 		}
 	})
-
-	getCommands().forEach(command => {															/** For Schleife durch alle "command" Objekte in "registercommands.ts". name: name des commands, callback: Funktion die ausgeführt wird */
-		context.subscriptions.push(commands.registerCommand(command.name, command.callback))	/** Durch "context.subscriptions.push" wird das Objekt nach deaktivieren der Erweiterung ordnungsgemäss aufgeräumt */
+	workspace.onDidChangeConfiguration(async (event: ConfigurationChangeEvent) => {	
+		if (event.affectsConfiguration('addon4vsc.sprache')) {
+			let temp: string | undefined = undefined 
+			while(temp === undefined) {
+				temp = workspace.getConfiguration('addon4vsc').get('sprache')
+			}
+			if (temp != getProgLanguage()) { /** überprüft ob sich der Wert geändert hat */
+				await commands.executeCommand('workbench.action.closeFolder')
+			}						
+		}
+	})
+	getCommands().forEach(command => { /** For Schleife durch alle "command" Objekte in "registercommands.ts". name: name des commands, callback: Funktion die ausgeführt wird */
+		/** Durch "context.subscriptions.push" wird das Objekt nach deaktivieren der Erweiterung ordnungsgemäss aufgeräumt */
+		context.subscriptions.push(commands.registerCommand(command.name, command.callback))
 	})
 }
 
