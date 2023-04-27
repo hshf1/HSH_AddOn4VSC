@@ -4,7 +4,7 @@
  *  privaten oder HSH Rechner handelt.
  */
 
-// TODO: Nach update im HsH Computerraum müssen Variablen und Funktionen hier angepasst werden
+// TODO: Für java und python einmal compiler init umstrukturieren!
 
 import {
     extensions, commands, window, StatusBarAlignment,
@@ -179,7 +179,7 @@ export function getPath(temp: string) {
 export function setPath() {
     envVar.path.userHomeFolder = homedir()
     /** Je nach dem ob im Rechneraum oder nicht wird der enstprechende Compiler-Pfad gespeichert */
-    envVar.path.compiler = envVar.settings.hshRZ ? 'C:\\\\Program Files (x86)\\\\Dev-Cpp\\\\MinGW64\\\\bin\\\\gcc.exe' : 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe'
+    envVar.path.compiler = envVar.settings.hshRZ ? 'C:\\\\Program Files\\\\mingw64\\\\bin\\\\gcc.exe' : 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe'
     envVar.settings.encodingSettingsJSON = envVar.os.IS_WINDOWS ? `cp437` : `utf8` /** Je nach dem ob Windows oder nicht wird Codierung gespeichert*/
 
     if (envVar.os.IS_WINDOWS && !envVar.settings.hshRZ) { /** Wenn windows und privater Rechner */
@@ -229,11 +229,21 @@ export function setPath() {
 
 /** Globale Funktion die den Compiler installiert */
 export function compiler_init() {
+    if (envVar.settings.hshRZ) {
+        const pathToRemove = 'C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin'
+        exec(`setx PATH "$(echo %PATH:${pathToRemove}=;%)";`, (error, stdout, stderr) => {
+            if (error) {
+                writeLog(`Fehler beim entfernen alter Umgebungsvariable: ${error.message}`, 'ERROR')
+            } else {
+                writeLog(`Alte Umgebungsvariable erfolgreich entfernt: ${stdout}`, 'INFO')
+            }
+        })
+    }
     exec('gcc --version', (error, stdout) => { /** Prüft ob eine gcc version installiert ist */
         if (error) { /** Wenn Fehler auftritt (keine Version installiert ist) */
             commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(envVar.path.userHomeFolder)).then(() => { /** Erzeugt neues Terminal und setzt das Verzeichnis auf das Heimatverzeichnis */
                 if (envVar.os.IS_WINDOWS) {
-                    window.showInformationMessage(writeLog(`Compiler nicht gefunden.`, 'INFO') + ` Zum installieren bitte auswählen:`, 'Privater Windows-Rechner', 'HsH Windows-Rechner', 'Jetzt nicht').then(async selected => { /** Fragt ob HSH oder Privater Rechner und wartet auf Antwort */
+                    window.showWarningMessage(writeLog(`Compiler nicht gefunden!`, 'INFO') + ` Zum installieren bitte auswählen:`, 'Privater Windows-Rechner', 'HsH Windows-Rechner', 'Jetzt nicht').then(async selected => { /** Fragt ob HSH oder Privater Rechner und wartet auf Antwort */
                         if (selected === 'Privater Windows-Rechner') { /** Wenn Privater Rechner */
                             workspace.getConfiguration('addon4vsc').update('computerraum', false, ConfigurationTarget.Global) /** Setzt in Settings.json die computerraum Variable false */
                             changeHsHOrPrivate(false) /** Ruft Funktion auf die die Einstellung ob HSH oder Privater Rechner einstellt */
@@ -241,11 +251,8 @@ export function compiler_init() {
                             /** Führt den Befehl aus das Skript zur installation auszuführen */
                         } else if (selected === 'HsH Windows-Rechner') { /** wenn HSH Rechner */
                             workspace.getConfiguration('addon4vsc').update('computerraum', true, ConfigurationTarget.Global) /** Setzt in Settings.json die computerraum Variable true */
-                            commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'setx Path \"%USERPROFILE%\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin\"\n' })
-                            envVar.path.compiler = 'C:\\\\Program Files (x86)\\\\Dev-Cpp\\\\MinGW64\\\\bin\\\\gcc.exe' /** Setzt den Compilerpfad */
+                            commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'setx Path \"%USERPROFILE%\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files\\mingw64\\bin\"\n' })
                             changeHsHOrPrivate(true) /** Ruft Funktion auf die die Einstellung ob HSH oder Privater Rechner einstellt */
-                            await new Promise(resolve => setTimeout(resolve, 5000)) /** Wartet 5 Sekunden */
-                            commands.executeCommand('workbench.action.reloadWindow') /** Lädt alle VS-Code Fenster neu, wodurch neue Änderungen aktiv werden*/
                         }
                     })
                 } else if (envVar.os.IS_OSX) { /** wenn Mac, führt Skript zur installation aus */
@@ -277,7 +284,7 @@ export async function setRZHsH() {
             window.showInformationMessage('Auf HsH Windows-Rechner im Rechenzentrum gestellt.')
         }
         workspace.getConfiguration('addon4vsc').update('computerraum', !workspace.getConfiguration('addon4vsc').get('computerraum'), ConfigurationTarget.Global) /** Invertiert die Einstellung in settings.json Computerraum */
-        envVar.path.compiler = workspace.getConfiguration('addon4vsc').get('computerraum') ? 'C:\\\\Program Files (x86)\\\\Dev-Cpp\\\\MinGW64\\\\bin\\\\gcc.exe' : 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe'
+        envVar.path.compiler = workspace.getConfiguration('addon4vsc').get('computerraum') ? 'C:\\\\Program Files\\\\mingw64\\\\bin\\\\gcc.exe' : 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe'
         /** Speichert den neuen Compilerpfad ein */
         changeHsHOrPrivate(!envVar.settings.hshRZ) /** Ruft Funktion auf die die Boolean ändert die für privat oder HSH Rechner steht */
     }
