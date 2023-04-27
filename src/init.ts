@@ -75,13 +75,13 @@ export function initMain() {
         envVar.settings.progLanguage = workspace.getConfiguration('addon4vsc').get('sprache')
     }
 
-    init_language()
+    // init_language()
 
     setPath()       /** Setzt die Pfade für .jsons und Übungsordner */
     checkjsons()    /** Ruft die Funktion auf, die sicherstellt, dass die Konfigurationsdateien vorhanden sind */
 
     if (!(workspace.workspaceFolders?.toString)) {  /** Funktion die schaut, ob Ordner in VS-Code geöffnet ist und ggf. den vorgefertigten Ordner öffnet */
-        openprefolder(envVar.settings.progLanguage) /** Öffnet Ordner je nach dem welche Prog.sprache aktiv ist */
+        openprefolder() /** Öffnet Ordner je nach dem welche Prog.sprache aktiv ist */
     }
 
     setStatusBarItem()  /** Initialisiert den Button in der Statusleiste */
@@ -134,16 +134,13 @@ export function getHsHRZ() {
 }
 
 /** Funktion die die Pfade zurückgibt und somit global verfügbar macht
+ * (Pfade werden entsprechend der Programmiersprache richtig gesetzt)
  * 
  * Verfügbare Argumente:
  * - settingsjson
  * - tasksjson
- * - testprogc
- * - testprogjava
- * - testprogpython
- * - cuebung
- * - javauebung
- * - pythonuebung
+ * - testprog
+ * - uebungfolder
  * - logfiledir
 */
 export function getPath(temp: string) {
@@ -152,18 +149,26 @@ export function getPath(temp: string) {
             return envVar.path.settingsJSON
         case 'tasksjson':
             return envVar.path.tasksJSON
-        case 'testprogc':
-            return envVar.path.testProgC
-        case 'testprogjava':
-            return envVar.path.testProgJava
-        case 'testprogpython':
-            return envVar.path.testProgPython
-        case 'cuebung':
-            return envVar.path.CUebung
-        case 'javauebung':
-            return envVar.path.JavaUebung
-        case 'pythonuebung':
-            return envVar.path.PythonUebung
+        case 'testprog':
+            if (envVar.settings.progLanguage === 'C') {
+                return envVar.path.testProgC
+            } else if (envVar.settings.progLanguage === 'Java') {
+                return envVar.path.testProgJava
+            } else if (envVar.settings.progLanguage === 'Python') {
+                return envVar.path.testProgPython
+            } else {
+                return ''
+            }
+        case 'uebungfolder':
+            if (envVar.settings.progLanguage === 'C') {
+                return envVar.path.CUebung
+            } else if (envVar.settings.progLanguage === 'Java') {
+                return envVar.path.JavaUebung
+            } else if (envVar.settings.progLanguage === 'Python') {
+                return envVar.path.PythonUebung
+            } else {
+                return ''
+            }
         case 'logfiledir':
             return envVar.path.logFileDir
         default:
@@ -299,4 +304,8 @@ export async function changeHsHOrPrivate(temp_hshRZ: boolean) {
     sethshRZ(temp_hshRZ)
     setPath()   /** Setzt Compilerpfad neu */
     await commands.executeCommand(getConstCommands()[3].command)   /** Führt command 3 aus, "tasks.json zurücksetzen" */                        
+}
+
+export function getProgLanguage() {
+    return envVar.settings.progLanguage
 }

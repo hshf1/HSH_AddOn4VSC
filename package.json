@@ -24,6 +24,7 @@
     "onCommand:open.link",
     "onCommand:setRZHsH.setting",
     "onCommand:report.problem",
+    "onCommand:switch.language",
     "onStartupFinished"
   ],
   "main": "./out/main.js",
@@ -91,6 +92,10 @@
       {
         "command": "report.problem",
         "title": "Problem melden"
+      },
+      {
+        "command": "switch.language",
+        "title": "Programmiersprache wechseln"
       }
     ]
   },

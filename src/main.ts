@@ -21,12 +21,13 @@ import {
 
 import {
 	getHsHRZ, getOS, getStatusBarItem,
-	initMain, changeHsHOrPrivate
+	initMain, changeHsHOrPrivate, getProgLanguage
 } from './init'										/** Importiert eine Reihe von Befehlen aus der init.ts */
 import { checkname } from './filefoldername'		/** Importiert die Funktion zum überprüfen des Dateinames aus filefoldername.ts */
 import { getCommands } from './registercommands'	/** Importiert die Registerbefehle für die Anzeigen aus registercommands.ts */
 import { treeDataProvider } from './activity_bar'	/** Importiert Funktionen der Activity Bar */
 import { writeLog } from './logfile'
+import { set_language } from './language_handler'
 
 /** die "activate" Funktion wird von VS-Code aufgerufen, wenn die Erweiterung aktiviert wird */
 export function activate(context: ExtensionContext) {
@@ -52,6 +53,18 @@ export function activate(context: ExtensionContext) {
 					writeLog(`Einstellung auf ${temp_hshRZ ? 'HsH-Rechner' : 'privaten Rechner'} geändert!`, 'INFO')
 				}						
 			}
+		}
+	})
+	workspace.onDidChangeConfiguration(async (event: ConfigurationChangeEvent) => {	
+		if (event.affectsConfiguration('addon4vsc.sprache')) {
+			writeLog(`Folgendes Event wird ausgeführt: ${event}`, 'INFO')
+			let temp: string | undefined = undefined 
+			while(temp === undefined) {
+				temp = workspace.getConfiguration('addon4vsc').get('sprache')
+			}
+			if (temp != getProgLanguage()) { /** überprüft ob sich der Wert geändert hat */
+				await commands.executeCommand('workbench.action.closeFolder')
+			}						
 		}
 	})
 

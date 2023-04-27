@@ -8,7 +8,7 @@ import { env, Uri, window } from 'vscode'           /** Importiert die genannten
 import { treeDataProvider } from './activity_bar'   /** Importiert den TreeDataProvider von activity_bar.ts */
 import { getConstCommands } from './constants'         /** Importiert die Namen und Beschreibungen der Commands aus constants.ts*/
 import { renewjsons } from './jsonfilescheck'       /** Importiert die Funktion zur Überprüfung und aktualisierung der .jsons Dateien aus jsonfilescheck.ts*/ 
-import { compiler_init, getPath, setRZHsH, getStatusBarItem } from './init' /** Importiert Funktionen aus init.ts */
+import { compiler_init, getPath, setRZHsH, getStatusBarItem, getOS, getHsHRZ } from './init' /** Importiert Funktionen aus init.ts */
 import { reportAProblem } from './reportaproblem'
 import { set_language } from './language_handler'
 import { writeLog } from './logfile'
@@ -87,22 +87,10 @@ const constregistercommands = [             /** Die Befehle sind in einem Array 
     {
         name: getConstCommands()[8].command,
         callback: async () => {
-            await set_language("C") /** Ruft Funktion auf die die Sprache neu einstellt und ändert den Offenen Ordner ggf. */
+            writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[8].command}`, 'INFO')
+            await set_language() /** Ruft Funktion auf die die Sprache neu einstellt und ändert den Offenen Ordner ggf. */
         }
-    },
-    {
-        name: getConstCommands()[9].command,
-        callback: async () => {
-            await set_language("Java") /** Ruft Funktion auf die die Sprache neu einstellt und ändert den Offenen Ordner ggf. */
-        }
-    },
-    {
-        name: getConstCommands()[10].command,
-        callback: async () => {
-            await set_language("Python") /** Ruft Funktion auf die die Sprache neu einstellt und ändert den Offenen Ordner ggf. */
-        }
-    },
-
+    }
 ]
 
 /** Exportiert Funktion die das Array an Befehls-Objekten für andere Module des Codes verfügbar macht */
