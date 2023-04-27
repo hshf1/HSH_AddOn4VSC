@@ -25,7 +25,7 @@ interface IEnvironmentVariables {
         IS_WINDOWS: boolean
         IS_OSX: boolean
         IS_LINUX: boolean
-    },
+    }
     path: { /** Definiert eine Reihe von String-Vaariablen */
         userHomeFolder: string /** Speichert das Heimatvereichnis des Benutzers */
         CUebung: string
@@ -38,12 +38,12 @@ interface IEnvironmentVariables {
         testProgJava: string
         testProgPython: string
         logFileDir: string
-    },
+    }
     settings: {
-        hshRZ: boolean | null /** Boolean die angibt ob es sich um einen PC im Rechnerraum handelt*/
+        hshRZ: boolean | null | undefined /** Boolean die angibt ob es sich um einen PC im Rechnerraum handelt*/
         progLanguage: string | undefined
         encodingSettingsJSON: string
-    },
+    }
     status: {
         compiler: boolean /** Boolean die angibt ob Compiler initialisiert wurde und keinen Fehler ausgibt */
     }
@@ -60,8 +60,15 @@ let statusbar_button: StatusBarItem /** Definiert statusbar_button als StatusBar
 /** Hauptfunktion die die Initialisierung durchführt und wenn erfolgreich setting_init true setzt. */
 export async function initMain() {
     setOS() /** Setzt die entsprechende Boolean für das jeweilige Betriebssystem true */
-    await workspace.getConfiguration('addon4vsc').get('computerraum') === null && envVar.os.IS_WINDOWS ? initHshRz() : ''
-    envVar.settings.progLanguage = await workspace.getConfiguration('addon4vsc').get('sprache')
+    if (await workspace.getConfiguration('addon4vsc').get('computerraum') === null && envVar.os.IS_WINDOWS) {
+        initHshRz()
+    }
+    while (envVar.settings.progLanguage === undefined) {
+        envVar.settings.progLanguage = await workspace.getConfiguration('addon4vsc').get('sprache')
+    }
+    while (envVar.settings.hshRZ === undefined) {
+        envVar.settings.hshRZ = await workspace.getConfiguration('addon4vsc').get('computerraum')
+    }
 
     if (!getOS('WIN')) { /** "Wenn die Boolean IS_Windows false ist */
         if (!extensions.getExtension('vadimcn.vscode-lldb')) { /** Wenn "vadimcn.vscode-lldb" nicht installiert ist */
@@ -244,11 +251,19 @@ export async function compiler_init() {
     }
     exec('gcc --version', (error, stdout) => { /** Prüft ob eine gcc version installiert ist */
         if (error) { /** Wenn Fehler auftritt (keine Version installiert ist) */
-            commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(envVar.path.userHomeFolder)).then(() => { /** Erzeugt neues Terminal und setzt das Verzeichnis auf das Heimatverzeichnis */
+            commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(envVar.path.userHomeFolder)).then(async () => { /** Erzeugt neues Terminal und setzt das Verzeichnis auf das Heimatverzeichnis */
                 if (envVar.os.IS_WINDOWS) {
                     if (existsSync(`C:\\Program Files\\mingw64\\bin`)) {
+                        const pathToRemove = 'C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin'
+                        let pathVar = await getUserPath()
+                        const pathDirs = pathVar.split(';')
+                        const index = pathDirs.indexOf(pathToRemove)
+                        if (index !== -1) {
+                            pathDirs.splice(index, 1);
+                        }
+                        pathVar = pathDirs.join(';')
                         workspace.getConfiguration('addon4vsc').update('computerraum', true, ConfigurationTarget.Global) /** Setzt in Settings.json die computerraum Variable true */
-                        commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'setx PATH \"%PATH%;C:\\Program Files\\mingw64\\bin\"\n' })
+                        commands.executeCommand('workbench.action.terminal.sendSequence', { text: `setx PATH \"${pathVar}\"\n` })
                         changeHsHOrPrivate(true) /** Ruft Funktion auf die die Einstellung ob HSH oder Privater Rechner einstellt */
                     } else {
                         workspace.getConfiguration('addon4vsc').update('computerraum', false, ConfigurationTarget.Global) /** Setzt in Settings.json die computerraum Variable false */
@@ -335,15 +350,15 @@ function getUserPath(): Promise<string> {
     return new Promise((resolve, reject) => {
       exec('reg query HKCU\\Environment /v Path', (error, stdout) => {
         if (error) {
-          reject(error);
+          reject(error)
         } else {
-          const matches = stdout.match(/Path\s+REG_SZ\s+(.*)/);
+          const matches = stdout.match(/Path\s+REG_SZ\s+(.*)/)
           if (matches) {
-            resolve(matches[1]);
+            resolve(matches[1])
           } else {
-            resolve('');
+            resolve('')
           }
         }
-      });
-    });
+      })
+    })
   }

@@ -64,10 +64,10 @@ export function activate(context: ExtensionContext) {
 			while(temp === undefined) {
 				temp = workspace.getConfiguration('addon4vsc').get('sprache')
 			}
+			setProgLanguage(temp)
 			if (temp != getProgLanguage() && getPath('uebungfolder') != openWorkspace) { /** überprüft ob sich der Wert geändert hat */
 				await commands.executeCommand('workbench.action.closeFolder')
-			}
-			setProgLanguage(temp)					
+			}					
 		}
 	})
 	getCommands().forEach(command => { /** For Schleife durch alle "command" Objekte in "registercommands.ts". name: name des commands, callback: Funktion die ausgeführt wird */
