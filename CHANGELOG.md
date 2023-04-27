@@ -4,12 +4,35 @@ Alle wichtigen Änderungen werden hier gespeichert und veröffentlicht.
 
 Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+---------
+
 ## [Unreleased]
 
 ### neu hinzugefügt / geplant
 
 - Java implementierung
 - Python implementierung
+
+## [1.5.9] - 27.04.2023
+
+### neu hinzugefügt
+- in der Activity bar Reiter "Programmiersprache ändern" hinzugefügt. Unterpunkte "C", "Python" und "Java" um zwischen verschiedenen Prog.sprachen wechseln zu können
+- entsprechend die registercommands erweitert
+- HelloWorld.java hinzugefügt
+- Addon erstellt eigenen Übungsordner für Java, wenn ausgewählt
+- neue Datei Language_Handler.ts hinzugefügt. Aufgabe ist es zu managen welche Prog.sprache gerade benutzt werden/wird soll.
+- die Folderpaths angegeben für den neuen Ordner + Datei
+- Java Dependencie angeben ("vscjava.vscode-java-pack") | Python Dependencie angegben ("ms-python.python")
+- Die Codes können über (Java Run/Java Debug | Python Run/Python Debug) angewendet werden.
+- Addon erstellt Automatisch die Ordner und die HelloWorld Dateien (Java und Python).
+- Wechseln der Programmiersprache zu einer anderen Sprache als C ist derzeit nur für HsH Rechner möglich
+
+   
+### geändert
+- OpenPreFolder() angepasst und variabler gestaltet
+- die Kontrolle ob .c am Ende erst mal auskommentiert (Kann später vlt, schauen ob entprechend .c oder .java und co ist)
+- in Reportporblems eine Nachricht gekürzt um Verwirrung zu vermeiden.
+
 
 ## [1.5.1] - [1.5.8] 23.04.2023 - 26.04.2023
 

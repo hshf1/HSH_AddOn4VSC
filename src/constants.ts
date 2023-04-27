@@ -13,7 +13,11 @@ export function getConstCommands(): Command[] {
     { command: 'open.link', title: 'Öffne Link' },
     { command: 'install.compiler', title: 'Compiler installieren' },
     { command: 'setRZHsH.setting', title: 'HsH Rechenzentrum' },
-    { command: 'report.problem', title: 'Problem melden' }
+    { command: 'report.problem', title: 'Problem melden'},
+    { command: 'switch.language_c', title: 'C'},
+    { command: 'switch.language_java', title: 'Java'},
+    { command: 'switch.language_python', title: 'Python'}
+    //TODO Compiler Check für C, Java und Python ohne automatischen Dowload ?
 ]
 }
 
@@ -38,6 +42,35 @@ int main()
     return 0;
 }`
 }
+
+/** Globale Konstante die das Testprogramm für java enthält */
+export const testprogjava = `public class HelloWorld {
+    public static void main(String[] args) {
+
+        System.out.println("Java said, Hello, World!");
+        int i = 1;
+        System.out.println(i);
+        i++;
+        System.out.println(i);
+        i++;
+        System.out.println(i);
+        i++;
+        System.out.println(i);
+
+    }
+}`
+
+/** Globale Konstante die das Testprogramm für python enthält */
+export const testprogpython = `print("Python said, Hello World!")
+i = 1
+print(i)
+i += 1
+print(i)
+i += 1
+print(i)
+i += 1
+print(i)
+`
 
 /** Globale Funktion die den Inhalt für Settings.json zurückgibt */
 export function getSettingsJsonData() {

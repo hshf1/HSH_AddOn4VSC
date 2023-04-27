@@ -26,11 +26,13 @@ import {
 import { checkname } from './filefoldername'		/** Importiert die Funktion zum überprüfen des Dateinames aus filefoldername.ts */
 import { getCommands } from './registercommands'	/** Importiert die Registerbefehle für die Anzeigen aus registercommands.ts */
 import { treeDataProvider } from './activity_bar'	/** Importiert Funktionen der Activity Bar */
+import { init_language } from './language_handler'
 import { writeLog } from './logfile'
 
 /** die "activate" Funktion wird von VS-Code aufgerufen, wenn die Erweiterung aktiviert wird */
 export function activate(context: ExtensionContext) {
 	initMain()	/** Ruft die Funktion auf, die die Initialisierung beginnt */
+  init_language()
 
 	const eventHandler_checkname = async () => {    /**	Code definiert eine asynchrone Funktion die als Event Handler fungiert */
 		if (getStatusBarItem().command === 'extension.off') {	/** überprüft ob der Statusleisten Button auf "pausiert" steht */

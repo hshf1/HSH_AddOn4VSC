@@ -99,7 +99,9 @@
   "extensionDependencies": [
     "formulahendry.code-runner",
     "ms-vscode.cpptools",
-    "ms-vsliveshare.vsliveshare"
+    "ms-vsliveshare.vsliveshare",
+    "vscjava.vscode-java-pack",
+    "ms-python.python"
   ],
   "devDependencies": {
     "@types/glob": "^8.0.0",
