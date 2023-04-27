@@ -27,7 +27,6 @@ import { checkname } from './filefoldername'		/** Importiert die Funktion zum ü
 import { getCommands } from './registercommands'	/** Importiert die Registerbefehle für die Anzeigen aus registercommands.ts */
 import { treeDataProvider } from './activity_bar'	/** Importiert Funktionen der Activity Bar */
 import { writeLog } from './logfile'
-import { set_language } from './language_handler'
 
 /** die "activate" Funktion wird von VS-Code aufgerufen, wenn die Erweiterung aktiviert wird */
 export function activate(context: ExtensionContext) {
@@ -66,9 +65,9 @@ export function activate(context: ExtensionContext) {
 			}						
 		}
 	})
-
-	getCommands().forEach(command => {															/** For Schleife durch alle "command" Objekte in "registercommands.ts". name: name des commands, callback: Funktion die ausgeführt wird */
-		context.subscriptions.push(commands.registerCommand(command.name, command.callback))	/** Durch "context.subscriptions.push" wird das Objekt nach deaktivieren der Erweiterung ordnungsgemäss aufgeräumt */
+	getCommands().forEach(command => { /** For Schleife durch alle "command" Objekte in "registercommands.ts". name: name des commands, callback: Funktion die ausgeführt wird */
+		/** Durch "context.subscriptions.push" wird das Objekt nach deaktivieren der Erweiterung ordnungsgemäss aufgeräumt */
+		context.subscriptions.push(commands.registerCommand(command.name, command.callback))
 	})
 }
 

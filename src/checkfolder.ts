@@ -25,23 +25,25 @@ function openfolder() {
 
 /** Öffnet/Erstellt Ordner Verzeichnis */
 export async function openprefolder() {
-	const folderUri = Uri.file(getPath('uebungfolder')) /** Kopiert den Pfad des CUebungs Ordners in eine Konstante */
+	const uebungsFolder = getPath('uebungfolder')
+	const testProg = getPath('testprog')
+	const folderUri = Uri.file(uebungsFolder) /** Kopiert den Pfad des CUebungs Ordners in eine Konstante */
 
-	if (!existsSync(getPath('uebungfolder'))) {	/** Überprüft ob der Pfad inklusive des Ordners noch nicht existiert */
+	if (!existsSync(uebungsFolder)) {	/** Überprüft ob der Pfad inklusive des Ordners noch nicht existiert */
 		try {
-			mkdirSync(getPath('uebungfolder'))	/** Versucht CUebung zu erstellen */
+			mkdirSync(uebungsFolder)	/** Versucht CUebung zu erstellen */
 		} catch (error: any) {
 			writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')	/** Falls ein Fehler entsteht wird dieser in die Konsole geschrieben */
 		}
 	}
-	if (!existsSync(getPath('testprog'))) {	/** Überprüft ob der Pfad inklusive der Datei noch nicht existiert */
+	if (!existsSync(testProg)) { /** Überprüft ob der Pfad inklusive der Datei noch nicht existiert */
 		try {
-			writeFileSync(getPath('testprog'), getTestProg()) /** Erstellt das testprog und schreibt den inhalt aus constants.ts hinein*/ 
+			writeFileSync(testProg, getTestProg()) /** Erstellt das testprog und schreibt den inhalt aus constants.ts hinein*/ 
 		} catch (error: any) {
 			writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR') /** Falls ein Fehler entsteht wird dieser in die Konsole geschrieben */
 		}
 	}
-	if (existsSync(getPath('uebungfolder'))) {	/** Überprüft ob der Pfad inklusive des Ordners schon existiert */
+	if (existsSync(uebungsFolder)) {	/** Überprüft ob der Pfad inklusive des Ordners schon existiert */
 		commands.executeCommand(`vscode.openFolder`, folderUri) /** VSCode Befehl der einen Ordner öffnet, übergeben wird der Pfad des Übungsordners  */
 	} else {
 		openfolder()	/** Ruft Funktion auf die den Nutzer einen Ordner auswählen lässt */

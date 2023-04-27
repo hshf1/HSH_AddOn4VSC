@@ -1,4 +1,5 @@
 import { ConfigurationTarget, window, workspace } from 'vscode'
+
 import { getProgLanguage } from './init'
 import { openprefolder } from './checkfolder'
 import { writeLog } from './logfile'

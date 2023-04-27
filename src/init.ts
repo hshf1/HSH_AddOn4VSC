@@ -17,7 +17,6 @@ import { activityBarMain } from './activity_bar'    /** Importiert die Funktion 
 import { openprefolder } from './checkfolder'		/** Importiert die Funktion zum öffnen des Vorgefertigten Ordner aus  checkfolder.ts */
 import { checkjsons } from './jsonfilescheck'		/** Importiert die Funktion zum überprüfen der jsons-Datei aus jsonfilescheck.ts */
 import { getConstCommands } from './constants'         /** Importiert die Namen und Beschreibungen der Commands aus constants.ts*/
-import { init_language } from './language_handler'
 import { logFileMain, writeLog } from './logfile'
 
 interface IEnvironmentVariables {

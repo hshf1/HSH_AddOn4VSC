@@ -8,20 +8,20 @@ import { env, Uri, window } from 'vscode'           /** Importiert die genannten
 import { treeDataProvider } from './activity_bar'   /** Importiert den TreeDataProvider von activity_bar.ts */
 import { getConstCommands } from './constants'         /** Importiert die Namen und Beschreibungen der Commands aus constants.ts*/
 import { renewjsons } from './jsonfilescheck'       /** Importiert die Funktion zur Überprüfung und aktualisierung der .jsons Dateien aus jsonfilescheck.ts*/ 
-import { compiler_init, getPath, setRZHsH, getStatusBarItem, getOS, getHsHRZ } from './init' /** Importiert Funktionen aus init.ts */
+import { compiler_init, getPath, setRZHsH, getStatusBarItem } from './init' /** Importiert Funktionen aus init.ts */
 import { reportAProblem } from './reportaproblem'
 import { set_language } from './language_handler'
 import { writeLog } from './logfile'
 
-const constregistercommands = [             /** Die Befehle sind in einem Array gespeichert und beziehen ihre Namen und Beschreibungen aus der Datei constants.ts */
+const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert und beziehen ihre Namen und Beschreibungen aus der Datei constants.ts */
     {
-        name: getConstCommands()[0].command,     /** Der Name wird aus der constants.ts geholt  */
-        callback: () => {                   /** Funktion die keine Paramter erwartet und keinen Rückgabewert hat */
+        name: getConstCommands()[0].command, /** Der Name wird aus der constants.ts geholt  */
+        callback: () => {                    /** Funktion die keine Paramter erwartet und keinen Rückgabewert hat */
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[0].command}`, 'INFO')
             getStatusBarItem().text = 'AddOn4VSC pausieren' /** Übergibt dem Statusbar Button die Beschriftung */
             getStatusBarItem().tooltip = 'Klicken, um die Erweiterung AddOn4VSC zu pausieren (spätestens, bis wenn VSCode neu startet)' /** Übergibt dem Statusbar Button die Beschriftung beim rüberfahren mit der Maus */
             getStatusBarItem().command = 'extension.off' /** Übergibt den Command der mit dem Drücken verknüpft ist aus constants.ts */
-            treeDataProvider.refresh()      /** Aktualisiert den TreeView (Sidebar) */
+            treeDataProvider.refresh() /** Aktualisiert den TreeView (Sidebar) */
         }
     },
     {
