@@ -85,19 +85,19 @@ const constregistercommands = [             /** Die Befehle sind in einem Array 
         }
     },
     {
-        name: constcommands[8].command,
+        name: getConstCommands()[8].command,
         callback: async () => {
             await set_language("C") /** Ruft Funktion auf die die Sprache neu einstellt und ändert den Offenen Ordner ggf. */
         }
     },
     {
-        name: constcommands[9].command,
+        name: getConstCommands()[9].command,
         callback: async () => {
             await set_language("Java") /** Ruft Funktion auf die die Sprache neu einstellt und ändert den Offenen Ordner ggf. */
         }
     },
     {
-        name: constcommands[10].command,
+        name: getConstCommands()[10].command,
         callback: async () => {
             await set_language("Python") /** Ruft Funktion auf die die Sprache neu einstellt und ändert den Offenen Ordner ggf. */
         }

@@ -1,8 +1,7 @@
 import { window } from 'vscode'
 import { getHsHRZ } from './init'
-import { openprefolder } from './checkfolder';
-import * as vscode from 'vscode';
-import * as path from 'path';
+import { openprefolder } from './checkfolder'
+import * as vscode from 'vscode'
 
 let active_language: string
 
@@ -10,34 +9,23 @@ let active_language: string
 
 export async function init_language() { //Initialisiert einmalig eine Sprache
 
-    let init_status: boolean | undefined = undefined
-
-    if (init_status != true) {
-        init_status = true
-
-        const folders = vscode.workspace.workspaceFolders; // Überprüft ob Ordner geöffnet ist und speichert den Namen falls vorhanden
+        const folders = vscode.workspace.workspaceFolders // Überprüft ob Ordner geöffnet ist und speichert den Namen falls vorhanden
         if (!folders || folders.length === 0) { // kein Ordner ist geöffnet wird einfach der C Ordner geöffnet            
             active_language = "C"
             openprefolder(active_language)
-            return;
+            return
         }
 
-        const currentFolderName = folders[0].name;
+        const currentFolderName = folders[0].name
         if (currentFolderName === 'C_Uebung') { // wenn im C Ordner speicher C als aktive Sprache
-            active_language = 'C';
-            return
+            active_language = 'C'
         } else if (currentFolderName === 'Java_Uebung') { // wenn im Java Ordner speicher java als aktive Sprache
-            active_language = 'Java';
-            return
+            active_language = 'Java'
         } else if (currentFolderName === 'Python_Uebung') { // wenn im Java Ordner speicher java als aktive Sprache
-            active_language = 'Python';
-            return
+            active_language = 'Python'
+        } else {
+            active_language = 'C'  //Falls unbekannter Ordner geöffnet ist wird einfach C als aktive Sprache gesetzt
         }
-
-        active_language = 'C';  //Falls unbekannter Ordner geöffnet ist wird einfach C als aktive Sprache gesetzt
-    }
-
-    return
 }
 
 

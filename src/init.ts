@@ -17,26 +17,31 @@ import { activityBarMain } from './activity_bar'    /** Importiert die Funktion 
 import { openprefolder } from './checkfolder'		/** Importiert die Funktion zum öffnen des Vorgefertigten Ordner aus  checkfolder.ts */
 import { checkjsons } from './jsonfilescheck'		/** Importiert die Funktion zum überprüfen der jsons-Datei aus jsonfilescheck.ts */
 import { getConstCommands } from './constants'         /** Importiert die Namen und Beschreibungen der Commands aus constants.ts*/
-import { get_active_prog_language } from './language_handler'
+import { init_language } from './language_handler'
 import { logFileMain, writeLog } from './logfile'
 
 interface IEnvironmentVariables {
     os: {   /** Definiert Bool's für die einzelnen Betriebssysteme */
-        IS_WINDOWS: boolean,
-        IS_OSX: boolean,
+        IS_WINDOWS: boolean
+        IS_OSX: boolean
         IS_LINUX: boolean
     },
     path: { /** Definiert eine Reihe von String-Vaariablen */
-        userHomeFolder: string, /** Speichert das Heimatvereichnis des Benutzers */
-        CUebung: string,
-        settingsJSON: string,
-        tasksJSON: string,
-        compiler: string,
-        testProg: string,
+        userHomeFolder: string /** Speichert das Heimatvereichnis des Benutzers */
+        CUebung: string
+        JavaUebung: string
+        PythonUebung: string
+        settingsJSON: string
+        tasksJSON: string
+        compiler: string
+        testProgC: string
+        testProgJava: string
+        testProgPython: string
         logFileDir: string
     },
     settings: {
-        hshRZ: boolean | undefined, /** Boolean die angibt ob es sich um einen PC im Rechnerraum handelt*/
+        hshRZ: boolean | undefined /** Boolean die angibt ob es sich um einen PC im Rechnerraum handelt*/
+        progLanguage: string | undefined
         encodingSettingsJSON: string
     },
     status: {
@@ -46,8 +51,8 @@ interface IEnvironmentVariables {
 
 let envVar: IEnvironmentVariables = { 
     os: { IS_WINDOWS: false, IS_OSX: false, IS_LINUX: false },
-    path: { userHomeFolder: "", CUebung: "", settingsJSON: "", tasksJSON: "", compiler: "", testProg: "", logFileDir: "" },
-    settings: { hshRZ: undefined, encodingSettingsJSON: "" }, status: { compiler: false }
+    path: { userHomeFolder: "", CUebung: "", JavaUebung: "", PythonUebung: "", settingsJSON: "", tasksJSON: "", compiler: "", testProgC: "", testProgJava: "", testProgPython: "", logFileDir: "" },
+    settings: { hshRZ: undefined, progLanguage: undefined, encodingSettingsJSON: "" }, status: { compiler: false }
 }
 
 let statusbar_button: StatusBarItem /** Definiert statusbar_button als StatusBarItem */
@@ -66,11 +71,17 @@ export function initMain() {
         envVar.settings.hshRZ = workspace.getConfiguration('addon4vsc').get('computerraum')
     }
 
+    while (envVar.settings.progLanguage === undefined) {
+        envVar.settings.progLanguage = workspace.getConfiguration('addon4vsc').get('sprache')
+    }
+
+    init_language()
+
     setPath()       /** Setzt die Pfade für .jsons und Übungsordner */
     checkjsons()    /** Ruft die Funktion auf, die sicherstellt, dass die Konfigurationsdateien vorhanden sind */
 
     if (!(workspace.workspaceFolders?.toString)) {  /** Funktion die schaut, ob Ordner in VS-Code geöffnet ist und ggf. den vorgefertigten Ordner öffnet */
-        openprefolder(get_active_prog_language()) /** Öffnet Ordner je nach dem welche Prog.sprache aktiv ist */
+        openprefolder(envVar.settings.progLanguage) /** Öffnet Ordner je nach dem welche Prog.sprache aktiv ist */
     }
 
     setStatusBarItem()  /** Initialisiert den Button in der Statusleiste */
@@ -127,8 +138,12 @@ export function getHsHRZ() {
  * Verfügbare Argumente:
  * - settingsjson
  * - tasksjson
- * - testprog
- * - CUebung
+ * - testprogc
+ * - testprogjava
+ * - testprogpython
+ * - cuebung
+ * - javauebung
+ * - pythonuebung
  * - logfiledir
 */
 export function getPath(temp: string) {
@@ -137,18 +152,18 @@ export function getPath(temp: string) {
             return envVar.path.settingsJSON
         case 'tasksjson':
             return envVar.path.tasksJSON
-        case 'testprog':
-            return envVar.path.testProg
+        case 'testprogc':
+            return envVar.path.testProgC
         case 'testprogjava':
-            return filePath_testprogjava
+            return envVar.path.testProgJava
         case 'testprogpython':
-            return filePath_testprogpython
-        case 'CUebung':
+            return envVar.path.testProgPython
+        case 'cuebung':
             return envVar.path.CUebung
-        case 'JavaUebung':
-            return folderPath_Java_Uebung
-        case 'PythonUebung':
-            return folderPath_Python_Uebung
+        case 'javauebung':
+            return envVar.path.JavaUebung
+        case 'pythonuebung':
+            return envVar.path.PythonUebung
         case 'logfiledir':
             return envVar.path.logFileDir
         default:
@@ -166,43 +181,43 @@ export function setPath() {
     if (envVar.os.IS_WINDOWS && !envVar.settings.hshRZ) { /** Wenn windows und privater Rechner */
         envVar.path.logFileDir = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User`
         envVar.path.CUebung = `${envVar.path.userHomeFolder}\\Documents\\C_Uebung`
-        folderPath_Java_Uebung = `${userhomefolder}\\Documents\\Java_Uebung`
-        folderPath_Python_Uebung = `${userhomefolder}\\Documents\\Python_Uebung`
+        envVar.path.JavaUebung = `${envVar.path.userHomeFolder}\\Documents\\Java_Uebung`
+        envVar.path.PythonUebung = `${envVar.path.userHomeFolder}\\Documents\\Python_Uebung`
         envVar.path.settingsJSON = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\settings.json`
         envVar.path.tasksJSON = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
-        envVar.path.testProg = `${envVar.path.CUebung}\\testprog.c`
-        filePath_testprogjava = `${folderPath_Java_Uebung}\\HelloWorld.java`
-        filePath_testprogpython = `${folderPath_Python_Uebung}\\HelloWorld.py`
+        envVar.path.testProgC = `${envVar.path.CUebung}\\testprog.c`
+        envVar.path.testProgJava = `${envVar.path.JavaUebung}\\HelloWorld.java`
+        envVar.path.testProgPython = `${envVar.path.PythonUebung}\\HelloWorld.py`
     } else if (envVar.os.IS_WINDOWS && envVar.settings.hshRZ) { /** Wenn windows und HSH Rechner */
         envVar.path.logFileDir = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User`
         envVar.path.CUebung = `U:\\C_Uebung`
-        folderPath_Java_Uebung = `U:\\Java_Uebung`
-        folderPath_Python_Uebung = `U:\\Python_Uebung`
+        envVar.path.JavaUebung = `U:\\Java_Uebung`
+        envVar.path.PythonUebung = `U:\\Python_Uebung`
         envVar.path.settingsJSON = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\settings.json`
         envVar.path.tasksJSON = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
-        envVar.path.testProg = `${envVar.path.CUebung}\\testprog.c`
-        filePath_testprogjava = `${folderPath_Java_Uebung}\\HelloWorld.java`
-        filePath_testprogpython = `${folderPath_Python_Uebung}\\HelloWorld.py`
+        envVar.path.testProgC = `${envVar.path.CUebung}\\testprog.c`
+        envVar.path.testProgJava = `${envVar.path.JavaUebung}\\HelloWorld.java`
+        envVar.path.testProgPython = `${envVar.path.PythonUebung}\\HelloWorld.py`
     } else if (envVar.os.IS_OSX) { /** Wenn MAC */
         envVar.path.logFileDir = `${envVar.path.userHomeFolder}/Library/Application Support/Code/User`
         envVar.path.CUebung = `${envVar.path.userHomeFolder}/Documents/C_Uebung`
-        folderPath_Java_Uebung = `${userhomefolder}/Documents/Java_Uebung`
-        folderPath_Python_Uebung = `${userhomefolder}/Documents/Python_Uebung`
+        envVar.path.JavaUebung = `${envVar.path.userHomeFolder}/Documents/Java_Uebung`
+        envVar.path.PythonUebung = `${envVar.path.userHomeFolder}/Documents/Python_Uebung`
         envVar.path.settingsJSON = `${envVar.path.userHomeFolder}/Library/Application Support/Code/User/settings.json`
         envVar.path.tasksJSON = `${envVar.path.userHomeFolder}/Library/Application Support/Code/User/tasks.json`
-        envVar.path.testProg = `${envVar.path.CUebung}/testprog.c`
-        filePath_testprogjava = `${folderPath_Java_Uebung}/HelloWorld.java`
-        filePath_testprogpython = `${folderPath_Python_Uebung}/HelloWorld.py`
+        envVar.path.testProgC = `${envVar.path.CUebung}/testprog.c`
+        envVar.path.testProgJava = `${envVar.path.JavaUebung}/HelloWorld.java`
+        envVar.path.testProgPython = `${envVar.path.PythonUebung}/HelloWorld.py`
     } else if (envVar.os.IS_LINUX) { /** Wenn Linux */
         envVar.path.logFileDir = `${envVar.path.userHomeFolder}/.config/Code/User`
         envVar.path.CUebung = `${envVar.path.userHomeFolder}/Documents/C_Uebung`
-        folderPath_Java_Uebung = `${userhomefolder}/Documents/Java_Uebung`
-        folderPath_Python_Uebung = `${userhomefolder}/Documents/Python_Uebung`
+        envVar.path.JavaUebung = `${envVar.path.userHomeFolder}/Documents/Java_Uebung`
+        envVar.path.PythonUebung = `${envVar.path.userHomeFolder}/Documents/Python_Uebung`
         envVar.path.settingsJSON = `${envVar.path.userHomeFolder}/.config/Code/User/settings.json`
         envVar.path.tasksJSON = `${envVar.path.userHomeFolder}/.config/Code/User/tasks.json`
-        envVar.path.testProg = `${envVar.path.CUebung}/testprog.c`
-        filePath_testprogjava = `${folderPath_Java_Uebung}/HelloWorld.java`
-        filePath_testprogpython = `${folderPath_Python_Uebung}/HelloWorld.py`
+        envVar.path.testProgC = `${envVar.path.CUebung}/testprog.c`
+        envVar.path.testProgJava = `${envVar.path.JavaUebung}/HelloWorld.java`
+        envVar.path.testProgPython = `${envVar.path.PythonUebung}/HelloWorld.py`
     } else {
         window.showErrorMessage(writeLog(`Betriebssystem wurde nicht erkannt! Einige Funktionen werden nicht richtig ausgeführt. Bitte neu starten!`, 'ERROR')) /** Falls kein Betriebssystem gefunden worde */
     }

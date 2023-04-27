@@ -36,6 +36,12 @@
           "description": "Hier die Einstellung aktivieren, falls VSCode aus dem RZ der Hochschule Hannover gestartet wird!",
           "default": false,
           "scope": "application"
+        },
+        "addon4vsc.sprache": {
+          "type": "string",
+          "description": "Hier kann die Programmiersprache ausgewählt werden, die genutzt werden soll.",
+          "default": "C",
+          "scope": "application"
         }
       }
     },

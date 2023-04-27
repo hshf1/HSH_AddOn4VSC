@@ -31,9 +31,9 @@ export async function openprefolder(temp_Folder: String) { /** Öffnet/Erstellt 
 
 	if (temp_Folder == "C") { /** Speichert die relevanten Daten in Variablen */
 
-		folder_path = getPath('CUebung')
-		prog_path = getPath('testprog')
-		programm = testprogc
+		folder_path = getPath('cuebung')
+		prog_path = getPath('testprogc')
+		programm = getTestProgC()
 
 	} else if (temp_Folder == "Java") {
 
@@ -53,14 +53,14 @@ export async function openprefolder(temp_Folder: String) { /** Öffnet/Erstellt 
 
 	if (!existsSync(folder_path)) {	/** Überprüft ob der Pfad inklusive des Ordners noch nicht existiert */
 		try {
-			mkdirSync(getPath('CUebung'))	/** Versucht CUebung zu erstellen */
+			mkdirSync(getPath('cuebung'))	/** Versucht CUebung zu erstellen */
 		} catch (error: any) {
 			writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')	/** Falls ein Fehler entsteht wird dieser in die Konsole geschrieben */
 		}
 	}
 	if (!existsSync(prog_path)) {	/** Überprüft ob der Pfad inklusive der Datei noch nicht existiert */
 		try {
-			writeFileSync(getPath('testprog'), programm()) /** Erstellt das testprog und schreibt den inhalt aus constants.ts hinein*/ 
+			writeFileSync(getPath('testprog'), programm) /** Erstellt das testprog und schreibt den inhalt aus constants.ts hinein*/ 
 		} catch (error: any) {
 			writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR') /** Falls ein Fehler entsteht wird dieser in die Konsole geschrieben */
 		}
