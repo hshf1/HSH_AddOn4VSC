@@ -1,4 +1,3 @@
-// TODO: Code effizienter und lessbarer schreiben
 // TODO: Try-Catch Blöcke definieren
 
 import {
@@ -91,7 +90,7 @@ async function userReportInput(userReport: UserReport) {
 async function getScreenshot(userReport: UserReport) {
     try {
         userReport.screenshot.filePath = join(tmpdir(), `screenshot_${Date.now()}.png`)
-        // TODO: ggf. möglichkeit bieten, ganzen Bildschirm oder nur VSC Window zu screenshotten?
+        // TODO: ggf. Möglichkeit bieten, ganzen Bildschirm oder nur VSC Window zu screenshotten?
         if (getOS("WIN")) {
             await execAsync(`powershell -Command "& { Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('%{PRTSC}'); Start-Sleep -Milliseconds 250; $image = [System.Windows.Forms.Clipboard]::GetImage(); $image.Save('${userReport.screenshot.filePath}'); }"`)
         } else if (getOS("MAC")) {
@@ -102,8 +101,8 @@ async function getScreenshot(userReport: UserReport) {
             throw new Error(`Ungültige Plattform: ${process.platform}`)
         }
     } catch (error) {
-        // TODO: vll error message mit ausgeben lassen? 
         window.showWarningMessage("Screenshot konnte nicht automatisch aufgenommen werden. Geben Sie die Rechte für VSCode frei und versuchen Sie es erneut!")
+        writeLog(`Fehler beim erstellen eines Screenshots für Problemreport: ${error}`, 'ERROR')
     }
 }
 
@@ -211,12 +210,12 @@ function getActiveEditorFilepaths(): { filename: string, path: string }[] {
         return []
     }
     const document = activeEditor.document
-    const filePaths = [{ filename: document.fileName.split('\\').pop()!, path: document.fileName }] //TODO: Ist es sinnvoll den Dateinamen ohne die vorherigen Ordnernamen anzugeben?
+    const filePaths = [{ filename: document.fileName.split('\\').pop()!, path: document.fileName }]
     for (let i = 0; i < window.visibleTextEditors.length; i++) {
         const editor = window.visibleTextEditors[i]
         if (editor !== activeEditor) {
             const document = editor.document
-            filePaths.push({ filename: document.fileName.split('\\').pop()!, path: document.fileName }) //TODO: Ist es sinnvoll den Dateinamen ohne die vorherigen Ordnernamen anzugeben?
+            filePaths.push({ filename: document.fileName.split('\\').pop()!, path: document.fileName })
         }
     }
     return filePaths

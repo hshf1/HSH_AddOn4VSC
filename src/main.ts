@@ -21,7 +21,7 @@ import {
 
 import {
 	getHsHRZ, getOS, getStatusBarItem,
-	initMain, changeHsHOrPrivate, getProgLanguage
+	initMain, changeHsHOrPrivate, getProgLanguage, setProgLanguage, getPath
 } from './init'										/** Importiert eine Reihe von Befehlen aus der init.ts */
 import { checkname } from './filefoldername'		/** Importiert die Funktion zum überprüfen des Dateinames aus filefoldername.ts */
 import { getCommands } from './registercommands'	/** Importiert die Registerbefehle für die Anzeigen aus registercommands.ts */
@@ -56,13 +56,15 @@ export function activate(context: ExtensionContext) {
 	})
 	workspace.onDidChangeConfiguration(async (event: ConfigurationChangeEvent) => {	
 		if (event.affectsConfiguration('addon4vsc.sprache')) {
-			let temp: string | undefined = undefined 
+			let temp: string | undefined = undefined
+			const openWorkspace = workspace.workspaceFolders?.toString || ''
 			while(temp === undefined) {
 				temp = workspace.getConfiguration('addon4vsc').get('sprache')
 			}
-			if (temp != getProgLanguage()) { /** überprüft ob sich der Wert geändert hat */
+			if (temp != getProgLanguage() && getPath('uebungfolder') != openWorkspace) { /** überprüft ob sich der Wert geändert hat */
 				await commands.executeCommand('workbench.action.closeFolder')
-			}						
+			}
+			setProgLanguage(temp)					
 		}
 	})
 	getCommands().forEach(command => { /** For Schleife durch alle "command" Objekte in "registercommands.ts". name: name des commands, callback: Funktion die ausgeführt wird */
