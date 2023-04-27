@@ -56,6 +56,9 @@ export function activate(context: ExtensionContext) {
 	})
 	workspace.onDidChangeConfiguration(async (event: ConfigurationChangeEvent) => {	
 		if (event.affectsConfiguration('addon4vsc.sprache')) {
+			if (!getOS('WIN') || !getHsHRZ()) {
+				return // Derzeit nur Verfügbar für HsH Rechner
+			}
 			let temp: string | undefined = undefined
 			const openWorkspace = workspace.workspaceFolders?.toString || ''
 			while(temp === undefined) {
