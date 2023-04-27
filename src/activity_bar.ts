@@ -18,9 +18,10 @@ import {
 *   TreeItem: Die TreeItem-Klasse stellt ein Element in einem TreeView dar.
 */
 
-import { constcommands } from './constants' /** Importiert die Befehle aus der constants.ts  */
+import { getConstCommands } from './constants' /** Importiert die Befehle aus der constants.ts  */
 import { getGithubLinks, getGithubStatus } from './github' /** Importiert die Links und den GitHubStatus aus github.ts */
 import { getHsHRZ, getStatusBarItem } from './init' /** Importiert Funktionen aus init.ts */
+import { writeLog } from './logfile'
 
 export let treeDataProvider: DepNodeProvider /** Deklariert Globale Variable treeDataProvider, die für die Baumstruktur der Seitenleiste wichtig ist  */
 let treeViewOptions: TreeViewOptions<Dependency> 
@@ -94,7 +95,8 @@ class DepNodeProvider implements TreeDataProvider<Dependency> {
     }
 }
 
-export async function activityBarMain() { /** Globale asynchrone Funktion die für die Seitenleiste zuständig ist*/
+/** Globale asynchrone Funktion die für die Seitenleiste zuständig ist*/
+export async function activityBarMain() {
     aktualisieren() /** Ruft Funktion auf die die Seitenleiste aktualisiert */
 
     treeDataProvider = new DepNodeProvider();/** Erstellt neue Instanz der DepNodeProvider die eine Implementierung des TreeDataProvider-Interafaces ist und somit eine Baumstruktur von Objekten*/
@@ -115,23 +117,25 @@ export async function activityBarMain() { /** Globale asynchrone Funktion die f�
     
     window.registerTreeDataProvider('menue_bar_activity', treeDataProvider) /** Erstellt neuen TreeView mit dem Namen "menue_bar_activity" und den Daten aus TreeDataProvider*/
     window.createTreeView('menue_bar_activity', treeViewOptions) /** Erstellt die grphische Oberfläche des TreeViews an der Seitenleiste */
+    writeLog(`Activity Bar geladen!`, 'INFO')
 }
 
-function aktualisieren() { /** Funktion die die Seitenleiste aktualisiert */
+/** Funktion die die Seitenleiste aktualisiert */
+function aktualisieren() {
     dependencies_main = [ /** Definiert die Dependencies des Main Arrays neu */
         new Dependency('GitHub: Vorlesung C', TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: ['https://github.com/hshf1/VorlesungC', ''] }),
         new Dependency((getStatusBarItem().command === 'extension.off') ? 'Erweiterung pausieren' : 'Erweiterung wieder aktivieren', TreeItemCollapsibleState.None, constcommands[(getStatusBarItem().command === 'extension.off') ? 1 : 0]),
         new Dependency('Programmiersprache ändern (Nur HSH Rechner!)', TreeItemCollapsibleState.Collapsed),
         new Dependency('Einstellungen', TreeItemCollapsibleState.Collapsed),
         new Dependency('Nützliche Links', TreeItemCollapsibleState.Expanded),
-        new Dependency('Problem melden', TreeItemCollapsibleState.None, constcommands[7])
+        new Dependency('Problem melden', TreeItemCollapsibleState.None, getConstCommands()[7])
     ]
 
     dependencies_settings = [ /** Definiert die Dependencies des settings Arrays neu */
-        new Dependency('settings.json zurücksetzen', TreeItemCollapsibleState.None, constcommands[2]),
-        new Dependency('tasks.json zurücksetzen', TreeItemCollapsibleState.None, constcommands[3]),
-        new Dependency('Compiler prüfen', TreeItemCollapsibleState.None, constcommands[5]),
-        new Dependency(getHsHRZ() ? 'Ändern auf privaten Windows-Rechner' : 'Ändern auf HsH Windows-Rechner', TreeItemCollapsibleState.None, constcommands[6])
+        new Dependency('settings.json zurücksetzen', TreeItemCollapsibleState.None, getConstCommands()[2]),
+        new Dependency('tasks.json zurücksetzen', TreeItemCollapsibleState.None, getConstCommands()[3]),
+        new Dependency('Compiler prüfen', TreeItemCollapsibleState.None, getConstCommands()[5]),
+        new Dependency(getHsHRZ() ? 'Ändern auf privaten Windows-Rechner' : 'Ändern auf HsH Windows-Rechner', TreeItemCollapsibleState.None, getConstCommands()[6])
     ]
 
     dependencies_program_languages = [ /** Definiert die Dependencies des program_languages Arrays neu */

@@ -8,29 +8,25 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 
 ## [Unreleased]
 
-## 26.04.2023
-### fertig
-- Java und Python Update ist bereit für die HSH Rechner. 
-- Die Codes können über (Java Run/Java Debug | Python Run/Python Debug) angewendet werden.
-### neu hinzugefügt
-- Benutzer kann nun auch Python auswählen
-- Addon erstellt Automatisch die Ordner und die HelloWorld Dateien (Java und Python).
-- Python Dependencie angegben ("ms-python.python")
-### sicherheit
-- Wechseln der Programmiersprache zu einer anderen Sprache als C ist auf privaten Rechner noch blockiert. (Skript muss vorher erweitert werden)
+### neu hinzugefügt / geplant
 
+- Java implementierung
+- Python implementierung
 
-
-##  24.04.2023
+## [1.5.9] - 27.04.2023
 
 ### neu hinzugefügt
-- in der Activity bar Reiter "Programmiersprache ändern" hinzugefügt. Unterpunkte "C" und "Java" um zwischen verschiedenen Prog.sprachen wechseln zu können
+- in der Activity bar Reiter "Programmiersprache ändern" hinzugefügt. Unterpunkte "C", "Python" und "Java" um zwischen verschiedenen Prog.sprachen wechseln zu können
 - entsprechend die registercommands erweitert
 - HelloWorld.java hinzugefügt
 - Addon erstellt eigenen Übungsordner für Java, wenn ausgewählt
 - neue Datei Language_Handler.ts hinzugefügt. Aufgabe ist es zu managen welche Prog.sprache gerade benutzt werden/wird soll.
--  die Folderpaths angegeben für den neuen Ordner + Datei
--  Java Dependencie angeben ("vscjava.vscode-java-pack")
+- die Folderpaths angegeben für den neuen Ordner + Datei
+- Java Dependencie angeben ("vscjava.vscode-java-pack") | Python Dependencie angegben ("ms-python.python")
+- Die Codes können über (Java Run/Java Debug | Python Run/Python Debug) angewendet werden.
+- Addon erstellt Automatisch die Ordner und die HelloWorld Dateien (Java und Python).
+- Wechseln der Programmiersprache zu einer anderen Sprache als C ist derzeit nur für HsH Rechner möglich
+
    
 ### geändert
 - OpenPreFolder() angepasst und variabler gestaltet
@@ -38,25 +34,21 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 - in Reportporblems eine Nachricht gekürzt um Verwirrung zu vermeiden.
 
 
-
-
-----
-
-### neu hinzugefügt 
-
-- Initialisierung anpassen
-- Code effizienter machen
-
-### fertig
-
-- 
-
-
-## [1.5.1] 23.04.2023
+## [1.5.1] - [1.5.8] 23.04.2023 - 26.04.2023
 
 ### neu hinzugefügt
 
 - Problem melden als neue Funktion in der Activity Bar (linke Menüleiste)
+- LogFile-System hinzugefügt
+
+### geändert
+
+- Code der Funktion "Problem melden" angepasst
+- automatisches hinzufügen/ändern der '.c'-Dateiendung (vorerst) ausgeschaltet
+- Problem melden: Screenshot, Inhalt aus Terminals und Code kann angehängt werden
+- Problem melden angepasst
+- LogFile angepasst
+- Initialisierung vereinfacht
 
 ## [1.5.0] 06.04.2023
 
@@ -90,6 +82,9 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 - Windows: Skript wird nicht mehr automatisch ausgeführt, auswahl zwischen privaten und HsH Windows
 - Fehlerbehebungen
 - Beim ändern von HsH oder privaten Windows-Rechner wird tasks.json automatisch angepasst
+
+<details>
+<summary>[1.0.0] - [1.3.0]</summary>
 
 ## [1.3.0] 20.01.2023
 
@@ -148,6 +143,11 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 - json-Dateien sind nun zusammengefasst und die Einstellungen in den jeweiligen einzelnen Dateien Plattform-spezifisch beschrieben.
 - Effizientere schreibweise vom Code.
 
+</details>
+
+<details>
+<summary>[0.0.1] - [0.0.10]</summary>
+
 ## [0.0.1] - [0.0.10] 26.12.2022 - 28.12.2022
 
 ### neu hinzugefügt
@@ -169,3 +169,5 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 - Überprüfung auf vorhandensein der benötigten Extensions wurde verbessert.
 - Methode, um zum Pfad des Ordners zu gelangen wurde angepasst. (MacOS)
 - Abfrage zum Ordner öffnen nur dann, wenn vordefinierter Ordner nicht gefunden wird.
+
+</details>

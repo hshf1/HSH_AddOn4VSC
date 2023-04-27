@@ -1,14 +1,15 @@
 /** Dieses Modul hat die Aufgabe sich mit GitHub zu verbinden und die "nützlichen Links" zu kopieren und richtig einzuspeichern */
 
 import { get } from 'request' /** Importiert die get Funktion aus dem Node.js Modul, damit lassen sich URL's aufrufen */
+import { writeLog } from './logfile'
 
 let githublinks: { link: string, name: string }[] = [] /** Definiert ein Objekt Array mit den Eigenschaten "link und "name" für dei einzelnen Links  */
-let github_status: boolean | undefined = undefined  //* Definiert eine Variable die den Status der Verbindung zum GitHub Server wieder gibt */
+let github_status: boolean | undefined = undefined  /** Definiert eine Variable die den Status der Verbindung zum GitHub Server wieder gibt */
 
 get('https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/links.txt', (error, response, body) => {
 /** Versucht die URL aufzurufen, falls ein Fehler entsteht wird der in Error gespeichert, response enthält das HTTP response Objekt und der Body enthält den body als String */
     if (error) { /** Wenn ein Fehler aufgetreten ist, wird der ausgegeben und der Status wird auf false gesetzt */
-        console.error(error)
+        writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')
         github_status = false
     } else {
         const elements = body.replace(/[\n]/g, '').split('<-') /** Entfernt die Zeilenumbrüche und trennt die Kette an den Stellen "<-" in ein Array auf  */
@@ -27,10 +28,12 @@ get('https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/links.t
     }
 })
 
-export function getGithubStatus() { /** Globale Funktion die den Github Status zurückgeben kann*/ 
+/** Globale Funktion die den Github Status zurückgeben kann */
+export function getGithubStatus() {
     return github_status
 }
 
-export function getGithubLinks() {  /** Globale Funktion die die GitHub Links zurückgeben kann*/ 
+/** Globale Funktion die die GitHub Links zurückgeben kann */
+export function getGithubLinks() {
     return githublinks
 }

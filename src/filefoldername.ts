@@ -12,8 +12,9 @@ import { extname, dirname, basename, join, parse } from 'path'
 import { existsSync } from 'fs' /** Importiert das existsSync Modul aus node.js, dadurch ist es möglich zu überprüfen ob eine Datei auf dem Dateisystem vorhanden ist */
 
 import { getOS } from './init' /** Importiert die Funktion zur bestimmung des Betriebssystems aus init.ts */
+import { writeLog } from './logfile'
 
-let firstInit: boolean = false; /** Deklariert eine Variable die auskunft darüber gibt ob eine erste Initalisierung schonmal statt gefunden hat */
+let firstInit: boolean = false /** Deklariert eine Variable die auskunft darüber gibt ob eine erste Initalisierung schonmal statt gefunden hat */
 
 export async function checkname() {
     const filePath: string = window.activeTextEditor?.document.uri.fsPath || "no_file_defined" 
@@ -24,11 +25,12 @@ export async function checkname() {
 
     if (getOS('WIN') && (constdirname.indexOf('ä') !== -1 || constdirname.indexOf('ö') !== -1 || constdirname.indexOf('ü') !== -1 || constdirname.indexOf(' ') !== -1)) {
     /** Überprüft ob der Ordnerpfad Umlaute enthält und ob es sich um einen Windows PC handelt */
-        window.showErrorMessage(`${constdirname} enthält Umlaute oder Leerzeichen! Diese müssen manuell umbenannt werden!`)
+        window.showWarningMessage(writeLog(`${constdirname} enthält Umlaute oder Leerzeichen! Diese müssen manuell umbenannt werden!`, 'WARNING'))
     }
 
-    if (constbasename.indexOf('ä') !== -1 || constbasename.indexOf('ö') !== -1 || constbasename.indexOf('ü') !== -1 || constbasename.indexOf(' ') !== -1 /*|| constextname !== '.c'*/) {
-        /** Überprüft ob der Dateiname Umlaute enthält oder nicht mit .c endet */
+    if (constbasename.indexOf('ä') !== -1 || constbasename.indexOf('ö') !== -1 || constbasename.indexOf('ü') !== -1 || constbasename.indexOf(' ') !== -1 /** || constextname !== '.c' */) {
+        /** Überprüft ob der Dateiname Umlaute enthält (oder nicht mit .c endet )*/
+
         if (filePath === "no_file_defined" || filePath === undefined || filePath.includes('settings.json') || filePath.includes('tasks.json')) {
             /** Falls nicht definiert oder eine .json wird Funktion abgebrochen */
             return
@@ -44,7 +46,7 @@ export async function checkname() {
 async function rename(currentPath: string) {
     const invalidChars = /[äöü ÄÖÜ]/g; /** Definiert die ungültigen Chars */
     let renameanfrage = await window.showWarningMessage( /** Fragt Benutzer ob Fehler ausgebessert werden sollen */
-        `Es sind Fehler im Dateinamen vorhanden! Sollen diese automatisch angepasst werden?`,
+        writeLog(`Es sind Fehler im Dateinamen vorhanden!`, 'WARNING')+'Sollen diese automatisch angepasst werden?',
         'Ja',
         'Nein',
     ) || ''
@@ -69,18 +71,20 @@ async function rename(currentPath: string) {
 
         newfullname = join(constdirname, replacedBasename) /** Verbindet den Ordnerpfad und den neuen Dateinamen und speichert ihn */
 
-        if (extname(currentPath) !== '.c') { /** Überprüft ob der aktuelle Pfad nicht .c enthält*/
-            if (extname(currentPath) === '') { /** Falls gar keine Endung existiert wird .c drangehängt */
-                newfullname = newfullname + '.c'
-            } else {
-                newfullname = newfullname.replace(extname(currentPath), '.c') /** Falls schon eine Endung existiert wird diese ausgetauscht */
-            }
-        }
+        //TODO: später anpassen je nach eingestellter programmiersprache
+        // if (extname(currentPath) !== '.c') { /** Überprüft ob der aktuelle Pfad nicht .c enthält*/
+        //     if (extname(currentPath) === '') { /** Falls gar keine Endung existiert wird .c drangehängt */
+        //         newfullname = newfullname + '.c'
+        //     } else {
+        //         newfullname = newfullname.replace(extname(currentPath), '.c') /** Falls schon eine Endung existiert wird diese ausgetauscht */
+        //     }
+        // }
         save_rename(currentPath, newfullname) /** Ruft Funktion auf die den neuen Namen speichert */
     }
 }
 
-async function save_rename(currentPath: string, newfullname: any) { /** Funktion die den neuen Namen einspeichert, bekommt den alten und den neuen Namen+Pfad */
+/** Funktion die den neuen Namen einspeichert, bekommt den alten und den neuen Namen+Pfad */
+async function save_rename(currentPath: string, newfullname: any) {
     if (existsSync(newfullname)) {  /** Überprüft ob der neue Name der Datei schon existiert */
         let parsedPath = parse(newfullname)
         let newName = join(parsedPath.dir, `${parsedPath.name}_1${parsedPath.ext}`) /** Hängt an den Namen ein "_1" */

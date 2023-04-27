@@ -8,7 +8,7 @@
 
 import {									
 	ExtensionContext, commands, workspace,	
-	debug, window, ConfigurationChangeEvent	
+	debug, ConfigurationChangeEvent	
 } from 'vscode'		
 
 /** Importiert die genannten Befehle aus der VS-Code Erweiterung 
@@ -20,19 +20,19 @@ import {
  *	ConfigurationChangeEvent: Ein Ereignis, das ausgelöst wird wenn sich eine Konfigurationseinstellung ändert. Enthält Informationen über die änderung */
 
 import {
-	getHsHRZ, getOS, getSettingInit,
-	getStatusBarItem, initMain, changeHsHOrPrivate
+	getHsHRZ, getOS, getStatusBarItem,
+	initMain, changeHsHOrPrivate
 } from './init'										/** Importiert eine Reihe von Befehlen aus der init.ts */
 import { checkname } from './filefoldername'		/** Importiert die Funktion zum überprüfen des Dateinames aus filefoldername.ts */
 import { getCommands } from './registercommands'	/** Importiert die Registerbefehle für die Anzeigen aus registercommands.ts */
-import { getGithubStatus } from './github'          /** Importiert den Status, ob Anfrage, nach .txt Datei mit nützlichen Links, an den GitHub Server erfolgreich war aus github.ts*/
 import { treeDataProvider } from './activity_bar'	/** Importiert Funktionen der Activity Bar */
 import { init_language } from './language_handler'
+import { writeLog } from './logfile'
 
-
-export function activate(context: ExtensionContext) {	/** die "activate" Funktion wird von VS-Code aufgerufen, wenn die Erweierung aktiviert wird */
-  
-	initialize()	/** Ruft die Funktion auf, die die Initialisierung beginnt */
+/** die "activate" Funktion wird von VS-Code aufgerufen, wenn die Erweiterung aktiviert wird */
+export function activate(context: ExtensionContext) {
+	initMain()	/** Ruft die Funktion auf, die die Initialisierung beginnt */
+  init_language()
 
 	const eventHandler_checkname = async () => {    /**	Code definiert eine asynchrone Funktion die als Event Handler fungiert */
 		if (getStatusBarItem().command === 'extension.off') {	/** überprüft ob der Statusleisten Button auf "pausiert" steht */
@@ -50,8 +50,9 @@ export function activate(context: ExtensionContext) {	/** die "activate" Funktio
 				}
 				if (temp_hshRZ != getHsHRZ()) {		/** überprüft ob sich der Wert geändert hat der Aussagt ob man im Computerraum ist */
 					changeHsHOrPrivate(temp_hshRZ)	/** Führt die Funktion aus, um die Pfade anzupassen */
-				}
-				treeDataProvider.refresh()			/** Aktualisiert die Anzeige der Activity Bar */						
+					treeDataProvider.refresh()		/** Aktualisiert die Anzeige der Activity Bar */
+					writeLog(`Einstellung auf ${temp_hshRZ ? 'HsH-Rechner' : 'privaten Rechner'} geändert!`, 'INFO')
+				}						
 			}
 		}
 	})
@@ -59,35 +60,9 @@ export function activate(context: ExtensionContext) {	/** die "activate" Funktio
 	getCommands().forEach(command => {															/** For Schleife durch alle "command" Objekte in "registercommands.ts". name: name des commands, callback: Funktion die ausgeführt wird */
 		context.subscriptions.push(commands.registerCommand(command.name, command.callback))	/** Durch "context.subscriptions.push" wird das Objekt nach deaktivieren der Erweiterung ordnungsgemäss aufgeräumt */
 	})
-
 }
 
-async function initialize() {							/** Der Zweck dieser Funktion ist es, die Module init.ts und github.ts zu initialisieren */
-	let init_status: boolean | undefined = undefined	/** Deklaration von init_status, Variable gibt an ob die Initialisierung erfolgreich war */	
-
-	init_language();
-
-	try {
-		await require('./init')									/** Versucht Modul init.ts zu laden */
-		await require('./github')								/** Versucht Modul github.ts zu laden */
-	} catch (error) {											/** Wenn ein Fehler während des Ladevorgangs auftritt, wird der catch-Block ausgeführt. */
-		console.error(error);									/** Fehler wird in der Konsole ausgegeben */
-		await new Promise(resolve => setTimeout(resolve, 1000))	/** Funktion wartet eine Sekunde mit setTimeout(), bevor sie sich selbst rekursiv aufruft, um es erneut zu versuchen.*/
-		await initialize()												
-	}
-	initMain()
-	while (init_status === undefined) {												/** Schleife wird solange ausgeführt bis init_status nicht mehr undefiniert ist */
-		if (getSettingInit() !== undefined && getGithubStatus() !== undefined) {	/** überprüft ob init.ts aufgerufen wurde und github.ts aufgerufen wurde*/
-			if (getSettingInit() === false) {										/** Falls bei init.ts Fehler aufgetreten sind kommt dieses Meldung.  */
-				window.showWarningMessage('Einstellungen konnten nicht richtig initialisiert werden. Bei Problem VSCode neu starten.')
-			}
-			if (getGithubStatus() === false) {	/** Falls bei github.ts Fehler aufgetreten sind kommt dieses Meldung.  */
-				window.showWarningMessage(`Nützliche Links aus GitHub konnten nicht geladen werden. Bei Bedarf Internetverbindung prüfen und VSCode neu starten.`)
-			}
-			init_status = true					/** Wenn beide Module erfolgreich geladen worden, wird der init_status gestzt und somit die Initalisierung abgeschlossen */
-		}
-		await new Promise(resolve => setTimeout(resolve, 1000))	/** Wartet 1000ms bevor die Schleife wieder anfängt */
-	}
+/** Funktion die Aufgerufen wird wenn die Erweiterung deaktiviert oder deinstalliert wird.*/
+export function deactivate() {
+	writeLog('HSH_AddOn4VSC wurde ordnungsgemäß beendet!', 'INFO')
 }
-
-export function deactivate() { }	/** Funktion die Aufgerufen wird wenn die Erweiterung deaktiviert oder deinstalliert wird.*/

@@ -1,11 +1,11 @@
 /** Dieses Modul enthält den Inhalt der .json Dateien, das testprogc und die Eigenschaften der Befehle  */
 
-
 import { Command } from "vscode" /** Importiert die Command Schnittstelle aus der VSCode Modul */
 
 import { getCompilerPath, getFilesEncoding } from "./init" /** Importiert die Funktion die den CompilerPfad bestimmt und die Funktion die das Encoding Format bestimmt */
 
-export const constcommands: Command[] = [ /** Definiert die einzelnen Befehle in einem Array. */
+export function getConstCommands(): Command[] {
+    return [ /** Definiert die einzelnen Befehle in einem Array. */
     { command: 'extension.on', title: "Erweiterung wieder aktivieren" },
     { command: "extension.off", title: "Erweiterung bis zum nächsten (Neu-)Start von VSCode pausieren" },
     { command: 'default.settingsjson', title: 'settings.json zurücksetzen' },
@@ -19,9 +19,11 @@ export const constcommands: Command[] = [ /** Definiert die einzelnen Befehle in
     { command: 'switch.language_python', title: 'Python'}
     //TODO Compiler Check für C, Java und Python ohne automatischen Dowload ?
 ]
+}
 
-/** Globale Konstante die das Testprogramm für c enthält */
-export const testprogc = `#include <stdio.h>
+/** Globale Funktion die das Testprogramm zurückgibt */
+export function getTestProgC() {
+    return `#include <stdio.h>
 
 int main()
 {
@@ -39,6 +41,7 @@ int main()
     y = 12 + 4 % 3 * 7 / 8;
     return 0;
 }`
+}
 
 /** Globale Konstante die das Testprogramm für java enthält */
 export const testprogjava = `public class HelloWorld {

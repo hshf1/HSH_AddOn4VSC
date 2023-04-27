@@ -6,17 +6,18 @@ sowie eine "callback"-Eigenschaft, die eine Funktion enthält die ausgeführt wi
 import { env, Uri, window } from 'vscode'           /** Importiert die genannten Befehle aus der VS-Code Erweiterung */
 
 import { treeDataProvider } from './activity_bar'   /** Importiert den TreeDataProvider von activity_bar.ts */
-import { constcommands } from './constants'         /** Importiert die Namen und Beschreibungen der Commands aus constants.ts*/
+import { getConstCommands } from './constants'         /** Importiert die Namen und Beschreibungen der Commands aus constants.ts*/
 import { renewjsons } from './jsonfilescheck'       /** Importiert die Funktion zur Überprüfung und aktualisierung der .jsons Dateien aus jsonfilescheck.ts*/ 
 import { compiler_init, getPath, setRZHsH, getStatusBarItem } from './init' /** Importiert Funktionen aus init.ts */
 import { reportAProblem } from './reportaproblem'
 import { set_language } from './language_handler'
-
+import { writeLog } from './logfile'
 
 const constregistercommands = [             /** Die Befehle sind in einem Array gespeichert und beziehen ihre Namen und Beschreibungen aus der Datei constants.ts */
     {
-        name: constcommands[0].command,     /** Der Name wird aus der constants.ts geholt  */
+        name: getConstCommands()[0].command,     /** Der Name wird aus der constants.ts geholt  */
         callback: () => {                   /** Funktion die keine Paramter erwartet und keinen Rückgabewert hat */
+            writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[0].command}`, 'INFO')
             getStatusBarItem().text = 'AddOn4VSC pausieren' /** Übergibt dem Statusbar Button die Beschriftung */
             getStatusBarItem().tooltip = 'Klicken, um die Erweiterung AddOn4VSC zu pausieren (spätestens, bis wenn VSCode neu startet)' /** Übergibt dem Statusbar Button die Beschriftung beim rüberfahren mit der Maus */
             getStatusBarItem().command = 'extension.off' /** Übergibt den Command der mit dem Drücken verknüpft ist aus constants.ts */
@@ -24,8 +25,9 @@ const constregistercommands = [             /** Die Befehle sind in einem Array 
         }
     },
     {
-        name: constcommands[1].command,     /** Wie vorheriger Befehl */
+        name: getConstCommands()[1].command,     /** Wie vorheriger Befehl */
         callback: () => {
+            writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[1].command}`, 'INFO')
             getStatusBarItem().text = 'AddOn4VSC wieder aktivieren'
             getStatusBarItem().tooltip = 'Klicken, um die Erweiterung AddOn4VSC wieder zu aktivieren'
             getStatusBarItem().command = 'extension.on'
@@ -33,25 +35,27 @@ const constregistercommands = [             /** Die Befehle sind in einem Array 
         }
     },
     {
-        name: constcommands[2].command,     
+        name: getConstCommands()[2].command,     
         callback: () => {
+            writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[2].command}`, 'INFO')
             renewjsons(getPath('settingsjson')) /** Aktualisiert die settings.json */
             window.showInformationMessage('settings.json wurde zurückgesetzt. Manchmal muss VSCode neu gestartet werden, um einige Änderungen wirksam zu machen.') /** Erzeugt kleines Fenster mit entsprechenden Inhalt */
-
         }
     },
     {
-        name: constcommands[3].command,     
+        name: getConstCommands()[3].command,     
         callback: () => {
+            writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[3].command}`, 'INFO')
             renewjsons(getPath('tasksjson'))    /** Aktualisiert die task.json */
             window.showInformationMessage('tasks.json wurde zurückgesetzt. Manchmal muss VSCode neu gestartet werden, um einige Änderungen wirksam zu machen.') /** Erzeugt kleines Fenster mit entsprechenden Inhalt */
         }
     },
     {
-        name: constcommands[4].command,
+        name: getConstCommands()[4].command,
         callback: (...args: any) => {   /** Übernimmt eine variable Anzahl von Argumenten (in diesem Fall einen Link), dessen Typ nicht spezifiziert sind */
+            writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[4].command}`, 'INFO')
             if (args[0] === '') {       /** Überprüft ob das erste Argument 0 ist, falls dies der Fall ist wird eine Fehlermeldung ausgegeben und die Funktion beendet */
-                window.showErrorMessage('Es wurde kein Link zum Öffnen übergeben!')
+                window.showErrorMessage(writeLog(`Es wurde kein Link zum Öffnen übergeben!`, 'ERROR') )
                 return
             } else {                    
                 env.openExternal(Uri.parse(args[0]))    /** Ist das Argument nicht leer wird, der Link aufgerufen*/
@@ -59,21 +63,24 @@ const constregistercommands = [             /** Die Befehle sind in einem Array 
         }
     },
     {
-        name: constcommands[5].command,
+        name: getConstCommands()[5].command,
         callback: () => {
+            writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[5].command}`, 'INFO')
             compiler_init()     /** Ruft Funktion auf die den Compiler initialisiert */
         }
     },
     {
-        name: constcommands[6].command,
+        name: getConstCommands()[6].command,
         callback: async () => {     /** Erstellt asynchrone Funktion  */
+            writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[6].command}`, 'INFO')
             await setRZHsH()         /** Ruft Funktion auf die die Einstellungen für den HSH Rechner einstellt */
             treeDataProvider.refresh()
         }
     },
     {
-        name: constcommands[7].command,
+        name: getConstCommands()[7].command,
         callback: async () => {
+            writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[7].command}`, 'INFO')
             await reportAProblem()
         }
     },
@@ -98,6 +105,7 @@ const constregistercommands = [             /** Die Befehle sind in einem Array 
 
 ]
 
-export function getCommands() {            /**  Exportiert Funktion die das Array an Befehls-Objekten für andere Module des Codes verfügbar macht  */
+/** Exportiert Funktion die das Array an Befehls-Objekten für andere Module des Codes verfügbar macht */
+export function getCommands() {
     return constregistercommands
 }
