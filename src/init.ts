@@ -18,6 +18,7 @@ import { openprefolder } from './checkfolder'		/** Importiert die Funktion zum �
 import { checkjsons } from './jsonfilescheck'		/** Importiert die Funktion zum überprüfen der jsons-Datei aus jsonfilescheck.ts */
 import { getConstCommands } from './constants'         /** Importiert die Namen und Beschreibungen der Commands aus constants.ts*/
 import { logFileMain, writeLog } from './logfile'
+import { existsSync } from 'fs'
 
 interface IEnvironmentVariables {
     os: {   /** Definiert Bool's für die einzelnen Betriebssysteme */
@@ -39,7 +40,7 @@ interface IEnvironmentVariables {
         logFileDir: string
     },
     settings: {
-        hshRZ: boolean | undefined /** Boolean die angibt ob es sich um einen PC im Rechnerraum handelt*/
+        hshRZ: boolean | null /** Boolean die angibt ob es sich um einen PC im Rechnerraum handelt*/
         progLanguage: string | undefined
         encodingSettingsJSON: string
     },
@@ -51,14 +52,16 @@ interface IEnvironmentVariables {
 let envVar: IEnvironmentVariables = { 
     os: { IS_WINDOWS: false, IS_OSX: false, IS_LINUX: false },
     path: { userHomeFolder: "", CUebung: "", JavaUebung: "", PythonUebung: "", settingsJSON: "", tasksJSON: "", compiler: "", testProgC: "", testProgJava: "", testProgPython: "", logFileDir: "" },
-    settings: { hshRZ: undefined, progLanguage: undefined, encodingSettingsJSON: "" }, status: { compiler: false }
+    settings: { hshRZ: null, progLanguage: undefined, encodingSettingsJSON: "" }, status: { compiler: false }
 }
 
 let statusbar_button: StatusBarItem /** Definiert statusbar_button als StatusBarItem */
 
 /** Hauptfunktion die die Initialisierung durchführt und wenn erfolgreich setting_init true setzt. */
-export function initMain() {
+export async function initMain() {
     setOS() /** Setzt die entsprechende Boolean für das jeweilige Betriebssystem true */
+    await workspace.getConfiguration('addon4vsc').get('computerraum') === null && envVar.os.IS_WINDOWS ? initHshRz() : ''
+    envVar.settings.progLanguage = await workspace.getConfiguration('addon4vsc').get('sprache')
 
     if (!getOS('WIN')) { /** "Wenn die Boolean IS_Windows false ist */
         if (!extensions.getExtension('vadimcn.vscode-lldb')) { /** Wenn "vadimcn.vscode-lldb" nicht installiert ist */
@@ -66,17 +69,10 @@ export function initMain() {
         }   /** "vadimcn.vscode-lldb" ist eine Erweiterung, die für den Debbuger wichtig ist. */
     }
 
-    while (envVar.settings.hshRZ === undefined) { /** Überprüft ob Rechnerraum oder nicht */
-        envVar.settings.hshRZ = workspace.getConfiguration('addon4vsc').get('computerraum')
-    }
-
-    while (envVar.settings.progLanguage === undefined) {
-        envVar.settings.progLanguage = workspace.getConfiguration('addon4vsc').get('sprache')
-    }
-
     // init_language()
 
     setPath()       /** Setzt die Pfade für .jsons und Übungsordner */
+    logFileMain()
     checkjsons()    /** Ruft die Funktion auf, die sicherstellt, dass die Konfigurationsdateien vorhanden sind */
 
     if (!(workspace.workspaceFolders?.toString)) {  /** Funktion die schaut, ob Ordner in VS-Code geöffnet ist und ggf. den vorgefertigten Ordner öffnet */
@@ -86,7 +82,6 @@ export function initMain() {
     setStatusBarItem()  /** Initialisiert den Button in der Statusleiste */
     activityBarMain()   /** Ruft Funktion auf die für die Activitybar zuständig ist */
     compiler_init()     /** Compiler initialisieren */
-    logFileMain()
 
     writeLog(`HSH_AddOn4VSC gestartet - Initialisierung beendet!`, 'INFO')
 }
@@ -243,18 +238,16 @@ export function compiler_init() {
         if (error) { /** Wenn Fehler auftritt (keine Version installiert ist) */
             commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(envVar.path.userHomeFolder)).then(() => { /** Erzeugt neues Terminal und setzt das Verzeichnis auf das Heimatverzeichnis */
                 if (envVar.os.IS_WINDOWS) {
-                    window.showWarningMessage(writeLog(`Compiler nicht gefunden!`, 'INFO') + ` Zum installieren bitte auswählen:`, 'Privater Windows-Rechner', 'HsH Windows-Rechner', 'Jetzt nicht').then(async selected => { /** Fragt ob HSH oder Privater Rechner und wartet auf Antwort */
-                        if (selected === 'Privater Windows-Rechner') { /** Wenn Privater Rechner */
-                            workspace.getConfiguration('addon4vsc').update('computerraum', false, ConfigurationTarget.Global) /** Setzt in Settings.json die computerraum Variable false */
-                            changeHsHOrPrivate(false) /** Ruft Funktion auf die die Einstellung ob HSH oder Privater Rechner einstellt */
-                            commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb runAs -ArgumentList \'/k curl -o %temp%\\vsc.cmd https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/vscwindows.cmd && %temp%\\vsc.cmd\'\"\n' })
-                            /** Führt den Befehl aus das Skript zur installation auszuführen */
-                        } else if (selected === 'HsH Windows-Rechner') { /** wenn HSH Rechner */
-                            workspace.getConfiguration('addon4vsc').update('computerraum', true, ConfigurationTarget.Global) /** Setzt in Settings.json die computerraum Variable true */
-                            commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'setx Path \"%USERPROFILE%\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files\\mingw64\\bin\"\n' })
-                            changeHsHOrPrivate(true) /** Ruft Funktion auf die die Einstellung ob HSH oder Privater Rechner einstellt */
-                        }
-                    })
+                    if (existsSync(`C:\\Program Files\\mingw64\\bin`)) {
+                        workspace.getConfiguration('addon4vsc').update('computerraum', true, ConfigurationTarget.Global) /** Setzt in Settings.json die computerraum Variable true */
+                        commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'setx PATH \"%PATH%;C:\\Program Files\\mingw64\\bin\"\n' })
+                        changeHsHOrPrivate(true) /** Ruft Funktion auf die die Einstellung ob HSH oder Privater Rechner einstellt */
+                    } else {
+                        workspace.getConfiguration('addon4vsc').update('computerraum', false, ConfigurationTarget.Global) /** Setzt in Settings.json die computerraum Variable false */
+                        changeHsHOrPrivate(false) /** Ruft Funktion auf die die Einstellung ob HSH oder Privater Rechner einstellt */
+                        commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb runAs -ArgumentList \'/k curl -o %temp%\\vsc.cmd https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/vscwindows.cmd && %temp%\\vsc.cmd\'\"\n' })
+                        /** Führt den Befehl aus das Skript zur installation auszuführen */
+                    }
                 } else if (envVar.os.IS_OSX) { /** wenn Mac, führt Skript zur installation aus */
                     commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'curl -sL https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/vsclinuxosx.sh | bash\n' })
                 } else if (envVar.os.IS_LINUX) { /** wenn Linux, führt Skript zur installation aus */
@@ -314,4 +307,18 @@ export async function changeHsHOrPrivate(temp_hshRZ: boolean) {
 
 export function getProgLanguage() {
     return envVar.settings.progLanguage
+}
+
+export function setProgLanguage(tmp: string) {
+    envVar.settings.progLanguage = tmp
+}
+
+function initHshRz() {
+    if (existsSync(`C:\\Program Files\\mingw64\\bin`)) {
+        workspace.getConfiguration('addon4vsc').update('computerraum', true, ConfigurationTarget.Global) /** Setzt in Settings.json die computerraum Variable true */
+        sethshRZ(true)
+    } else {
+        workspace.getConfiguration('addon4vsc').update('computerraum', false, ConfigurationTarget.Global) /** Setzt in Settings.json die computerraum Variable false */
+        sethshRZ(false)
+    }
 }
