@@ -226,7 +226,15 @@ export function setPath() {
 export function compiler_init() {
     if (envVar.settings.hshRZ) {
         const pathToRemove = 'C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin'
-        exec(`setx PATH "$(echo %PATH:${pathToRemove}=;%)";`, (error, stdout, stderr) => {
+        let pathVar = process.env.PATH || ''
+        const pathDirs = pathVar.split(';')
+        const index = pathDirs.indexOf(pathToRemove)
+        if (index !== -1) {
+            pathDirs.splice(index, 1);
+        }
+        pathVar = pathDirs.join(';')
+
+        exec(`setx PATH "${pathVar}";`, (error, stdout, stderr) => {
             if (error) {
                 writeLog(`Fehler beim entfernen alter Umgebungsvariable: ${error.message}`, 'ERROR')
             } else {
