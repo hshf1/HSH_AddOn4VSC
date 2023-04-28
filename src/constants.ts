@@ -137,8 +137,8 @@ export function getSettingsJsonData() {
 }
 
 /** Globale Funktion die den Inhalt für Task.json zurückgibt */
-export function getTasksJsonData() {
-    const temp = getPath('compiler') /** Speichert Compilerpfad zwischen und baut ihn in den Inhalt ein */
+export async function getTasksJsonData() {
+    const temp = await getPath('compiler') /** Speichert Compilerpfad zwischen und baut ihn in den Inhalt ein */
 
     let tasksjsondata = `{
         "version": "2.0.0",

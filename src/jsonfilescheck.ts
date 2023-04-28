@@ -49,7 +49,7 @@ async function setsettingsjson() {
 
 async function settasksjson() {
 	try {
-		await promises.writeFile(await getPath('tasksjson'), getTasksJsonData())	/**Erstellt die tasks.json in dem Pfad von getPath() und mit dem Inhalt aus constants.ts */
+		await promises.writeFile(await getPath('tasksjson'), await getTasksJsonData())	/**Erstellt die tasks.json in dem Pfad von getPath() und mit dem Inhalt aus constants.ts */
 	} catch (err: any) {
 		writeLog(`[${err.stack?.split('\n')[2]?.trim()}] ${err}`, 'ERROR') /** Falls Fehler auftritt wird Fehler ausgegeben */
 	}

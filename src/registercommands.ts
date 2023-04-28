@@ -41,7 +41,7 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
         callback: async () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[2].command}`, 'INFO')
             renewjsons(await getPath('settingsjson')) /** Aktualisiert die settings.json */
-            window.showInformationMessage('settings.json wurde zurückgesetzt. Manchmal muss VSCode neu gestartet werden, um einige Änderungen wirksam zu machen.') /** Erzeugt kleines Fenster mit entsprechenden Inhalt */
+            window.showInformationMessage('settings.json wurde zurückgesetzt.') /** Erzeugt kleines Fenster mit entsprechenden Inhalt */
         }
     },
     {
@@ -49,7 +49,7 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
         callback: async () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[3].command}`, 'INFO')
             renewjsons(await getPath('tasksjson'))    /** Aktualisiert die task.json */
-            window.showInformationMessage('tasks.json wurde zurückgesetzt. Manchmal muss VSCode neu gestartet werden, um einige Änderungen wirksam zu machen.') /** Erzeugt kleines Fenster mit entsprechenden Inhalt */
+            window.showInformationMessage('tasks.json wurde zurückgesetzt.') /** Erzeugt kleines Fenster mit entsprechenden Inhalt */
         }
     },
     {

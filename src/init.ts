@@ -13,7 +13,7 @@ import { exec } from 'child_process'/** Importiert die exec Funktion aus dem Nod
 
 import { activityBarMain, treeDataProvider } from './activity_bar'    /** Importiert die Funktion die in der Activitybar die Links einfügt */
 import { openprefolder } from './checkfolder'		/** Importiert die Funktion zum öffnen des Vorgefertigten Ordner aus  checkfolder.ts */
-import { checkjsons } from './jsonfilescheck'		/** Importiert die Funktion zum überprüfen der jsons-Datei aus jsonfilescheck.ts */
+import { checkjsons, renewjsons } from './jsonfilescheck'		/** Importiert die Funktion zum überprüfen der jsons-Datei aus jsonfilescheck.ts */
 import { getConstCommands } from './constants'      /** Importiert die Namen und Beschreibungen der Commands aus constants.ts*/
 import { logFileMain, writeLog } from './logfile'
 import { existsSync } from 'fs'
@@ -65,7 +65,7 @@ export async function initMain() {
         commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb') /** Installiere "vadimcn.vscode-lldb" */
     }   /** "vadimcn.vscode-lldb" ist eine Erweiterung, die für den Debbuger wichtig ist. */
 
-    setPath()    /** Setzt die Pfade für .jsons und Übungsordner */
+    await setPath()    /** Setzt die Pfade für .jsons und Übungsordner */
     setFilesEncoding()
     logFileMain()
     await checkjsons() /** Ruft die Funktion auf, die sicherstellt, dass die Konfigurationsdateien vorhanden sind */
@@ -247,10 +247,10 @@ export function getFilesEncoding() {
     return envVar.settings.encodingSettingsJSON
 }
 
-export function onEventComputerraum() {
+export async function onEventComputerraum() {
     if (getOS('WIN')) { /** überprüft ob Windows */
         setPath() /** Setzt Compilerpfad neu */
-        commands.executeCommand(getConstCommands()[3].command) /** Führt command 3 aus, "tasks.json zurücksetzen" */   
+        renewjsons(await getPath('tasksjson'))  
         treeDataProvider.refresh() /** Aktualisiert die Anzeige der Activity Bar */
         writeLog(`onEventComputerraum durchgeführt!`, 'INFO')
     }						
