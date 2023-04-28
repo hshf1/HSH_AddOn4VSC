@@ -106,11 +106,11 @@ async function getScreenshot(userReport: UserReport) {
     }
 }
 
-function getAttachments(userReport: UserReport) {
+async function getAttachments(userReport: UserReport) {
     userReport.attachments.push({ filename: getLogFileName(), path: getLogFilePath() })
     userReport.attachments.push({ filename: 'terminalcontent.txt', path: userReport.terminalContentPath })
-    userReport.attachments.push({ filename: 'settings.json', path: getPath('settingsjson') })
-    userReport.attachments.push({ filename: 'tasks.json', path: getPath('tasksjson') })
+    userReport.attachments.push({ filename: 'settings.json', path: await getPath('settingsjson') })
+    userReport.attachments.push({ filename: 'tasks.json', path: await getPath('tasksjson') })
     
     if (userReport.screenshot.permission) {
         userReport.attachments.push({ filename: 'screenshot.png', path: userReport.screenshot.filePath })

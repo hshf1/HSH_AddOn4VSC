@@ -1,6 +1,6 @@
 import { ConfigurationTarget, window, workspace } from 'vscode'
 
-import { getProgLanguage } from './init'
+import { getConfigProgLanguage } from './init'
 import { openprefolder } from './checkfolder'
 import { writeLog } from './logfile'
 
@@ -39,7 +39,7 @@ export async function set_language() {
         return
     }
 
-    if (newLanguage === getProgLanguage()) { /** Überprüft ob Sprache bereits aktiv ist */
+    if (newLanguage === await getConfigProgLanguage()) { /** Überprüft ob Sprache bereits aktiv ist */
         window.showInformationMessage('Programmiersprache bereits aktiv')
         return
     }
