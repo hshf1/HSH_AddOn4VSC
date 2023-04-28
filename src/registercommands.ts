@@ -103,12 +103,10 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
         callback: async () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[8].command}`, 'INFO')
             
-            if (!getOS('WIN') || !(await getConfigComputerraum())) {
-                window.showWarningMessage(writeLog('Programmiersprache wechseln ist derzeit nur an HsH Rechnern verfügbar!', 'WARNING'))
-				return // Derzeit nur Verfügbar für HsH Rechner
-			}
+            window.showWarningMessage(writeLog('Programmiersprache wechseln ist derzeit nicht verfügbar!', 'WARNING'))
+            return
             
-            await set_language() /** Ruft Funktion auf die die Sprache neu einstellt und ändert den Offenen Ordner ggf. */
+            // await set_language() /** Ruft Funktion auf die die Sprache neu einstellt und ändert den Offenen Ordner ggf. */
         }
     }
 ]
