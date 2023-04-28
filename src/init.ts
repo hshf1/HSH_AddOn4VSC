@@ -4,8 +4,6 @@
  *  privaten oder HSH Rechner handelt.
  */
 
-// TODO: Für java und python einmal compiler init umstrukturieren!
-
 import {
     extensions, commands, window, StatusBarAlignment,
     Uri, workspace, ConfigurationTarget, StatusBarItem
@@ -13,10 +11,10 @@ import {
 import { homedir } from 'os'        /** Importiert die homedir Funktion aus dem Node.js Modul.  Die homedir-Funktion gibt das Heimatverzeichnis des aktuellen Benutzers als Zeichenfolge zurück. */
 import { exec } from 'child_process'/** Importiert die exec Funktion aus dem Node.js Modul. Die exec-Funktion wird verwendet, um einen Befehl in der Befehlszeile auszuführen. */
 
-import { activityBarMain } from './activity_bar'    /** Importiert die Funktion die in der Activitybar die Links einfügt */
+import { activityBarMain, treeDataProvider } from './activity_bar'    /** Importiert die Funktion die in der Activitybar die Links einfügt */
 import { openprefolder } from './checkfolder'		/** Importiert die Funktion zum öffnen des Vorgefertigten Ordner aus  checkfolder.ts */
 import { checkjsons } from './jsonfilescheck'		/** Importiert die Funktion zum überprüfen der jsons-Datei aus jsonfilescheck.ts */
-import { getConstCommands } from './constants'         /** Importiert die Namen und Beschreibungen der Commands aus constants.ts*/
+import { getConstCommands } from './constants'      /** Importiert die Namen und Beschreibungen der Commands aus constants.ts*/
 import { logFileMain, writeLog } from './logfile'
 import { existsSync } from 'fs'
 
@@ -40,8 +38,6 @@ interface IEnvironmentVariables {
         logFileDir: string
     }
     settings: {
-        hshRZ: boolean | null | undefined /** Boolean die angibt ob es sich um einen PC im Rechnerraum handelt*/
-        progLanguage: string | undefined
         encodingSettingsJSON: string
     }
     status: {
@@ -52,7 +48,7 @@ interface IEnvironmentVariables {
 let envVar: IEnvironmentVariables = { 
     os: { IS_WINDOWS: false, IS_OSX: false, IS_LINUX: false },
     path: { userHomeFolder: "", CUebung: "", JavaUebung: "", PythonUebung: "", settingsJSON: "", tasksJSON: "", compiler: "", testProgC: "", testProgJava: "", testProgPython: "", logFileDir: "" },
-    settings: { hshRZ: null, progLanguage: undefined, encodingSettingsJSON: "" }, status: { compiler: false }
+    settings: { encodingSettingsJSON: "" }, status: { compiler: false }
 }
 
 let statusbar_button: StatusBarItem /** Definiert statusbar_button als StatusBarItem */
@@ -60,27 +56,19 @@ let statusbar_button: StatusBarItem /** Definiert statusbar_button als StatusBar
 /** Hauptfunktion die die Initialisierung durchführt und wenn erfolgreich setting_init true setzt. */
 export async function initMain() {
     setOS() /** Setzt die entsprechende Boolean für das jeweilige Betriebssystem true */
-    if (await workspace.getConfiguration('addon4vsc').get('computerraum') === null && envVar.os.IS_WINDOWS) {
-        initHshRz()
-    }
-    while (envVar.settings.progLanguage === undefined) {
-        envVar.settings.progLanguage = await workspace.getConfiguration('addon4vsc').get('sprache')
-    }
-    while (envVar.settings.hshRZ === undefined) {
-        envVar.settings.hshRZ = await workspace.getConfiguration('addon4vsc').get('computerraum')
+
+    if (await getConfigComputerraum() === null) {
+        initPrivateOrHsh()
     }
 
-    if (!getOS('WIN')) { /** "Wenn die Boolean IS_Windows false ist */
-        if (!extensions.getExtension('vadimcn.vscode-lldb')) { /** Wenn "vadimcn.vscode-lldb" nicht installiert ist */
-            commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb') /** Installiere "vadimcn.vscode-lldb" */
-        }   /** "vadimcn.vscode-lldb" ist eine Erweiterung, die für den Debbuger wichtig ist. */
-    }
+    if (!getOS('WIN') && !extensions.getExtension('vadimcn.vscode-lldb')) { /** Wenn kein Windows und "vadimcn.vscode-lldb" nicht installiert ist */
+        commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb') /** Installiere "vadimcn.vscode-lldb" */
+    }   /** "vadimcn.vscode-lldb" ist eine Erweiterung, die für den Debbuger wichtig ist. */
 
-    // init_language()
-
-    setPath()       /** Setzt die Pfade für .jsons und Übungsordner */
+    setPath()    /** Setzt die Pfade für .jsons und Übungsordner */
+    setFilesEncoding()
     logFileMain()
-    checkjsons()    /** Ruft die Funktion auf, die sicherstellt, dass die Konfigurationsdateien vorhanden sind */
+    await checkjsons() /** Ruft die Funktion auf, die sicherstellt, dass die Konfigurationsdateien vorhanden sind */
 
     if (!(workspace.workspaceFolders?.toString)) {  /** Funktion die schaut, ob Ordner in VS-Code geöffnet ist und ggf. den vorgefertigten Ordner öffnet */
         openprefolder() /** Öffnet Ordner je nach dem welche Prog.sprache aktiv ist */
@@ -90,18 +78,17 @@ export async function initMain() {
     activityBarMain()   /** Ruft Funktion auf die für die Activitybar zuständig ist */
     compiler_init()     /** Compiler initialisieren */
 
-    writeLog(`HSH_AddOn4VSC gestartet - Initialisierung beendet!`, 'INFO')
+    writeLog(`HSH_AddOn4VSC gestartet - init.ts initialisiert!`, 'INFO')
 }
-/** Funktion die Überprüft welches Betriebssystem vorliegt
- * und entsprechend die Boolean setzt */
+
+/** Funktion die Überprüft welches Betriebssystem vorliegt und entsprechend die Boolean setzt */
 function setOS() {
     envVar.os.IS_WINDOWS = process.platform.startsWith('win')
     envVar.os.IS_OSX = process.platform == 'darwin'
     envVar.os.IS_LINUX = !envVar.os.IS_WINDOWS && !envVar.os.IS_OSX
 }
 
-/** Funktion die  WIN, MAC oder LIN als Eingabe bekommnt
- * und entsprechend den Boolschen Status zurückgibt */
+/** Funktion die  WIN, MAC oder LIN als Eingabe bekommnt und entsprechend den Boolschen Status zurückgibt */
 export function getOS(os: string) {
     switch(os) {
         case 'WIN':
@@ -129,62 +116,29 @@ export function getStatusBarItem() {
     return statusbar_button 
 }
 
-/** Funktion die hshRZ Variable zurückgibt und somit global verfügbar macht */
-export function getHsHRZ() {
-    return envVar.settings.hshRZ
+export async function setConfigProgLanguage(tmp: string) {
+    await workspace.getConfiguration('addon4vsc').update('sprache', tmp, ConfigurationTarget.Global)
 }
 
-/** Funktion die die Pfade zurückgibt und somit global verfügbar macht
- * (Pfade werden entsprechend der Programmiersprache richtig gesetzt)
- * 
- * Verfügbare Argumente:
- * - settingsjson
- * - tasksjson
- * - testprog
- * - uebungfolder
- * - logfiledir
-*/
-export function getPath(temp: string) {
-    switch(temp) {
-        case 'settingsjson':
-            return envVar.path.settingsJSON
-        case 'tasksjson':
-            return envVar.path.tasksJSON
-        case 'testprog':
-            if (envVar.settings.progLanguage === 'C') {
-                return envVar.path.testProgC
-            } else if (envVar.settings.progLanguage === 'Java') {
-                return envVar.path.testProgJava
-            } else if (envVar.settings.progLanguage === 'Python') {
-                return envVar.path.testProgPython
-            } else {
-                return ''
-            }
-        case 'uebungfolder':
-            if (envVar.settings.progLanguage === 'C') {
-                return envVar.path.CUebung
-            } else if (envVar.settings.progLanguage === 'Java') {
-                return envVar.path.JavaUebung
-            } else if (envVar.settings.progLanguage === 'Python') {
-                return envVar.path.PythonUebung
-            } else {
-                return ''
-            }
-        case 'logfiledir':
-            return envVar.path.logFileDir
-        default:
-            return ''
-    }
+export async function getConfigProgLanguage() {
+    return await workspace.getConfiguration('addon4vsc').get('sprache')
+}
+
+export async function setConfigComputerraum(tmp: boolean) {
+    await workspace.getConfiguration('addon4vsc').update('computerraum', tmp, ConfigurationTarget.Global)
+}
+
+export async function getConfigComputerraum() {
+    return await workspace.getConfiguration('addon4vsc').get('computerraum')
 }
 
 /** Funktion die die Pfade abhängig vom Betriebssystem bestimmt und in Variablen speichert */
-export function setPath() {
+export async function setPath() {
+    const Computerraum = await getConfigComputerraum()
     envVar.path.userHomeFolder = homedir()
-    /** Je nach dem ob im Rechneraum oder nicht wird der enstprechende Compiler-Pfad gespeichert */
-    envVar.path.compiler = envVar.settings.hshRZ ? 'C:\\\\Program Files\\\\mingw64\\\\bin\\\\gcc.exe' : 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe'
-    envVar.settings.encodingSettingsJSON = envVar.os.IS_WINDOWS ? `cp437` : `utf8` /** Je nach dem ob Windows oder nicht wird Codierung gespeichert*/
 
-    if (envVar.os.IS_WINDOWS && !envVar.settings.hshRZ) { /** Wenn windows und privater Rechner */
+    if (envVar.os.IS_WINDOWS && !Computerraum) { /** Wenn windows und privater Rechner */
+        envVar.path.compiler = 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe'
         envVar.path.logFileDir = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User`
         envVar.path.CUebung = `${envVar.path.userHomeFolder}\\Documents\\C_Uebung`
         envVar.path.JavaUebung = `${envVar.path.userHomeFolder}\\Documents\\Java_Uebung`
@@ -194,7 +148,8 @@ export function setPath() {
         envVar.path.testProgC = `${envVar.path.CUebung}\\testprog.c`
         envVar.path.testProgJava = `${envVar.path.JavaUebung}\\HelloWorld.java`
         envVar.path.testProgPython = `${envVar.path.PythonUebung}\\HelloWorld.py`
-    } else if (envVar.os.IS_WINDOWS && envVar.settings.hshRZ) { /** Wenn windows und HSH Rechner */
+    } else if (envVar.os.IS_WINDOWS && Computerraum) { /** Wenn windows und HSH Rechner */
+        envVar.path.compiler = 'C:\\\\Program Files\\\\mingw64\\\\bin\\\\gcc.exe'
         envVar.path.logFileDir = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User`
         envVar.path.CUebung = `U:\\C_Uebung`
         envVar.path.JavaUebung = `U:\\Java_Uebung`
@@ -229,15 +184,108 @@ export function setPath() {
     }
 }
 
-/** Globale Funktion die den Compiler installiert */
-export async function compiler_init() {
-    if (envVar.settings.hshRZ) {
+/** Funktion die die Pfade zurückgibt und somit global verfügbar macht
+ * (Pfade werden entsprechend der Programmiersprache richtig gesetzt)
+ * 
+ * Verfügbare Argumente:
+ * - settingsjson
+ * - tasksjson
+ * - compiler
+ * - testprog
+ * - uebungfolder
+ * - logfiledir
+*/
+export async function getPath(tmp: string) {
+    const progLanguage = await getConfigProgLanguage()
+
+    switch(tmp) {
+        case 'settingsjson':
+            return envVar.path.settingsJSON
+        case 'tasksjson':
+            return envVar.path.tasksJSON
+        case 'compiler':
+            return envVar.path.compiler
+        case 'testprog':
+            switch(progLanguage) {
+                case 'C':
+                    return envVar.path.testProgC
+                case 'Java':
+                    return envVar.path.testProgJava
+                case 'Python':
+                    return envVar.path.testProgPython
+                default:
+                    return ''
+            }
+        case 'uebungfolder':
+            switch(progLanguage) {
+                case 'C':
+                    return envVar.path.CUebung
+                case 'Java':
+                    return envVar.path.JavaUebung
+                case 'Python':
+                    return envVar.path.PythonUebung
+                default:
+                    return ''
+            }
+        case 'logfiledir':
+            return envVar.path.logFileDir
+        default:
+            return ''
+    }
+}
+
+export function setFilesEncoding() {
+    if (envVar.os.IS_WINDOWS) {
+        envVar.settings.encodingSettingsJSON = `cp437`
+    } else {
+        envVar.settings.encodingSettingsJSON = `utf8`
+    }
+}
+
+/** Globale Funktion die zurückgibt um welche Art der Codierung es sich handelt */
+export function getFilesEncoding() {
+    return envVar.settings.encodingSettingsJSON
+}
+
+export function onEventComputerraum() {
+    if (getOS('WIN')) { /** überprüft ob Windows */
+        setPath() /** Setzt Compilerpfad neu */
+        commands.executeCommand(getConstCommands()[3].command) /** Führt command 3 aus, "tasks.json zurücksetzen" */   
+        treeDataProvider.refresh() /** Aktualisiert die Anzeige der Activity Bar */
+        writeLog(`onEventComputerraum durchgeführt!`, 'INFO')
+    }						
+}
+
+export async function onEventProgLanguage() {
+    const Computerraum = await getConfigComputerraum()
+    const openWorkspace = workspace.workspaceFolders?.toString || ''
+
+    if (!getOS('WIN') || !Computerraum) {
+        window.showWarningMessage(writeLog('Programmiersprache wechseln ist derzeit nur an HsH Rechnern verfügbar!', 'WARNING'))
+        return
+    }
+    setPath()
+    if (await getPath('uebungfolder') != openWorkspace) { /** überprüft ob sich der Wert geändert hat */
+        await commands.executeCommand('workbench.action.closeFolder')
+    }					
+}
+
+function initPrivateOrHsh() {
+    if (envVar.os.IS_WINDOWS && existsSync(`C:\\Program Files\\mingw64\\bin`)) {
+        setConfigComputerraum(true)
+    } else {
+        setConfigComputerraum(false)
+    }
+}
+
+async function deleteOldPath() {
+    if (envVar.os.IS_WINDOWS) {
         const pathToRemove = 'C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin'
-        let pathVar = await getUserPath()
+        let pathVar = await getUserEnvironmentPath()
         const pathDirs = pathVar.split(';')
         const index = pathDirs.indexOf(pathToRemove)
         if (index !== -1) {
-            pathDirs.splice(index, 1);
+            pathDirs.splice(index, 1)
         }
         pathVar = pathDirs.join(';')
 
@@ -245,29 +293,60 @@ export async function compiler_init() {
             if (error) {
                 writeLog(`Fehler beim entfernen alter Umgebungsvariable: ${error.message}`, 'ERROR')
             } else {
-                writeLog(`Alte Umgebungsvariable erfolgreich entfernt: ${stdout}`, 'INFO')
+                writeLog(`Alte Umgebungsvariable erfolgreich entfernt: ${stdout.trim()}`, 'INFO')
             }
         })
     }
+}
+
+async function addNewPath() {
+    const pathToAdd = 'C:\\Program Files\\mingw64\\bin';
+    let pathVar = await getUserEnvironmentPath()
+    const pathDirs = pathVar.split(';')
+    if (!pathDirs.includes(pathToAdd)) {
+        pathDirs.push(pathToAdd);
+    }
+    pathVar = pathDirs.join(';');
+
+    exec(`setx PATH "${pathVar}";`, (error, stdout, stderr) => {
+        if (error) {
+            writeLog(`Fehler beim entfernen alter Umgebungsvariable: ${error.message}`, 'ERROR')
+        } else {
+            writeLog(`Alte Umgebungsvariable erfolgreich entfernt: ${stdout.trim()}`, 'INFO')
+        }
+    })
+}
+
+function getUserEnvironmentPath(): Promise<string> {
+    return new Promise((resolve, reject) => {
+        exec('reg query HKCU\\Environment /v Path', (error, stdout) => {
+            if (error) {
+                reject(error)
+            } else {
+                const matches = stdout.match(/Path\s+REG_SZ\s+(.*)/)
+                if (matches) {
+                    resolve(matches[1])
+                } else {
+                    resolve('')
+                }
+            }
+        })
+    })
+}
+
+/** Globale Funktion die den Compiler installiert */
+export async function compiler_init() {
+    await deleteOldPath()
+
     exec('gcc --version', (error, stdout) => { /** Prüft ob eine gcc version installiert ist */
         if (error) { /** Wenn Fehler auftritt (keine Version installiert ist) */
             commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(envVar.path.userHomeFolder)).then(async () => { /** Erzeugt neues Terminal und setzt das Verzeichnis auf das Heimatverzeichnis */
                 if (envVar.os.IS_WINDOWS) {
                     if (existsSync(`C:\\Program Files\\mingw64\\bin`)) {
-                        const pathToRemove = 'C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin'
-                        let pathVar = await getUserPath()
-                        const pathDirs = pathVar.split(';')
-                        const index = pathDirs.indexOf(pathToRemove)
-                        if (index !== -1) {
-                            pathDirs.splice(index, 1);
-                        }
-                        pathVar = pathDirs.join(';')
-                        workspace.getConfiguration('addon4vsc').update('computerraum', true, ConfigurationTarget.Global) /** Setzt in Settings.json die computerraum Variable true */
-                        commands.executeCommand('workbench.action.terminal.sendSequence', { text: `setx PATH \"${pathVar}\"\n` })
-                        changeHsHOrPrivate(true) /** Ruft Funktion auf die die Einstellung ob HSH oder Privater Rechner einstellt */
+                        addNewPath()
+                        setConfigComputerraum(true)
                     } else {
-                        workspace.getConfiguration('addon4vsc').update('computerraum', false, ConfigurationTarget.Global) /** Setzt in Settings.json die computerraum Variable false */
-                        changeHsHOrPrivate(false) /** Ruft Funktion auf die die Einstellung ob HSH oder Privater Rechner einstellt */
+                        setConfigComputerraum(false)
                         commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb runAs -ArgumentList \'/k curl -o %temp%\\vsc.cmd https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/vscwindows.cmd && %temp%\\vsc.cmd\'\"\n' })
                         /** Führt den Befehl aus das Skript zur installation auszuführen */
                     }
@@ -278,87 +357,12 @@ export async function compiler_init() {
                 }
             })
         } else {
-            writeLog(`Compiler gefunden!`, 'INFO')
+            writeLog(`Compiler gefunden! Informationen zum Compiler: ${stdout.trim()} `, 'INFO')
             if (envVar.status.compiler) { /** Falls compiler_stat schon true */
-                window.showInformationMessage(`Compiler bereits installiert! Informationen zum Compiler: ${stdout}`)
+                window.showInformationMessage(`Compiler bereits installiert!`)
             } else { /** Falls compiler_stat noch false, wird dann auf true gesetzt */
                 envVar.status.compiler = true
             }
         }
     })
 }
-
-/** Globale asynchrone Funktion die Ändert ob es sich um privaten oder HSH Rechner handelt */
-export async function setRZHsH() {
-    if (!envVar.os.IS_WINDOWS) { /** Überprüft ob es sich um einen Windows PC handelt */
-        window.showInformationMessage('Diese Einstellung ist nur für Windows-Betriebssysteme notwendig.')
-        return
-    } else {
-        if (workspace.getConfiguration('addon4vsc').get('computerraum')) { /** Überprüft ob die Einstellung computerraum in settings.json true ist */
-            window.showInformationMessage('Auf privater Windows-Rechner gestellt.')
-        } else {
-            window.showInformationMessage('Auf HsH Windows-Rechner im Rechenzentrum gestellt.')
-        }
-        workspace.getConfiguration('addon4vsc').update('computerraum', !workspace.getConfiguration('addon4vsc').get('computerraum'), ConfigurationTarget.Global) /** Invertiert die Einstellung in settings.json Computerraum */
-        envVar.path.compiler = workspace.getConfiguration('addon4vsc').get('computerraum') ? 'C:\\\\Program Files\\\\mingw64\\\\bin\\\\gcc.exe' : 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe'
-        /** Speichert den neuen Compilerpfad ein */
-        changeHsHOrPrivate(!envVar.settings.hshRZ) /** Ruft Funktion auf die die Boolean ändert die für privat oder HSH Rechner steht */
-    }
-}
-
-/** Globale Funktion die die hshRZ Boolean überschreibt */
-export function sethshRZ(ext_hshRZ: boolean) {
-    envVar.settings.hshRZ = ext_hshRZ
-}
-
-/** Globale Funktion die den Compilerpfad zurückgibt */
-export function getCompilerPath() {
-    return envVar.path.compiler
-}
-
-/** Globale Funktion die zurückgibt um welche Art der Codierung es sich handelt */
-export function getFilesEncoding() {
-    return envVar.settings.encodingSettingsJSON
-}
-
-/** Funktion die die Einstellung der Boolean anwendet und den Compiler-Pfad + task.json aktualisiert */
-export async function changeHsHOrPrivate(temp_hshRZ: boolean) {
-    sethshRZ(temp_hshRZ)
-    setPath()   /** Setzt Compilerpfad neu */
-    await commands.executeCommand(getConstCommands()[3].command)   /** Führt command 3 aus, "tasks.json zurücksetzen" */                        
-}
-
-export function getProgLanguage() {
-    return envVar.settings.progLanguage
-}
-
-export function setProgLanguage(tmp: string) {
-    envVar.settings.progLanguage = tmp
-}
-
-function initHshRz() {
-    if (existsSync(`C:\\Program Files\\mingw64\\bin`)) {
-        workspace.getConfiguration('addon4vsc').update('computerraum', true, ConfigurationTarget.Global) /** Setzt in Settings.json die computerraum Variable true */
-        sethshRZ(true)
-    } else {
-        workspace.getConfiguration('addon4vsc').update('computerraum', false, ConfigurationTarget.Global) /** Setzt in Settings.json die computerraum Variable false */
-        sethshRZ(false)
-    }
-}
-
-function getUserPath(): Promise<string> {
-    return new Promise((resolve, reject) => {
-      exec('reg query HKCU\\Environment /v Path', (error, stdout) => {
-        if (error) {
-          reject(error)
-        } else {
-          const matches = stdout.match(/Path\s+REG_SZ\s+(.*)/)
-          if (matches) {
-            resolve(matches[1])
-          } else {
-            resolve('')
-          }
-        }
-      })
-    })
-  }

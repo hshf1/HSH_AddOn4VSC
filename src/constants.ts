@@ -2,7 +2,7 @@
 
 import { Command } from "vscode" /** Importiert die Command Schnittstelle aus der VSCode Modul */
 
-import { getCompilerPath, getFilesEncoding, getProgLanguage } from "./init" /** Importiert die Funktion die den CompilerPfad bestimmt und die Funktion die das Encoding Format bestimmt */
+import { getPath, getFilesEncoding, getConfigProgLanguage } from "./init" /** Importiert die Funktion die den CompilerPfad bestimmt und die Funktion die das Encoding Format bestimmt */
 
 export function getConstCommands(): Command[] {
     return [ /** Definiert die einzelnen Befehle in einem Array. */
@@ -20,9 +20,9 @@ export function getConstCommands(): Command[] {
 }
 
 /** Globale Funktion die das Testprogramm zurückgibt */
-export function getTestProg() {
-    const language = getProgLanguage()
-    if (language === 'C') {
+export async function getTestProg() {
+    const progLanguage = await getConfigProgLanguage()
+    if (progLanguage === 'C') {
         return `#include <stdio.h>
 
 int main()
@@ -41,7 +41,7 @@ int main()
     y = 12 + 4 % 3 * 7 / 8;
     return 0;
 }`
-    } else if (language === 'Java') {
+    } else if (progLanguage === 'Java') {
         return `public class HelloWorld {
     public static void main(String[] args) {
 
@@ -57,7 +57,7 @@ int main()
 
     }
 }`
-    } else if (language === 'Python') {
+    } else if (progLanguage === 'Python') {
         return `print("Python said, Hello World!")
 i = 1
 print(i)
@@ -74,7 +74,7 @@ print(i)`
 
 /** Globale Funktion die den Inhalt für Settings.json zurückgibt */
 export function getSettingsJsonData() {
-    let temp = getFilesEncoding() /** Speichert das Encoding Format und baut es in den Inhalt ein*/
+    const temp = getFilesEncoding() /** Speichert das Encoding Format und baut es in den Inhalt ein*/
 
     let settingsjsondata = `{
         // Allgemeine Nutzereinstellungen
@@ -138,7 +138,7 @@ export function getSettingsJsonData() {
 
 /** Globale Funktion die den Inhalt für Task.json zurückgibt */
 export function getTasksJsonData() {
-    let temp = getCompilerPath() /** Speichert Compilerpfad zwischen und baut ihn in den Inhalt ein */
+    const temp = getPath('compiler') /** Speichert Compilerpfad zwischen und baut ihn in den Inhalt ein */
 
     let tasksjsondata = `{
         "version": "2.0.0",

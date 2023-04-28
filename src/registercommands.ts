@@ -8,7 +8,9 @@ import { env, Uri, window } from 'vscode'           /** Importiert die genannten
 import { treeDataProvider } from './activity_bar'   /** Importiert den TreeDataProvider von activity_bar.ts */
 import { getConstCommands } from './constants'         /** Importiert die Namen und Beschreibungen der Commands aus constants.ts*/
 import { renewjsons } from './jsonfilescheck'       /** Importiert die Funktion zur Überprüfung und aktualisierung der .jsons Dateien aus jsonfilescheck.ts*/ 
-import { compiler_init, getPath, setRZHsH, getStatusBarItem, getOS, getHsHRZ } from './init' /** Importiert Funktionen aus init.ts */
+import { 
+    compiler_init, getPath, getStatusBarItem,
+    getOS, getConfigComputerraum, setConfigComputerraum } from './init' /** Importiert Funktionen aus init.ts */
 import { reportAProblem } from './reportaproblem'
 import { set_language } from './language_handler'
 import { writeLog } from './logfile'
@@ -36,17 +38,17 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
     },
     {
         name: getConstCommands()[2].command,     
-        callback: () => {
+        callback: async () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[2].command}`, 'INFO')
-            renewjsons(getPath('settingsjson')) /** Aktualisiert die settings.json */
+            renewjsons(await getPath('settingsjson')) /** Aktualisiert die settings.json */
             window.showInformationMessage('settings.json wurde zurückgesetzt. Manchmal muss VSCode neu gestartet werden, um einige Änderungen wirksam zu machen.') /** Erzeugt kleines Fenster mit entsprechenden Inhalt */
         }
     },
     {
         name: getConstCommands()[3].command,     
-        callback: () => {
+        callback: async () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[3].command}`, 'INFO')
-            renewjsons(getPath('tasksjson'))    /** Aktualisiert die task.json */
+            renewjsons(await getPath('tasksjson'))    /** Aktualisiert die task.json */
             window.showInformationMessage('tasks.json wurde zurückgesetzt. Manchmal muss VSCode neu gestartet werden, um einige Änderungen wirksam zu machen.') /** Erzeugt kleines Fenster mit entsprechenden Inhalt */
         }
     },
@@ -73,7 +75,19 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
         name: getConstCommands()[6].command,
         callback: async () => {     /** Erstellt asynchrone Funktion  */
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[6].command}`, 'INFO')
-            await setRZHsH()         /** Ruft Funktion auf die die Einstellungen für den HSH Rechner einstellt */
+            const Computerraum = await getConfigComputerraum()
+            if (!getOS('WIN')) { /** Überprüft ob es sich um einen Windows PC handelt */
+                window.showInformationMessage('Diese Einstellung ist nur für Windows-Betriebssysteme notwendig.')
+                return
+            }
+
+            setConfigComputerraum(!Computerraum)
+
+            if (Computerraum) {
+                window.showInformationMessage('Auf privater Windows-Rechner gestellt.')
+            } else {
+                window.showInformationMessage('Auf HsH Windows-Rechner im Rechenzentrum gestellt.')
+            }
             treeDataProvider.refresh()
         }
     },
@@ -89,7 +103,7 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
         callback: async () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[8].command}`, 'INFO')
             
-            if (!getOS('WIN') || !getHsHRZ()) {
+            if (!getOS('WIN') || !(await getConfigComputerraum())) {
                 window.showWarningMessage(writeLog('Programmiersprache wechseln ist derzeit nur an HsH Rechnern verfügbar!', 'WARNING'))
 				return // Derzeit nur Verfügbar für HsH Rechner
 			}
