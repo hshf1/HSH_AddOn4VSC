@@ -33,9 +33,9 @@
       "title": "HSH_AddOn4VSC",
       "properties": {
         "addon4vsc.computerraum": {
-          "type": "boolean",
+          "type": "string",
           "description": "Hier die Einstellung aktivieren, falls VSCode aus dem RZ der Hochschule Hannover gestartet wird!",
-          "default": null,
+          "default": "init",
           "scope": "application"
         },
         "addon4vsc.sprache": {
@@ -110,9 +110,7 @@
   "extensionDependencies": [
     "formulahendry.code-runner",
     "ms-vscode.cpptools",
-    "ms-vsliveshare.vsliveshare",
-    "vscjava.vscode-java-pack",
-    "ms-python.python"
+    "ms-vsliveshare.vsliveshare"
   ],
   "devDependencies": {
     "@types/glob": "^8.0.0",

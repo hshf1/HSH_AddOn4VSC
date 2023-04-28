@@ -20,8 +20,9 @@ export function getConstCommands(): Command[] {
 }
 
 /** Globale Funktion die das Testprogramm zurückgibt */
-export async function getTestProg() {
-    const progLanguage = await getConfigProgLanguage()
+export function getTestProg() {
+    const progLanguage = getConfigProgLanguage()
+
     if (progLanguage === 'C') {
         return `#include <stdio.h>
 
@@ -79,7 +80,7 @@ export function getSettingsJsonData() {
     let settingsjsondata = `{
         // Allgemeine Nutzereinstellungen
         "addon4vsc.sprache": "C",                       // Programmiersprache auswählen (derzeit C, Java und Python)
-        "addon4vsc.computerraum": null,                 // Standort für Windows Rechner (Privat = false, HsH = true, null = kein Windows/nicht initialisiert)
+        "addon4vsc.computerraum": "init",                 // Standort für Windows Rechner (Privat = false, HsH = true, null = kein Windows/nicht initialisiert)
         "liveshare.anonymousGuestApproval": "accept",   // Live Share eingeladene Anonyme Nutzer automatisch akzeptieren
         "liveshare.guestApprovalRequired": false,       // Live Share um eingeladene Nutzer automatisch zu akzeptieren auf false einstellen
         "extensions.ignoreRecommendations": true,       // Keine Empfehlungen mehr Anzeigen
@@ -137,8 +138,8 @@ export function getSettingsJsonData() {
 }
 
 /** Globale Funktion die den Inhalt für Task.json zurückgibt */
-export async function getTasksJsonData() {
-    const temp = await getPath('compiler') /** Speichert Compilerpfad zwischen und baut ihn in den Inhalt ein */
+export function getTasksJsonData() {
+    const temp = getPath('compiler') /** Speichert Compilerpfad zwischen und baut ihn in den Inhalt ein */
 
     let tasksjsondata = `{
         "version": "2.0.0",

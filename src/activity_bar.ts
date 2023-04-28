@@ -95,17 +95,13 @@ class DepNodeProvider implements TreeDataProvider<Dependency> {
     }
 }
 
-/** Globale asynchrone Funktion die für die Seitenleiste zuständig ist*/
-export async function activityBarMain() {
+/** Globale Funktion die für die Seitenleiste zuständig ist*/
+export function activityBarMain() {
     aktualisieren() /** Ruft Funktion auf die die Seitenleiste aktualisiert */
 
     treeDataProvider = new DepNodeProvider();/** Erstellt neue Instanz der DepNodeProvider die eine Implementierung des TreeDataProvider-Interafaces ist und somit eine Baumstruktur von Objekten*/
     treeViewOptions = {
         treeDataProvider: treeDataProvider /** Objekt wird so definiert das eine TreeDataProivder Eigenschaft hat, die auf die Variable gleichen Names verweist */
-    }
-
-    while (getGithubStatus() === undefined) {/** Versucht solange eine Verbindung zu Github aufzuabauem bis es entweder klappt oder fehlschlägt */
-        await new Promise(resolve => setTimeout(resolve, 1000)); /** Warte 1 sek */
     }
 
     if (getGithubStatus() === true) { /** Wenn Verbindung besteht */
@@ -121,7 +117,7 @@ export async function activityBarMain() {
 }
 
 /** Funktion die die Seitenleiste aktualisiert */
-async function aktualisieren() {
+function aktualisieren() {
     dependencies_main = [ /** Definiert die Dependencies des Main Arrays neu */
         new Dependency('GitHub: Vorlesung C', TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: ['https://github.com/hshf1/VorlesungC', ''] }),
         new Dependency((getStatusBarItem().command === 'extension.off') ? 'Erweiterung pausieren' : 'Erweiterung wieder aktivieren', TreeItemCollapsibleState.None, getConstCommands()[(getStatusBarItem().command === 'extension.off') ? 1 : 0]),
@@ -135,6 +131,6 @@ async function aktualisieren() {
         new Dependency('settings.json zurücksetzen', TreeItemCollapsibleState.None, getConstCommands()[2]),
         new Dependency('tasks.json zurücksetzen', TreeItemCollapsibleState.None, getConstCommands()[3]),
         new Dependency('Compiler prüfen', TreeItemCollapsibleState.None, getConstCommands()[5]),
-        new Dependency(await getConfigComputerraum() ? 'Ändern auf privaten Windows-Rechner' : 'Ändern auf HsH Windows-Rechner', TreeItemCollapsibleState.None, getConstCommands()[6])
+        new Dependency(getConfigComputerraum() === "true" ? 'Ändern auf privaten Windows-Rechner' : 'Ändern auf HsH Windows-Rechner', TreeItemCollapsibleState.None, getConstCommands()[6])
     ]
 }

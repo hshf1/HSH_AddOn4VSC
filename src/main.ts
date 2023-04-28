@@ -29,7 +29,7 @@ import { writeLog } from './logfile'
 
 /** die "activate" Funktion wird von VS-Code aufgerufen, wenn die Erweiterung aktiviert wird */
 export async function activate(context: ExtensionContext) {
-	await initMain() /** Ruft die Funktion auf, die die Initialisierung beginnt */
+	initMain() /** Ruft die Funktion auf, die die Initialisierung beginnt */
 
 	const eventHandler_checkname = async () => {    /**	Code definiert eine asynchrone Funktion die als Event Handler fungiert */
 		if (getStatusBarItem().command === 'extension.off') {	/** überprüft ob der Statusleisten Button auf "pausiert" steht */
@@ -43,7 +43,7 @@ export async function activate(context: ExtensionContext) {
 			onEventComputerraum()
 		}
 	})
-	workspace.onDidChangeConfiguration(async (event: ConfigurationChangeEvent) => {	
+	workspace.onDidChangeConfiguration((event: ConfigurationChangeEvent) => {	
 		if (event.affectsConfiguration('addon4vsc.sprache')) {
 			onEventProgLanguage()
 		}

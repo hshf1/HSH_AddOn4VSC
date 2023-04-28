@@ -73,15 +73,19 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
     },
     {
         name: getConstCommands()[6].command,
-        callback: async () => {     /** Erstellt asynchrone Funktion  */
+        callback: () => {     /** Erstellt asynchrone Funktion  */
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[6].command}`, 'INFO')
-            const Computerraum = await getConfigComputerraum()
+            const Computerraum = getConfigComputerraum()
             if (!getOS('WIN')) { /** Überprüft ob es sich um einen Windows PC handelt */
                 window.showInformationMessage('Diese Einstellung ist nur für Windows-Betriebssysteme notwendig.')
                 return
             }
 
-            setConfigComputerraum(!Computerraum)
+            if (Computerraum === "true") {
+                setConfigComputerraum("false")
+            } else {
+                setConfigComputerraum("true")
+            }
 
             if (Computerraum) {
                 window.showInformationMessage('Auf privater Windows-Rechner gestellt.')
@@ -102,13 +106,9 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
         name: getConstCommands()[8].command,
         callback: async () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[8].command}`, 'INFO')
-            
-            if (!getOS('WIN') || !(await getConfigComputerraum())) {
-                window.showWarningMessage(writeLog('Programmiersprache wechseln ist derzeit nur an HsH Rechnern verfügbar!', 'WARNING'))
-				return // Derzeit nur Verfügbar für HsH Rechner
-			}
-            
-            await set_language() /** Ruft Funktion auf die die Sprache neu einstellt und ändert den Offenen Ordner ggf. */
+            window.showWarningMessage(writeLog('Programmiersprache wechseln ist derzeit nicht verfügbar!', 'WARNING'))
+		    return
+            // await set_language() /** Ruft Funktion auf die die Sprache neu einstellt und ändert den Offenen Ordner ggf. */
         }
     }
 ]

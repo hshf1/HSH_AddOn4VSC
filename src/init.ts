@@ -11,12 +11,12 @@ import {
 import { homedir } from 'os'        /** Importiert die homedir Funktion aus dem Node.js Modul.  Die homedir-Funktion gibt das Heimatverzeichnis des aktuellen Benutzers als Zeichenfolge zurück. */
 import { exec } from 'child_process'/** Importiert die exec Funktion aus dem Node.js Modul. Die exec-Funktion wird verwendet, um einen Befehl in der Befehlszeile auszuführen. */
 
-import { activityBarMain, treeDataProvider } from './activity_bar'    /** Importiert die Funktion die in der Activitybar die Links einfügt */
-import { openprefolder } from './checkfolder'		/** Importiert die Funktion zum öffnen des Vorgefertigten Ordner aus  checkfolder.ts */
-import { checkjsons, renewjsons } from './jsonfilescheck'		/** Importiert die Funktion zum überprüfen der jsons-Datei aus jsonfilescheck.ts */
-import { getConstCommands } from './constants'      /** Importiert die Namen und Beschreibungen der Commands aus constants.ts*/
+import { activityBarMain, treeDataProvider } from './activity_bar'  /** Importiert die Funktion die in der Activitybar die Links einfügt */
+import { openprefolder } from './checkfolder'		                /** Importiert die Funktion zum öffnen des Vorgefertigten Ordner aus  checkfolder.ts */
+import { checkjsons, renewjsons } from './jsonfilescheck'		    /** Importiert die Funktion zum überprüfen der jsons-Datei aus jsonfilescheck.ts */
 import { logFileMain, writeLog } from './logfile'
 import { existsSync } from 'fs'
+import { githubMain } from './github'
 
 interface IEnvironmentVariables {
     os: {   /** Definiert Bool's für die einzelnen Betriebssysteme */
@@ -39,6 +39,8 @@ interface IEnvironmentVariables {
     }
     settings: {
         encodingSettingsJSON: string
+        computerraumConfig: string
+        progLanguageConfig: string
     }
     status: {
         compiler: boolean /** Boolean die angibt ob Compiler initialisiert wurde und keinen Fehler ausgibt */
@@ -48,27 +50,30 @@ interface IEnvironmentVariables {
 let envVar: IEnvironmentVariables = { 
     os: { IS_WINDOWS: false, IS_OSX: false, IS_LINUX: false },
     path: { userHomeFolder: "", CUebung: "", JavaUebung: "", PythonUebung: "", settingsJSON: "", tasksJSON: "", compiler: "", testProgC: "", testProgJava: "", testProgPython: "", logFileDir: "" },
-    settings: { encodingSettingsJSON: "" }, status: { compiler: false }
+    settings: { encodingSettingsJSON: "", computerraumConfig: "init", progLanguageConfig: "init" }, status: { compiler: false }
 }
 
 let statusbar_button: StatusBarItem /** Definiert statusbar_button als StatusBarItem */
 
 /** Hauptfunktion die die Initialisierung durchführt und wenn erfolgreich setting_init true setzt. */
-export async function initMain() {
+export function initMain() {
     setOS() /** Setzt die entsprechende Boolean für das jeweilige Betriebssystem true */
 
-    if (await getConfigComputerraum() === null) {
+    if (getConfigComputerraum() === "init") {
         initPrivateOrHsh()
     }
+
+    getConfigProgLanguageIntern()
 
     if (!getOS('WIN') && !extensions.getExtension('vadimcn.vscode-lldb')) { /** Wenn kein Windows und "vadimcn.vscode-lldb" nicht installiert ist */
         commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb') /** Installiere "vadimcn.vscode-lldb" */
     }   /** "vadimcn.vscode-lldb" ist eine Erweiterung, die für den Debbuger wichtig ist. */
 
-    await setPath()    /** Setzt die Pfade für .jsons und Übungsordner */
+    setPath()    /** Setzt die Pfade für .jsons und Übungsordner */
     setFilesEncoding()
     logFileMain()
-    await checkjsons() /** Ruft die Funktion auf, die sicherstellt, dass die Konfigurationsdateien vorhanden sind */
+    checkjsons() /** Ruft die Funktion auf, die sicherstellt, dass die Konfigurationsdateien vorhanden sind */
+    githubMain()
 
     if (!(workspace.workspaceFolders?.toString)) {  /** Funktion die schaut, ob Ordner in VS-Code geöffnet ist und ggf. den vorgefertigten Ordner öffnet */
         openprefolder() /** Öffnet Ordner je nach dem welche Prog.sprache aktiv ist */
@@ -116,49 +121,72 @@ export function getStatusBarItem() {
     return statusbar_button 
 }
 
-export async function setConfigProgLanguage(tmp: string) {
-    await workspace.getConfiguration('addon4vsc').update('sprache', tmp, ConfigurationTarget.Global)
+function setConfigProgLanguageIntern(tmp: string) {
+    workspace.getConfiguration('addon4vsc').update('sprache', tmp, ConfigurationTarget.Global)
 }
 
-export async function getConfigProgLanguage() {
-    return await workspace.getConfiguration('addon4vsc').get('sprache')
+function getConfigProgLanguageIntern() {
+    while(getConfigProgLanguage() === "init") {
+        envVar.settings.progLanguageConfig =  workspace.getConfiguration('addon4vsc').get('sprache') || "init"
+    }
 }
 
-export async function setConfigComputerraum(tmp: boolean) {
-    await workspace.getConfiguration('addon4vsc').update('computerraum', tmp, ConfigurationTarget.Global)
+function setConfigComputerraumIntern(tmp: string) {
+    workspace.getConfiguration('addon4vsc').update('computerraum', tmp, ConfigurationTarget.Global)
 }
 
-export async function getConfigComputerraum() {
-    return await workspace.getConfiguration('addon4vsc').get('computerraum')
+/** Als string entweder "true" oder "false" */
+export function setConfigProgLanguage(tmp: string) {
+    envVar.settings.progLanguageConfig = tmp
+    setConfigProgLanguageIntern(tmp)
+}
+
+export function getConfigProgLanguage(): string {
+    return envVar.settings.progLanguageConfig
+}
+
+/** Als string entweder "true" oder "false" */
+export function setConfigComputerraum(tmp: string) {
+    envVar.settings.computerraumConfig = tmp
+    setConfigComputerraumIntern(tmp)
+}
+
+export function getConfigComputerraum() {
+    return envVar.settings.computerraumConfig
 }
 
 /** Funktion die die Pfade abhängig vom Betriebssystem bestimmt und in Variablen speichert */
-export async function setPath() {
-    const Computerraum = await getConfigComputerraum()
+export function setPath() {
+    const Computerraum = getConfigComputerraum()
     envVar.path.userHomeFolder = homedir()
-
-    if (envVar.os.IS_WINDOWS && !Computerraum) { /** Wenn windows und privater Rechner */
-        envVar.path.compiler = 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe'
-        envVar.path.logFileDir = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User`
-        envVar.path.CUebung = `${envVar.path.userHomeFolder}\\Documents\\C_Uebung`
-        envVar.path.JavaUebung = `${envVar.path.userHomeFolder}\\Documents\\Java_Uebung`
-        envVar.path.PythonUebung = `${envVar.path.userHomeFolder}\\Documents\\Python_Uebung`
-        envVar.path.settingsJSON = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\settings.json`
-        envVar.path.tasksJSON = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
-        envVar.path.testProgC = `${envVar.path.CUebung}\\testprog.c`
-        envVar.path.testProgJava = `${envVar.path.JavaUebung}\\HelloWorld.java`
-        envVar.path.testProgPython = `${envVar.path.PythonUebung}\\HelloWorld.py`
-    } else if (envVar.os.IS_WINDOWS && Computerraum) { /** Wenn windows und HSH Rechner */
-        envVar.path.compiler = 'C:\\\\Program Files\\\\mingw64\\\\bin\\\\gcc.exe'
-        envVar.path.logFileDir = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User`
-        envVar.path.CUebung = `U:\\C_Uebung`
-        envVar.path.JavaUebung = `U:\\Java_Uebung`
-        envVar.path.PythonUebung = `U:\\Python_Uebung`
-        envVar.path.settingsJSON = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\settings.json`
-        envVar.path.tasksJSON = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
-        envVar.path.testProgC = `${envVar.path.CUebung}\\testprog.c`
-        envVar.path.testProgJava = `${envVar.path.JavaUebung}\\HelloWorld.java`
-        envVar.path.testProgPython = `${envVar.path.PythonUebung}\\HelloWorld.py`
+    if (envVar.os.IS_WINDOWS) {
+        switch(Computerraum) {
+            case 'true': /** Wenn windows und HSH Rechner */
+                envVar.path.compiler = 'C:\\\\Program Files\\\\mingw64\\\\bin\\\\gcc.exe'
+                envVar.path.logFileDir = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User`
+                envVar.path.CUebung = `U:\\C_Uebung`
+                envVar.path.JavaUebung = `U:\\Java_Uebung`
+                envVar.path.PythonUebung = `U:\\Python_Uebung`
+                envVar.path.settingsJSON = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\settings.json`
+                envVar.path.tasksJSON = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
+                envVar.path.testProgC = `${envVar.path.CUebung}\\testprog.c`
+                envVar.path.testProgJava = `${envVar.path.JavaUebung}\\HelloWorld.java`
+                envVar.path.testProgPython = `${envVar.path.PythonUebung}\\HelloWorld.py`
+            case 'false': /** Wenn windows und privater Rechner */
+                envVar.path.compiler = 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe'
+                envVar.path.logFileDir = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User`
+                envVar.path.CUebung = `${envVar.path.userHomeFolder}\\Documents\\C_Uebung`
+                envVar.path.JavaUebung = `${envVar.path.userHomeFolder}\\Documents\\Java_Uebung`
+                envVar.path.PythonUebung = `${envVar.path.userHomeFolder}\\Documents\\Python_Uebung`
+                envVar.path.settingsJSON = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\settings.json`
+                envVar.path.tasksJSON = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
+                envVar.path.testProgC = `${envVar.path.CUebung}\\testprog.c`
+                envVar.path.testProgJava = `${envVar.path.JavaUebung}\\HelloWorld.java`
+                envVar.path.testProgPython = `${envVar.path.PythonUebung}\\HelloWorld.py`
+            default:
+                initPrivateOrHsh()
+                setPath()
+        }
     } else if (envVar.os.IS_OSX) { /** Wenn MAC */
         envVar.path.logFileDir = `${envVar.path.userHomeFolder}/Library/Application Support/Code/User`
         envVar.path.CUebung = `${envVar.path.userHomeFolder}/Documents/C_Uebung`
@@ -184,7 +212,7 @@ export async function setPath() {
     }
 }
 
-/** Funktion die die Pfade zurückgibt und somit global verfügbar macht
+/** Funktion, die die Pfade zurückgibt und somit global verfügbar macht
  * (Pfade werden entsprechend der Programmiersprache richtig gesetzt)
  * 
  * Verfügbare Argumente:
@@ -195,8 +223,8 @@ export async function setPath() {
  * - uebungfolder
  * - logfiledir
 */
-export async function getPath(tmp: string) {
-    const progLanguage = await getConfigProgLanguage()
+export function getPath(tmp: string) {
+    const progLanguage = getConfigProgLanguage()
 
     switch(tmp) {
         case 'settingsjson':
@@ -247,17 +275,17 @@ export function getFilesEncoding() {
     return envVar.settings.encodingSettingsJSON
 }
 
-export async function onEventComputerraum() {
+export function onEventComputerraum() {
     if (getOS('WIN')) { /** überprüft ob Windows */
         setPath() /** Setzt Compilerpfad neu */
-        renewjsons(await getPath('tasksjson'))  
+        renewjsons(getPath('tasksjson'))  
         treeDataProvider.refresh() /** Aktualisiert die Anzeige der Activity Bar */
         writeLog(`onEventComputerraum durchgeführt!`, 'INFO')
     }						
 }
 
-export async function onEventProgLanguage() {
-    const Computerraum = await getConfigComputerraum()
+export function onEventProgLanguage() {
+    const Computerraum = getConfigComputerraum()
     const openWorkspace = workspace.workspaceFolders?.toString() || ''
 
     if (!getOS('WIN') || !Computerraum) {
@@ -265,16 +293,16 @@ export async function onEventProgLanguage() {
         return
     }
     setPath()
-    if (openWorkspace.includes(await getPath('uebungfolder'))) { /** überprüft ob sich der Wert geändert hat */
-        await commands.executeCommand('workbench.action.closeFolder')
+    if (openWorkspace.includes(getPath('uebungfolder'))) { /** überprüft ob sich der Wert geändert hat */
+        commands.executeCommand('workbench.action.closeFolder')
     }					
 }
 
 function initPrivateOrHsh() {
     if (envVar.os.IS_WINDOWS && existsSync(`C:\\Program Files\\mingw64\\bin`)) {
-        setConfigComputerraum(true)
+        setConfigComputerraum("true")
     } else {
-        setConfigComputerraum(false)
+        setConfigComputerraum("false")
     }
 }
 
@@ -289,7 +317,7 @@ async function deleteOldPath() {
         }
         pathVar = pathDirs.join(';')
 
-        exec(`setx PATH "${pathVar}";`, (error, stdout, stderr) => {
+        exec(`setx PATH "${pathVar}"`, (error, stdout, stderr) => {
             if (error) {
                 writeLog(`Fehler beim entfernen alter Umgebungsvariable: ${error.message}`, 'ERROR')
             } else {
@@ -308,7 +336,7 @@ async function addNewPath() {
     }
     pathVar = pathDirs.join(';');
 
-    exec(`setx PATH "${pathVar}";`, (error, stdout, stderr) => {
+    exec(`setx PATH "${pathVar}"`, (error, stdout, stderr) => {
         if (error) {
             writeLog(`Fehler beim entfernen alter Umgebungsvariable: ${error.message}`, 'ERROR')
         } else {
@@ -344,9 +372,9 @@ export async function compiler_init() {
                 if (envVar.os.IS_WINDOWS) {
                     if (existsSync(`C:\\Program Files\\mingw64\\bin`)) {
                         addNewPath()
-                        setConfigComputerraum(true)
+                        setConfigComputerraum("true")
                     } else {
-                        setConfigComputerraum(false)
+                        setConfigComputerraum("false")
                         commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb runAs -ArgumentList \'/k curl -o %temp%\\vsc.cmd https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/vscwindows.cmd && %temp%\\vsc.cmd\'\"\n' })
                         /** Führt den Befehl aus das Skript zur installation auszuführen */
                     }

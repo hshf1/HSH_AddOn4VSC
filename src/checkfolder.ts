@@ -24,9 +24,9 @@ function openfolder() {
 }
 
 /** Öffnet/Erstellt Ordner Verzeichnis */
-export async function openprefolder() {
-	const uebungsFolder = await getPath('uebungfolder')
-	const testProg = await getPath('testprog')
+export function openprefolder() {
+	const uebungsFolder = getPath('uebungfolder')
+	const testProg = getPath('testprog')
 	const folderUri = Uri.file(uebungsFolder) /** Kopiert den Pfad des CUebungs Ordners in eine Konstante */
 
 	if (!existsSync(uebungsFolder)) {	/** Überprüft ob der Pfad inklusive des Ordners noch nicht existiert */
@@ -38,7 +38,7 @@ export async function openprefolder() {
 	}
 	if (!existsSync(testProg)) { /** Überprüft ob der Pfad inklusive der Datei noch nicht existiert */
 		try {
-			writeFileSync(testProg, await getTestProg()) /** Erstellt das testprog und schreibt den inhalt aus constants.ts hinein*/ 
+			writeFileSync(testProg, getTestProg()) /** Erstellt das testprog und schreibt den inhalt aus constants.ts hinein*/ 
 		} catch (error: any) {
 			writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR') /** Falls ein Fehler entsteht wird dieser in die Konsole geschrieben */
 		}
