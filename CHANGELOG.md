@@ -13,7 +13,7 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 - Java implementierung
 - Python implementierung
 
-## [1.6.0] - [1.6.4] 27.04.2023 - 28.04.2023 
+## [1.6.0] - [1.6.5] 27.04.2023 - 28.04.2023 
 
 ### neu hinzugefügt
 - in der Activity bar Reiter "Programmiersprache ändern" hinzugefügt. Unterpunkte "C", "Python" und "Java" um zwischen verschiedenen Prog.sprachen wechseln zu können
