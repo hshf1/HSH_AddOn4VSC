@@ -13,7 +13,7 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 - Java implementierung
 - Python implementierung
 
-## [1.6.0] - [1.6.3] 27.04.2023
+## [1.6.0] - [1.6.4] 27.04.2023 - 28.04.2023 
 
 ### neu hinzugefügt
 - in der Activity bar Reiter "Programmiersprache ändern" hinzugefügt. Unterpunkte "C", "Python" und "Java" um zwischen verschiedenen Prog.sprachen wechseln zu können
@@ -33,6 +33,7 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 - die Kontrolle ob .c am Ende erst mal auskommentiert (Kann später vlt, schauen ob entprechend .c oder .java und co ist)
 - in Reportporblems eine Nachricht gekürzt um Verwirrung zu vermeiden.
 - neue Pfade für mingw64 an den HsH-Rechnern
+- Code angepasst, effizienter und lesbarer
 
 ## [1.5.1] - [1.5.8] 23.04.2023 - 26.04.2023
 
