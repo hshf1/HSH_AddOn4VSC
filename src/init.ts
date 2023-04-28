@@ -258,14 +258,14 @@ export async function onEventComputerraum() {
 
 export async function onEventProgLanguage() {
     const Computerraum = await getConfigComputerraum()
-    const openWorkspace = workspace.workspaceFolders?.toString || ''
+    const openWorkspace = workspace.workspaceFolders?.toString() || ''
 
     if (!getOS('WIN') || !Computerraum) {
         window.showWarningMessage(writeLog('Programmiersprache wechseln ist derzeit nur an HsH Rechnern verfügbar!', 'WARNING'))
         return
     }
     setPath()
-    if (await getPath('uebungfolder') != openWorkspace) { /** überprüft ob sich der Wert geändert hat */
+    if (openWorkspace.includes(await getPath('uebungfolder'))) { /** überprüft ob sich der Wert geändert hat */
         await commands.executeCommand('workbench.action.closeFolder')
     }					
 }
