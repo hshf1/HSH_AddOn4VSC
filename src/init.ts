@@ -38,6 +38,7 @@ interface IEnvironmentVariables {
     }
     settings: {
         encodingSettingsJSON: string
+        computerraum: boolean
     }
     status: {
         compiler: boolean /** Boolean die angibt ob Compiler initialisiert wurde und keinen Fehler ausgibt */
@@ -47,7 +48,7 @@ interface IEnvironmentVariables {
 let envVar: IEnvironmentVariables = { 
     os: { IS_WINDOWS: false, IS_OSX: false, IS_LINUX: false },
     path: { userHomeFolder: "", CUebung: "", JavaUebung: "", PythonUebung: "", settingsJSON: "", tasksJSON: "", compiler: "", testProgC: "", testProgJava: "", testProgPython: "", logFileDir: "" },
-    settings: { encodingSettingsJSON: "" }, status: { compiler: false }
+    settings: { encodingSettingsJSON: "", computerraum: false }, status: { compiler: false }
 }
 
 let statusbar_button: StatusBarItem /** Definiert statusbar_button als StatusBarItem */
@@ -55,9 +56,7 @@ let statusbar_button: StatusBarItem /** Definiert statusbar_button als StatusBar
 /** Hauptfunktion die die Initialisierung durchführt und wenn erfolgreich setting_init true setzt. */
 export async function initMain() {
     setOS() /** Setzt die entsprechende Boolean für das jeweilige Betriebssystem true */
-    if(envVar.os.IS_WINDOWS && await getConfigComputerraum() === null) {
-        initPrivateOrHsh()
-    }
+    getConfigComputerraumIntern()
 
     if (!getOS('WIN') && !extensions.getExtension('vadimcn.vscode-lldb')) { /** Wenn kein Windows und "vadimcn.vscode-lldb" nicht installiert ist */
         commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb') /** Installiere "vadimcn.vscode-lldb" */
@@ -122,25 +121,47 @@ function setConfigComputerraumIntern(tmp: boolean) {
     workspace.getConfiguration('addon4vsc').update('computerraum', tmp, ConfigurationTarget.Global)
 }
 
-export function setConfigComputerraum(tmp: boolean) {
-    setConfigComputerraumIntern(tmp)
+function getConfigComputerraumIntern() {
+    return new Promise((resolve, reject) => {
+        let configProgLanguage
+        workspace.getConfiguration('addon4vsc').get('sprache')
+        resolve(configProgLanguage)
+    })
+}
+
+export async function setConfigComputerraum(tmp: boolean) {
+    if (getOS('WIN') && envVar.settings.computerraum != tmp) { /** überprüft ob Windows */
+        envVar.settings.computerraum = tmp
+        setConfigComputerraumIntern(tmp)
+        setPath() /** Setzt Compilerpfad neu */
+        renewjsons(await getPath('tasksjson'))  
+        treeDataProvider.refresh() /** Aktualisiert die Anzeige der Activity Bar */
+        writeLog(`onEventComputerraum durchgeführt!`, 'INFO')
+    } else {
+        envVar.settings.computerraum = tmp
+        setConfigComputerraumIntern(tmp)
+    }
 }
 
 export function getConfigComputerraum() {
     return new Promise((resolve, reject) => {
         let configComputerraum = workspace.getConfiguration('addon4vsc').get('computerraum')
         if (configComputerraum === null) {
-            configComputerraum = initPrivateOrHsh()
+            if (existsSync(`C:\\Program Files\\mingw64\\bin`)) {
+                configComputerraum = true
+                setConfigComputerraum(true)
+            } else {
+                configComputerraum = false
+                setConfigComputerraum(false)
+            }
         }
+        envVar.settings.computerraum = configComputerraum as boolean
         resolve(configComputerraum)
     })
 }
 
 export function getConfigProgLanguage() {
-    return new Promise((resolve, reject) => {
-        let configProgLanguage = workspace.getConfiguration('addon4vsc').get('sprache')
-        resolve(configProgLanguage)
-    })
+    return envVar.settings.computerraum
 }
 
 /** Funktion die die Pfade abhängig vom Betriebssystem bestimmt und in Variablen speichert */
@@ -259,12 +280,7 @@ export function getFilesEncoding() {
 }
 
 export async function onEventComputerraum() {
-    if (getOS('WIN')) { /** überprüft ob Windows */
-        setPath() /** Setzt Compilerpfad neu */
-        renewjsons(await getPath('tasksjson'))  
-        treeDataProvider.refresh() /** Aktualisiert die Anzeige der Activity Bar */
-        writeLog(`onEventComputerraum durchgeführt!`, 'INFO')
-    }						
+    			
 }
 
 export async function onEventProgLanguage() {
@@ -279,16 +295,6 @@ export async function onEventProgLanguage() {
     if (openWorkspace.includes(await getPath('uebungfolder'))) { /** überprüft ob sich der Wert geändert hat */
         commands.executeCommand('workbench.action.closeFolder')
     }					
-}
-
-function initPrivateOrHsh() {
-    if (envVar.os.IS_WINDOWS && existsSync(`C:\\Program Files\\mingw64\\bin`)) {
-        setConfigComputerraum(true)
-        return true
-    } else {
-        setConfigComputerraum(false)
-        return false
-    }
 }
 
 async function deleteOldPath() {
@@ -357,8 +363,6 @@ export async function compiler_init() {
         if (error) { /** Wenn Fehler auftritt (keine Version installiert ist) */
             commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(envVar.path.userHomeFolder)).then(async () => { /** Erzeugt neues Terminal und setzt das Verzeichnis auf das Heimatverzeichnis */
                 if (envVar.os.IS_WINDOWS) {
-                    initPrivateOrHsh()
-
                     if (await getConfigComputerraum()) {
                         await addNewPath()
                     } else {
