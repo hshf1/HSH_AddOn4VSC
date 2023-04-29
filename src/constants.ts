@@ -20,8 +20,8 @@ export function getConstCommands(): Command[] {
 }
 
 /** Globale Funktion die das Testprogramm zurückgibt */
-export function getTestProg() {
-    const progLanguage = getConfigProgLanguage()
+export async function getTestProg() {
+    const progLanguage = await getConfigProgLanguage() as unknown as string
 
     if (progLanguage === 'C') {
         return `#include <stdio.h>

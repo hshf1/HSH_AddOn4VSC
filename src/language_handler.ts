@@ -39,7 +39,7 @@ export async function set_language() {
         return
     }
 
-    if (newLanguage === getConfigProgLanguage()) { /** Überprüft ob Sprache bereits aktiv ist */
+    if (newLanguage === getConfigProgLanguage() as unknown as string) { /** Überprüft ob Sprache bereits aktiv ist */
         window.showInformationMessage('Programmiersprache bereits aktiv')
         return
     }

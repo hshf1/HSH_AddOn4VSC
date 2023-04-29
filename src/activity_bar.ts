@@ -117,7 +117,7 @@ export async function activityBarMain() {
 }
 
 /** Funktion die die Seitenleiste aktualisiert */
-function aktualisieren() {
+async function aktualisieren() {
     dependencies_main = [ /** Definiert die Dependencies des Main Arrays neu */
         new Dependency('GitHub: Vorlesung C', TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: ['https://github.com/hshf1/VorlesungC', ''] }),
         new Dependency((getStatusBarItem().command === 'extension.off') ? 'Erweiterung pausieren' : 'Erweiterung wieder aktivieren', TreeItemCollapsibleState.None, getConstCommands()[(getStatusBarItem().command === 'extension.off') ? 1 : 0]),
@@ -131,6 +131,6 @@ function aktualisieren() {
         new Dependency('settings.json zurücksetzen', TreeItemCollapsibleState.None, getConstCommands()[2]),
         new Dependency('tasks.json zurücksetzen', TreeItemCollapsibleState.None, getConstCommands()[3]),
         new Dependency('Compiler prüfen', TreeItemCollapsibleState.None, getConstCommands()[5]),
-        new Dependency(getConfigComputerraum() ? 'Ändern auf privaten Windows-Rechner' : 'Ändern auf HsH Windows-Rechner', TreeItemCollapsibleState.None, getConstCommands()[6])
+        new Dependency(await getConfigComputerraum() ? 'Ändern auf privaten Windows-Rechner' : 'Ändern auf HsH Windows-Rechner', TreeItemCollapsibleState.None, getConstCommands()[6])
     ]
 }

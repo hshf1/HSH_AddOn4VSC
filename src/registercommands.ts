@@ -37,17 +37,17 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
     },
     {
         name: getConstCommands()[2].command,     
-        callback: () => {
+        callback: async () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[2].command}`, 'INFO')
-            renewjsons(getPath('settingsjson')) /** Aktualisiert die settings.json */
+            renewjsons(await getPath('settingsjson')) /** Aktualisiert die settings.json */
             window.showInformationMessage('settings.json wurde zurückgesetzt.') /** Erzeugt kleines Fenster mit entsprechenden Inhalt */
         }
     },
     {
         name: getConstCommands()[3].command,     
-        callback: () => {
+        callback: async () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[3].command}`, 'INFO')
-            renewjsons(getPath('tasksjson'))    /** Aktualisiert die task.json */
+            renewjsons(await getPath('tasksjson'))    /** Aktualisiert die task.json */
             window.showInformationMessage('tasks.json wurde zurückgesetzt.') /** Erzeugt kleines Fenster mit entsprechenden Inhalt */
         }
     },
@@ -72,9 +72,9 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
     },
     {
         name: getConstCommands()[6].command,
-        callback: () => {     /** Erstellt asynchrone Funktion  */
+        callback: async () => {     /** Erstellt asynchrone Funktion  */
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[6].command}`, 'INFO')
-            const Computerraum = getConfigComputerraum()
+            const Computerraum = await getConfigComputerraum()
             if (!getOS('WIN')) { /** Überprüft ob es sich um einen Windows PC handelt */
                 window.showInformationMessage('Diese Einstellung ist nur für Windows-Betriebssysteme notwendig.')
                 return
