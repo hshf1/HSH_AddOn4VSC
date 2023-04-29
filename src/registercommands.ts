@@ -12,7 +12,6 @@ import {
     compiler_init, getPath, getStatusBarItem,
     getOS, getConfigComputerraum, setConfigComputerraum } from './init' /** Importiert Funktionen aus init.ts */
 import { reportAProblem } from './reportaproblem'
-import { set_language } from './language_handler'
 import { writeLog } from './logfile'
 
 const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert und beziehen ihre Namen und Beschreibungen aus der Datei constants.ts */
@@ -81,13 +80,14 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
                 return
             }
 
-            setConfigComputerraum(!Computerraum)
-
             if (Computerraum) {
+                setConfigComputerraum(false)
                 window.showInformationMessage('Auf privater Windows-Rechner gestellt.')
             } else {
+                setConfigComputerraum(true)
                 window.showInformationMessage('Auf HsH Windows-Rechner im Rechenzentrum gestellt.')
             }
+
             treeDataProvider.refresh()
         }
     },
@@ -100,12 +100,10 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
     },
     {
         name: getConstCommands()[8].command,
-        callback: async () => {
+        callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[8].command}`, 'INFO')
-            
             window.showWarningMessage(writeLog('Programmiersprache wechseln ist derzeit nicht verfügbar!', 'WARNING'))
-            return
-            
+		    return
             // await set_language() /** Ruft Funktion auf die die Sprache neu einstellt und ändert den Offenen Ordner ggf. */
         }
     }

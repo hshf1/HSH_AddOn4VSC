@@ -21,7 +21,8 @@ export function getConstCommands(): Command[] {
 
 /** Globale Funktion die das Testprogramm zurückgibt */
 export async function getTestProg() {
-    const progLanguage = await getConfigProgLanguage()
+    const progLanguage = await getConfigProgLanguage() as unknown as string
+
     if (progLanguage === 'C') {
         return `#include <stdio.h>
 
@@ -137,8 +138,8 @@ export function getSettingsJsonData() {
 }
 
 /** Globale Funktion die den Inhalt für Task.json zurückgibt */
-export async function getTasksJsonData() {
-    const temp = await getPath('compiler') /** Speichert Compilerpfad zwischen und baut ihn in den Inhalt ein */
+export function getTasksJsonData() {
+    const temp = getPath('compiler') /** Speichert Compilerpfad zwischen und baut ihn in den Inhalt ein */
 
     let tasksjsondata = `{
         "version": "2.0.0",

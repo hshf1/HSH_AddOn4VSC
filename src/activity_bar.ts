@@ -19,7 +19,7 @@ import {
 */
 
 import { getConstCommands } from './constants' /** Importiert die Befehle aus der constants.ts  */
-import { getGithubLinks, getGithubStatus } from './github' /** Importiert die Links und den GitHubStatus aus github.ts */
+import { getGithubLinks } from './github' /** Importiert die Links und den GitHubStatus aus github.ts */
 import { getConfigComputerraum, getStatusBarItem } from './init' /** Importiert Funktionen aus init.ts */
 import { writeLog } from './logfile'
 
@@ -95,7 +95,7 @@ class DepNodeProvider implements TreeDataProvider<Dependency> {
     }
 }
 
-/** Globale asynchrone Funktion die für die Seitenleiste zuständig ist*/
+/** Globale Funktion die für die Seitenleiste zuständig ist*/
 export async function activityBarMain() {
     aktualisieren() /** Ruft Funktion auf die die Seitenleiste aktualisiert */
 
@@ -104,17 +104,13 @@ export async function activityBarMain() {
         treeDataProvider: treeDataProvider /** Objekt wird so definiert das eine TreeDataProivder Eigenschaft hat, die auf die Variable gleichen Names verweist */
     }
 
-    while (getGithubStatus() === undefined) {/** Versucht solange eine Verbindung zu Github aufzuabauem bis es entweder klappt oder fehlschlägt */
-        await new Promise(resolve => setTimeout(resolve, 1000)); /** Warte 1 sek */
-    }
+    const links = await getGithubLinks() /** github Links werden in die Variable links geladen */
+    console.log('Hier wird gespeichert von github.ts: '+links)
+    for (let i = 0; i < links.length; i++) { /** Schleife durch alle Links */
+        console.log('Hier wird schleife von github.ts: '+links[i].name)
+        dependencies_link.push(new Dependency(links[i].name, TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: [links[i].link] }))
+    }   /** Definiert die Links als neue Dependencys/Elemente die in der Seitenleiste unter Links auftauchen */
 
-    if (getGithubStatus() === true) { /** Wenn Verbindung besteht */
-        let links = getGithubLinks() /** githubd Links werden in die Variable links geladen */
-        for (let i = 0; i < links.length; i++) { /** Schleife durch alle Links */
-            dependencies_link.push(new Dependency(links[i].name, TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: [links[i].link] }))
-        }   /** Definiert die Links als neue Dependencys/Elemente die in der Seitenleiste unter Links auftauchen */
-    }
-    
     window.registerTreeDataProvider('menue_bar_activity', treeDataProvider) /** Erstellt neuen TreeView mit dem Namen "menue_bar_activity" und den Daten aus TreeDataProvider*/
     window.createTreeView('menue_bar_activity', treeViewOptions) /** Erstellt die grphische Oberfläche des TreeViews an der Seitenleiste */
     writeLog(`Activity Bar geladen!`, 'INFO')

@@ -11,10 +11,9 @@ import {
 import { homedir } from 'os'        /** Importiert die homedir Funktion aus dem Node.js Modul.  Die homedir-Funktion gibt das Heimatverzeichnis des aktuellen Benutzers als Zeichenfolge zurück. */
 import { exec } from 'child_process'/** Importiert die exec Funktion aus dem Node.js Modul. Die exec-Funktion wird verwendet, um einen Befehl in der Befehlszeile auszuführen. */
 
-import { activityBarMain, treeDataProvider } from './activity_bar'    /** Importiert die Funktion die in der Activitybar die Links einfügt */
-import { openprefolder } from './checkfolder'		/** Importiert die Funktion zum öffnen des Vorgefertigten Ordner aus  checkfolder.ts */
-import { checkjsons, renewjsons } from './jsonfilescheck'		/** Importiert die Funktion zum überprüfen der jsons-Datei aus jsonfilescheck.ts */
-import { getConstCommands } from './constants'      /** Importiert die Namen und Beschreibungen der Commands aus constants.ts*/
+import { activityBarMain, treeDataProvider } from './activity_bar'  /** Importiert die Funktion die in der Activitybar die Links einfügt */
+import { openprefolder } from './checkfolder'		                /** Importiert die Funktion zum öffnen des Vorgefertigten Ordner aus  checkfolder.ts */
+import { checkjsons, renewjsons } from './jsonfilescheck'		    /** Importiert die Funktion zum überprüfen der jsons-Datei aus jsonfilescheck.ts */
 import { logFileMain, writeLog } from './logfile'
 import { existsSync } from 'fs'
 
@@ -56,8 +55,7 @@ let statusbar_button: StatusBarItem /** Definiert statusbar_button als StatusBar
 /** Hauptfunktion die die Initialisierung durchführt und wenn erfolgreich setting_init true setzt. */
 export async function initMain() {
     setOS() /** Setzt die entsprechende Boolean für das jeweilige Betriebssystem true */
-
-    if (await getConfigComputerraum() === null) {
+    if(envVar.os.IS_WINDOWS && await getConfigComputerraum() === null) {
         initPrivateOrHsh()
     }
 
@@ -65,10 +63,10 @@ export async function initMain() {
         commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb') /** Installiere "vadimcn.vscode-lldb" */
     }   /** "vadimcn.vscode-lldb" ist eine Erweiterung, die für den Debbuger wichtig ist. */
 
-    await setPath()    /** Setzt die Pfade für .jsons und Übungsordner */
+    setPath()    /** Setzt die Pfade für .jsons und Übungsordner */
     setFilesEncoding()
     logFileMain()
-    await checkjsons() /** Ruft die Funktion auf, die sicherstellt, dass die Konfigurationsdateien vorhanden sind */
+    checkjsons() /** Ruft die Funktion auf, die sicherstellt, dass die Konfigurationsdateien vorhanden sind */
 
     if (!(workspace.workspaceFolders?.toString)) {  /** Funktion die schaut, ob Ordner in VS-Code geöffnet ist und ggf. den vorgefertigten Ordner öffnet */
         openprefolder() /** Öffnet Ordner je nach dem welche Prog.sprache aktiv ist */
@@ -116,44 +114,57 @@ export function getStatusBarItem() {
     return statusbar_button 
 }
 
-export async function setConfigProgLanguage(tmp: string) {
-    await workspace.getConfiguration('addon4vsc').update('sprache', tmp, ConfigurationTarget.Global)
+function setConfigProgLanguageIntern(tmp: string) {
+    workspace.getConfiguration('addon4vsc').update('sprache', tmp, ConfigurationTarget.Global)
 }
 
-export async function getConfigProgLanguage() {
-    return await workspace.getConfiguration('addon4vsc').get('sprache')
+function setConfigComputerraumIntern(tmp: boolean) {
+    workspace.getConfiguration('addon4vsc').update('computerraum', tmp, ConfigurationTarget.Global)
 }
 
-export async function setConfigComputerraum(tmp: boolean) {
-    await workspace.getConfiguration('addon4vsc').update('computerraum', tmp, ConfigurationTarget.Global)
+export function setConfigComputerraum(tmp: boolean) {
+    setConfigComputerraumIntern(tmp)
 }
 
-export async function getConfigComputerraum() {
-    return await workspace.getConfiguration('addon4vsc').get('computerraum')
+export function getConfigComputerraum() {
+    return new Promise((resolve, reject) => {
+        let configComputerraum = workspace.getConfiguration('addon4vsc').get('computerraum')
+        if (configComputerraum === null) {
+            configComputerraum = initPrivateOrHsh()
+        }
+        resolve(configComputerraum)
+    })
+}
+
+export function getConfigProgLanguage() {
+    return new Promise((resolve, reject) => {
+        let configProgLanguage = workspace.getConfiguration('addon4vsc').get('sprache')
+        resolve(configProgLanguage)
+    })
 }
 
 /** Funktion die die Pfade abhängig vom Betriebssystem bestimmt und in Variablen speichert */
 export async function setPath() {
-    const Computerraum = await getConfigComputerraum()
+    const Computerraum = await getConfigComputerraum() as unknown as boolean
+    console.log('setPath Computerraum: '+Computerraum)
     envVar.path.userHomeFolder = homedir()
-
-    if (envVar.os.IS_WINDOWS && !Computerraum) { /** Wenn windows und privater Rechner */
-        envVar.path.compiler = 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe'
-        envVar.path.logFileDir = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User`
-        envVar.path.CUebung = `${envVar.path.userHomeFolder}\\Documents\\C_Uebung`
-        envVar.path.JavaUebung = `${envVar.path.userHomeFolder}\\Documents\\Java_Uebung`
-        envVar.path.PythonUebung = `${envVar.path.userHomeFolder}\\Documents\\Python_Uebung`
-        envVar.path.settingsJSON = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\settings.json`
-        envVar.path.tasksJSON = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
-        envVar.path.testProgC = `${envVar.path.CUebung}\\testprog.c`
-        envVar.path.testProgJava = `${envVar.path.JavaUebung}\\HelloWorld.java`
-        envVar.path.testProgPython = `${envVar.path.PythonUebung}\\HelloWorld.py`
-    } else if (envVar.os.IS_WINDOWS && Computerraum) { /** Wenn windows und HSH Rechner */
+    if (envVar.os.IS_WINDOWS && Computerraum) {
         envVar.path.compiler = 'C:\\\\Program Files\\\\mingw64\\\\bin\\\\gcc.exe'
         envVar.path.logFileDir = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User`
         envVar.path.CUebung = `U:\\C_Uebung`
         envVar.path.JavaUebung = `U:\\Java_Uebung`
         envVar.path.PythonUebung = `U:\\Python_Uebung`
+        envVar.path.settingsJSON = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\settings.json`
+        envVar.path.tasksJSON = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
+        envVar.path.testProgC = `${envVar.path.CUebung}\\testprog.c`
+        envVar.path.testProgJava = `${envVar.path.JavaUebung}\\HelloWorld.java`
+        envVar.path.testProgPython = `${envVar.path.PythonUebung}\\HelloWorld.py`
+    } else if (envVar.os.IS_WINDOWS && !Computerraum) {
+        envVar.path.compiler = 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe'
+        envVar.path.logFileDir = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User`
+        envVar.path.CUebung = `${envVar.path.userHomeFolder}\\Documents\\C_Uebung`
+        envVar.path.JavaUebung = `${envVar.path.userHomeFolder}\\Documents\\Java_Uebung`
+        envVar.path.PythonUebung = `${envVar.path.userHomeFolder}\\Documents\\Python_Uebung`
         envVar.path.settingsJSON = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\settings.json`
         envVar.path.tasksJSON = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
         envVar.path.testProgC = `${envVar.path.CUebung}\\testprog.c`
@@ -184,7 +195,7 @@ export async function setPath() {
     }
 }
 
-/** Funktion die die Pfade zurückgibt und somit global verfügbar macht
+/** Funktion, die die Pfade zurückgibt und somit global verfügbar macht
  * (Pfade werden entsprechend der Programmiersprache richtig gesetzt)
  * 
  * Verfügbare Argumente:
@@ -196,7 +207,7 @@ export async function setPath() {
  * - logfiledir
 */
 export async function getPath(tmp: string) {
-    const progLanguage = await getConfigProgLanguage()
+    const progLanguage = await getConfigProgLanguage() as unknown as string
 
     switch(tmp) {
         case 'settingsjson':
@@ -257,7 +268,7 @@ export async function onEventComputerraum() {
 }
 
 export async function onEventProgLanguage() {
-    const Computerraum = await getConfigComputerraum()
+    const Computerraum = getConfigComputerraum()
     const openWorkspace = workspace.workspaceFolders?.toString() || ''
 
     if (!getOS('WIN') || !Computerraum) {
@@ -266,15 +277,17 @@ export async function onEventProgLanguage() {
     }
     setPath()
     if (openWorkspace.includes(await getPath('uebungfolder'))) { /** überprüft ob sich der Wert geändert hat */
-        await commands.executeCommand('workbench.action.closeFolder')
+        commands.executeCommand('workbench.action.closeFolder')
     }					
 }
 
 function initPrivateOrHsh() {
     if (envVar.os.IS_WINDOWS && existsSync(`C:\\Program Files\\mingw64\\bin`)) {
         setConfigComputerraum(true)
+        return true
     } else {
         setConfigComputerraum(false)
+        return false
     }
 }
 
@@ -286,16 +299,17 @@ async function deleteOldPath() {
         const index = pathDirs.indexOf(pathToRemove)
         if (index !== -1) {
             pathDirs.splice(index, 1)
+            pathVar = pathDirs.join(';')
+            exec(`setx PATH "${pathVar}"`, (error, stdout, stderr) => {
+                if (error) {
+                    writeLog(`Fehler beim entfernen alter Umgebungsvariable: ${error.message}`, 'ERROR')
+                } else {
+                    writeLog(`Alte Umgebungsvariable erfolgreich entfernt: ${stdout.trim()}`, 'INFO')
+                }
+            })
+        } else {
+            writeLog(`Alte Umgebungsvariable ist bereits gelöscht.`,'INFO')
         }
-        pathVar = pathDirs.join(';')
-
-        exec(`setx PATH "${pathVar}";`, (error, stdout, stderr) => {
-            if (error) {
-                writeLog(`Fehler beim entfernen alter Umgebungsvariable: ${error.message}`, 'ERROR')
-            } else {
-                writeLog(`Alte Umgebungsvariable erfolgreich entfernt: ${stdout.trim()}`, 'INFO')
-            }
-        })
     }
 }
 
@@ -304,17 +318,18 @@ async function addNewPath() {
     let pathVar = await getUserEnvironmentPath()
     const pathDirs = pathVar.split(';')
     if (!pathDirs.includes(pathToAdd)) {
-        pathDirs.push(pathToAdd);
+        pathDirs.push(pathToAdd)
+        pathVar = pathDirs.join(';')
+        exec(`setx PATH "${pathVar}"`, (error, stdout, stderr) => {
+            if (error) {
+                writeLog(`Fehler beim entfernen alter Umgebungsvariable: ${error.message}`, 'ERROR')
+            } else {
+                writeLog(`Alte Umgebungsvariable erfolgreich entfernt: ${stdout.trim()}`, 'INFO')
+            }
+        })
+    } else {
+        writeLog(`Umgebungsvariable ist bereits vorhanden.`,'INFO')
     }
-    pathVar = pathDirs.join(';');
-
-    exec(`setx PATH "${pathVar}";`, (error, stdout, stderr) => {
-        if (error) {
-            writeLog(`Fehler beim entfernen alter Umgebungsvariable: ${error.message}`, 'ERROR')
-        } else {
-            writeLog(`Alte Umgebungsvariable erfolgreich entfernt: ${stdout.trim()}`, 'INFO')
-        }
-    })
 }
 
 function getUserEnvironmentPath(): Promise<string> {
@@ -342,11 +357,11 @@ export async function compiler_init() {
         if (error) { /** Wenn Fehler auftritt (keine Version installiert ist) */
             commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(envVar.path.userHomeFolder)).then(async () => { /** Erzeugt neues Terminal und setzt das Verzeichnis auf das Heimatverzeichnis */
                 if (envVar.os.IS_WINDOWS) {
-                    if (existsSync(`C:\\Program Files\\mingw64\\bin`)) {
-                        addNewPath()
-                        setConfigComputerraum(true)
+                    initPrivateOrHsh()
+
+                    if (await getConfigComputerraum()) {
+                        await addNewPath()
                     } else {
-                        setConfigComputerraum(false)
                         commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb runAs -ArgumentList \'/k curl -o %temp%\\vsc.cmd https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/vscwindows.cmd && %temp%\\vsc.cmd\'\"\n' })
                         /** Führt den Befehl aus das Skript zur installation auszuführen */
                     }
