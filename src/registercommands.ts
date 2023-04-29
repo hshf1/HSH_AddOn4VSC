@@ -7,12 +7,16 @@ import { env, Uri, window } from 'vscode'           /** Importiert die genannten
 
 import { treeDataProvider } from './activity_bar'   /** Importiert den TreeDataProvider von activity_bar.ts */
 import { getConstCommands } from './constants'         /** Importiert die Namen und Beschreibungen der Commands aus constants.ts*/
-import { renewjsons } from './jsonfilescheck'       /** Importiert die Funktion zur Überprüfung und aktualisierung der .jsons Dateien aus jsonfilescheck.ts*/ 
+import { updateJSON } from './jsonfilescheck'       /** Importiert die Funktion zur Überprüfung und aktualisierung der .jsons Dateien aus jsonfilescheck.ts*/ 
 import { 
-    compiler_init, getPath, getStatusBarItem,
-    getOS, getConfigComputerraum, setConfigComputerraum } from './init' /** Importiert Funktionen aus init.ts */
+    getPath, getStatusBarItem,
+    getOS, 
+    initCompiler,
+    getComputerraumConfig,
+    setComputerraumConfig} from './init' /** Importiert Funktionen aus init.ts */
 import { reportAProblem } from './reportaproblem'
 import { writeLog } from './logfile'
+import { eventHandler_changeLocation } from './events'
 
 const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert und beziehen ihre Namen und Beschreibungen aus der Datei constants.ts */
     {
@@ -37,17 +41,17 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
     },
     {
         name: getConstCommands()[2].command,     
-        callback: async () => {
+        callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[2].command}`, 'INFO')
-            renewjsons(await getPath('settingsjson')) /** Aktualisiert die settings.json */
+            updateJSON(getPath('settingsjson')) /** Aktualisiert die settings.json */
             window.showInformationMessage('settings.json wurde zurückgesetzt.') /** Erzeugt kleines Fenster mit entsprechenden Inhalt */
         }
     },
     {
         name: getConstCommands()[3].command,     
-        callback: async () => {
+        callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[3].command}`, 'INFO')
-            renewjsons(await getPath('tasksjson'))    /** Aktualisiert die task.json */
+            updateJSON(getPath('tasksjson'))    /** Aktualisiert die task.json */
             window.showInformationMessage('tasks.json wurde zurückgesetzt.') /** Erzeugt kleines Fenster mit entsprechenden Inhalt */
         }
     },
@@ -67,24 +71,24 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
         name: getConstCommands()[5].command,
         callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[5].command}`, 'INFO')
-            compiler_init()     /** Ruft Funktion auf die den Compiler initialisiert */
+            initCompiler()     /** Ruft Funktion auf die den Compiler initialisiert */
         }
     },
     {
         name: getConstCommands()[6].command,
-        callback: async () => {     /** Erstellt asynchrone Funktion  */
+        callback: () => {     /** Erstellt asynchrone Funktion  */
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[6].command}`, 'INFO')
-            const Computerraum = await getConfigComputerraum()
+            const COMPUTERRAUM = getComputerraumConfig()
             if (!getOS('WIN')) { /** Überprüft ob es sich um einen Windows PC handelt */
                 window.showInformationMessage('Diese Einstellung ist nur für Windows-Betriebssysteme notwendig.')
                 return
             }
 
-            if (Computerraum) {
-                setConfigComputerraum(false)
+            if (COMPUTERRAUM) {
+                setComputerraumConfig(false)
                 window.showInformationMessage('Auf privater Windows-Rechner gestellt.')
             } else {
-                setConfigComputerraum(true)
+                setComputerraumConfig(true)
                 window.showInformationMessage('Auf HsH Windows-Rechner im Rechenzentrum gestellt.')
             }
 

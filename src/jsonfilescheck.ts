@@ -2,55 +2,73 @@
 
 import { promises, unlinkSync } from 'fs' /** Importiert Funktionen zum Arbeiten mit Dateien (Filesystem) aus node.js*/
 
-import { getSettingsJsonData, getTasksJsonData } from './constants'	/** Importiert den Inhalt der Jsons aus dem Modul constants.ts */
+import { getSettingsContent, getTasksContent } from './constants'	/** Importiert den Inhalt der Jsons aus dem Modul constants.ts */
 import { getPath } from './init' /** Importiert die Funktion die Pfade für .JSON und den Ordner + Bsp. Prog.  */
 import { writeLog } from './logfile'
 
 /** Funktion die die settings.json und task.json aktualisiert */
-export async function renewjsons(filePath_todelete: string) {
+export function updateJSON(path: string) {
 	try {
-		unlinkSync(filePath_todelete)	/** Versucht den Pfad der zu löschenden Datei zu finden*/
+		unlinkSync(path)	/** Versucht den Pfad der zu löschenden Datei zu finden*/
 	} catch (err: any) {				/** Bei Fehler, werden Fehlermeldungen ausgegeben */
 		if (err.code === 'ENOENT') {
-			writeLog(`[${err.stack?.split('\n')[2]?.trim()}] ${filePath_todelete} ${err}`, 'ERROR')
+			writeLog(`[${err.stack?.split('\n')[2]?.trim()}] ${path} ${err}`, 'ERROR')
 		} else {
-			writeLog(`[${err.stack?.split('\n')[2]?.trim()}] ${filePath_todelete} ${err}`, 'ERROR')
+			writeLog(`[${err.stack?.split('\n')[2]?.trim()}] ${path} ${err}`, 'ERROR')
 		}
-	}
-	if (filePath_todelete.includes("settings")) { /** Wenn der Dateipfad "settings" enthält soll die settings.json erneuert werden */
-		await setsettingsjson()
-	} else if (filePath_todelete.includes("tasks")) {	/** Wenn der Dateipfad "tasks" enthält soll die task.json erneurt werden */
-		await settasksjson()
+	} finally {
+		if (path.includes("settings")) { /** Wenn der Dateipfad "settings" enthält soll die settings.json erneuert werden */
+			setsettingsjson()
+		} else if (path.includes("tasks")) {	/** Wenn der Dateipfad "tasks" enthält soll die task.json erneurt werden */
+			settasksjson()
+		}
+		writeLog(`${path} wurde erfolgreich gelöscht!`, 'INFO')
 	}
 }
 
 /** Funktion überprüft ob die beiden .jsons vorhanden sind und fügt ggf. neu hinzu */
-export async function checkjsons() {
+export function checkJSON() {
 	try {
-		await promises.stat(await getPath('settingsjson')) /** Überprüft ob Datei vorhanden ist */
+		promises.stat(getPath('settingsjson')) /** Überprüft ob Datei vorhanden ist */
 	} catch {
-		await setsettingsjson()	/** Falls Fehler auftritt, sie also nicht vorhanden ist, wird sie neu erstellt */
+		writeLog(`${getPath('settingsjson')} wurde nicht gefunden.`, 'WARNING')
+		setsettingsjson()	/** Falls Fehler auftritt, sie also nicht vorhanden ist, wird sie neu erstellt */
+	} finally {
+		writeLog(`${getPath('settingsjson')} wurde gefunden.`, 'WARNING')
 	}
 	try {
-		await promises.stat(await getPath('tasksjson'))	/** Überprüft ob Datei vorhanden ist */
+		promises.stat(getPath('tasksjson'))	/** Überprüft ob Datei vorhanden ist */
 	} catch {
-		await settasksjson()	/** Falls Fehler auftritt, sie also nicht vorhanden ist, wird sie neu erstellt */
+		writeLog(`${getPath('tasksjson')} wurde nicht gefunden.`, 'WARNING')
+		settasksjson()	/** Falls Fehler auftritt, sie also nicht vorhanden ist, wird sie neu erstellt */
+	} finally {
+		writeLog(`${getPath('tasksjson')} wurde gefunden.`, 'WARNING')
 	}
 }
 
 /** Funktion die settings.json erstellt oder aktualisiert */
-async function setsettingsjson() {
+function setsettingsjson() {
+	const CONTENT = getSettingsContent()
+	const PATH = getPath('settingsjson')
+
 	try {
-		await promises.writeFile(await getPath('settingsjson'), getSettingsJsonData()) /**Erstellt die settings.json in dem Pfad von getPath() und mit dem Inhalt aus constants.ts */
+		promises.writeFile(PATH, CONTENT) /**Erstellt die settings.json in dem Pfad von getPath() und mit dem Inhalt aus constants.ts */
 	} catch (err: any) {
 		writeLog(`[${err.stack?.split('\n')[2]?.trim()}] ${err}`, 'ERROR')	/** Falls Fehler auftritt wird Fehler ausgegeben */
+	} finally {
+		writeLog(`${getPath('settingsjson')} wurde erfolgreich erstellt.`, 'INFO')
 	}
 }
 
-async function settasksjson() {
+function settasksjson() {
+	const CONTENT = getTasksContent()
+	const PATH = getPath('tasksjson')
+
 	try {
-		await promises.writeFile(await getPath('tasksjson'), getTasksJsonData())	/**Erstellt die tasks.json in dem Pfad von getPath() und mit dem Inhalt aus constants.ts */
+		promises.writeFile(PATH, CONTENT) /**Erstellt die tasks.json in dem Pfad von getPath() und mit dem Inhalt aus constants.ts */
 	} catch (err: any) {
 		writeLog(`[${err.stack?.split('\n')[2]?.trim()}] ${err}`, 'ERROR') /** Falls Fehler auftritt wird Fehler ausgegeben */
+	} finally {
+		writeLog(`${getPath('tasksjson')} wurde erfolgreich erstellt.`, 'INFO')
 	}
 }

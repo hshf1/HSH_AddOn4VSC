@@ -2,7 +2,7 @@
 
 import { Command } from "vscode" /** Importiert die Command Schnittstelle aus der VSCode Modul */
 
-import { getPath, getFilesEncoding, getConfigProgLanguage } from "./init" /** Importiert die Funktion die den CompilerPfad bestimmt und die Funktion die das Encoding Format bestimmt */
+import { getOS, getPath, getProgLanguageConfig } from "./init" /** Importiert die Funktion die den CompilerPfad bestimmt und die Funktion die das Encoding Format bestimmt */
 
 export function getConstCommands(): Command[] {
     return [ /** Definiert die einzelnen Befehle in einem Array. */
@@ -20,10 +20,10 @@ export function getConstCommands(): Command[] {
 }
 
 /** Globale Funktion die das Testprogramm zurückgibt */
-export async function getTestProg() {
-    const progLanguage = await getConfigProgLanguage() as unknown as string
+export function getTestProg() {
+    const PROGLANGUAGE = getProgLanguageConfig()
 
-    if (progLanguage === 'C') {
+    if (PROGLANGUAGE === 'C') {
         return `#include <stdio.h>
 
 int main()
@@ -42,7 +42,7 @@ int main()
     y = 12 + 4 % 3 * 7 / 8;
     return 0;
 }`
-    } else if (progLanguage === 'Java') {
+    } else if (PROGLANGUAGE === 'Java') {
         return `public class HelloWorld {
     public static void main(String[] args) {
 
@@ -58,7 +58,7 @@ int main()
 
     }
 }`
-    } else if (progLanguage === 'Python') {
+    } else if (PROGLANGUAGE === 'Python') {
         return `print("Python said, Hello World!")
 i = 1
 print(i)
@@ -74,17 +74,17 @@ print(i)`
 }
 
 /** Globale Funktion die den Inhalt für Settings.json zurückgibt */
-export function getSettingsJsonData() {
-    const temp = getFilesEncoding() /** Speichert das Encoding Format und baut es in den Inhalt ein*/
+export function getSettingsContent() {
+    const ENCODING = getOS('WIN') ? `cp437` : `utf8`
 
-    let settingsjsondata = `{
+    let content = `{
         // Allgemeine Nutzereinstellungen
         "addon4vsc.sprache": "C",                       // Programmiersprache auswählen (derzeit C, Java und Python)
         "addon4vsc.computerraum": null,                 // Standort für Windows Rechner (Privat = false, HsH = true, null = kein Windows/nicht initialisiert)
         "liveshare.anonymousGuestApproval": "accept",   // Live Share eingeladene Anonyme Nutzer automatisch akzeptieren
         "liveshare.guestApprovalRequired": false,       // Live Share um eingeladene Nutzer automatisch zu akzeptieren auf false einstellen
         "extensions.ignoreRecommendations": true,       // Keine Empfehlungen mehr Anzeigen
-        "files.encoding": "${temp}",                      // Zur richtigen Darstellung von Umlauten
+        "files.encoding": "${ENCODING}",                      // Zur richtigen Darstellung von Umlauten
         //"files.autoGuessEncoding": true,              // Zurzeit deaktiviert, da noch instabil! Automatische Anpassung der Encodierung, falls möglich
         "editor.unicodeHighlight.nonBasicASCII": false, // Nicht Basic ASCII Zeichen nicht hervorheben
         "files.autoSave": "onFocusChange",              // Dateien werden bei Änderungen des Fokus automatisch gespeichert
@@ -134,14 +134,14 @@ export function getSettingsJsonData() {
         }
     }`
 
-    return settingsjsondata
+    return content
 }
 
 /** Globale Funktion die den Inhalt für Task.json zurückgibt */
-export function getTasksJsonData() {
-    const temp = getPath('compiler') /** Speichert Compilerpfad zwischen und baut ihn in den Inhalt ein */
+export function getTasksContent() {
+    const COMPILER = getPath('compiler') /** Speichert Compilerpfad zwischen und baut ihn in den Inhalt ein */
 
-    let tasksjsondata = `{
+    let content = `{
         "version": "2.0.0",
         "tasks": [
             {
@@ -169,7 +169,7 @@ export function getTasksJsonData() {
             {
                 "type": "cppbuild",
                 "label": "C/C++: gcc.exe Aktive Datei kompilieren",
-                "command": "${temp}",
+                "command": "${COMPILER}",
                 "args": [
                     "-g",
                     "\${file}",
@@ -186,10 +186,10 @@ export function getTasksJsonData() {
                     "kind": "build",
                     "isDefault": true
                 },
-                "detail": "Compiler: ${temp}"
+                "detail": "Compiler: ${COMPILER}"
             }
         ]
     }`
 
-    return tasksjsondata
+    return content
 }

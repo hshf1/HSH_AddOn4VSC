@@ -16,7 +16,7 @@ import { writeLog } from './logfile'
 
 let firstInit: boolean = false /** Deklariert eine Variable die auskunft darüber gibt ob eine erste Initalisierung schonmal statt gefunden hat */
 
-export async function checkname() {
+export async function checkName() {
     const filePath: string = window.activeTextEditor?.document.uri.fsPath || "no_file_defined" 
     /** Speichert den Dateipfad der aktuell geöffneten Datei, falls keine Datei offen ist wird "no_file_defined" gespeichert */
     const constdirname = dirname(filePath).toLowerCase()    /** Speichert den Ordnerpfad von Filepath */

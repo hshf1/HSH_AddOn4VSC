@@ -20,7 +20,7 @@ import {
 
 import { getConstCommands } from './constants' /** Importiert die Befehle aus der constants.ts  */
 import { getGithubLinks } from './github' /** Importiert die Links und den GitHubStatus aus github.ts */
-import { getConfigComputerraum, getStatusBarItem } from './init' /** Importiert Funktionen aus init.ts */
+import { getComputerraumConfig, getStatusBarItem } from './init' /** Importiert Funktionen aus init.ts */
 import { writeLog } from './logfile'
 
 export let treeDataProvider: DepNodeProvider /** Deklariert Globale Variable treeDataProvider, die für die Baumstruktur der Seitenleiste wichtig ist  */
@@ -52,6 +52,7 @@ class DepNodeProvider implements TreeDataProvider<Dependency> {
     refresh(): void {  /** löst das Event aus, um den Baum zu aktualisieren. */
         aktualisieren() /** Ruft Funktion auf die die Seitenleiste aktualisiert */
         this._onDidChangeTreeData.fire(undefined) /** Löst Event aus, sorgt dafür, dass alle TreeItems neu gerendert werden müssen */
+        writeLog(`Activity Bar aktualisiert!`, 'INFO')
     }
 
     /** Funktion die eine Dependency als Eingabe erwartet und es als TreeItem ausgibt */
@@ -96,7 +97,7 @@ class DepNodeProvider implements TreeDataProvider<Dependency> {
 }
 
 /** Globale Funktion die für die Seitenleiste zuständig ist*/
-export async function activityBarMain() {
+export async function initActivityBar() {
     aktualisieren() /** Ruft Funktion auf die die Seitenleiste aktualisiert */
 
     treeDataProvider = new DepNodeProvider();/** Erstellt neue Instanz der DepNodeProvider die eine Implementierung des TreeDataProvider-Interafaces ist und somit eine Baumstruktur von Objekten*/
@@ -105,9 +106,7 @@ export async function activityBarMain() {
     }
 
     const links = await getGithubLinks() /** github Links werden in die Variable links geladen */
-    console.log('Hier wird gespeichert von github.ts: '+links)
     for (let i = 0; i < links.length; i++) { /** Schleife durch alle Links */
-        console.log('Hier wird schleife von github.ts: '+links[i].name)
         dependencies_link.push(new Dependency(links[i].name, TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: [links[i].link] }))
     }   /** Definiert die Links als neue Dependencys/Elemente die in der Seitenleiste unter Links auftauchen */
 
@@ -131,6 +130,6 @@ async function aktualisieren() {
         new Dependency('settings.json zurücksetzen', TreeItemCollapsibleState.None, getConstCommands()[2]),
         new Dependency('tasks.json zurücksetzen', TreeItemCollapsibleState.None, getConstCommands()[3]),
         new Dependency('Compiler prüfen', TreeItemCollapsibleState.None, getConstCommands()[5]),
-        new Dependency(await getConfigComputerraum() ? 'Ändern auf privaten Windows-Rechner' : 'Ändern auf HsH Windows-Rechner', TreeItemCollapsibleState.None, getConstCommands()[6])
+        new Dependency(getComputerraumConfig() ? 'Ändern auf privaten Windows-Rechner' : 'Ändern auf HsH Windows-Rechner', TreeItemCollapsibleState.None, getConstCommands()[6])
     ]
 }
