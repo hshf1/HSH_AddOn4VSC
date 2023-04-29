@@ -17,7 +17,7 @@ import { checkJSON } from './jsonfilescheck'    /** Importiert die Funktion zum 
 import { initLogFile, writeLog } from './logfile'
 import { existsSync } from 'fs'
 
-let os = { windows: false, osx: false, linux: false }
+let os = { windows: false, osx: false, linux: false, os: "" }
 let path = {
     userHomeFolder: "", CUebung: "", JavaUebung: "", PythonUebung: "", settingsJSON: "",
     tasksJSON: "", compiler: "", testProgC: "", testProgJava: "", testProgPython: "", logFileDir: ""
@@ -35,6 +35,7 @@ export function initialize() {
         commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb') /** Installiere "vadimcn.vscode-lldb" */
     }   /** "vadimcn.vscode-lldb" ist eine Erweiterung, die für den Debbuger wichtig ist. */
 
+    initLocation()
     initConfigurations()
     initPath() /** Setzt die Pfade für .jsons und Übungsordner */
     initLogFile()
@@ -49,6 +50,7 @@ export function initialize() {
     initCompiler()     /** Compiler initialisieren */
 
     writeLog(`HSH_AddOn4VSC gestartet und initialisiert!`, 'INFO')
+    writeLog(`Folgendes Betriebssystem wurde erkannt: ${os.os}`, 'INFO')
 }
 
 /** Funktion die Überprüft welches Betriebssystem vorliegt und entsprechend die Boolean setzt */
@@ -59,17 +61,14 @@ function setOS() {
     os.linux = !os.windows && !os.osx
 
     if (os.windows) {
-        tmp = "Windows"
+        os.os = "Windows"
     } else if (os.osx) {
-        tmp = "MacOS"
+        os.os = "MacOS"
     } else if (os.linux) {
-        tmp = "Linux"
+        os.os = "Linux"
     } else {
-        writeLog(`Konnte nicht zugeordnet werden!`, 'ERROR')
-        return
+        os.os = "Betriebssystem wurde nicht erkannt!"
     }
-
-    writeLog(`Folgendes Betriebssystem wurde erkannt: ${tmp}`, 'INFO')
 }
 
 /** Funktion die WIN, MAC oder LIN als Eingabe bekommnt und entsprechend den Boolschen Status zurückgibt */
@@ -88,12 +87,6 @@ export function getOS(tmp: string) {
 
 export function initConfigurations() {
     try {
-        let tmp: boolean | undefined = workspace.getConfiguration('addon4vsc').get('computerraum')
-        if (tmp == undefined && tmp != null) {
-            settings.computerraum = tmp
-        } else {
-            initLocation()
-        }
         settings.progLanguage = workspace.getConfiguration('addon4vsc').get('sprache', 'C')
     } catch (error: any) {
         writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')
@@ -102,21 +95,14 @@ export function initConfigurations() {
 
 function initLocation() {
     if (existsSync(`C:\\Program Files\\mingw64\\bin`)) {
-        setComputerraumConfig(true)
+        settings.computerraum = true
     } else {
-        setComputerraumConfig(false)
+        settings.computerraum = false
     }
 }
 
 export function setComputerraumConfig(tmp: boolean) {
     settings.computerraum = tmp
-
-    try {
-        workspace.getConfiguration('addon4vsc').update('computerraum', tmp, ConfigurationTarget.Global)
-    } catch (error: any) {
-        writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')
-    }
-    initPath() /** Setzt Compilerpfad neu */
 }
 
 export function getComputerraumConfig() {
@@ -203,8 +189,6 @@ export function getPath(tmp: string) {
             return path.settingsJSON
         case 'tasksjson':
             return path.tasksJSON
-        case 'compiler':
-            return path.compiler
         case 'testprog':
             switch (settings.progLanguage) {
                 case 'C':

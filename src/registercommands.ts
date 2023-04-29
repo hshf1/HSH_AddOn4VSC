@@ -7,16 +7,13 @@ import { env, Uri, window } from 'vscode'           /** Importiert die genannten
 
 import { treeDataProvider } from './activity_bar'   /** Importiert den TreeDataProvider von activity_bar.ts */
 import { getConstCommands } from './constants'         /** Importiert die Namen und Beschreibungen der Commands aus constants.ts*/
-import { updateJSON } from './jsonfilescheck'       /** Importiert die Funktion zur Überprüfung und aktualisierung der .jsons Dateien aus jsonfilescheck.ts*/ 
+import { setsettingsjson, settasksjson } from './jsonfilescheck'       /** Importiert die Funktion zur Überprüfung und aktualisierung der .jsons Dateien aus jsonfilescheck.ts*/ 
 import { 
-    getPath, getStatusBarItem,
-    getOS, 
-    initCompiler,
-    getComputerraumConfig,
-    setComputerraumConfig} from './init' /** Importiert Funktionen aus init.ts */
+    getStatusBarItem, getOS, initCompiler,
+    getComputerraumConfig, setComputerraumConfig,
+} from './init' /** Importiert Funktionen aus init.ts */
 import { reportAProblem } from './reportaproblem'
 import { writeLog } from './logfile'
-import { eventHandler_changeLocation } from './events'
 
 const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert und beziehen ihre Namen und Beschreibungen aus der Datei constants.ts */
     {
@@ -43,7 +40,7 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
         name: getConstCommands()[2].command,     
         callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[2].command}`, 'INFO')
-            updateJSON(getPath('settingsjson')) /** Aktualisiert die settings.json */
+            setsettingsjson() /** Aktualisiert die settings.json */
             window.showInformationMessage('settings.json wurde zurückgesetzt.') /** Erzeugt kleines Fenster mit entsprechenden Inhalt */
         }
     },
@@ -51,7 +48,7 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
         name: getConstCommands()[3].command,     
         callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[3].command}`, 'INFO')
-            updateJSON(getPath('tasksjson'))    /** Aktualisiert die task.json */
+            settasksjson()    /** Aktualisiert die task.json */
             window.showInformationMessage('tasks.json wurde zurückgesetzt.') /** Erzeugt kleines Fenster mit entsprechenden Inhalt */
         }
     },

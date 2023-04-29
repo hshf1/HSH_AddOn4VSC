@@ -1,9 +1,7 @@
 import { commands, window, workspace } from "vscode"
-import { getComputerraumConfig, getOS, getPath, getStatusBarItem, initConfigurations, initPath } from "./init"
+import { getComputerraumConfig, getOS, getPath, getStatusBarItem, initPath } from "./init"
 import { writeLog } from "./logfile"
 import { checkName } from "./filefoldername"
-import { updateJSON } from "./jsonfilescheck"
-import { treeDataProvider } from "./activity_bar"
 
 export function eventHandler_checkName() {    /** Code definiert eine Funktion die als Event Handler fungiert */
 		if (getStatusBarItem().command === 'extension.off') {	/** überprüft ob der Statusleisten Button auf "pausiert" steht */
@@ -12,10 +10,7 @@ export function eventHandler_checkName() {    /** Code definiert eine Funktion d
 }
 
 export function eventHandler_changeLocation() {
-    initConfigurations()
-    updateJSON(getPath('tasksjson'))
-    treeDataProvider.refresh() /** Aktualisiert die Anzeige der Activity Bar */
-    writeLog(`eventHandler_changeLocation durchgeführt!`, 'INFO')
+    
 }
 
 export function eventHandler_changeProgLanguage() {

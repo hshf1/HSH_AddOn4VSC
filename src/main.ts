@@ -37,11 +37,6 @@ export async function activate(context: ExtensionContext) {
 	}
 	workspace.onDidSaveTextDocument(eventHandler_checkName)						/** Wenn der Benutzer eine Datei im Workspace speichert wird die Funktion aufgerufen, die den Namen auf Umlaute überprüft */
 	debug.onDidChangeBreakpoints(eventHandler_checkName)						/** Wenn der Benutzer die Debugger Breakpoints verändert wird die Funktion aufgerufen, die den Namen auf Umlaute überprüft */
-  	workspace.onDidChangeConfiguration((event: ConfigurationChangeEvent) => {	/** Funktion wird ausgelöst wenn sich Konfigurationseinstellungen geändert haben */
-		if (event.affectsConfiguration('addon4vsc.computerraum')) {       		/** Überprüft, ob geänderte Einstellung das AddOn betrifft */	
-			eventHandler_changeLocation()
-		}
-	})
 	workspace.onDidChangeConfiguration((event: ConfigurationChangeEvent) => {	
 		if (event.affectsConfiguration('addon4vsc.sprache')) {
 			eventHandler_changeProgLanguage()
@@ -49,7 +44,7 @@ export async function activate(context: ExtensionContext) {
 	})
 	process.on('uncaughtException', (error) => {
 		console.log("UNCAUGHT ERROR: " + error.name + error.message + error)
-	  });
+	})
 	  
 	getCommands().forEach(command => { /** For Schleife durch alle "command" Objekte in "registercommands.ts". name: name des commands, callback: Funktion die ausgeführt wird */
 		/** Durch "context.subscriptions.push" wird das Objekt nach deaktivieren der Erweiterung ordnungsgemäss aufgeräumt */
