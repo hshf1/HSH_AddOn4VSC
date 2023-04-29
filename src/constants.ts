@@ -80,7 +80,7 @@ export function getSettingsJsonData() {
     let settingsjsondata = `{
         // Allgemeine Nutzereinstellungen
         "addon4vsc.sprache": "C",                       // Programmiersprache auswählen (derzeit C, Java und Python)
-        "addon4vsc.computerraum": "init",                 // Standort für Windows Rechner (Privat = false, HsH = true, null = kein Windows/nicht initialisiert)
+        "addon4vsc.computerraum": null,                 // Standort für Windows Rechner (Privat = false, HsH = true, null = kein Windows/nicht initialisiert)
         "liveshare.anonymousGuestApproval": "accept",   // Live Share eingeladene Anonyme Nutzer automatisch akzeptieren
         "liveshare.guestApprovalRequired": false,       // Live Share um eingeladene Nutzer automatisch zu akzeptieren auf false einstellen
         "extensions.ignoreRecommendations": true,       // Keine Empfehlungen mehr Anzeigen

@@ -38,7 +38,7 @@ interface IEnvironmentVariables {
     }
     settings: {
         encodingSettingsJSON: string
-        computerraumConfig: string
+        computerraumConfig: boolean | null
         progLanguageConfig: string
     }
     status: {
@@ -49,7 +49,7 @@ interface IEnvironmentVariables {
 let envVar: IEnvironmentVariables = { 
     os: { IS_WINDOWS: false, IS_OSX: false, IS_LINUX: false },
     path: { userHomeFolder: "", CUebung: "", JavaUebung: "", PythonUebung: "", settingsJSON: "", tasksJSON: "", compiler: "", testProgC: "", testProgJava: "", testProgPython: "", logFileDir: "" },
-    settings: { encodingSettingsJSON: "", computerraumConfig: "init", progLanguageConfig: "init" }, status: { compiler: false }
+    settings: { encodingSettingsJSON: "", computerraumConfig: null, progLanguageConfig: "init" }, status: { compiler: false }
 }
 
 let statusbar_button: StatusBarItem /** Definiert statusbar_button als StatusBarItem */
@@ -58,7 +58,7 @@ let statusbar_button: StatusBarItem /** Definiert statusbar_button als StatusBar
 export function initMain() {
     setOS() /** Setzt die entsprechende Boolean für das jeweilige Betriebssystem true */
 
-    if (getConfigComputerraum() === "init") {
+    if (getConfigComputerraum() === null) {
         initPrivateOrHsh()
     }
 
@@ -124,37 +124,42 @@ function setConfigProgLanguageIntern(tmp: string) {
 }
 
 function getConfigProgLanguageIntern() {
-    while(envVar.settings.progLanguageConfig === "init") {
+    do {
         envVar.settings.progLanguageConfig =  workspace.getConfiguration('addon4vsc').get('sprache') || "init"
-    }
+    } while (envVar.settings.progLanguageConfig === "init")
 }
 
-function setConfigComputerraumIntern(tmp: string) {
+function setConfigComputerraumIntern(tmp: boolean) {
     workspace.getConfiguration('addon4vsc').update('computerraum', tmp, ConfigurationTarget.Global)
 }
 
-/** Als string entweder "true" oder "false" */
+function getConfigComputerraumIntern() {
+    do {
+        envVar.settings.computerraumConfig =  workspace.getConfiguration('addon4vsc').get('computerraum') || null
+    } while (envVar.settings.computerraumConfig === null)
+}
+
 export function setConfigProgLanguage(tmp: string) {
     envVar.settings.progLanguageConfig = tmp
     setConfigProgLanguageIntern(tmp)
 }
 
 export function getConfigProgLanguage(): string {
-    if(envVar.settings.progLanguageConfig === "init") {
+    // TODO: Methode ändern, falls später mehr sprachen kommen
+    while (!(envVar.settings.progLanguageConfig === "C" || envVar.settings.progLanguageConfig === "Java" || envVar.settings.progLanguageConfig === "Python")) {
         getConfigProgLanguageIntern()
     }
     return envVar.settings.progLanguageConfig
 }
 
-/** Als string entweder "true" oder "false" */
-export function setConfigComputerraum(tmp: string) {
+export function setConfigComputerraum(tmp: boolean) {
     envVar.settings.computerraumConfig = tmp
     setConfigComputerraumIntern(tmp)
 }
 
 export function getConfigComputerraum() {
-    if (envVar.settings.computerraumConfig === "init") {
-        initPrivateOrHsh()
+    while (!(envVar.settings.computerraumConfig || !envVar.settings.computerraumConfig)) {
+        getConfigComputerraumIntern()
     }
     return envVar.settings.computerraumConfig
 }
@@ -165,7 +170,7 @@ export function setPath() {
     envVar.path.userHomeFolder = homedir()
     if (envVar.os.IS_WINDOWS) {
         switch(Computerraum) {
-            case 'true': /** Wenn windows und HSH Rechner */
+            case true: /** Wenn windows und HSH Rechner */
                 envVar.path.compiler = 'C:\\\\Program Files\\\\mingw64\\\\bin\\\\gcc.exe'
                 envVar.path.logFileDir = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User`
                 envVar.path.CUebung = `U:\\C_Uebung`
@@ -176,7 +181,7 @@ export function setPath() {
                 envVar.path.testProgC = `${envVar.path.CUebung}\\testprog.c`
                 envVar.path.testProgJava = `${envVar.path.JavaUebung}\\HelloWorld.java`
                 envVar.path.testProgPython = `${envVar.path.PythonUebung}\\HelloWorld.py`
-            case 'false': /** Wenn windows und privater Rechner */
+            case false: /** Wenn windows und privater Rechner */
                 envVar.path.compiler = 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe'
                 envVar.path.logFileDir = `${envVar.path.userHomeFolder}\\AppData\\Roaming\\Code\\User`
                 envVar.path.CUebung = `${envVar.path.userHomeFolder}\\Documents\\C_Uebung`
@@ -304,9 +309,9 @@ export function onEventProgLanguage() {
 
 function initPrivateOrHsh() {
     if (envVar.os.IS_WINDOWS && existsSync(`C:\\Program Files\\mingw64\\bin`)) {
-        setConfigComputerraum("true")
+        setConfigComputerraum(true)
     } else {
-        setConfigComputerraum("false")
+        setConfigComputerraum(false)
     }
 }
 
@@ -318,16 +323,17 @@ async function deleteOldPath() {
         const index = pathDirs.indexOf(pathToRemove)
         if (index !== -1) {
             pathDirs.splice(index, 1)
+            pathVar = pathDirs.join(';')
+            exec(`setx PATH "${pathVar}"`, (error, stdout, stderr) => {
+                if (error) {
+                    writeLog(`Fehler beim entfernen alter Umgebungsvariable: ${error.message}`, 'ERROR')
+                } else {
+                    writeLog(`Alte Umgebungsvariable erfolgreich entfernt: ${stdout.trim()}`, 'INFO')
+                }
+            })
+        } else {
+            writeLog(`Alte Umgebungsvariable ist bereits gelöscht.`,'INFO')
         }
-        pathVar = pathDirs.join(';')
-
-        exec(`setx PATH "${pathVar}"`, (error, stdout, stderr) => {
-            if (error) {
-                writeLog(`Fehler beim entfernen alter Umgebungsvariable: ${error.message}`, 'ERROR')
-            } else {
-                writeLog(`Alte Umgebungsvariable erfolgreich entfernt: ${stdout.trim()}`, 'INFO')
-            }
-        })
     }
 }
 
@@ -336,17 +342,18 @@ async function addNewPath() {
     let pathVar = await getUserEnvironmentPath()
     const pathDirs = pathVar.split(';')
     if (!pathDirs.includes(pathToAdd)) {
-        pathDirs.push(pathToAdd);
+        pathDirs.push(pathToAdd)
+        pathVar = pathDirs.join(';')
+        exec(`setx PATH "${pathVar}"`, (error, stdout, stderr) => {
+            if (error) {
+                writeLog(`Fehler beim entfernen alter Umgebungsvariable: ${error.message}`, 'ERROR')
+            } else {
+                writeLog(`Alte Umgebungsvariable erfolgreich entfernt: ${stdout.trim()}`, 'INFO')
+            }
+        })
+    } else {
+        writeLog(`Umgebungsvariable ist bereits vorhanden.`,'INFO')
     }
-    pathVar = pathDirs.join(';');
-
-    exec(`setx PATH "${pathVar}"`, (error, stdout, stderr) => {
-        if (error) {
-            writeLog(`Fehler beim entfernen alter Umgebungsvariable: ${error.message}`, 'ERROR')
-        } else {
-            writeLog(`Alte Umgebungsvariable erfolgreich entfernt: ${stdout.trim()}`, 'INFO')
-        }
-    })
 }
 
 function getUserEnvironmentPath(): Promise<string> {
@@ -374,11 +381,11 @@ export async function compiler_init() {
         if (error) { /** Wenn Fehler auftritt (keine Version installiert ist) */
             commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(envVar.path.userHomeFolder)).then(async () => { /** Erzeugt neues Terminal und setzt das Verzeichnis auf das Heimatverzeichnis */
                 if (envVar.os.IS_WINDOWS) {
-                    if (existsSync(`C:\\Program Files\\mingw64\\bin`)) {
+                    initPrivateOrHsh()
+
+                    if (getConfigComputerraum()) {
                         await addNewPath()
-                        setConfigComputerraum("true")
                     } else {
-                        setConfigComputerraum("false")
                         commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb runAs -ArgumentList \'/k curl -o %temp%\\vsc.cmd https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/vscwindows.cmd && %temp%\\vsc.cmd\'\"\n' })
                         /** Führt den Befehl aus das Skript zur installation auszuführen */
                     }

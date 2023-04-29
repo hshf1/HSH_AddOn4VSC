@@ -80,17 +80,14 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
                 return
             }
 
-            if (Computerraum === "true") {
-                setConfigComputerraum("false")
-            } else {
-                setConfigComputerraum("true")
-            }
-
             if (Computerraum) {
+                setConfigComputerraum(false)
                 window.showInformationMessage('Auf privater Windows-Rechner gestellt.')
             } else {
+                setConfigComputerraum(true)
                 window.showInformationMessage('Auf HsH Windows-Rechner im Rechenzentrum gestellt.')
             }
+
             treeDataProvider.refresh()
         }
     },
