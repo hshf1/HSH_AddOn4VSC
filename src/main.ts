@@ -47,6 +47,10 @@ export async function activate(context: ExtensionContext) {
 			eventHandler_changeProgLanguage()
 		}
 	})
+	process.on('uncaughtException', (error) => {
+		console.log("UNCAUGHT ERROR: " + error.name + error.message + error)
+	  });
+	  
 	getCommands().forEach(command => { /** For Schleife durch alle "command" Objekte in "registercommands.ts". name: name des commands, callback: Funktion die ausgeführt wird */
 		/** Durch "context.subscriptions.push" wird das Objekt nach deaktivieren der Erweiterung ordnungsgemäss aufgeräumt */
 		context.subscriptions.push(commands.registerCommand(command.name, command.callback))
