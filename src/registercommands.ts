@@ -12,7 +12,6 @@ import {
     compiler_init, getPath, getStatusBarItem,
     getOS, getConfigComputerraum, setConfigComputerraum } from './init' /** Importiert Funktionen aus init.ts */
 import { reportAProblem } from './reportaproblem'
-import { set_language } from './language_handler'
 import { writeLog } from './logfile'
 
 const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert und beziehen ihre Namen und Beschreibungen aus der Datei constants.ts */
@@ -38,17 +37,17 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
     },
     {
         name: getConstCommands()[2].command,     
-        callback: async () => {
+        callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[2].command}`, 'INFO')
-            renewjsons(await getPath('settingsjson')) /** Aktualisiert die settings.json */
+            renewjsons(getPath('settingsjson')) /** Aktualisiert die settings.json */
             window.showInformationMessage('settings.json wurde zurückgesetzt.') /** Erzeugt kleines Fenster mit entsprechenden Inhalt */
         }
     },
     {
         name: getConstCommands()[3].command,     
-        callback: async () => {
+        callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[3].command}`, 'INFO')
-            renewjsons(await getPath('tasksjson'))    /** Aktualisiert die task.json */
+            renewjsons(getPath('tasksjson'))    /** Aktualisiert die task.json */
             window.showInformationMessage('tasks.json wurde zurückgesetzt.') /** Erzeugt kleines Fenster mit entsprechenden Inhalt */
         }
     },
@@ -104,7 +103,7 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
     },
     {
         name: getConstCommands()[8].command,
-        callback: async () => {
+        callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[8].command}`, 'INFO')
             window.showWarningMessage(writeLog('Programmiersprache wechseln ist derzeit nicht verfügbar!', 'WARNING'))
 		    return

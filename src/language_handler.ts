@@ -39,14 +39,14 @@ export async function set_language() {
         return
     }
 
-    if (newLanguage === await getConfigProgLanguage()) { /** Überprüft ob Sprache bereits aktiv ist */
+    if (newLanguage === getConfigProgLanguage()) { /** Überprüft ob Sprache bereits aktiv ist */
         window.showInformationMessage('Programmiersprache bereits aktiv')
         return
     }
 
     changeSettingsLanguage(newLanguage)
     window.showInformationMessage(writeLog(`${newLanguage} ausgewählt`, 'INFO'))
-    await openprefolder()
+    openprefolder() // TODO: Code nochmal ansehen
 }
 
 function changeSettingsLanguage(newLanguage: string) {

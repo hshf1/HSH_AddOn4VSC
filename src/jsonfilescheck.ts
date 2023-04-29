@@ -27,12 +27,12 @@ export async function renewjsons(filePath_todelete: string) {
 /** Funktion überprüft ob die beiden .jsons vorhanden sind und fügt ggf. neu hinzu */
 export async function checkjsons() {
 	try {
-		await promises.stat(await getPath('settingsjson')) /** Überprüft ob Datei vorhanden ist */
+		await promises.stat(getPath('settingsjson')) /** Überprüft ob Datei vorhanden ist */
 	} catch {
 		await setsettingsjson()	/** Falls Fehler auftritt, sie also nicht vorhanden ist, wird sie neu erstellt */
 	}
 	try {
-		await promises.stat(await getPath('tasksjson'))	/** Überprüft ob Datei vorhanden ist */
+		await promises.stat(getPath('tasksjson'))	/** Überprüft ob Datei vorhanden ist */
 	} catch {
 		await settasksjson()	/** Falls Fehler auftritt, sie also nicht vorhanden ist, wird sie neu erstellt */
 	}
@@ -41,7 +41,7 @@ export async function checkjsons() {
 /** Funktion die settings.json erstellt oder aktualisiert */
 async function setsettingsjson() {
 	try {
-		await promises.writeFile(await getPath('settingsjson'), getSettingsJsonData()) /**Erstellt die settings.json in dem Pfad von getPath() und mit dem Inhalt aus constants.ts */
+		await promises.writeFile(getPath('settingsjson'), getSettingsJsonData()) /**Erstellt die settings.json in dem Pfad von getPath() und mit dem Inhalt aus constants.ts */
 	} catch (err: any) {
 		writeLog(`[${err.stack?.split('\n')[2]?.trim()}] ${err}`, 'ERROR')	/** Falls Fehler auftritt wird Fehler ausgegeben */
 	}
@@ -49,7 +49,7 @@ async function setsettingsjson() {
 
 async function settasksjson() {
 	try {
-		await promises.writeFile(await getPath('tasksjson'), await getTasksJsonData())	/**Erstellt die tasks.json in dem Pfad von getPath() und mit dem Inhalt aus constants.ts */
+		await promises.writeFile(getPath('tasksjson'), getTasksJsonData())	/**Erstellt die tasks.json in dem Pfad von getPath() und mit dem Inhalt aus constants.ts */
 	} catch (err: any) {
 		writeLog(`[${err.stack?.split('\n')[2]?.trim()}] ${err}`, 'ERROR') /** Falls Fehler auftritt wird Fehler ausgegeben */
 	}

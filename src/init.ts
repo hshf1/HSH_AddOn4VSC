@@ -16,7 +16,6 @@ import { openprefolder } from './checkfolder'		                /** Importiert di
 import { checkjsons, renewjsons } from './jsonfilescheck'		    /** Importiert die Funktion zum überprüfen der jsons-Datei aus jsonfilescheck.ts */
 import { logFileMain, writeLog } from './logfile'
 import { existsSync } from 'fs'
-import { githubMain } from './github'
 
 interface IEnvironmentVariables {
     os: {   /** Definiert Bool's für die einzelnen Betriebssysteme */
@@ -73,7 +72,6 @@ export function initMain() {
     setFilesEncoding()
     logFileMain()
     checkjsons() /** Ruft die Funktion auf, die sicherstellt, dass die Konfigurationsdateien vorhanden sind */
-    githubMain()
 
     if (!(workspace.workspaceFolders?.toString)) {  /** Funktion die schaut, ob Ordner in VS-Code geöffnet ist und ggf. den vorgefertigten Ordner öffnet */
         openprefolder() /** Öffnet Ordner je nach dem welche Prog.sprache aktiv ist */
@@ -126,7 +124,7 @@ function setConfigProgLanguageIntern(tmp: string) {
 }
 
 function getConfigProgLanguageIntern() {
-    while(getConfigProgLanguage() === "init") {
+    while(envVar.settings.progLanguageConfig === "init") {
         envVar.settings.progLanguageConfig =  workspace.getConfiguration('addon4vsc').get('sprache') || "init"
     }
 }
@@ -142,6 +140,9 @@ export function setConfigProgLanguage(tmp: string) {
 }
 
 export function getConfigProgLanguage(): string {
+    if(envVar.settings.progLanguageConfig === "init") {
+        getConfigProgLanguageIntern()
+    }
     return envVar.settings.progLanguageConfig
 }
 
@@ -152,6 +153,9 @@ export function setConfigComputerraum(tmp: string) {
 }
 
 export function getConfigComputerraum() {
+    if (envVar.settings.computerraumConfig === "init") {
+        initPrivateOrHsh()
+    }
     return envVar.settings.computerraumConfig
 }
 
@@ -371,7 +375,7 @@ export async function compiler_init() {
             commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(envVar.path.userHomeFolder)).then(async () => { /** Erzeugt neues Terminal und setzt das Verzeichnis auf das Heimatverzeichnis */
                 if (envVar.os.IS_WINDOWS) {
                     if (existsSync(`C:\\Program Files\\mingw64\\bin`)) {
-                        addNewPath()
+                        await addNewPath()
                         setConfigComputerraum("true")
                     } else {
                         setConfigComputerraum("false")
