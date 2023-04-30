@@ -24,4 +24,4 @@ jobs:
           extension-id: 'cako.addon4vsc'
           package-path: './out'
         env:
-          AZURE_STORAGE_ACCESS_KEY: ${{ secrets.4alaoyuzu3hnn77o3zl34chifutqclt7k5vponht3vuh2b4jvvuq }}
+          AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
