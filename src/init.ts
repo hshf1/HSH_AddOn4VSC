@@ -20,7 +20,7 @@ import { existsSync } from 'fs'
 let os = { windows: false, osx: false, linux: false, os: "" }
 let path = {
     userHomeFolder: "", CUebung: "", JavaUebung: "", PythonUebung: "", settingsJSON: "",
-    tasksJSON: "", compiler: "", testProgC: "", testProgJava: "", testProgPython: "", logFileDir: ""
+    tasksJSON: "", testProgC: "", testProgJava: "", testProgPython: "", logFileDir: ""
 }
 let settings = {
     computerraum: false, progLanguage: "", compiler: false,
@@ -30,6 +30,8 @@ let settings = {
 /** Hauptfunktion die die Initialisierung durchführt und wenn erfolgreich setting_init true setzt. */
 export function initialize() {
     setOS() /** Setzt die entsprechende Boolean für das jeweilige Betriebssystem true */
+
+    uninstallExtensions()
 
     if (!getOS('WIN') && !extensions.getExtension('vadimcn.vscode-lldb')) { /** Wenn kein Windows und "vadimcn.vscode-lldb" nicht installiert ist */
         commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb') /** Installiere "vadimcn.vscode-lldb" */
@@ -85,6 +87,15 @@ export function getOS(tmp: string) {
     }
 }
 
+function uninstallExtensions() {
+    if (extensions.getExtension('vscjava.vscode-java-pack')) {
+        commands.executeCommand('workbench.extensions.uninstallExtension', 'vscjava.vscode-java-pack', true)
+    }
+    if (extensions.getExtension('ms-python.python')) { 
+        commands.executeCommand('workbench.extensions.uninstallExtension', 'ms-python.python', true) 
+    }  
+}
+
 export function initConfigurations() {
     try {
         settings.progLanguage = workspace.getConfiguration('addon4vsc').get('sprache', 'C')
@@ -127,7 +138,6 @@ export function getProgLanguageConfig() {
 export function initPath() {
     path.userHomeFolder = homedir()
     if (os.windows && settings.computerraum) {
-        path.compiler = 'C:\\\\Program Files\\\\mingw64\\\\bin\\\\gcc.exe'
         path.logFileDir = `${path.userHomeFolder}\\AppData\\Roaming\\Code\\User`
         path.CUebung = `U:\\C_Uebung`
         path.JavaUebung = `U:\\Java_Uebung`
@@ -138,7 +148,6 @@ export function initPath() {
         path.testProgJava = `${path.JavaUebung}\\HelloWorld.java`
         path.testProgPython = `${path.PythonUebung}\\HelloWorld.py`
     } else if (os.windows && !settings.computerraum) {
-        path.compiler = 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\gcc.exe'
         path.logFileDir = `${path.userHomeFolder}\\AppData\\Roaming\\Code\\User`
         path.CUebung = `${path.userHomeFolder}\\Documents\\C_Uebung`
         path.JavaUebung = `${path.userHomeFolder}\\Documents\\Java_Uebung`
