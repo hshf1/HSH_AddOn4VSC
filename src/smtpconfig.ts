@@ -1,6 +1,3 @@
-import * as dotenv from 'dotenv'
-dotenv.config();
-
 const host = process.env.SMTP_HOST
 const email = process.env.SMTP_EMAIL
 const password = process.env.SMTP_PASSWORD
