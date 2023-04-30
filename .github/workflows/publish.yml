@@ -13,7 +13,7 @@ jobs:
 
       # Install Node.js and the vsce tool
       - name: Setup Node.js and vsce
-        uses: actions/setup-node@v2.4.4
+        uses: actions/setup-node
         with:
           node-version: 14
       - name: Install vsce
