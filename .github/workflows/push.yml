@@ -53,4 +53,4 @@ jobs:
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           GITHUB_TOKEN: ${{ secrets.MYGITHUB_TOKEN }}
           NPM_AUTH_TOKEN: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
-        run: npx vsce publish -p ${{ secrets.VSCE_PERSONAL_ACCESS_TOKEN }}
+        run: npx vsce publish -p ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
