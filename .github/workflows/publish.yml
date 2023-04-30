@@ -3,30 +3,24 @@ on:
   push:
     branches:
       - master
-
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
-
-      # Install Node.js and the vsce tool
       - name: Setup Node.js and vsce
-        uses: actions/setup-node
+        uses: actions/setup-node@v2.x
         with:
           node-version: 14
       - name: Install vsce
         run: npm install -g vsce
-
-      # Build and package the extension
       - name: Build and package extension
         run: |
           npm install
           vsce package
-
-      # Publish the extension
       - name: Publish extension to Visual Studio Code marketplace
         env:
           VSCE_PERSONAL_ACCESS_TOKEN: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
-        run: vsce publish -p $VSCE_PERSONAL_ACCESS_TOKEN
+        uses: vsciot-vscode.vscode-iot-workbench-publish-extension
+        with:
+          args: publish -p $VSCE_PERSONAL_ACCESS_TOKEN
