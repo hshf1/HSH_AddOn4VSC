@@ -17,7 +17,7 @@ import { checkJSON } from './jsonfilescheck'    /** Importiert die Funktion zum 
 import { initLogFile, writeLog } from './logfile'
 import { existsSync } from 'fs'
 
-let os = { windows: false, osx: false, linux: false, os: "" }
+let os = { windows: false, osx: false, linux: false }
 let path = {
     userHomeFolder: "", CUebung: "", JavaUebung: "", PythonUebung: "", settingsJSON: "",
     tasksJSON: "", testProgC: "", testProgJava: "", testProgPython: "", logFileDir: ""
@@ -29,6 +29,7 @@ let settings = {
 
 /** Hauptfunktion die die Initialisierung durchführt und wenn erfolgreich setting_init true setzt. */
 export function initialize() {
+    writeLog(`HSH_AddOn4VSC gestartet - Initialisierung beginnt!`, 'INFO')
     setOS() /** Setzt die entsprechende Boolean für das jeweilige Betriebssystem true */
 
     uninstallExtensions()
@@ -51,8 +52,7 @@ export function initialize() {
     initActivityBar()   /** Ruft Funktion auf die für die Activitybar zuständig ist */
     initCompiler()     /** Compiler initialisieren */
 
-    writeLog(`HSH_AddOn4VSC gestartet und initialisiert!`, 'INFO')
-    writeLog(`Folgendes Betriebssystem wurde erkannt: ${os.os}`, 'INFO')
+    writeLog(`Initialisierung beendet!`, 'INFO')
 }
 
 /** Funktion die Überprüft welches Betriebssystem vorliegt und entsprechend die Boolean setzt */
@@ -63,14 +63,16 @@ function setOS() {
     os.linux = !os.windows && !os.osx
 
     if (os.windows) {
-        os.os = "Windows"
+        tmp = "Windows"
     } else if (os.osx) {
-        os.os = "MacOS"
+        tmp = "MacOS"
     } else if (os.linux) {
-        os.os = "Linux"
+        tmp = "Linux"
     } else {
-        os.os = "Betriebssystem wurde nicht erkannt!"
+        tmp = "Betriebssystem wurde nicht erkannt!"
     }
+
+    writeLog(`Folgendes Betriebssystem wurde erkannt: ${tmp}`, 'INFO')
 }
 
 /** Funktion die WIN, MAC oder LIN als Eingabe bekommnt und entsprechend den Boolschen Status zurückgibt */
@@ -114,6 +116,8 @@ function initLocation() {
     } else {
         settings.computerraum = false
     }
+
+    writeLog(`Location: ${settings.computerraum ? 'HsH-Rechner' : 'Privater Rechner'}`, 'INFO')
 }
 
 export function setComputerraumConfig(tmp: boolean) {

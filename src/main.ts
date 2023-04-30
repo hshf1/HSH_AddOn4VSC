@@ -6,6 +6,8 @@
  * Die activate()-Funktion registriert auch mehrere Befehle für die Benutzeroberfläche.
 */
 
+// TODO: VSCode Version in HsH prüfen, dann package.json min. Version auf 1.75 setzen
+
 import {									
 	ExtensionContext, commands, workspace,	
 	debug, ConfigurationChangeEvent	
@@ -18,22 +20,15 @@ import {
  *  debug: Ein Objekt, das Methoden und Ereignisse bereitstellt, um Debugging-Funktionen in Visual Studio Code-Erweiterungen zu aktivieren.
  *	ConfigurationChangeEvent: Ein Ereignis, das ausgelöst wird wenn sich eine Konfigurationseinstellung ändert. Enthält Informationen über die änderung */
 
-import { getStatusBarItem, initialize } from './init'	/** Importiert eine Reihe von Befehlen aus der init.ts */
-import { checkName } from './filefoldername'			/** Importiert die Funktion zum überprüfen des Dateinames aus filefoldername.ts */
-import { getCommands } from './registercommands'		/** Importiert die Registerbefehle für die Anzeigen aus registercommands.ts */
+import { initialize } from './init' /** Importiert eine Reihe von Befehlen aus der init.ts */
+import { getCommands } from './registercommands' /** Importiert die Registerbefehle für die Anzeigen aus registercommands.ts */
 import { writeLog } from './logfile'
-import { eventHandler_changeProgLanguage } from './events'
+import { eventHandler_changeProgLanguage, eventHandler_checkName } from './eventHandler'
 
 /** die "activate" Funktion wird von VS-Code aufgerufen, wenn die Erweiterung aktiviert wird */
-export async function activate(context: ExtensionContext) {
-
+export function activate(context: ExtensionContext) {
 	initialize()/** Ruft die Funktion auf, die die Initialisierung beginnt */
 
-	const eventHandler_checkName = () => {    /** Code definiert eine Funktion die als Event Handler fungiert */
-		if (getStatusBarItem().command === 'extension.off') {	/** überprüft ob der Statusleisten Button auf "pausiert" steht */
-			checkName()                         			/**	Führt die Funktion aus die den Namen überprüft und wartet bis sie fertig ist */
-		}
-	}
 	workspace.onDidSaveTextDocument(eventHandler_checkName)						/** Wenn der Benutzer eine Datei im Workspace speichert wird die Funktion aufgerufen, die den Namen auf Umlaute überprüft */
 	debug.onDidChangeBreakpoints(eventHandler_checkName)						/** Wenn der Benutzer die Debugger Breakpoints verändert wird die Funktion aufgerufen, die den Namen auf Umlaute überprüft */
 	workspace.onDidChangeConfiguration((event: ConfigurationChangeEvent) => {	

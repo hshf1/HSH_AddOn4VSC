@@ -9,7 +9,7 @@
     "type": "git",
     "url": "https://github.com/hshf1/HSH_AddOn4VSC"
   },
-  "version": "1.6.12",
+  "version": "1.6.13",
   "engines": {
     "vscode": "^1.50.0"
   },
@@ -22,7 +22,6 @@
     "onCommand:extension.on",
     "onCommand:extension.off",
     "onCommand:open.link",
-    "onCommand:setRZHsH.setting",
     "onCommand:report.problem",
     "onCommand:switch.language",
     "onStartupFinished"

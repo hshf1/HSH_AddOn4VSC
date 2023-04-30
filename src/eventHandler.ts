@@ -1,7 +1,8 @@
 import { commands, window, workspace } from "vscode"
+
 import { getComputerraumConfig, getOS, getPath, getStatusBarItem, initPath } from "./init"
 import { writeLog } from "./logfile"
-import { checkName } from "./filefoldername"
+import { checkName } from "./filefoldername" /** Importiert die Funktion zum überprüfen des Dateinames aus filefoldername.ts */
 
 export function eventHandler_checkName() {    /** Code definiert eine Funktion die als Event Handler fungiert */
     if (getStatusBarItem().command === 'extension.off') {	/** überprüft ob der Statusleisten Button auf "pausiert" steht */

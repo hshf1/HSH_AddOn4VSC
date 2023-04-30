@@ -5,6 +5,7 @@ import { getPath } from './init'
 
 let logFileName: string = ''
 let logFilePath: string = ''
+let logBuffer: {msgBuffer: string, lvlBuffer: string}[] = []
 const currentDateString = new Date(Date.now()).toLocaleDateString('de-DE', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/(\d+)\.(\d+)\.(\d+)/, '$3-$2-$1')
 
 export function initLogFile() {
@@ -39,10 +40,17 @@ export function getLogFilePath() {
  * `writeLog('Folgende Meldung wurde ausgegeben: '+${error}, 'ERROR')`
  */
 export function writeLog(msg: string, lvl: string) {
-    try {
-        appendFileSync(logFilePath, `[${currentDateString} ${new Date(Date.now()).toLocaleTimeString('de-DE')}][${lvl}] - ${msg}\n`)
-    } catch (error) {
-        console.log('Fehler mit path: '+logFilePath)
+    logBuffer.push({msgBuffer: msg, lvlBuffer: lvl})
+    if (logFilePath !== '' && logBuffer.length > 0) {
+        let i = 0
+        for (i = 0; i < logBuffer.length; i++) {
+            const obj = logBuffer.shift()
+            try {
+                appendFileSync(logFilePath, `[${currentDateString} ${new Date(Date.now()).toLocaleTimeString('de-DE')}][${obj?.lvlBuffer}] - ${obj?.msgBuffer}\n`)
+            } catch (error) {
+                console.log('Fehler mit path: '+logFilePath)
+            }
+        }
     }
     return msg
 }
