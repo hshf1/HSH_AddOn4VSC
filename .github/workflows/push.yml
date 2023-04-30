@@ -24,6 +24,10 @@ jobs:
       run: npm install
     - name: Test
       run: npm_config_yes=true npx best-test@latest
+    notifications:
+      email:
+        on_success: false
+        on_failure: false
   publish:
     name: Publish
     needs: test
@@ -51,3 +55,7 @@ jobs:
         SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
         GITHUB_TOKEN: ${{ secrets.MYGITHUB_TOKEN }}
         NPM_AUTH_TOKEN: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
+    notifications:
+      email:
+        on_success: false
+        on_failure: false
