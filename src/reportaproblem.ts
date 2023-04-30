@@ -1,13 +1,14 @@
 // TODO: Try-Catch Blöcke definieren
 
 import {
+    ProgressLocation,
     Terminal, commands,
     env, window
 } from "vscode"
 import { promisify } from 'util'
 import { exec } from 'child_process'
 import { join } from "path"
-import { promises } from "fs"
+import { promises, writeFileSync } from "fs"
 import { tmpdir } from "os"
 import { createTransport } from "nodemailer"
 
@@ -37,18 +38,30 @@ export async function reportAProblem() {
         mail: "", problem: "", codeAttachPermission: "", terminalContentPath: "",
         screenshot: { permission: "", filePath: "" }, attachments: []
     }
-
-    try {
-        await userReportInput(userReport)
-        if (userReport.screenshot.permission === 'Ja') {
-            await getScreenshot(userReport)
+    
+    window.withProgress({
+        location: ProgressLocation.Notification,
+        title: 'Problem melden gestartet!',
+        cancellable: false
+    }, async (progress, token) => {
+        try {
+            progress.report({ message: "Warten auf Nutzereingabe...", increment: 0 })
+            await userReportInput(userReport)
+            if (userReport.screenshot.permission === 'Ja') {
+                progress.report({ message: "Mache ein Screenshot...", increment: 20 })
+                await getScreenshot(userReport)
+            }
+            progress.report({ message: "Kopiere den Inhalt aus den Terminals...", increment: 40 })
+            await getTerminalContent(userReport)
+            progress.report({ message: "Anhänge zusammenstellen...", increment: 60 })
+            await getAttachments(userReport)
+            progress.report({ message: "E-Mail wird versendet...", increment: 80 })
+            await sendReport(userReport)
+            progress.report({ message: "E-Mail versendet!", increment: 100 })
+        } catch(error: any) {
+            writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')
         }
-        await getTerminalContent(userReport)
-        await getAttachments(userReport)
-        await sendReport(userReport)
-    } catch(error: any) {
-        writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')
-    }
+    })
 }
 
 async function userReportInput(userReport: UserReport) {
@@ -60,6 +73,7 @@ async function userReportInput(userReport: UserReport) {
         placeHolder: "max@mustermail.de (Pflichtfeld)",
         ignoreFocusOut: true
     }) || ''
+
     userReport.mail = userReport.mail.trim()
     if (!emailPattern.test(userReport.mail)) {
         window.showWarningMessage("Problem melden wurde abgebrochen. Bitte eine richtige E-Mail Adresse angeben!")
@@ -137,29 +151,28 @@ async function sendReport(userReport: UserReport) {
         return
     }
 
-    const transporter = createTransport({
-        host: getSmtpHost(),
-        port: getSmtpPort(),
-        secure: true,
-        auth: {
-            user: getSmtpEMail(),
-            pass: setString(getSmtpPW(), 15),
-        }
-    })
-
-    const mailOptions = {
-        from: userReport.mail,
-        to: getSmtpEMail(),
-        cc: userReport.mail,
-        subject: 'VSCode Problem',
-        text: `Bitte keine Dateien oder Programme ausführen!\nSollte ein Code mitgeschickt worden sein, immer stets überprüfen vor dem Ausführen!\n\nFolgendes Problem wurde vom Nutzer ${userReport.mail} gemeldet:\n\n${userReport.problem}`,
-        attachments: userReport.attachments
-        // TODO: eigene Dateien anhängen erlauben? Wozu? Sicherheitsbedenken?
+    // TODO: eigene Dateien anhängen erlauben? Wozu? Sicherheitsbedenken?
+    try {
+        await createTransport({
+            host: getSmtpHost(),
+            port: getSmtpPort(),
+            secure: true,
+            auth: {
+                user: getSmtpEMail(),
+                pass: setString(getSmtpPW(), 15),
+            }
+        }).sendMail({
+            from: userReport.mail,
+            to: getSmtpEMail(),
+            cc: userReport.mail,
+            subject: 'VSCode Problem',
+            text: `Bitte keine Dateien oder Programme ausführen!\nSollte ein Code mitgeschickt worden sein, immer stets überprüfen vor dem Ausführen!\n\nFolgendes Problem wurde vom Nutzer ${userReport.mail} gemeldet:\n\n${userReport.problem}`,
+            attachments: userReport.attachments
+        })
+        window.showInformationMessage(writeLog('Problem erfolgreich per E-Mail versendet!', 'INFO'))
+    } catch (error: any) {
+        writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')
     }
-
-    await transporter.sendMail(mailOptions)
-    
-    window.showInformationMessage(writeLog('Problem erfolgreich gemeldet!', 'INFO'))
 }
 
 async function getTerminalContent(userReport: UserReport) {
@@ -172,7 +185,7 @@ async function getTerminalContent(userReport: UserReport) {
             fileContents += `Terminal: ${terminalName}\nInhalt: ${terminalContent}\n`
         }
 
-        await promises.writeFile(userReport.terminalContentPath, fileContents)
+        writeFileSync(userReport.terminalContentPath, fileContents)
     } catch (error: any) {
         writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')
     }
@@ -193,15 +206,15 @@ async function captureAllTerminalContents(): Promise<Map<string, string>> {
 }
 
 function setString(tmp: string, num: number): string {
-    let str = '';
-    for (let i = 0; i < str.length; i++) {
-      let charCode = tmp.charCodeAt(i);
+    let str = ''
+    for (let i = 0; i < tmp.length; i++) {
+      let charCode = tmp.charCodeAt(i)
       if (charCode >= 65 && charCode <= 90) {
-        str += String.fromCharCode(((charCode - 65 - num + 26) % 26) + 65);
+        str += String.fromCharCode(((charCode - 65 - num + 26) % 26) + 65)
       } else if (charCode >= 97 && charCode <= 122) {
-        str += String.fromCharCode(((charCode - 97 - num + 26) % 26) + 97);
+        str += String.fromCharCode(((charCode - 97 - num + 26) % 26) + 97)
       } else {
-        str += tmp.charAt(i);
+        str += tmp.charAt(i)
       }
     }
     return str

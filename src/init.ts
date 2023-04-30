@@ -6,7 +6,7 @@
 
 import {
     extensions, commands, window, StatusBarAlignment,
-    Uri, workspace, ConfigurationTarget
+    Uri, workspace, ConfigurationTarget, ProgressLocation
 } from 'vscode'                     /** Importiert die genannten Befehle aus der VS-Code Erweiterung */
 import { homedir } from 'os'        /** Importiert die homedir Funktion aus dem Node.js Modul.  Die homedir-Funktion gibt das Heimatverzeichnis des aktuellen Benutzers als Zeichenfolge zurück. */
 import { exec } from 'child_process'/** Importiert die exec Funktion aus dem Node.js Modul. Die exec-Funktion wird verwendet, um einen Befehl in der Befehlszeile auszuführen. */
@@ -29,30 +29,34 @@ let settings = {
 
 /** Hauptfunktion die die Initialisierung durchführt und wenn erfolgreich setting_init true setzt. */
 export function initialize() {
-    writeLog(`HSH_AddOn4VSC gestartet - Initialisierung beginnt!`, 'INFO')
-    setOS() /** Setzt die entsprechende Boolean für das jeweilige Betriebssystem true */
+    window.withProgress({
+        location: ProgressLocation.Notification,
+        title: 'Initialisiere...',
+        cancellable: false
+      }, async (progress, token) => {
+        writeLog(`HSH_AddOn4VSC gestartet - Initialisierung beginnt!`, 'INFO')
+        setOS() /** Setzt die entsprechende Boolean für das jeweilige Betriebssystem true */
+        uninstallExtensions() // TODO: Später wieder rausnehmen
+        if (!getOS('WIN') && !extensions.getExtension('vadimcn.vscode-lldb')) { /** Wenn kein Windows und "vadimcn.vscode-lldb" nicht installiert ist */
+            commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb') /** Installiere "vadimcn.vscode-lldb" */
+        }   /** "vadimcn.vscode-lldb" ist eine Erweiterung, die für den Debbuger wichtig ist. */
 
-    uninstallExtensions()
+        initLocation()
+        initConfigurations()
+        initPath() /** Setzt die Pfade für .jsons und Übungsordner */
+        initLogFile()
 
-    if (!getOS('WIN') && !extensions.getExtension('vadimcn.vscode-lldb')) { /** Wenn kein Windows und "vadimcn.vscode-lldb" nicht installiert ist */
-        commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb') /** Installiere "vadimcn.vscode-lldb" */
-    }   /** "vadimcn.vscode-lldb" ist eine Erweiterung, die für den Debbuger wichtig ist. */
+        if (!(workspace.workspaceFolders?.toString)) {  /** Funktion die schaut, ob Ordner in VS-Code geöffnet ist und ggf. den vorgefertigten Ordner öffnet */
+            openPreFolder() /** Öffnet Ordner je nach dem welche Prog.sprache aktiv ist */
+        }
 
-    initLocation()
-    initConfigurations()
-    initPath() /** Setzt die Pfade für .jsons und Übungsordner */
-    initLogFile()
-    checkJSON() /** Ruft die Funktion auf, die sicherstellt, dass die Konfigurationsdateien vorhanden sind */
+        checkJSON() /** Ruft die Funktion auf, die sicherstellt, dass die Konfigurationsdateien vorhanden sind */
+        initStatusBarItem()  /** Initialisiert den Button in der Statusleiste */
+        initActivityBar()   /** Ruft Funktion auf die für die Activitybar zuständig ist */
+        initCompiler()     /** Compiler initialisieren */
 
-    if (!(workspace.workspaceFolders?.toString)) {  /** Funktion die schaut, ob Ordner in VS-Code geöffnet ist und ggf. den vorgefertigten Ordner öffnet */
-        openPreFolder() /** Öffnet Ordner je nach dem welche Prog.sprache aktiv ist */
-    }
-
-    initStatusBarItem()  /** Initialisiert den Button in der Statusleiste */
-    initActivityBar()   /** Ruft Funktion auf die für die Activitybar zuständig ist */
-    initCompiler()     /** Compiler initialisieren */
-
-    writeLog(`Initialisierung beendet!`, 'INFO')
+        writeLog(`Initialisierung beendet!`, 'INFO')
+    })
 }
 
 /** Funktion die Überprüft welches Betriebssystem vorliegt und entsprechend die Boolean setzt */
