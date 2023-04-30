@@ -118,6 +118,7 @@
   },
   "dependencies": {
     "@types/request": "^2.48.8",
+    "dotenv": "^16.0.3",
     "nodemailer": "^6.9.1",
     "request": "^2.88.2"
   }
