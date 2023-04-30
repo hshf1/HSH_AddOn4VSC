@@ -1,0 +1,27 @@
+name: Publish to cako publisher
+on:
+  push:
+    branches:
+      - master
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Install dependencies
+        run: npm install
+      - name: Build
+        run: npm run build
+      - name: Deploy to HSH_AddOn4VSC publisher
+        uses: vsciot-vscode/vscode-iot-workbench-publish-extension@v1
+        with:
+          vscode-version: '1.54.x'
+          extension-id: 'cako.addon4vsc'
+          package-path: './out'
+        env:
+          AZURE_STORAGE_ACCESS_KEY: ${{ secrets.4alaoyuzu3hnn77o3zl34chifutqclt7k5vponht3vuh2b4jvvuq }}
