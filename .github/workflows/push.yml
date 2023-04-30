@@ -1,9 +1,5 @@
 on: [push, pull_request]
 name: Build, Test and maybe Publish
-notifications:
-  email:
-    on_success: false
-    on_failure: false
 jobs:
   test:
     name: Build & Test
