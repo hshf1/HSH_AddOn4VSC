@@ -7,10 +7,6 @@ jobs:
     strategy:
       matrix:
         node-version: [12.x, 14.x]
-      notifications:
-        email:
-          on_success: false
-          on_failure: false
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
@@ -59,3 +55,7 @@ jobs:
         SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
         GITHUB_TOKEN: ${{ secrets.MYGITHUB_TOKEN }}
         NPM_AUTH_TOKEN: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
+      notifications:
+        email:
+          on_success: false
+          on_failure: false
