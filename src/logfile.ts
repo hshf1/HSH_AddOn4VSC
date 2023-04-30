@@ -39,7 +39,6 @@ export function getLogFilePath() {
  * `writeLog('Folgende Meldung wurde ausgegeben: '+${error}, 'ERROR')`
  */
 export function writeLog(msg: string, lvl: string) {
-    console.log('logfilepath: '+logFilePath)
     try {
         appendFileSync(logFilePath, `[${currentDateString} ${new Date(Date.now()).toLocaleTimeString('de-DE')}][${lvl}] - ${msg}\n`)
     } catch (error) {

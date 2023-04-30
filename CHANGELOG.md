@@ -13,7 +13,7 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 - Java implementierung
 - Python implementierung
 
-## [1.6.0] - [1.6.8] 27.04.2023 - 29.04.2023 
+## [1.6.0] - [1.6.10] 27.04.2023 - 30.04.2023 
 
 ### neu hinzugefügt
 - in der Activity bar Reiter "Programmiersprache ändern" hinzugefügt. Unterpunkte "C", "Python" und "Java" um zwischen verschiedenen Prog.sprachen wechseln zu können
@@ -29,6 +29,8 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 
    
 ### geändert
+- bugfixes
+- Compilerpfad auf "gcc.exe" geändert
 - OpenPreFolder() angepasst und variabler gestaltet
 - die Kontrolle ob .c am Ende erst mal auskommentiert (Kann später vlt, schauen ob entprechend .c oder .java und co ist)
 - in Reportporblems eine Nachricht gekürzt um Verwirrung zu vermeiden.

@@ -16,14 +16,13 @@ import {
  * commands: Ein Objekt, das verschiedene Methoden bereitstellt, um Befehle in der Visual Studio Code-UI zu registrieren und auszuführen.
  *  workspace: Ein Objekt, das verschiedene Methoden und Eigenschaften bereitstellt, um auf Workspace-Informationen und -Einstellungen zuzugreifen.
  *  debug: Ein Objekt, das Methoden und Ereignisse bereitstellt, um Debugging-Funktionen in Visual Studio Code-Erweiterungen zu aktivieren.
- *	window: Ein Objekt, das verschiedene Methoden und Eigenschaften bereitstellt, um auf die Visual Studio Code-UI zuzugreifen und sie zu manipulieren. 
  *	ConfigurationChangeEvent: Ein Ereignis, das ausgelöst wird wenn sich eine Konfigurationseinstellung ändert. Enthält Informationen über die änderung */
 
 import { getStatusBarItem, initialize } from './init'	/** Importiert eine Reihe von Befehlen aus der init.ts */
 import { checkName } from './filefoldername'			/** Importiert die Funktion zum überprüfen des Dateinames aus filefoldername.ts */
 import { getCommands } from './registercommands'		/** Importiert die Registerbefehle für die Anzeigen aus registercommands.ts */
 import { writeLog } from './logfile'
-import { eventHandler_changeLocation, eventHandler_changeProgLanguage } from './events'
+import { eventHandler_changeProgLanguage } from './events'
 
 /** die "activate" Funktion wird von VS-Code aufgerufen, wenn die Erweiterung aktiviert wird */
 export async function activate(context: ExtensionContext) {
@@ -41,9 +40,6 @@ export async function activate(context: ExtensionContext) {
 		if (event.affectsConfiguration('addon4vsc.sprache')) {
 			eventHandler_changeProgLanguage()
 		}
-	})
-	process.on('uncaughtException', (error) => {
-		console.log("UNCAUGHT ERROR: " + error.name + error.message + error)
 	})
 	  
 	getCommands().forEach(command => { /** For Schleife durch alle "command" Objekte in "registercommands.ts". name: name des commands, callback: Funktion die ausgeführt wird */

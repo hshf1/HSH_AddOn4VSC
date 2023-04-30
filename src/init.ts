@@ -88,12 +88,16 @@ export function getOS(tmp: string) {
 }
 
 function uninstallExtensions() {
-    if (extensions.getExtension('vscjava.vscode-java-pack')) {
-        commands.executeCommand('workbench.extensions.uninstallExtension', 'vscjava.vscode-java-pack', true)
+    try {
+        if (extensions.getExtension('vscjava.vscode-java-pack')) {
+            commands.executeCommand('workbench.extensions.uninstallExtension', 'vscjava.vscode-java-pack', true)
+        }
+        if (extensions.getExtension('ms-python.python')) { 
+            commands.executeCommand('workbench.extensions.uninstallExtension', 'ms-python.python', true) 
+        }  
+    } catch (error) {
+        console.log(error)
     }
-    if (extensions.getExtension('ms-python.python')) { 
-        commands.executeCommand('workbench.extensions.uninstallExtension', 'ms-python.python', true) 
-    }  
 }
 
 export function initConfigurations() {
