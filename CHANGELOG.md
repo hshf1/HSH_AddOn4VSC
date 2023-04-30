@@ -4,7 +4,7 @@ Alle wichtigen Änderungen werden hier gespeichert und veröffentlicht.
 
 Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
----------
+--------- 
 
 ## [Unreleased]
 
