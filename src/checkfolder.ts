@@ -7,7 +7,7 @@ import { getPath } from './init' /** Importiert die Funktion die verschiedene Pf
 import { getTestProg } from './constants' /** Importiert den Inhalt des testprogramms aus constants.ts */
 import { writeLog } from './logfile'
 
-function openfolder() {
+function openFolder() {
 	const options: OpenDialogOptions = { /** Übernimmt die Einstellungen für das Dialog Fenster in dem der Ordner ausgewählt werden kann */
 		canSelectMany: false,
 		openLabel: 'Ordner öffnen',
@@ -24,9 +24,9 @@ function openfolder() {
 }
 
 /** Öffnet/Erstellt Ordner Verzeichnis */
-export async function openprefolder() {
-	const uebungsFolder = await getPath('uebungfolder')
-	const testProg = await getPath('testprog')
+export function openPreFolder() {
+	const uebungsFolder = getPath('uebungfolder')
+	const testProg = getPath('testprog')
 	const folderUri = Uri.file(uebungsFolder) /** Kopiert den Pfad des CUebungs Ordners in eine Konstante */
 
 	if (!existsSync(uebungsFolder)) {	/** Überprüft ob der Pfad inklusive des Ordners noch nicht existiert */
@@ -38,7 +38,7 @@ export async function openprefolder() {
 	}
 	if (!existsSync(testProg)) { /** Überprüft ob der Pfad inklusive der Datei noch nicht existiert */
 		try {
-			writeFileSync(testProg, await getTestProg()) /** Erstellt das testprog und schreibt den inhalt aus constants.ts hinein*/ 
+			writeFileSync(testProg, getTestProg()) /** Erstellt das testprog und schreibt den inhalt aus constants.ts hinein*/ 
 		} catch (error: any) {
 			writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR') /** Falls ein Fehler entsteht wird dieser in die Konsole geschrieben */
 		}
@@ -46,6 +46,6 @@ export async function openprefolder() {
 	if (existsSync(uebungsFolder)) {	/** Überprüft ob der Pfad inklusive des Ordners schon existiert */
 		commands.executeCommand(`vscode.openFolder`, folderUri) /** VSCode Befehl der einen Ordner öffnet, übergeben wird der Pfad des Übungsordners  */
 	} else {
-		openfolder()	/** Ruft Funktion auf die den Nutzer einen Ordner auswählen lässt */
+		openFolder()	/** Ruft Funktion auf die den Nutzer einen Ordner auswählen lässt */
 	}
 }

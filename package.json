@@ -9,7 +9,7 @@
     "type": "git",
     "url": "https://github.com/hshf1/HSH_AddOn4VSC"
   },
-  "version": "1.6.9",
+  "version": "1.6.10",
   "engines": {
     "vscode": "^1.50.0"
   },
@@ -32,12 +32,6 @@
     "configuration": {
       "title": "HSH_AddOn4VSC",
       "properties": {
-        "addon4vsc.computerraum": {
-          "type": "boolean",
-          "description": "Hier die Einstellung aktivieren, falls VSCode aus dem RZ der Hochschule Hannover gestartet wird!",
-          "default": null,
-          "scope": "application"
-        },
         "addon4vsc.sprache": {
           "type": "string",
           "description": "Hier kann die Programmiersprache ausgewählt werden, die genutzt werden soll.",
@@ -65,10 +59,6 @@
       ]
     },
     "commands": [
-      {
-        "command": "setRZHsH.setting",
-        "title": "Path für RZHsH einstellen"
-      },
       {
         "command": "open.link",
         "title": "Öffne Link '%link%'"

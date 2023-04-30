@@ -2,7 +2,7 @@
 
 import { Command } from "vscode" /** Importiert die Command Schnittstelle aus der VSCode Modul */
 
-import { getPath, getFilesEncoding, getConfigProgLanguage } from "./init" /** Importiert die Funktion die den CompilerPfad bestimmt und die Funktion die das Encoding Format bestimmt */
+import { getOS, getProgLanguageConfig } from "./init" /** Importiert die Funktion die den CompilerPfad bestimmt und die Funktion die das Encoding Format bestimmt */
 
 export function getConstCommands(): Command[] {
     return [ /** Definiert die einzelnen Befehle in einem Array. */
@@ -20,10 +20,10 @@ export function getConstCommands(): Command[] {
 }
 
 /** Globale Funktion die das Testprogramm zurückgibt */
-export async function getTestProg() {
-    const progLanguage = await getConfigProgLanguage() as unknown as string
+export function getTestProg() {
+    const PROGLANGUAGE = getProgLanguageConfig()
 
-    if (progLanguage === 'C') {
+    if (PROGLANGUAGE === 'C') {
         return `#include <stdio.h>
 
 int main()
@@ -42,7 +42,7 @@ int main()
     y = 12 + 4 % 3 * 7 / 8;
     return 0;
 }`
-    } else if (progLanguage === 'Java') {
+    } else if (PROGLANGUAGE === 'Java') {
         return `public class HelloWorld {
     public static void main(String[] args) {
 
@@ -58,7 +58,7 @@ int main()
 
     }
 }`
-    } else if (progLanguage === 'Python') {
+    } else if (PROGLANGUAGE === 'Python') {
         return `print("Python said, Hello World!")
 i = 1
 print(i)
@@ -74,17 +74,17 @@ print(i)`
 }
 
 /** Globale Funktion die den Inhalt für Settings.json zurückgibt */
-export function getSettingsJsonData() {
-    const temp = getFilesEncoding() /** Speichert das Encoding Format und baut es in den Inhalt ein*/
+export function getSettingsContent() {
+    const ENCODING = getOS('WIN') ? `cp437` : `utf8`
 
-    let settingsjsondata = `{
+    let content = `{
         // Allgemeine Nutzereinstellungen
         "addon4vsc.sprache": "C",                       // Programmiersprache auswählen (derzeit C, Java und Python)
-        "addon4vsc.computerraum": null,                 // Standort für Windows Rechner (Privat = false, HsH = true, null = kein Windows/nicht initialisiert)
+        "terminal.integrated.scrollback": 10000,        //Setzt die max.Anzahl der Zeilen im Terminal auf 10000
         "liveshare.anonymousGuestApproval": "accept",   // Live Share eingeladene Anonyme Nutzer automatisch akzeptieren
         "liveshare.guestApprovalRequired": false,       // Live Share um eingeladene Nutzer automatisch zu akzeptieren auf false einstellen
         "extensions.ignoreRecommendations": true,       // Keine Empfehlungen mehr Anzeigen
-        "files.encoding": "${temp}",                      // Zur richtigen Darstellung von Umlauten
+        "files.encoding": "${ENCODING}",                        // Zur richtigen Darstellung von Umlauten
         //"files.autoGuessEncoding": true,              // Zurzeit deaktiviert, da noch instabil! Automatische Anpassung der Encodierung, falls möglich
         "editor.unicodeHighlight.nonBasicASCII": false, // Nicht Basic ASCII Zeichen nicht hervorheben
         "files.autoSave": "onFocusChange",              // Dateien werden bei Änderungen des Fokus automatisch gespeichert
@@ -134,62 +134,58 @@ export function getSettingsJsonData() {
         }
     }`
 
-    return settingsjsondata
+    return content
 }
 
 /** Globale Funktion die den Inhalt für Task.json zurückgibt */
-export function getTasksJsonData() {
-    const temp = getPath('compiler') /** Speichert Compilerpfad zwischen und baut ihn in den Inhalt ein */
-
-    let tasksjsondata = `{
-        "version": "2.0.0",
-        "tasks": [
-            {
-                "type": "cppbuild",
-                "label": "C/C++: gcc Aktive Datei kompilieren",
-                "command": "/usr/bin/gcc",
-                "args": [
-                    "-g",
-                    "\${file}",
-                    "-o",
-                    "\${fileDirname}/\${fileBasenameNoExtension}"
-                ],
-                "options": {
-                    "cwd": "\${fileDirname}"
-                },
-                "problemMatcher": [
-                    "$gcc"
-                ],
-                "group": {
-                    "kind": "build",
-                    "isDefault": true
-                },
-                "detail": "Vom Debugger generierte Aufgabe."
+export function getTasksContent() {
+return `{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "C/C++: gcc Aktive Datei kompilieren",
+            "command": "/usr/bin/gcc",
+            "args": [
+                "-g",
+                "\${file}",
+                "-o",
+                "\${fileDirname}/\${fileBasenameNoExtension}"
+            ],
+            "options": {
+                "cwd": "\${fileDirname}"
             },
-            {
-                "type": "cppbuild",
-                "label": "C/C++: gcc.exe Aktive Datei kompilieren",
-                "command": "${temp}",
-                "args": [
-                    "-g",
-                    "\${file}",
-                    "-o",
-                    "\${fileDirname}\\\\\${fileBasenameNoExtension}.exe"
-                ],
-                "options": {
-                    "cwd": "\${workspaceFolder}"
-                },
-                "problemMatcher": [
-                    "$gcc"
-                ],
-                "group": {
-                    "kind": "build",
-                    "isDefault": true
-                },
-                "detail": "Compiler: ${temp}"
-            }
-        ]
-    }`
-
-    return tasksjsondata
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Vom Debugger generierte Aufgabe."
+        },
+        {
+            "type": "cppbuild",
+            "label": "C/C++: gcc.exe Aktive Datei kompilieren",
+            "command": "gcc.exe",
+            "args": [
+                "-g",
+                "\${file}",
+                "-o",
+                "\${fileDirname}\\\\\${fileBasenameNoExtension}.exe"
+            ],
+            "options": {
+                "cwd": "\${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Compiler: gcc.exe"
+        }
+    ]
+}`
 }
