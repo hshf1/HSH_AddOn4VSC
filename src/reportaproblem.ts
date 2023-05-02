@@ -8,12 +8,12 @@ import {
 import { promisify } from 'util'
 import { exec } from 'child_process'
 import { join } from "path"
-import { promises, writeFileSync } from "fs"
+import { writeFileSync } from "fs"
 import { tmpdir } from "os"
 import { createTransport } from "nodemailer"
 
 import { getSmtpEMail, getSmtpHost, getSmtpPW, getSmtpPort } from "./smtpconfig"
-import { getOS, getPath } from "./init"
+import { getOS, getPath, getUserEnvironmentPath } from "./init"
 import { getLogFileName, getLogFilePath, writeLog } from "./logfile"
 
 const execAsync = promisify(exec)
@@ -33,7 +33,7 @@ interface UserReport {
     }[]
 }
 
-export async function reportAProblem() {
+export function reportAProblem() {
     let userReport: UserReport = {
         mail: "", problem: "", codeAttachPermission: "", terminalContentPath: "",
         screenshot: { permission: "", filePath: "" }, attachments: []
@@ -50,6 +50,10 @@ export async function reportAProblem() {
             if (userReport.screenshot.permission === 'Ja') {
                 progress.report({ message: "Mache ein Screenshot...", increment: 20 })
                 await getScreenshot(userReport)
+            }
+            if (getOS('WIN')) {
+                progress.report({ message: "Speichern der aktuellen Nutzer-Umgebungsvariablen...", increment: 30})
+                await getUserEnvironment()
             }
             progress.report({ message: "Kopiere den Inhalt aus den Terminals...", increment: 40 })
             await getTerminalContent(userReport)
@@ -120,11 +124,20 @@ async function getScreenshot(userReport: UserReport) {
     }
 }
 
+async function getUserEnvironment() {
+    let userEnvironment = await getUserEnvironmentPath()
+    userEnvironment.replace(';', '\n')
+    writeFileSync(getPath('userenv'), userEnvironment, { flag: 'w'})
+}
+
 async function getAttachments(userReport: UserReport) {
     userReport.attachments.push({ filename: getLogFileName(), path: getLogFilePath() })
     userReport.attachments.push({ filename: 'terminalcontent.txt', path: userReport.terminalContentPath })
-    userReport.attachments.push({ filename: 'settings.json', path: await getPath('settingsjson') })
-    userReport.attachments.push({ filename: 'tasks.json', path: await getPath('tasksjson') })
+    userReport.attachments.push({ filename: 'settings.json', path: getPath('settingsjson') })
+    userReport.attachments.push({ filename: 'tasks.json', path: getPath('tasksjson') })
+    if (getOS('WIN')) {
+        userReport.attachments.push({ filename: 'userEnvironmentPaths.txt', path: getPath('userenv')})
+    }
     
     if (userReport.screenshot.permission) {
         userReport.attachments.push({ filename: 'screenshot.png', path: userReport.screenshot.filePath })
@@ -166,7 +179,7 @@ async function sendReport(userReport: UserReport) {
             to: getSmtpEMail(),
             cc: userReport.mail,
             subject: 'VSCode Problem',
-            text: `Bitte keine Dateien oder Programme ausführen!\nSollte ein Code mitgeschickt worden sein, immer stets überprüfen vor dem Ausführen!\n\nFolgendes Problem wurde vom Nutzer ${userReport.mail} gemeldet:\n\n${userReport.problem}`,
+            text: `Bitte keine Dateien oder Programme unbedenklich ausführen!\nSollte ein Code mitgeschickt worden sein, immer stets manuell überprüfen vor dem Ausführen!\n\nFolgendes Problem wurde vom Nutzer ${userReport.mail} gemeldet:\n\n${userReport.problem}`,
             attachments: userReport.attachments
         })
         window.showInformationMessage(writeLog('Problem erfolgreich per E-Mail versendet!', 'INFO'))

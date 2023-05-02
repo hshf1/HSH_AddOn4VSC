@@ -20,7 +20,7 @@ import { existsSync } from 'fs'
 let os = { windows: false, osx: false, linux: false }
 let path = {
     userHomeFolder: "", CUebung: "", JavaUebung: "", PythonUebung: "", settingsJSON: "",
-    tasksJSON: "", testProgC: "", testProgJava: "", testProgPython: "", logFileDir: ""
+    tasksJSON: "", testProgC: "", testProgJava: "", testProgPython: "", logFileDir: "", newTasksVersionControl: ""
 }
 let settings = {
     computerraum: false, progLanguage: "", compiler: false,
@@ -159,6 +159,7 @@ export function initPath() {
         path.testProgC = `${path.CUebung}\\testprog.c`
         path.testProgJava = `${path.JavaUebung}\\HelloWorld.java`
         path.testProgPython = `${path.PythonUebung}\\HelloWorld.py`
+        path.newTasksVersionControl = `${path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\tasks_v1_7_1.txt`
     } else if (os.windows && !settings.computerraum) {
         path.logFileDir = `${path.userHomeFolder}\\AppData\\Roaming\\Code\\User`
         path.CUebung = `${path.userHomeFolder}\\Documents\\C_Uebung`
@@ -169,6 +170,7 @@ export function initPath() {
         path.testProgC = `${path.CUebung}\\testprog.c`
         path.testProgJava = `${path.JavaUebung}\\HelloWorld.java`
         path.testProgPython = `${path.PythonUebung}\\HelloWorld.py`
+        path.newTasksVersionControl = `${path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\tasks_v1_7_1.txt`
     } else if (os.osx) { /** Wenn MAC */
         path.logFileDir = `${path.userHomeFolder}/Library/Application Support/Code/User`
         path.CUebung = `${path.userHomeFolder}/Documents/C_Uebung`
@@ -179,6 +181,7 @@ export function initPath() {
         path.testProgC = `${path.CUebung}/testprog.c`
         path.testProgJava = `${path.JavaUebung}/HelloWorld.java`
         path.testProgPython = `${path.PythonUebung}/HelloWorld.py`
+        path.newTasksVersionControl = `${path.userHomeFolder}/Library/Application Support/Code/User/tasks_v1_7_1.txt`
     } else if (os.linux) { /** Wenn Linux */
         path.logFileDir = `${path.userHomeFolder}/.config/Code/User`
         path.CUebung = `${path.userHomeFolder}/Documents/C_Uebung`
@@ -189,6 +192,7 @@ export function initPath() {
         path.testProgC = `${path.CUebung}/testprog.c`
         path.testProgJava = `${path.JavaUebung}/HelloWorld.java`
         path.testProgPython = `${path.PythonUebung}/HelloWorld.py`
+        path.newTasksVersionControl = `${path.userHomeFolder}/.config/Code/User/tasks_v1_7_1.txt`
     }
 }
 
@@ -203,6 +207,7 @@ export function initPath() {
  * - testprog
  * - uebungfolder
  * - logfiledir
+ * - newtasksversioncontrol
 */
 export function getPath(tmp: string) {
     switch (tmp) {
@@ -234,6 +239,8 @@ export function getPath(tmp: string) {
             }
         case 'logfiledir':
             return path.logFileDir
+        case 'newtasksversioncontrol':
+            return path.newTasksVersionControl
         default:
             writeLog(`Unbekanntes Argument für getPath: ${tmp}`, 'ERROR')
             return ''
@@ -255,14 +262,22 @@ export function getStatusBarItem() {
 
 /** Globale Funktion die den Compiler installiert */
 export async function initCompiler() {
-    await deleteOldPath()
+    if (getOS('WIN')) {
+        await deleteOldPath('C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin')
+        if (getComputerraumConfig()) {
+            await addNewPath('C:\\Program Files\\mingw64\\bin')
+        } else {
+            await addNewPath('C:\\ProgramData\\chocolatey\\bin')
+            await addNewPath('C:\\ProgramData\\chocolatey\\lib\\mingw\\tools\\install\\mingw64\\bin')
+        }
+    }
 
     exec('gcc --version', (error, stdout) => { /** Prüft ob eine gcc version installiert ist */
         if (error) { /** Wenn Fehler auftritt (keine Version installiert ist) */
-            commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(path.userHomeFolder)).then(() => { /** Erzeugt neues Terminal und setzt das Verzeichnis auf das Heimatverzeichnis */
-                if (os.windows) {
+            commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(path.userHomeFolder)).then(async () => { /** Erzeugt neues Terminal und setzt das Verzeichnis auf das Heimatverzeichnis */
+                if (getOS('WIN')) {
                     if (settings.computerraum) {
-                        addNewPath()
+                        await addNewPath('C:\\Program Files\\mingw64\\bin')
                     } else {
                         commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb runAs -ArgumentList \'/k curl -o %temp%\\vsc.cmd https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/vscwindows.cmd && %temp%\\vsc.cmd\'\"\n' })
                         /** Führt den Befehl aus das Skript zur installation auszuführen */
@@ -284,30 +299,28 @@ export async function initCompiler() {
     })
 }
 
-async function deleteOldPath() {
-    if (os.windows) {
-        const pathToRemove = 'C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin'
-        let pathVar = await getUserEnvironmentPath()
-        const pathDirs = pathVar.split(';')
-        const index = pathDirs.indexOf(pathToRemove)
-        if (index !== -1) {
-            pathDirs.splice(index, 1)
-            pathVar = pathDirs.join(';')
-            exec(`setx PATH "${pathVar}"`, (error, stdout, stderr) => {
-                if (error) {
-                    writeLog(`Fehler beim entfernen alter Umgebungsvariable: ${error.message}`, 'ERROR')
-                } else {
-                    writeLog(`Alte Umgebungsvariable erfolgreich entfernt: ${stdout.trim()}`, 'INFO')
-                }
-            })
-        } else {
-            writeLog(`Alte Umgebungsvariable ist bereits gelöscht.`, 'INFO')
-        }
+async function deleteOldPath(tmp: string) {
+    const pathToRemove: string = 'C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin'
+    let pathVar = await getUserEnvironmentPath()
+    const pathDirs = pathVar.split(';')
+    const index = pathDirs.indexOf(pathToRemove)
+    if (index !== -1) {
+        pathDirs.splice(index, 1)
+        pathVar = pathDirs.join(';')
+        exec(`setx PATH "${pathVar}"`, (error, stdout, stderr) => {
+            if (error) {
+                writeLog(`Fehler beim entfernen alter Umgebungsvariable: ${error.message}`, 'ERROR')
+            } else {
+                writeLog(`Alte Umgebungsvariable erfolgreich entfernt: ${stdout.trim()}`, 'INFO')
+            }
+        })
+    } else {
+        writeLog(`Alte Umgebungsvariable ist bereits gelöscht.`, 'INFO')
     }
 }
 
-async function addNewPath() {
-    const pathToAdd = 'C:\\Program Files\\mingw64\\bin';
+async function addNewPath(tmp: string) {
+    const pathToAdd: string = tmp
     let pathVar = await getUserEnvironmentPath()
     const pathDirs = pathVar.split(';')
     if (!pathDirs.includes(pathToAdd)) {
@@ -325,7 +338,7 @@ async function addNewPath() {
     }
 }
 
-function getUserEnvironmentPath(): Promise<string> {
+export function getUserEnvironmentPath(): Promise<string> {
     return new Promise((resolve, reject) => {
         exec('reg query HKCU\\Environment /v Path', (error, stdout) => {
             if (error) {

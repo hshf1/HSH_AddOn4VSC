@@ -13,10 +13,14 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 - Java implementierung
 - Python implementierung
 
-## [1.7.0] - 30.04.2023
+## [1.7.0] - [1.7.1] - 30.04.2023 - 02.05.2023
 
 ### neu hinzugefügt
 - ProgressBar für Initialisierung und Problem melden
+
+### geändert
+
+- Bugfix in den Umgebungsvariablen am Windows
 
 ## [1.6.0] - [1.6.14] 27.04.2023 - 30.04.2023 
 

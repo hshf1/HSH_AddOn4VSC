@@ -22,6 +22,14 @@ export function checkJSON() {
 		writeLog(`${getPath('tasksjson')} wurde nicht gefunden.`, 'WARNING')
 		settasksjson()	/** Falls Fehler auftritt, sie also nicht vorhanden ist, wird sie neu erstellt */
 	}
+	try {
+		statSync(getPath('newtasksversioncontrol'))	/** Überprüft ob Datei vorhanden ist */
+		writeLog(`${getPath('newtasksversioncontrol')} wurde gefunden.`, 'INFO')
+	} catch (error) {
+		writeLog(`${getPath('newtasksversioncontrol')} wurde nicht gefunden.`, 'WARNING')
+		setNewVersionControl(getPath('newtasksversioncontrol'))
+		settasksjson()	/** Falls Fehler auftritt, sie also nicht vorhanden ist, wird sie neu erstellt */
+	}
 }
 
 /** Funktion die settings.json erstellt oder aktualisiert */
@@ -44,7 +52,19 @@ export function settasksjson() {
 	
 	try {
 		writeFileSync(PATH, CONTENT, { flag: 'w' }) /**Erstellt die tasks.json in dem Pfad von getPath() und mit dem Inhalt aus constants.ts */
-		writeLog(`${getPath('tasksjson')} wurde erfolgreich erstellt.`, 'INFO')
+		writeLog(`${PATH} wurde erfolgreich erstellt.`, 'INFO')
+	} catch (err: any) {
+		writeLog(`[${err.stack?.split('\n')[2]?.trim()}] ${err}`, 'ERROR') /** Falls Fehler auftritt wird Fehler ausgegeben */
+	}
+}
+
+function setNewVersionControl(tmp: string) {
+	const PATH: string = tmp
+	const CONTENT = ''
+	
+	try {
+		writeFileSync(PATH, CONTENT, { flag: 'w' })
+		writeLog(`${PATH} wurde erfolgreich erstellt.`, 'INFO')
 	} catch (err: any) {
 		writeLog(`[${err.stack?.split('\n')[2]?.trim()}] ${err}`, 'ERROR') /** Falls Fehler auftritt wird Fehler ausgegeben */
 	}
