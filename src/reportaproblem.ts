@@ -72,7 +72,7 @@ async function userReportInput(userReport: UserReport) {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
     userReport.mail = await window.showInputBox({
-        prompt: `Bitte E-Mail Adresse für künftige Korrespondenz angeben. Eine Kopie dieser Problemmeldung wird an die angegebene E-Mail Adresse gesendet.
+        prompt: `$(info)Bitte E-Mail Adresse für künftige Korrespondenz angeben. Eine Kopie dieser Problemmeldung wird an die angegebene E-Mail Adresse gesendet.
         (Zum Bestätigen die ENTER-Taste oder zum Abbrechen ESC-Taste drücken)`,
         value: "@stud.hs-hannover.de",
         valueSelection: [0, 0],
@@ -82,9 +82,9 @@ async function userReportInput(userReport: UserReport) {
             if (emailPattern.test(email)) {
               return null
             } else {
-              return "Bitte eine gültige E-Mail Adresse angeben! (max@mustermail.de) Zum Abbrechen die ESC-Taste drücken."
+              return `$(error)Bitte eine gültige E-Mail Adresse angeben! (max@mustermail.de) Zum Abbrechen die ESC-Taste drücken.`
             }
-          }
+        }
     }) || ''
 
     if (!userReport.mail) {
@@ -93,19 +93,22 @@ async function userReportInput(userReport: UserReport) {
     }
 
     userReport.problem = await window.showInputBox({
-        prompt: `Bitte beschreibe dein Problem.
+        title: 'Problem beschreiben:',
+        prompt: `$(info)Bitte beschreibe dein Problem.
         (Zum Bestätigen die ENTER-Taste oder zum Abbrechen ESC-Taste drücken)`,
         placeHolder: "Hier reinschreiben...",
         ignoreFocusOut: true
     }) || ''
 
     userReport.screenshot.permission = await window.showQuickPick(['Ja', 'Nein'], {
+        title: 'Screenshot anhängen:',
         canPickMany: false,
         placeHolder: 'Soll ein Screenshot von VSCode mitangehängt werden? (gesamter Bildschirm wird gecaptured!)',
         ignoreFocusOut: true
     }) || 'Nein'
 
     userReport.codeAttachPermission = await window.showQuickPick(['Ja', 'Nein'], {
+        title: 'Datei anhängen:',
         canPickMany: false,
         placeHolder: 'Soll die aktiv geöffnete Datei in VSCode mitgesendet werden?',
         ignoreFocusOut: true

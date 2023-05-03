@@ -9,8 +9,8 @@ let logBuffer: {msgBuffer: string, lvlBuffer: string}[] = []
 const currentDateString = new Date(Date.now()).toLocaleDateString('de-DE', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/(\d+)\.(\d+)\.(\d+)/, '$3-$2-$1')
 
 export function initLogFile() {
-    logFileName = `HSH_Addon4VSC_logFile-${currentDateString}.txt`
-    logFilePath = join(getPath('logfiledir'), logFileName)
+    logFileName = `logFile-${currentDateString}.txt`
+    logFilePath = join(getPath('addondir'), logFileName)
     
     if(!existsSync(logFilePath)) {
         writeFileSync(logFilePath, `Automatisch erzeugter LogFile - HSH_AddOn4VSC\n`)
@@ -56,19 +56,19 @@ export function writeLog(msg: string, lvl: string) {
 }
 
 function deleteLog() {
-    const logfiledir = getPath('logfiledir')
+    const addOnDir = getPath('addondir')
     const daysToKeep = 2 /** Anzahl Tage zum aufbewahren von Logs */
     let filesToDelete: string[] = []
 
     try {
-        filesToDelete = readdirSync(logfiledir)
+        filesToDelete = readdirSync(addOnDir)
         .filter((fileName) => {
-            const fileDate = new Date(fileName.replace('HSH_Addon4VSC_logFile-', '').replace('.txt', ''))
+            const fileDate = new Date(fileName.replace('logFile-', '').replace('.txt', ''))
             const currentDate = new Date(currentDateString)
             const secondsPerDay = 86400000
             return !isNaN(fileDate.getTime()) && Math.floor((currentDate.getTime() - fileDate.getTime())/secondsPerDay) >= daysToKeep
         })
-        .map((fileName) => join(logfiledir, fileName))
+        .map((fileName) => join(addOnDir, fileName))
 
         for (const fileToDelete of filesToDelete) {
             unlinkSync(fileToDelete)
