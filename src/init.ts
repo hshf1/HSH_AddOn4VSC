@@ -23,7 +23,7 @@ let path = {
     tasksJSON: "", testProgC: "", testProgJava: "", testProgPython: "", addOnDir: ""
 }
 let settings = {
-    computerraum: false, progLanguage: "", compiler: false,
+    computerraum: false, progLanguage: "", compiler: false, reloadNeeded: false,
     statusBarButton: window.createStatusBarItem(StatusBarAlignment.Right, 100) /** Definiert statusbar_button als StatusBarItem */
 }
 
@@ -259,14 +259,13 @@ export function getStatusBarItem() {
 
 /** Globale Funktion die den Compiler installiert */
 export async function initCompiler() {
-    let reloadNeeded: boolean = false
     if (getOS('WIN')) {
         await deleteOldPath('C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin')
         if (getComputerraumConfig()) {
-            reloadNeeded = await addNewPath('C:\\Program Files\\mingw64\\bin')
+            settings.reloadNeeded = await addNewPath('C:\\Program Files\\mingw64\\bin')
         } else {
-            reloadNeeded = await addNewPath('C:\\ProgramData\\chocolatey\\bin')
-            reloadNeeded = await addNewPath('C:\\ProgramData\\chocolatey\\lib\\mingw\\tools\\install\\mingw64\\bin')
+            settings.reloadNeeded = await addNewPath('C:\\ProgramData\\chocolatey\\bin')
+            settings.reloadNeeded = await addNewPath('C:\\ProgramData\\chocolatey\\lib\\mingw\\tools\\install\\mingw64\\bin')
         }
     }
 
@@ -275,7 +274,7 @@ export async function initCompiler() {
             commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(path.userHomeFolder)).then(async () => { /** Erzeugt neues Terminal und setzt das Verzeichnis auf das Heimatverzeichnis */
                 if (getOS('WIN')) {
                     if (settings.computerraum) {
-                        reloadNeeded = await addNewPath('C:\\Program Files\\mingw64\\bin')
+                        settings.reloadNeeded = await addNewPath('C:\\Program Files\\mingw64\\bin')
                     } else {
                         commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb runAs -ArgumentList \'/k curl -o %temp%\\vsc.cmd https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/vscwindows.cmd && %temp%\\vsc.cmd\'\"\n' })
                         /** Führt den Befehl aus das Skript zur installation auszuführen */
@@ -296,7 +295,7 @@ export async function initCompiler() {
         }
     })
 
-    if (reloadNeeded) {
+    if (settings.reloadNeeded) {
         commands.executeCommand('workbench.action.reloadWindow')
     }
 }
@@ -320,7 +319,7 @@ async function deleteOldPath(tmp: string): Promise<boolean> {
     } else {
         writeLog(`Alte Umgebungsvariable ist bereits gelöscht.`, 'INFO')
     }
-    return false
+    return settings.reloadNeeded ? true : false
 }
 
 async function addNewPath(tmp: string): Promise<boolean> {
@@ -341,7 +340,7 @@ async function addNewPath(tmp: string): Promise<boolean> {
     } else {
         writeLog(`Umgebungsvariable ist bereits vorhanden.`, 'INFO')
     }
-    return false
+    return settings.reloadNeeded ? true : false
 }
 
 export function getUserEnvironmentPath(): Promise<string> {
