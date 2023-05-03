@@ -9,7 +9,7 @@ import {
     Uri, workspace, ConfigurationTarget, ProgressLocation
 } from 'vscode'                     /** Importiert die genannten Befehle aus der VS-Code Erweiterung */
 import { homedir } from 'os'        /** Importiert die homedir Funktion aus dem Node.js Modul.  Die homedir-Funktion gibt das Heimatverzeichnis des aktuellen Benutzers als Zeichenfolge zurück. */
-import { exec } from 'child_process'/** Importiert die exec Funktion aus dem Node.js Modul. Die exec-Funktion wird verwendet, um einen Befehl in der Befehlszeile auszuführen. */
+import { exec, spawn } from 'child_process'/** Importiert die exec Funktion aus dem Node.js Modul. Die exec-Funktion wird verwendet, um einen Befehl in der Befehlszeile auszuführen. */
 
 import { initActivityBar } from './activity_bar'/** Importiert die Funktion die in der Activitybar die Links einfügt */
 import { openPreFolder } from './checkfolder'	/** Importiert die Funktion zum öffnen des Vorgefertigten Ordner aus  checkfolder.ts */
@@ -192,7 +192,11 @@ export function initPath() {
     }
 
     if (!existsSync(path.addOnDir)) {
-        mkdirSync(path.addOnDir)
+        try {
+            mkdirSync(path.addOnDir)
+        } catch (error: any) {
+            writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')
+        }
     }
 }
 
@@ -295,8 +299,15 @@ export async function initCompiler() {
         }
     })
 
-    if (settings.reloadNeeded) {
-        commands.executeCommand('workbench.action.reloadWindow')
+    if ((settings.reloadNeeded && getOS('WIN'))) {
+        const vsc = `${process.argv[0]}`
+        commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(path.userHomeFolder)).then(() => {
+            commands.executeCommand('workbench.action.terminal.sendSequence', { 
+                text: `Start-Process cmd '/c taskkill /F /IM Code.exe && start "" "${vsc}"'\n`
+            }).then((error: any) => {
+                writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')
+            })
+        })
     }
 }
 
