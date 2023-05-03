@@ -15,12 +15,12 @@ import { initActivityBar } from './activity_bar'/** Importiert die Funktion die 
 import { openPreFolder } from './checkfolder'	/** Importiert die Funktion zum öffnen des Vorgefertigten Ordner aus  checkfolder.ts */
 import { checkJSON } from './jsonfilescheck'    /** Importiert die Funktion zum überprüfen der jsons-Datei aus jsonfilescheck.ts */
 import { initLogFile, writeLog } from './logfile'
-import { existsSync } from 'fs'
+import { existsSync, mkdirSync } from 'fs'
 
 let os = { windows: false, osx: false, linux: false }
 let path = {
     userHomeFolder: "", CUebung: "", JavaUebung: "", PythonUebung: "", settingsJSON: "",
-    tasksJSON: "", testProgC: "", testProgJava: "", testProgPython: "", logFileDir: "", newTasksVersionControl: ""
+    tasksJSON: "", testProgC: "", testProgJava: "", testProgPython: "", addOnDir: ""
 }
 let settings = {
     computerraum: false, progLanguage: "", compiler: false,
@@ -33,7 +33,7 @@ export function initialize() {
         location: ProgressLocation.Notification,
         title: 'Initialisiere...',
         cancellable: false
-      }, async (progress, token) => {
+    }, async (progress, token) => {
         writeLog(`HSH_AddOn4VSC gestartet - Initialisierung beginnt!`, 'INFO')
         setOS() /** Setzt die entsprechende Boolean für das jeweilige Betriebssystem true */
         uninstallExtensions() // TODO: Später wieder rausnehmen
@@ -98,9 +98,9 @@ function uninstallExtensions() {
         if (extensions.getExtension('vscjava.vscode-java-pack')) {
             commands.executeCommand('workbench.extensions.uninstallExtension', 'vscjava.vscode-java-pack', true)
         }
-        if (extensions.getExtension('ms-python.python')) { 
-            commands.executeCommand('workbench.extensions.uninstallExtension', 'ms-python.python', true) 
-        }  
+        if (extensions.getExtension('ms-python.python')) {
+            commands.executeCommand('workbench.extensions.uninstallExtension', 'ms-python.python', true)
+        }
     } catch (error) {
         console.log(error)
     }
@@ -150,7 +150,7 @@ export function getProgLanguageConfig() {
 export function initPath() {
     path.userHomeFolder = homedir()
     if (os.windows && settings.computerraum) {
-        path.logFileDir = `${path.userHomeFolder}\\AppData\\Roaming\\Code\\User`
+        path.addOnDir = `${path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\HSH_AddOn4VSC`
         path.CUebung = `U:\\C_Uebung`
         path.JavaUebung = `U:\\Java_Uebung`
         path.PythonUebung = `U:\\Python_Uebung`
@@ -159,9 +159,8 @@ export function initPath() {
         path.testProgC = `${path.CUebung}\\testprog.c`
         path.testProgJava = `${path.JavaUebung}\\HelloWorld.java`
         path.testProgPython = `${path.PythonUebung}\\HelloWorld.py`
-        path.newTasksVersionControl = `${path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\tasks_v1_7_1.txt`
     } else if (os.windows && !settings.computerraum) {
-        path.logFileDir = `${path.userHomeFolder}\\AppData\\Roaming\\Code\\User`
+        path.addOnDir = `${path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\HSH_AddOn4VSC`
         path.CUebung = `${path.userHomeFolder}\\Documents\\C_Uebung`
         path.JavaUebung = `${path.userHomeFolder}\\Documents\\Java_Uebung`
         path.PythonUebung = `${path.userHomeFolder}\\Documents\\Python_Uebung`
@@ -170,9 +169,8 @@ export function initPath() {
         path.testProgC = `${path.CUebung}\\testprog.c`
         path.testProgJava = `${path.JavaUebung}\\HelloWorld.java`
         path.testProgPython = `${path.PythonUebung}\\HelloWorld.py`
-        path.newTasksVersionControl = `${path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\tasks_v1_7_1.txt`
     } else if (os.osx) { /** Wenn MAC */
-        path.logFileDir = `${path.userHomeFolder}/Library/Application Support/Code/User`
+        path.addOnDir = `${path.userHomeFolder}/Library/Application Support/Code/User/HSH_AddOn4VSC`
         path.CUebung = `${path.userHomeFolder}/Documents/C_Uebung`
         path.JavaUebung = `${path.userHomeFolder}/Documents/Java_Uebung`
         path.PythonUebung = `${path.userHomeFolder}/Documents/Python_Uebung`
@@ -181,9 +179,8 @@ export function initPath() {
         path.testProgC = `${path.CUebung}/testprog.c`
         path.testProgJava = `${path.JavaUebung}/HelloWorld.java`
         path.testProgPython = `${path.PythonUebung}/HelloWorld.py`
-        path.newTasksVersionControl = `${path.userHomeFolder}/Library/Application Support/Code/User/tasks_v1_7_1.txt`
     } else if (os.linux) { /** Wenn Linux */
-        path.logFileDir = `${path.userHomeFolder}/.config/Code/User`
+        path.addOnDir = `${path.userHomeFolder}/.config/Code/User/HSH_AddOn4VSC`
         path.CUebung = `${path.userHomeFolder}/Documents/C_Uebung`
         path.JavaUebung = `${path.userHomeFolder}/Documents/Java_Uebung`
         path.PythonUebung = `${path.userHomeFolder}/Documents/Python_Uebung`
@@ -192,7 +189,10 @@ export function initPath() {
         path.testProgC = `${path.CUebung}/testprog.c`
         path.testProgJava = `${path.JavaUebung}/HelloWorld.java`
         path.testProgPython = `${path.PythonUebung}/HelloWorld.py`
-        path.newTasksVersionControl = `${path.userHomeFolder}/.config/Code/User/tasks_v1_7_1.txt`
+    }
+
+    if (!existsSync(path.addOnDir)) {
+        mkdirSync(path.addOnDir)
     }
 }
 
@@ -206,8 +206,7 @@ export function initPath() {
  * - compiler
  * - testprog
  * - uebungfolder
- * - logfiledir
- * - newtasksversioncontrol
+ * - addondirÌ
 */
 export function getPath(tmp: string) {
     switch (tmp) {
@@ -237,10 +236,8 @@ export function getPath(tmp: string) {
                 default:
                     return ''
             }
-        case 'logfiledir':
-            return path.logFileDir
-        case 'newtasksversioncontrol':
-            return path.newTasksVersionControl
+        case 'addondir':
+            return path.addOnDir
         default:
             writeLog(`Unbekanntes Argument für getPath: ${tmp}`, 'ERROR')
             return ''
