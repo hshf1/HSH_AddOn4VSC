@@ -259,13 +259,14 @@ export function getStatusBarItem() {
 
 /** Globale Funktion die den Compiler installiert */
 export async function initCompiler() {
+    let reloadNeeded: boolean = false
     if (getOS('WIN')) {
         await deleteOldPath('C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin')
         if (getComputerraumConfig()) {
-            await addNewPath('C:\\Program Files\\mingw64\\bin')
+            reloadNeeded = await addNewPath('C:\\Program Files\\mingw64\\bin')
         } else {
-            await addNewPath('C:\\ProgramData\\chocolatey\\bin')
-            await addNewPath('C:\\ProgramData\\chocolatey\\lib\\mingw\\tools\\install\\mingw64\\bin')
+            reloadNeeded = await addNewPath('C:\\ProgramData\\chocolatey\\bin')
+            reloadNeeded = await addNewPath('C:\\ProgramData\\chocolatey\\lib\\mingw\\tools\\install\\mingw64\\bin')
         }
     }
 
@@ -274,7 +275,7 @@ export async function initCompiler() {
             commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(path.userHomeFolder)).then(async () => { /** Erzeugt neues Terminal und setzt das Verzeichnis auf das Heimatverzeichnis */
                 if (getOS('WIN')) {
                     if (settings.computerraum) {
-                        await addNewPath('C:\\Program Files\\mingw64\\bin')
+                        reloadNeeded = await addNewPath('C:\\Program Files\\mingw64\\bin')
                     } else {
                         commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb runAs -ArgumentList \'/k curl -o %temp%\\vsc.cmd https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/vscwindows.cmd && %temp%\\vsc.cmd\'\"\n' })
                         /** Führt den Befehl aus das Skript zur installation auszuführen */
@@ -294,9 +295,13 @@ export async function initCompiler() {
             }
         }
     })
+
+    if (reloadNeeded) {
+        commands.executeCommand('workbench.action.reloadWindow')
+    }
 }
 
-async function deleteOldPath(tmp: string) {
+async function deleteOldPath(tmp: string): Promise<boolean> {
     const pathToRemove: string = 'C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin'
     let pathVar = await getUserEnvironmentPath()
     const pathDirs = pathVar.split(';')
@@ -309,14 +314,16 @@ async function deleteOldPath(tmp: string) {
                 writeLog(`Fehler beim entfernen alter Umgebungsvariable: ${error.message}`, 'ERROR')
             } else {
                 writeLog(`Alte Umgebungsvariable erfolgreich entfernt: ${stdout.trim()}`, 'INFO')
+                return true
             }
         })
     } else {
         writeLog(`Alte Umgebungsvariable ist bereits gelöscht.`, 'INFO')
     }
+    return false
 }
 
-async function addNewPath(tmp: string) {
+async function addNewPath(tmp: string): Promise<boolean> {
     const pathToAdd: string = tmp
     let pathVar = await getUserEnvironmentPath()
     const pathDirs = pathVar.split(';')
@@ -327,12 +334,14 @@ async function addNewPath(tmp: string) {
             if (error) {
                 writeLog(`Fehler beim entfernen alter Umgebungsvariable: ${error.message}`, 'ERROR')
             } else {
-                writeLog(`Alte Umgebungsvariable erfolgreich entfernt: ${stdout.trim()}`, 'INFO')
+                writeLog(`Neue Umgebungsvariable (${pathToAdd}) erfolgreich hinzugefügt: ${stdout.trim()}`, 'INFO')
+                return true
             }
         })
     } else {
         writeLog(`Umgebungsvariable ist bereits vorhanden.`, 'INFO')
     }
+    return false
 }
 
 export function getUserEnvironmentPath(): Promise<string> {
