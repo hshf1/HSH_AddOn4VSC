@@ -74,14 +74,22 @@ async function userReportInput(userReport: UserReport) {
     userReport.mail = await window.showInputBox({
         prompt: `Bitte E-Mail Adresse für künftige Korrespondenz angeben. Eine Kopie dieser Problemmeldung wird an die angegebene E-Mail Adresse gesendet.
         (Zum Bestätigen die ENTER-Taste oder zum Abbrechen ESC-Taste drücken)`,
-        placeHolder: "max@mustermail.de (Pflichtfeld)",
-        ignoreFocusOut: true
+        value: "@stud.hs-hannover.de",
+        valueSelection: [0, 0],
+        title: "E-Mail Adresse eingeben:",
+        ignoreFocusOut: true,
+        validateInput: (email: string) => {
+            if (emailPattern.test(email)) {
+              return null
+            } else {
+              return "Bitte eine gültige E-Mail Adresse angeben! (max@mustermail.de) Zum Abbrechen die ESC-Taste drücken."
+            }
+          }
     }) || ''
 
-    userReport.mail = userReport.mail.trim()
-    if (!emailPattern.test(userReport.mail)) {
-        window.showWarningMessage("Problem melden wurde abgebrochen. Bitte eine richtige E-Mail Adresse angeben!")
-        throw new Error('Eingegebene E-Mail Adresse ist ungültig, melden eines Problems abgebrochen!')
+    if (!userReport.mail) {
+        window.showInformationMessage('Problem melden abgebrochen!')
+        throw new Error("E-Mail Eingabe abgebrochen!")
     }
 
     userReport.problem = await window.showInputBox({
