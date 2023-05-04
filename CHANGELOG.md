@@ -13,7 +13,7 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 - Java implementierung
 - Python implementierung
 
-## [1.7.0] - [1.7.6] - 30.04.2023 - 03.05.2023
+## [1.7.0] - [1.7.7] - 30.04.2023 - 03.05.2023
 
 ### neu hinzugefügt
 - ProgressBar für Initialisierung und Problem melden

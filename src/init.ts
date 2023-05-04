@@ -300,14 +300,15 @@ export async function initCompiler() {
     })
 
     if ((settings.reloadNeeded && getOS('WIN'))) {
-        const vsc = `${process.argv[0]}`
+        /*const vsc = `${process.argv[0]}`
         commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(path.userHomeFolder)).then(() => {
             commands.executeCommand('workbench.action.terminal.sendSequence', { 
                 text: `Start-Process cmd '/c taskkill /F /IM Code.exe && start "" "${vsc}"'\n`
             }).then((error: any) => {
                 writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')
             })
-        })
+        })*/
+        window.showWarningMessage(writeLog(`VSCode muss neu gestartet werden!`, 'WARNING'))
     }
 }
 
