@@ -96,7 +96,7 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
         name: getConstCommands()[7].command,
         callback: async () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[7].command}`, 'INFO')
-            reportAProblem()
+            reportAProblem() /** Fürht die Fehlermelden Funktion aus */
         }
     },
     {

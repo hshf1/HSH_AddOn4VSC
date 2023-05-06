@@ -93,6 +93,7 @@ export function getOS(tmp: string) {
     }
 }
 
+/** Funktion die vorübergehend, die Extensions deinstalliert um verwirrung bei Studenten zu vermeiden */
 function uninstallExtensions() {
     try {
         if (extensions.getExtension('vscjava.vscode-java-pack')) {
@@ -105,7 +106,7 @@ function uninstallExtensions() {
         console.log(error)
     }
 }
-
+/** initialisiert die Programmiersprache zu C */
 export function initConfigurations() {
     try {
         settings.progLanguage = workspace.getConfiguration('addon4vsc').get('sprache', 'C')
@@ -113,7 +114,7 @@ export function initConfigurations() {
         writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')
     }
 }
-
+/** Funktion die anhand des Compilers überprüft ob man sich an einem HSH Rechner befindet */
 function initLocation() {
     if (existsSync(`C:\\Program Files\\mingw64\\bin`)) {
         settings.computerraum = true
@@ -123,15 +124,15 @@ function initLocation() {
 
     writeLog(`Location: ${settings.computerraum ? 'HsH-Rechner' : 'Privater Rechner'}`, 'INFO')
 }
-
+/** Funktion die die Einstellung ob im Computerraum in den settings einstellt */
 export function setComputerraumConfig(tmp: boolean) {
     settings.computerraum = tmp
 }
-
+/** Funktion die die Einstellungen vom Computerraum zurückgibt */
 export function getComputerraumConfig() {
     return settings.computerraum
 }
-
+/** Funktion mit der sich die Programmiersprache in den Settings einstellen lässt */
 function setProgLanguageConfig(tmp: string) {
     settings.progLanguage = tmp
 
@@ -141,7 +142,7 @@ function setProgLanguageConfig(tmp: string) {
         writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')
     }
 }
-
+/** Funktion die die Einstellungen der Programmiersprache zurückgibt */
 export function getProgLanguageConfig() {
     return settings.progLanguage
 }
@@ -261,7 +262,7 @@ export function getStatusBarItem() {
     return settings.statusBarButton
 }
 
-/** Globale Funktion die den Compiler installiert */
+/** Globale Funktion die den Compiler installiert und die Pfade setzt*/
 export async function initCompiler() {
     if (getOS('WIN')) {
         await deleteOldPath('C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin')
@@ -297,7 +298,7 @@ export async function initCompiler() {
                 settings.compiler = true
             }
         }
-    })
+})
 
     if ((settings.reloadNeeded && getOS('WIN'))) {
         /*const vsc = `${process.argv[0]}`
@@ -311,7 +312,7 @@ export async function initCompiler() {
         window.showWarningMessage(writeLog(`VSCode muss neu gestartet werden!`, 'WARNING'))
     }
 }
-
+/** Funktion die nach dem Dev-C++ Pfad in den systempfaden sucht und löscht */
 async function deleteOldPath(tmp: string) {
     const pathToRemove: string = 'C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin'
     let pathVar = await getUserEnvironmentPath()
@@ -332,7 +333,7 @@ async function deleteOldPath(tmp: string) {
         writeLog(`Alte Umgebungsvariable ist bereits gelöscht.`, 'INFO')
     }
 }
-
+/** Funtkion die einen neue Pfade in den Benutzerumgebungsvariablen hinzufügen kann  */
 async function addNewPath(tmp: string) {
     const pathToAdd: string = tmp
     let pathVar = await getUserEnvironmentPath()
@@ -352,7 +353,7 @@ async function addNewPath(tmp: string) {
         writeLog(`Umgebungsvariable ist bereits vorhanden.`, 'INFO')
     }
 }
-
+/** Funktion die die Pfade der Umgebungsvariablen auslesen und zurückgeben kann */
 export function getUserEnvironmentPath(): Promise<string> {
     return new Promise((resolve, reject) => {
         exec('reg query HKCU\\Environment /v Path', (error, stdout) => {

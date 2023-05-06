@@ -21,6 +21,7 @@ export async function checkName() {
     /** Speichert den Dateipfad der aktuell geöffneten Datei, falls keine Datei offen ist wird "no_file_defined" gespeichert */
     const constdirname = dirname(filePath).toLowerCase()    /** Speichert den Ordnerpfad von Filepath */
     const constbasename = basename(filePath).toLowerCase()  /** Speichert den Dateinamen von Filepath */
+    const basenameWithoutExt = parse(constbasename).name /** Speichert den reinen Dateinamen ohne Dateiendung */
     const constextname = extname(filePath)  /** Speichert die Endung der Datei von Filepath z.B .js */
 
     if (getOS('WIN') && (constdirname.indexOf('ä') !== -1 || constdirname.indexOf('ö') !== -1 || constdirname.indexOf('ü') !== -1 || constdirname.indexOf(' ') !== -1)) {
@@ -28,7 +29,7 @@ export async function checkName() {
         window.showWarningMessage(writeLog(`${constdirname} enthält Umlaute oder Leerzeichen! Diese müssen manuell umbenannt werden!`, 'WARNING'))
     }
 
-    if (constbasename.indexOf('ä') !== -1 || constbasename.indexOf('ö') !== -1 || constbasename.indexOf('ü') !== -1 || constbasename.indexOf(' ') !== -1 /** || constextname !== '.c' */) {
+    if (basenameWithoutExt.indexOf('ä') !== -1 || basenameWithoutExt.indexOf('ö') !== -1 || basenameWithoutExt.indexOf('ü') !== -1 || basenameWithoutExt.indexOf(' ') !== -1 || basenameWithoutExt.indexOf('.') !== -1 /** || constextname !== '.c' */) {
         /** Überprüft ob der Dateiname Umlaute enthält (oder nicht mit .c endet )*/
 
         if (filePath === "no_file_defined" || filePath === undefined || filePath.includes('settings.json') || filePath.includes('tasks.json')) {
@@ -44,7 +45,7 @@ export async function checkName() {
 }
 
 async function rename(currentPath: string) {
-    const invalidChars = /[äöü ÄÖÜ]/g; /** Definiert die ungültigen Chars */
+    const invalidChars = /[äöü ÄÖÜ.]/g; /** Definiert die ungültigen Chars */
     let renameanfrage = await window.showWarningMessage( /** Fragt Benutzer ob Fehler ausgebessert werden sollen */
         writeLog(`Es sind Fehler im Dateinamen vorhanden!`, 'WARNING')+'Sollen diese automatisch angepasst werden?',
         'Ja',
@@ -54,9 +55,10 @@ async function rename(currentPath: string) {
     if (renameanfrage === 'Ja') {
         let newfullname: any; /** Erstellt neue Variable vom Typ Any um den neuen Dateipfad zwischen zu speichern */
         const constdirname = dirname(currentPath); /** Übergibt Ordnerpfad */
-        const constbasename = basename(currentPath) /** Übergibt Dateinamen */ 
+        const basenameWithoutExt = parse(currentPath).name /** Übergibt Dateinamen ohne Endung */ 
+        const constextname = extname(currentPath); /** Übergibt die Dateiendung bsp .c */
 
-        const replacedBasename = constbasename.replace(invalidChars, (char: string) => {
+        const replacedBasename = basenameWithoutExt.replace(invalidChars, (char: string) => {
         /** Definiert neue Konstante die den neuen umgeschriebenen Dateinamen enthält */
             return {
                 ' ': '_',
@@ -66,10 +68,12 @@ async function rename(currentPath: string) {
                 'Ä': 'AE',
                 'Ö': 'OE',
                 'Ü': 'UE',
+                '.': '_',
             }[char] || char;
         })
-
-        newfullname = join(constdirname, replacedBasename) /** Verbindet den Ordnerpfad und den neuen Dateinamen und speichert ihn */
+        const newName = replacedBasename.concat(constextname); /** fügt die Endung an den Dateinamen  */
+        newfullname = join(constdirname, newName) /** Verbindet den Ordnerpfad und den neuen Dateinamen und speichert ihn */
+        
 
         //TODO: später anpassen je nach eingestellter programmiersprache
         // if (extname(currentPath) !== '.c') { /** Überprüft ob der aktuelle Pfad nicht .c enthält*/
