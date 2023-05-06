@@ -13,7 +13,7 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 - Java implementierung
 - Python implementierung
 
-## [1.7.0] - [1.7.7] - 30.04.2023 - 03.05.2023
+## [1.7.0] - [1.7.8] - 30.04.2023 - 06.05.2023
 
 ### neu hinzugefügt
 - ProgressBar für Initialisierung und Problem melden
@@ -23,6 +23,7 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 - Bugfix in den Umgebungsvariablen am Windows
 - E-Mail Adresse wird beim Problem melden automatisch vorgefüllt mit "@stud.hs-hannover.de"
 - Neuer Ordner .../Code/User/HSH_AddOn4VSC für logFile und VersionControl
+- Kontrolliert den Dateinamen nun auch auf "." im Namen und ersetzt durch "_"
 
 ## [1.6.0] - [1.6.14] 27.04.2023 - 30.04.2023 
 
