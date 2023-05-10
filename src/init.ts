@@ -11,6 +11,9 @@ import {
 import { homedir } from 'os'        /** Importiert die homedir Funktion aus dem Node.js Modul.  Die homedir-Funktion gibt das Heimatverzeichnis des aktuellen Benutzers als Zeichenfolge zurück. */
 import { exec, spawn } from 'child_process'/** Importiert die exec Funktion aus dem Node.js Modul. Die exec-Funktion wird verwendet, um einen Befehl in der Befehlszeile auszuführen. */
 
+import * as process from 'process';
+import * as fs from 'fs-extra';
+
 import { initActivityBar } from './activity_bar'/** Importiert die Funktion die in der Activitybar die Links einfügt */
 import { openPreFolder } from './checkfolder'	/** Importiert die Funktion zum öffnen des Vorgefertigten Ordner aus  checkfolder.ts */
 import { checkJSON } from './jsonfilescheck'    /** Importiert die Funktion zum überprüfen der jsons-Datei aus jsonfilescheck.ts */
@@ -41,8 +44,8 @@ export function initialize() {
             commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb') /** Installiere "vadimcn.vscode-lldb" */
         }   /** "vadimcn.vscode-lldb" ist eine Erweiterung, die für den Debbuger wichtig ist. */
 
-        initLocation()
-        initConfigurations()
+        initLocation() /** Funktion die anhand des Compilers überprüft ob man sich an einem HSH Rechner befindet */
+        initConfigurations() /** initialisiert die Programmiersprache zu C */
         initPath() /** Setzt die Pfade für .jsons und Übungsordner */
         initLogFile()
 
@@ -54,6 +57,8 @@ export function initialize() {
         initStatusBarItem()  /** Initialisiert den Button in der Statusleiste */
         initActivityBar()   /** Ruft Funktion auf die für die Activitybar zuständig ist */
         initCompiler()     /** Compiler initialisieren */
+
+        initExtensionsDir() /** Funktion die überprüft ob HSH Rechner und ggf. Extensions Pfad einstellt */
 
         writeLog(`Initialisierung beendet!`, 'INFO')
     })
@@ -298,7 +303,7 @@ export async function initCompiler() {
                 settings.compiler = true
             }
         }
-})
+    })
 
     if ((settings.reloadNeeded && getOS('WIN'))) {
         /*const vsc = `${process.argv[0]}`
@@ -369,4 +374,54 @@ export function getUserEnvironmentPath(): Promise<string> {
             }
         })
     })
+}
+
+
+async function initExtensionsDir() {
+
+    const username = process.env.USERNAME; //Speichert den Username für den Pfad ein
+    const ExtensionsDirPath = `C:\\Users\\${username}\\.vscode\\extensions`; //Standard Pfad für die Extensions
+    const ExtensionsDirPath_HSH = `D:\\VSCODE_Extensions` //Neuer Pfad für HSH Rechner //TODO durch U ändern
+    const ExtensionsDirPath_HSH_test = `C:\\Users\\${username}\\.vscode\\test_extensions` //TODO Löschen
+
+    let pathDir = await getUserExtensionDir() //Überpüft die aktuelle Variable
+
+    if (settings.computerraum && os.windows) { //Wenn im Computerraum aktiv
+        if (pathDir == ExtensionsDirPath_HSH) { //Wenn Pfad schon besteht
+            window.showInformationMessage(`Extensionpfad bereits gesetzt: ${ExtensionsDirPath}`)
+        } else {
+            exec(`setx VSCODE_EXTENSIONS ${ExtensionsDirPath_HSH}`) //setzt die Umgebungsvariable
+            window.showInformationMessage(`Extensionspfad neu gesetzt: ${ExtensionsDirPath_HSH}`) //Zeigt Hinweis
+            await copyExtensions(ExtensionsDirPath_HSH_test, ExtensionsDirPath_HSH) //Kopiert die derzeitigen Addons ins neue Verzeichnis
+            window.showWarningMessage("VSCode muss neu gestartetet werden!") //VSCode muss neu gestartet werden, um die Addons aus dem neuen Verzeichnis zu laden
+        }
+    } else if (!settings.computerraum && os.windows && pathDir != "%VSCODE_EXTENSIONS%") {
+        exec(`setx VSCODE_EXTENSIONS ""`) //Setzt die Variable wieder zurück
+        window.showInformationMessage(`Extensionspfad zurück gesetzt:`) //Zeigt Hinweis
+    }
+
+}
+
+/** Funktion die den VSCODE_EXTENSIONS Pfad ausliest */
+export function getUserExtensionDir(): Promise<string> {
+    return new Promise((resolve, reject) => {
+        exec('echo %VSCODE_EXTENSIONS%', (error, stdout) => {
+            if (error) {
+                reject(error)
+            } else {
+                resolve(stdout.trim())
+            }
+        })
+    })
+}
+
+//Funktion die den Ordner der Extensions kopiert
+async function copyExtensions(sourcePath: string, destPath: string) {
+    try {
+        await fs.ensureDir(destPath); // Create destination directory if it doesn't exist
+        await fs.copy(sourcePath, destPath); // Copy all files and subdirectories from the source to the destination director
+        console.log('All extensions copied successfully!');
+    } catch (err) {
+        console.error(err);
+    }
 }

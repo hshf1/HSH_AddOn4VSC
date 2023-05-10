@@ -102,6 +102,7 @@
     "ms-vsliveshare.vsliveshare"
   ],
   "devDependencies": {
+    "@types/fs-extra": "^11.0.1",
     "@types/glob": "^8.0.0",
     "@types/mocha": "^10.0.0",
     "@types/node": "16.x",
@@ -117,6 +118,7 @@
   },
   "dependencies": {
     "@types/request": "^2.48.8",
+    "fs-extra": "^11.1.1",
     "nodemailer": "^6.9.1",
     "request": "^2.88.2"
   }
