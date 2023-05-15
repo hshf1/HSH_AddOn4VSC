@@ -392,17 +392,21 @@ async function initExtensionsDir() {
         } else {
             let answer = await window.showInformationMessage("Möchtest du das Addon auf das U:\ Laufwerk verschieben, sodass du es nicht jedesmal erneut herunterladen musst?", "Ja", "Nein")
             if (answer === "Ja") {
-                exec(`setx VSCODE_EXTENSIONS ${ExtensionsDirPath_HSH}`) //setzt die Umgebungsvariable
-                writeLog(`Extensionspfad neu gesetzt: ${ExtensionsDirPath_HSH}`, 'INFO')
-
-                await copyExtensions(ExtensionsDirPath, ExtensionsDirPath_HSH) //Kopiert die derzeitigen Addons ins neue Verzeichnis
+                if (fs.existsSync('U:\\')) { //Überprüft ob das U: Laufwerk existiert
+                    exec(`setx VSCODE_EXTENSIONS ${ExtensionsDirPath_HSH}`) //setzt die Umgebungsvariable
+                    writeLog(`Extensionspfad neu gesetzt: ${ExtensionsDirPath_HSH}`, 'INFO')
+                    await copyExtensions(ExtensionsDirPath, ExtensionsDirPath_HSH) //Kopiert die derzeitigen Addons ins neue Verzeichnis
+                } else {
+                    window.showErrorMessage(`Laufwerk U:\\ nicht gefunden.`) //Gibt Fehler aus
+                    writeLog(`Laufwerk U: nicht gefunden`, 'INFO')
+                }
             }
         }
-    } else if (!settings.computerraum && os.windows && pathDir != "%VSCODE_EXTENSIONS%") {
+    } else if (!settings.computerraum && os.windows && pathDir != "%VSCODE_EXTENSIONS%") { //Wenn privater Windowsrechner und es ist ein Pfad gesetzt
         exec(`setx VSCODE_EXTENSIONS ""`) //Setzt die Variable wieder zurück
         window.showInformationMessage(`Extensionspfad zurück gesetzt:`) //Zeigt Hinweis
+        writeLog(`Extensionspfad zurückgesetzt`, 'INFO')
     }
-
 }
 
 /** Funktion die den VSCODE_EXTENSIONS Pfad ausliest */
@@ -428,11 +432,11 @@ async function copyExtensions(sourcePath: string, destPath: string) {
         await fs.copy(sourcePath, destPath); // Copy all files and subdirectories from the source to the destination director
         console.log('All extensions copied successfully!');
         writeLog(`Kopiervorgang des Addons abgeschlossen`, 'INFO')
-        window.showWarningMessage("Kopiervorgang beendet. VSCode kann neu gestartet werden!") //VSCode muss neu gestartet werden, um die Addons aus dem neuen Verzeichnis zu laden
-        //TODO Auto neustart der die Umgebungsvariablen mit aktualisiert.
+        window.showInformationMessage("Kopiervorgang beendet. VSCode kann neu gestartet werden!") //VSCode muss neu gestartet werden, um die Addons aus dem neuen Verzeichnis zu laden
+        //TODO Auto Neustart der die Umgebungsvariablen mit aktualisiert.
     } catch (err) {
         console.error(err);
         writeLog(`Fehler beim kopieren des Addons: ${err}`, 'ERROR')
-        window.showWarningMessage("Bei dem Kopieren ist ein Fehler aufgetreten!")
+        window.showErrorMessage("Bei dem Kopieren ist ein Fehler aufgetreten!")
     }
 }
