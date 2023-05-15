@@ -380,9 +380,10 @@ export function getUserEnvironmentPath(): Promise<string> {
 async function initExtensionsDir() {
 
     const username = process.env.USERNAME; //Speichert den Username für den Pfad ein
+
     const ExtensionsDirPath = `C:\\Users\\${username}\\.vscode\\extensions`; //Standard Pfad für die Extensions
-    const ExtensionsDirPath_HSH = `D:\\VSCODE_Extensions` //Neuer Pfad für HSH Rechner //TODO durch U ändern
-    const ExtensionsDirPath_HSH_test = `C:\\Users\\${username}\\.vscode\\test_extensions` //TODO Löschen
+    const ExtensionsDirPath_HSH = `U:\\VSCODE_Extensions` //Neuer Pfad für HSH Rechner 
+    //const ExtensionsDirPath_HSH_test = `C:\\Users\\${username}\\.vscode\\test_extensions` //TODO Löschen
 
     let pathDir = await getUserExtensionDir() //Überpüft die aktuelle Variable
 
@@ -392,7 +393,7 @@ async function initExtensionsDir() {
         } else {
             exec(`setx VSCODE_EXTENSIONS ${ExtensionsDirPath_HSH}`) //setzt die Umgebungsvariable
             window.showInformationMessage(`Extensionspfad neu gesetzt: ${ExtensionsDirPath_HSH}`) //Zeigt Hinweis
-            await copyExtensions(ExtensionsDirPath_HSH_test, ExtensionsDirPath_HSH) //Kopiert die derzeitigen Addons ins neue Verzeichnis
+            await copyExtensions(ExtensionsDirPath, ExtensionsDirPath_HSH) //Kopiert die derzeitigen Addons ins neue Verzeichnis
             window.showWarningMessage("VSCode muss neu gestartetet werden!") //VSCode muss neu gestartet werden, um die Addons aus dem neuen Verzeichnis zu laden
         }
     } else if (!settings.computerraum && os.windows && pathDir != "%VSCODE_EXTENSIONS%") {
