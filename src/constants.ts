@@ -80,11 +80,11 @@ export function getSettingsContent() {
     let content = `{
         // Allgemeine Nutzereinstellungen
         "addon4vsc.sprache": "C",                       // Programmiersprache auswählen (derzeit C, Java und Python)
-        "terminal.integrated.scrollback": 10000,        //Setzt die max.Anzahl der Zeilen im Terminal auf 10000
+        "terminal.integrated.scrollback": 10000,        // Setzt die max.Anzahl der Zeilen im Terminal auf 10000
         "liveshare.anonymousGuestApproval": "accept",   // Live Share eingeladene Anonyme Nutzer automatisch akzeptieren
         "liveshare.guestApprovalRequired": false,       // Live Share um eingeladene Nutzer automatisch zu akzeptieren auf false einstellen
         "extensions.ignoreRecommendations": true,       // Keine Empfehlungen mehr Anzeigen
-        "files.encoding": "${ENCODING}",                        // Zur richtigen Darstellung von Umlauten
+        "files.encoding": "${ENCODING}",                // Zur richtigen Darstellung von Umlauten
         //"files.autoGuessEncoding": true,              // Zurzeit deaktiviert, da noch instabil! Automatische Anpassung der Encodierung, falls möglich
         "editor.unicodeHighlight.nonBasicASCII": false, // Nicht Basic ASCII Zeichen nicht hervorheben
         "files.autoSave": "onFocusChange",              // Dateien werden bei Änderungen des Fokus automatisch gespeichert
@@ -98,6 +98,7 @@ export function getSettingsContent() {
         "code-runner.runInTerminal": true,              // Um Eingaben in seinem Programm tätigen zu können z.B. für scanf
         "code-runner.preserveFocus": false,             // damit springt man automatisch ins Terminal bei Abarbeitung
         "code-runner.defaultLanguage": "C",             // Default-Language Code-Runner
+        "update.mode": "manual",                        //Sorgt dafür das VSCode nicht Automatisch nach Updates sucht. Updates können jedoch Manuel durchegeführt werden
         // Einstellungen für den Debugger
         "launch": {
             "version": "0.2.0",

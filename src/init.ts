@@ -379,22 +379,24 @@ export function getUserEnvironmentPath(): Promise<string> {
 
 async function initExtensionsDir() {
 
-    const username = process.env.USERNAME; //Speichert den Username für den Pfad ein
+    const username = homedir(); //Speichert den Username für den Pfad ein
 
-    const ExtensionsDirPath = `C:\\Users\\${username}\\.vscode\\extensions`; //Standard Pfad für die Extensions
+    const ExtensionsDirPath = `${username}\\.vscode\\extensions`; //Standard Pfad für die Extensions
     const ExtensionsDirPath_HSH = `U:\\VSCODE_Extensions` //Neuer Pfad für HSH Rechner 
-    //const ExtensionsDirPath_HSH_test = `C:\\Users\\${username}\\.vscode\\test_extensions` //TODO Löschen
 
     let pathDir = await getUserExtensionDir() //Überpüft die aktuelle Variable
 
     if (settings.computerraum && os.windows) { //Wenn im Computerraum aktiv
         if (pathDir == ExtensionsDirPath_HSH) { //Wenn Pfad schon besteht
-            window.showInformationMessage(`Extensionpfad bereits gesetzt: ${ExtensionsDirPath}`)
+            writeLog(`Extensionpfad bereits gesetzt: ${ExtensionsDirPath_HSH}`, "INFO")
         } else {
-            exec(`setx VSCODE_EXTENSIONS ${ExtensionsDirPath_HSH}`) //setzt die Umgebungsvariable
-            window.showInformationMessage(`Extensionspfad neu gesetzt: ${ExtensionsDirPath_HSH}`) //Zeigt Hinweis
-            await copyExtensions(ExtensionsDirPath, ExtensionsDirPath_HSH) //Kopiert die derzeitigen Addons ins neue Verzeichnis
-            window.showWarningMessage("VSCode muss neu gestartetet werden!") //VSCode muss neu gestartet werden, um die Addons aus dem neuen Verzeichnis zu laden
+            let answer = await window.showInformationMessage("Möchtest du das Addon auf das U:\ Laufwerk verschieben, sodass du es nicht jedesmal erneut herunterladen musst?", "Ja", "Nein")
+            if (answer === "Ja") {
+                exec(`setx VSCODE_EXTENSIONS ${ExtensionsDirPath_HSH}`) //setzt die Umgebungsvariable
+                writeLog(`Extensionspfad neu gesetzt: ${ExtensionsDirPath_HSH}`, 'INFO')
+
+                await copyExtensions(ExtensionsDirPath, ExtensionsDirPath_HSH) //Kopiert die derzeitigen Addons ins neue Verzeichnis
+            }
         }
     } else if (!settings.computerraum && os.windows && pathDir != "%VSCODE_EXTENSIONS%") {
         exec(`setx VSCODE_EXTENSIONS ""`) //Setzt die Variable wieder zurück
@@ -419,10 +421,18 @@ export function getUserExtensionDir(): Promise<string> {
 //Funktion die den Ordner der Extensions kopiert
 async function copyExtensions(sourcePath: string, destPath: string) {
     try {
+        window.showWarningMessage(`Eine Kopie des Addons wird angelegt, bitte VSCode nicht schließen`)
+
         await fs.ensureDir(destPath); // Create destination directory if it doesn't exist
+        writeLog(`Kopiervorgang des Addons begonnen`, 'INFO')
         await fs.copy(sourcePath, destPath); // Copy all files and subdirectories from the source to the destination director
         console.log('All extensions copied successfully!');
+        writeLog(`Kopiervorgang des Addons abgeschlossen`, 'INFO')
+        window.showWarningMessage("Kopiervorgang beendet. VSCode kann neu gestartet werden!") //VSCode muss neu gestartet werden, um die Addons aus dem neuen Verzeichnis zu laden
+        //TODO Auto neustart der die Umgebungsvariablen mit aktualisiert.
     } catch (err) {
         console.error(err);
+        writeLog(`Fehler beim kopieren des Addons: ${err}`, 'ERROR')
+        window.showWarningMessage("Bei dem Kopieren ist ein Fehler aufgetreten!")
     }
 }
