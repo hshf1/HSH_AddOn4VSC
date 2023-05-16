@@ -105,10 +105,14 @@ export async function initActivityBar() {
         treeDataProvider: treeDataProvider /** Objekt wird so definiert das eine TreeDataProivder Eigenschaft hat, die auf die Variable gleichen Names verweist */
     }
 
-    const links = await getGithubLinks() /** github Links werden in die Variable links geladen */
-    for (let i = 0; i < links.length; i++) { /** Schleife durch alle Links */
-        dependencies_link.push(new Dependency(links[i].name, TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: [links[i].link] }))
-    }   /** Definiert die Links als neue Dependencys/Elemente die in der Seitenleiste unter Links auftauchen */
+    try {
+        const links = await getGithubLinks() /** github Links werden in die Variable links geladen */
+        for (let i = 0; i < links.length; i++) { /** Schleife durch alle Links */
+            dependencies_link.push(new Dependency(links[i].name, TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: [links[i].link] }))
+        }   /** Definiert die Links als neue Dependencys/Elemente die in der Seitenleiste unter Links auftauchen */
+    } catch (error) {
+        dependencies_link = []
+    }
 
     window.registerTreeDataProvider('menue_bar_activity', treeDataProvider) /** Erstellt neuen TreeView mit dem Namen "menue_bar_activity" und den Daten aus TreeDataProvider*/
     window.createTreeView('menue_bar_activity', treeViewOptions) /** Erstellt die grphische Oberfläche des TreeViews an der Seitenleiste */
