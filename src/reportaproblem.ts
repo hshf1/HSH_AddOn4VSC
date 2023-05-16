@@ -15,8 +15,10 @@ import { tmpdir } from "os"
 import { createTransport } from "nodemailer"
 
 import { getSmtpEMail, getSmtpHost, getSmtpPW, getSmtpPort } from "./smtpconfig"
-import { getOS, getPath, getUserEnvironmentPath } from "./init"
+import { getUserEnvironmentPath } from "./init/initMain"
 import { getLogFileName, getLogFilePath, writeLog } from "./logfile"
+import { getPath } from './init/paths'
+import { getOSBoolean } from "./init/os"
 
 const execAsync = promisify(exec)
 
@@ -55,7 +57,7 @@ export function reportAProblem() {
                 progress.report({ message: "Mache ein Screenshot...", increment: 20 })
                 await getScreenshot(userReport)
             }
-            if (getOS('WIN')) {
+            if (getOSBoolean('Windows')) {
                 progress.report({ message: "Speichern der aktuellen Nutzer-Umgebungsvariablen...", increment: 30})
                 await getUserEnvironment()
             }
@@ -125,11 +127,11 @@ async function getScreenshot(userReport: UserReport) {
     try {
         userReport.screenshot.filePath = join(tmpdir(), `screenshot_${Date.now()}.png`)
         // TODO: ggf. Möglichkeit bieten, ganzen Bildschirm oder nur VSC Window zu screenshotten?
-        if (getOS("WIN")) {
+        if (getOSBoolean("Windows")) {
             await execAsync(`powershell -Command "& { Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('%{PRTSC}'); Start-Sleep -Milliseconds 250; $image = [System.Windows.Forms.Clipboard]::GetImage(); $image.Save('${userReport.screenshot.filePath}'); }"`)
-        } else if (getOS("MAC")) {
+        } else if (getOSBoolean("MacOS")) {
             await execAsync(`screencapture "${userReport.screenshot.filePath}"`) // TODO: Derzeit gesamter Bildschirm - ändern, dass nur VSC Window gecaptured wird
-        } else if (getOS("LIN")) {
+        } else if (getOSBoolean("Linux")) {
             await execAsync(`gnome-screenshot -f "${userReport.screenshot.filePath}"`) // TODO: Linux muss noch getestet werden
         } else {
             throw new Error(`Ungültige Plattform: ${process.platform}`)
@@ -143,16 +145,16 @@ async function getScreenshot(userReport: UserReport) {
 async function getUserEnvironment() {
     let userEnvironment = await getUserEnvironmentPath()
     userEnvironment.replace(';', '\n')
-    writeFileSync(getPath('userenv'), userEnvironment, { flag: 'w'})
+    writeFileSync(join(getPath().vscUserData, 'userEnvironmentPaths.txt'), userEnvironment, { flag: 'w'})
 }
 /** Funktion die, den LogFile, und die Jsons kopiert und in das Objekt speichert */
 async function getAttachments(userReport: UserReport) {
     userReport.attachments.push({ filename: getLogFileName(), path: getLogFilePath() })
     userReport.attachments.push({ filename: 'terminalcontent.txt', path: userReport.terminalContentPath })
-    userReport.attachments.push({ filename: 'settings.json', path: getPath('settingsjson') })
-    userReport.attachments.push({ filename: 'tasks.json', path: getPath('tasksjson') })
-    if (getOS('WIN')) {
-        userReport.attachments.push({ filename: 'userEnvironmentPaths.txt', path: getPath('userenv')})
+    userReport.attachments.push({ filename: 'settings.json', path: join(getPath().vscUserData, 'settings.json') })
+    userReport.attachments.push({ filename: 'tasks.json', path: join(getPath().vscUserData, 'tasks.json') })
+    if (getOSBoolean('Windows')) {
+        userReport.attachments.push({ filename: 'userEnvironmentPaths.txt', path: join(getPath().vscUserData, 'userEnvironmentPaths.txt')})
     }
     
     if (userReport.screenshot.permission) {

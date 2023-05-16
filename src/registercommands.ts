@@ -9,11 +9,12 @@ import { treeDataProvider } from './activity_bar'   /** Importiert den TreeDataP
 import { getConstCommands } from './constants'         /** Importiert die Namen und Beschreibungen der Commands aus constants.ts*/
 import { setsettingsjson, settasksjson } from './jsonfilescheck'       /** Importiert die Funktion zur Überprüfung und aktualisierung der .jsons Dateien aus jsonfilescheck.ts*/ 
 import { 
-    getStatusBarItem, getOS, initCompiler,
+    getStatusBarItem, initCompiler,
     getComputerraumConfig, setComputerraumConfig,
-} from './init' /** Importiert Funktionen aus init.ts */
+} from './init/initMain' /** Importiert Funktionen aus init.ts */
 import { reportAProblem } from './reportaproblem'
 import { writeLog } from './logfile'
+import { getOSBoolean } from './init/os'
 
 const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert und beziehen ihre Namen und Beschreibungen aus der Datei constants.ts */
     {
@@ -76,7 +77,7 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
         callback: () => {     /** Erstellt asynchrone Funktion  */
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[6].command}`, 'INFO')
             const COMPUTERRAUM = getComputerraumConfig()
-            if (!getOS('WIN')) { /** Überprüft ob es sich um einen Windows PC handelt */
+            if (!getOSBoolean('Windows')) { /** Überprüft ob es sich um einen Windows PC handelt */
                 window.showInformationMessage('Diese Einstellung ist nur für Windows-Betriebssysteme notwendig.')
                 return
             }

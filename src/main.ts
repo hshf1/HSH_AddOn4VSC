@@ -20,7 +20,7 @@ import {
  *  debug: Ein Objekt, das Methoden und Ereignisse bereitstellt, um Debugging-Funktionen in Visual Studio Code-Erweiterungen zu aktivieren.
  *	ConfigurationChangeEvent: Ein Ereignis, das ausgelöst wird wenn sich eine Konfigurationseinstellung ändert. Enthält Informationen über die änderung */
 
-import { initialize } from './init' /** Importiert eine Reihe von Befehlen aus der init.ts */
+import { initialize } from './init/initMain' /** Importiert eine Reihe von Befehlen aus der init.ts */
 import { getCommands } from './registercommands' /** Importiert die Registerbefehle für die Anzeigen aus registercommands.ts */
 import { writeLog } from './logfile'
 import { eventHandler_changeProgLanguage, eventHandler_checkName } from './eventHandler'

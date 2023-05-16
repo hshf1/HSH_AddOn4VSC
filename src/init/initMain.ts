@@ -9,24 +9,19 @@ import {
     Uri, workspace, ConfigurationTarget, ProgressLocation
 } from 'vscode'                     /** Importiert die genannten Befehle aus der VS-Code Erweiterung */
 import { homedir } from 'os'        /** Importiert die homedir Funktion aus dem Node.js Modul.  Die homedir-Funktion gibt das Heimatverzeichnis des aktuellen Benutzers als Zeichenfolge zurück. */
-import { exec, spawn } from 'child_process'/** Importiert die exec Funktion aus dem Node.js Modul. Die exec-Funktion wird verwendet, um einen Befehl in der Befehlszeile auszuführen. */
+import { exec } from 'child_process'/** Importiert die exec Funktion aus dem Node.js Modul. Die exec-Funktion wird verwendet, um einen Befehl in der Befehlszeile auszuführen. */
+import { existsSync } from 'fs'
+import * as fs from 'fs-extra'
 
-import * as process from 'process';
-import * as fs from 'fs-extra';
+import { initActivityBar } from '../activity_bar'/** Importiert die Funktion die in der Activitybar die Links einfügt */
+import { openPreFolder } from '../checkfolder'	/** Importiert die Funktion zum öffnen des Vorgefertigten Ordner aus  checkfolder.ts */
+import { checkJSON } from '../jsonfilescheck'    /** Importiert die Funktion zum überprüfen der jsons-Datei aus jsonfilescheck.ts */
+import { initLogFile, writeLog } from '../logfile'
+import { getPath, initPath } from './paths'
+import { getOSBoolean, setOS } from './os'
 
-import { initActivityBar } from './activity_bar'/** Importiert die Funktion die in der Activitybar die Links einfügt */
-import { openPreFolder } from './checkfolder'	/** Importiert die Funktion zum öffnen des Vorgefertigten Ordner aus  checkfolder.ts */
-import { checkJSON } from './jsonfilescheck'    /** Importiert die Funktion zum überprüfen der jsons-Datei aus jsonfilescheck.ts */
-import { initLogFile, writeLog } from './logfile'
-import { existsSync, mkdirSync } from 'fs'
-
-let os = { windows: false, osx: false, linux: false }
-let path = {
-    userHomeFolder: "", CUebung: "", JavaUebung: "", PythonUebung: "", settingsJSON: "",
-    tasksJSON: "", testProgC: "", testProgJava: "", testProgPython: "", addOnDir: ""
-}
 let settings = {
-    computerraum: false, progLanguage: "", compiler: false, reloadNeeded: false,
+    computerraum: false, progLanguage: "C", compiler: false, reloadNeeded: false,
     statusBarButton: window.createStatusBarItem(StatusBarAlignment.Right, 100) /** Definiert statusbar_button als StatusBarItem */
 }
 
@@ -40,7 +35,7 @@ export function initialize() {
         writeLog(`HSH_AddOn4VSC gestartet - Initialisierung beginnt!`, 'INFO')
         setOS() /** Setzt die entsprechende Boolean für das jeweilige Betriebssystem true */
         uninstallExtensions() // TODO: Später wieder rausnehmen
-        if (!getOS('WIN') && !extensions.getExtension('vadimcn.vscode-lldb')) { /** Wenn kein Windows und "vadimcn.vscode-lldb" nicht installiert ist */
+        if (!getOSBoolean('Windows') && !extensions.getExtension('vadimcn.vscode-lldb')) { /** Wenn kein Windows und "vadimcn.vscode-lldb" nicht installiert ist */
             commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb') /** Installiere "vadimcn.vscode-lldb" */
         }   /** "vadimcn.vscode-lldb" ist eine Erweiterung, die für den Debbuger wichtig ist. */
 
@@ -62,40 +57,6 @@ export function initialize() {
 
         writeLog(`Initialisierung beendet!`, 'INFO')
     })
-}
-
-/** Funktion die Überprüft welches Betriebssystem vorliegt und entsprechend die Boolean setzt */
-function setOS() {
-    let tmp: string = ''
-    os.windows = process.platform.startsWith('win')
-    os.osx = process.platform == 'darwin'
-    os.linux = !os.windows && !os.osx
-
-    if (os.windows) {
-        tmp = "Windows"
-    } else if (os.osx) {
-        tmp = "MacOS"
-    } else if (os.linux) {
-        tmp = "Linux"
-    } else {
-        tmp = "Betriebssystem wurde nicht erkannt!"
-    }
-
-    writeLog(`Folgendes Betriebssystem wurde erkannt: ${tmp}`, 'INFO')
-}
-
-/** Funktion die WIN, MAC oder LIN als Eingabe bekommnt und entsprechend den Boolschen Status zurückgibt */
-export function getOS(tmp: string) {
-    switch (tmp) {
-        case 'WIN':
-            return os.windows
-        case 'MAC':
-            return os.osx
-        case 'LIN':
-            return os.linux
-        default:
-            return false
-    }
 }
 
 /** Funktion die vorübergehend, die Extensions deinstalliert um verwirrung bei Studenten zu vermeiden */
@@ -152,108 +113,6 @@ export function getProgLanguageConfig() {
     return settings.progLanguage
 }
 
-/** Funktion die die Pfade abhängig vom Betriebssystem bestimmt und in Variablen speichert */
-export function initPath() {
-    path.userHomeFolder = homedir()
-    if (os.windows && settings.computerraum) {
-        path.addOnDir = `${path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\HSH_AddOn4VSC`
-        path.CUebung = `U:\\C_Uebung`
-        path.JavaUebung = `U:\\Java_Uebung`
-        path.PythonUebung = `U:\\Python_Uebung`
-        path.settingsJSON = `${path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\settings.json`
-        path.tasksJSON = `${path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
-        path.testProgC = `${path.CUebung}\\testprog.c`
-        path.testProgJava = `${path.JavaUebung}\\HelloWorld.java`
-        path.testProgPython = `${path.PythonUebung}\\HelloWorld.py`
-    } else if (os.windows && !settings.computerraum) {
-        path.addOnDir = `${path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\HSH_AddOn4VSC`
-        path.CUebung = `${path.userHomeFolder}\\Documents\\C_Uebung`
-        path.JavaUebung = `${path.userHomeFolder}\\Documents\\Java_Uebung`
-        path.PythonUebung = `${path.userHomeFolder}\\Documents\\Python_Uebung`
-        path.settingsJSON = `${path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\settings.json`
-        path.tasksJSON = `${path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\tasks.json`
-        path.testProgC = `${path.CUebung}\\testprog.c`
-        path.testProgJava = `${path.JavaUebung}\\HelloWorld.java`
-        path.testProgPython = `${path.PythonUebung}\\HelloWorld.py`
-    } else if (os.osx) { /** Wenn MAC */
-        path.addOnDir = `${path.userHomeFolder}/Library/Application Support/Code/User/HSH_AddOn4VSC`
-        path.CUebung = `${path.userHomeFolder}/Documents/C_Uebung`
-        path.JavaUebung = `${path.userHomeFolder}/Documents/Java_Uebung`
-        path.PythonUebung = `${path.userHomeFolder}/Documents/Python_Uebung`
-        path.settingsJSON = `${path.userHomeFolder}/Library/Application Support/Code/User/settings.json`
-        path.tasksJSON = `${path.userHomeFolder}/Library/Application Support/Code/User/tasks.json`
-        path.testProgC = `${path.CUebung}/testprog.c`
-        path.testProgJava = `${path.JavaUebung}/HelloWorld.java`
-        path.testProgPython = `${path.PythonUebung}/HelloWorld.py`
-    } else if (os.linux) { /** Wenn Linux */
-        path.addOnDir = `${path.userHomeFolder}/.config/Code/User/HSH_AddOn4VSC`
-        path.CUebung = `${path.userHomeFolder}/Documents/C_Uebung`
-        path.JavaUebung = `${path.userHomeFolder}/Documents/Java_Uebung`
-        path.PythonUebung = `${path.userHomeFolder}/Documents/Python_Uebung`
-        path.settingsJSON = `${path.userHomeFolder}/.config/Code/User/settings.json`
-        path.tasksJSON = `${path.userHomeFolder}/.config/Code/User/tasks.json`
-        path.testProgC = `${path.CUebung}/testprog.c`
-        path.testProgJava = `${path.JavaUebung}/HelloWorld.java`
-        path.testProgPython = `${path.PythonUebung}/HelloWorld.py`
-    }
-
-    if (!existsSync(path.addOnDir)) {
-        try {
-            mkdirSync(path.addOnDir)
-        } catch (error: any) {
-            writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')
-        }
-    }
-}
-
-/** Funktion, die die Pfade zurückgibt und somit global verfügbar macht
- * 
- * (Pfade werden entsprechend der Programmiersprache richtig gesetzt)
- * 
- * Verfügbare Argumente:
- * - settingsjson
- * - tasksjson
- * - compiler
- * - testprog
- * - uebungfolder
- * - addondirÌ
-*/
-export function getPath(tmp: string) {
-    switch (tmp) {
-        case 'settingsjson':
-            return path.settingsJSON
-        case 'tasksjson':
-            return path.tasksJSON
-        case 'testprog':
-            switch (settings.progLanguage) {
-                case 'C':
-                    return path.testProgC
-                case 'Java':
-                    return path.testProgJava
-                case 'Python':
-                    return path.testProgPython
-                default:
-                    return ''
-            }
-        case 'uebungfolder':
-            switch (settings.progLanguage) {
-                case 'C':
-                    return path.CUebung
-                case 'Java':
-                    return path.JavaUebung
-                case 'Python':
-                    return path.PythonUebung
-                default:
-                    return ''
-            }
-        case 'addondir':
-            return path.addOnDir
-        default:
-            writeLog(`Unbekanntes Argument für getPath: ${tmp}`, 'ERROR')
-            return ''
-    }
-}
-
 /** Funktion die den Button in der Statusbar definiert */
 async function initStatusBarItem() {
     settings.statusBarButton.text = 'HSH_AddOn4VSC pausieren'
@@ -269,7 +128,7 @@ export function getStatusBarItem() {
 
 /** Globale Funktion die den Compiler installiert und die Pfade setzt*/
 export async function initCompiler() {
-    if (getOS('WIN')) {
+    if (getOSBoolean('Windows')) {
         await deleteOldPath('C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin')
         if (getComputerraumConfig()) {
             await addNewPath('C:\\Program Files\\mingw64\\bin')
@@ -281,17 +140,17 @@ export async function initCompiler() {
 
     exec('gcc --version', (error, stdout) => { /** Prüft ob eine gcc version installiert ist */
         if (error) { /** Wenn Fehler auftritt (keine Version installiert ist) */
-            commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(path.userHomeFolder)).then(async () => { /** Erzeugt neues Terminal und setzt das Verzeichnis auf das Heimatverzeichnis */
-                if (getOS('WIN')) {
+            commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(getPath().userHome)).then(async () => { /** Erzeugt neues Terminal und setzt das Verzeichnis auf das Heimatverzeichnis */
+                if (getOSBoolean('Windows')) {
                     if (settings.computerraum) {
                         await addNewPath('C:\\Program Files\\mingw64\\bin')
                     } else {
                         commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb runAs -ArgumentList \'/k curl -o %temp%\\vsc.cmd https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/vscwindows.cmd && %temp%\\vsc.cmd\'\"\n' })
                         /** Führt den Befehl aus das Skript zur installation auszuführen */
                     }
-                } else if (os.osx) { /** wenn Mac, führt Skript zur installation aus */
+                } else if (getOSBoolean('MacOS')) { /** wenn Mac, führt Skript zur installation aus */
                     commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'curl -sL https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/vsclinuxosx.sh | bash\n' })
-                } else if (os.linux) { /** wenn Linux, führt Skript zur installation aus */
+                } else if (getOSBoolean('Linux')) { /** wenn Linux, führt Skript zur installation aus */
                     commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'sudo snap install curl && curl -sL https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/vsclinuxosx.sh | bash\n' })
                 }
             })
@@ -305,7 +164,7 @@ export async function initCompiler() {
         }
     })
 
-    if ((settings.reloadNeeded && getOS('WIN'))) {
+    if ((settings.reloadNeeded && getOSBoolean('Windows'))) {
         /*const vsc = `${process.argv[0]}`
         commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(path.userHomeFolder)).then(() => {
             commands.executeCommand('workbench.action.terminal.sendSequence', { 
@@ -314,7 +173,12 @@ export async function initCompiler() {
                 writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')
             })
         })*/
-        window.showWarningMessage(writeLog(`VSCode muss neu gestartet werden!`, 'WARNING'))
+        window.showWarningMessage(writeLog(`VSCode wird jetzt beendet, bitte VSCode manuell neu starten!`, 'WARNING'), { modal: true, title: 'Neustart erforderlich!' })
+        exec('taskkill /im code.exe /f', (error, stdout, stderr) => {
+            if (error) {
+                writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')
+            }
+        })
     }
 }
 /** Funktion die nach dem Dev-C++ Pfad in den systempfaden sucht und löscht */
@@ -376,33 +240,32 @@ export function getUserEnvironmentPath(): Promise<string> {
     })
 }
 
-
 async function initExtensionsDir() {
 
-    const username = homedir(); //Speichert den Username für den Pfad ein
+    const USERHOME = getPath().userHome //Speichert den Username für den Pfad ein
 
-    const ExtensionsDirPath = `${username}\\.vscode\\extensions`; //Standard Pfad für die Extensions
-    const ExtensionsDirPath_HSH = `U:\\VSCODE_Extensions` //Neuer Pfad für HSH Rechner 
+    const EXTENSIONSDIRPATH = `${USERHOME}\\.vscode\\extensions` //Standard Pfad für die Extensions
+    const EXTENSIONSDIRPATH_HSH = `U:\\VSCODE_Extensions` //Neuer Pfad für HSH Rechner // TODO: Ändern auf const EXTENSIONSDIRPATH_HSH = join(getPath().vscUserData, 'VSCODE_Extensions')
 
     let pathDir = await getUserExtensionDir() //Überpüft die aktuelle Variable
 
-    if (settings.computerraum && os.windows) { //Wenn im Computerraum aktiv
-        if (pathDir == ExtensionsDirPath_HSH) { //Wenn Pfad schon besteht
-            writeLog(`Extensionpfad bereits gesetzt: ${ExtensionsDirPath_HSH}`, "INFO")
+    if (settings.computerraum && getOSBoolean('Windows')) { //Wenn im Computerraum aktiv
+        if (pathDir == EXTENSIONSDIRPATH_HSH) { //Wenn Pfad schon besteht
+            writeLog(`Extensionpfad bereits gesetzt: ${EXTENSIONSDIRPATH_HSH}`, "INFO")
         } else {
             let answer = await window.showInformationMessage("Möchtest du das Addon auf das U:\ Laufwerk verschieben, sodass du es nicht jedesmal erneut herunterladen musst?", "Ja", "Nein")
             if (answer === "Ja") {
-                if (fs.existsSync('U:\\')) { //Überprüft ob das U: Laufwerk existiert
-                    exec(`setx VSCODE_EXTENSIONS ${ExtensionsDirPath_HSH}`) //setzt die Umgebungsvariable
-                    writeLog(`Extensionspfad neu gesetzt: ${ExtensionsDirPath_HSH}`, 'INFO')
-                    await copyExtensions(ExtensionsDirPath, ExtensionsDirPath_HSH) //Kopiert die derzeitigen Addons ins neue Verzeichnis
+                if (existsSync('U:\\')) { //Überprüft ob das U: Laufwerk existiert
+                    exec(`setx VSCODE_EXTENSIONS ${EXTENSIONSDIRPATH_HSH}`) //setzt die Umgebungsvariable
+                    writeLog(`Extensionspfad neu gesetzt: ${EXTENSIONSDIRPATH_HSH}`, 'INFO')
+                    await copyExtensions(EXTENSIONSDIRPATH, EXTENSIONSDIRPATH_HSH) //Kopiert die derzeitigen Addons ins neue Verzeichnis
                 } else {
                     window.showErrorMessage(`Laufwerk U:\\ nicht gefunden.`) //Gibt Fehler aus
                     writeLog(`Laufwerk U: nicht gefunden`, 'INFO')
                 }
             }
         }
-    } else if (!settings.computerraum && os.windows && pathDir != "%VSCODE_EXTENSIONS%") { //Wenn privater Windowsrechner und es ist ein Pfad gesetzt
+    } else if (!settings.computerraum && getOSBoolean('Windows') && pathDir != "%VSCODE_EXTENSIONS%") { //Wenn privater Windowsrechner und es ist ein Pfad gesetzt
         exec(`setx VSCODE_EXTENSIONS ""`) //Setzt die Variable wieder zurück
         window.showInformationMessage(`Extensionspfad zurück gesetzt:`) //Zeigt Hinweis
         writeLog(`Extensionspfad zurückgesetzt`, 'INFO')

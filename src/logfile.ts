@@ -1,7 +1,6 @@
 import { appendFileSync, existsSync, readdirSync, unlinkSync, writeFileSync } from 'fs'
 import { join } from 'path'
-
-import { getPath } from './init'
+import { getPath } from './init/paths'
 
 let logFileName: string = ''
 let logFilePath: string = ''
@@ -10,7 +9,7 @@ const currentDateString = new Date(Date.now()).toLocaleDateString('de-DE', { yea
 
 export function initLogFile() {
     logFileName = `logFile-${currentDateString}.txt`
-    logFilePath = join(getPath('addondir'), logFileName)
+    logFilePath = join(getPath().tempAddOn, logFileName)
     
     if(!existsSync(logFilePath)) {
         writeFileSync(logFilePath, `Automatisch erzeugter LogFile - HSH_AddOn4VSC\n`)
@@ -56,7 +55,7 @@ export function writeLog(msg: string, lvl: string) {
 }
 
 function deleteLog() {
-    const addOnDir = getPath('addondir')
+    const addOnDir = getPath().tempAddOn
     const daysToKeep = 2 /** Anzahl Tage zum aufbewahren von Logs */
     let filesToDelete: string[] = []
 

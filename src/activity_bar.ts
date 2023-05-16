@@ -20,7 +20,7 @@ import {
 
 import { getConstCommands } from './constants' /** Importiert die Befehle aus der constants.ts  */
 import { getGithubLinks } from './github' /** Importiert die Links und den GitHubStatus aus github.ts */
-import { getComputerraumConfig, getStatusBarItem } from './init' /** Importiert Funktionen aus init.ts */
+import { getComputerraumConfig, getStatusBarItem } from './init/initMain' /** Importiert Funktionen aus init.ts */
 import { writeLog } from './logfile'
 
 export let treeDataProvider: DepNodeProvider /** Deklariert Globale Variable treeDataProvider, die für die Baumstruktur der Seitenleiste wichtig ist  */

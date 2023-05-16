@@ -3,7 +3,7 @@
 import { Uri, OpenDialogOptions, commands, window } from 'vscode' /** Importiert die genannten Befehle aus der VS-Code Erweiterung */
 import { existsSync, mkdirSync, writeFileSync } from 'fs'	/** Importiert Funktionen zum Arbeiten mit Dateien (Filesystem) aus node.js*/
 
-import { getPath } from './init' /** Importiert die Funktion die verschiedene Pfade zurückgibt aus init.ts  */
+import { getPath } from './init/paths' /** Importiert die Funktion die verschiedene Pfade zurückgibt aus init.ts  */
 import { getTestProg } from './constants' /** Importiert den Inhalt des testprogramms aus constants.ts */
 import { writeLog } from './logfile'
 
@@ -25,8 +25,8 @@ function openFolder() {
 
 /** Öffnet/Erstellt Ordner Verzeichnis */
 export function openPreFolder() {
-	const uebungsFolder = getPath('uebungfolder')
-	const testProg = getPath('testprog')
+	const uebungsFolder = getPath().uebungsFolder
+	const testProg = getPath().testProgFile
 	const folderUri = Uri.file(uebungsFolder) /** Kopiert den Pfad des CUebungs Ordners in eine Konstante */
 
 	if (!existsSync(uebungsFolder)) {	/** Überprüft ob der Pfad inklusive des Ordners noch nicht existiert */
