@@ -73,7 +73,6 @@ async function rename(currentPath: string) {
         })
         const newName = replacedBasename.concat(constextname); /** fügt die Endung an den Dateinamen  */
         newfullname = join(constdirname, newName) /** Verbindet den Ordnerpfad und den neuen Dateinamen und speichert ihn */
-        
 
         //TODO: später anpassen je nach eingestellter programmiersprache
         // if (extname(currentPath) !== '.c') { /** Überprüft ob der aktuelle Pfad nicht .c enthält*/
@@ -83,6 +82,7 @@ async function rename(currentPath: string) {
         //         newfullname = newfullname.replace(extname(currentPath), '.c') /** Falls schon eine Endung existiert wird diese ausgetauscht */
         //     }
         // }
+        
         save_rename(currentPath, newfullname) /** Ruft Funktion auf die den neuen Namen speichert */
     }
 }

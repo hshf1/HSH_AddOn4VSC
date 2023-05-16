@@ -1,7 +1,4 @@
 /** Dieses Modul behandelt den Code rund um die Problemmeldefunktion */
-
-// TODO: Try-Catch Blöcke definieren
-
 import {
     ProgressLocation,
     Terminal, commands,
@@ -182,7 +179,6 @@ async function sendReport(userReport: UserReport) {
         return
     }
 
-    // TODO: eigene Dateien anhängen erlauben? Wozu? Sicherheitsbedenken?
     try {
         await createTransport({
             host: getSmtpHost(),

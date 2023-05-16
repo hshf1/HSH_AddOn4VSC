@@ -1,9 +1,10 @@
-import { homedir } from 'os'
+import { homedir } from 'os' /** Importiert die homedir Funktion aus dem Node.js Modul. Die homedir-Funktion gibt das Heimatverzeichnis des aktuellen Benutzers als Zeichenfolge zurück. */
 import { existsSync, mkdirSync } from 'fs'
 
 import { getComputerraumConfig, getProgLanguageConfig } from './initMain'
 import { writeLog } from '../logfile'
 import { getOSString } from './os'
+import { join } from 'path'
 
 let paths: Paths
 
@@ -34,7 +35,7 @@ export class Paths {
         if (this.hshRO) {
             return `U:`
         } else {
-            return `${this.userHomeRO}\\Documents`
+            return join(this.userHomeRO, 'Documents')
         }
     }
 
@@ -52,17 +53,17 @@ export class Paths {
     }
 
     get tempAddOn(): string {
-        return `${this.vscUserData}\\HSH_AddOn4VSC`
+        return join(this.vscUserData, 'HSH_AddOn4VSC')
     }
 
     get uebungsFolder(): string {
         switch (this.langRO) {
             case 'C':
-                return `${this.userWorkParentFolder}\\C_Uebung`
+                return join(this.userWorkParentFolder, 'C_Uebung')
             case 'Java':
-                return `${this.userWorkParentFolder}\\Java_Uebung`
+                return join(this.userWorkParentFolder, 'Java_Uebung')
             case 'Python':
-                return `${this.userWorkParentFolder}\\Python_Uebung`
+                return join(this.userWorkParentFolder, 'Python_Uebung')
             default:
                 return ``
         }
@@ -71,11 +72,11 @@ export class Paths {
     get testProgFile(): string {
         switch (this.langRO) {
             case 'C':
-                return `${this.uebungsFolder}\\testprog.c`
+                return join(this.uebungsFolder, 'testprog.c')
             case 'Java':
-                return `${this.uebungsFolder}\\HelloWorld.java`
+                return join(this.uebungsFolder, 'HelloWorld.java')
             case 'Python':
-                return `${this.uebungsFolder}\\HelloWorld.py`
+                return join(this.uebungsFolder, 'HelloWorld.py')
             default:
                 return ``
         }
@@ -85,7 +86,7 @@ export class Paths {
 /** Funktion die die Pfade abhängig vom Betriebssystem bestimmt und in Variablen speichert */
 export function initPath() {
     paths = new Paths()
-    if (!existsSync(paths.tempAddOn)) { // TODO: Ordner erstellen wenn nicht da dort machen, wo es auch aufgerufen wird
+    if (!existsSync(paths.tempAddOn)) {
         try {
             mkdirSync(paths.tempAddOn)
         } catch (error: any) {
