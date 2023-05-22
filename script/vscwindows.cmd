@@ -1,7 +1,7 @@
 :::::::::::::::::::::::::::::::::::::::
 ::   VSCode Installation für Windows ::
 :: Hochschule Hannover - Vorlesung C ::
-::    zuletzt geändert am 05.04.2023 ::
+::    zuletzt geändert am 22.05.2023 ::
 :::::::::::::::::::::::::::::::::::::::
 
 :: Zum installieren Terminal als Adminstrator ausführen! und folgende Zeile Code ausführen (ohne ::)
@@ -63,8 +63,13 @@ setx PATH "%ALLUSERSPROFILE%\chocolatey\bin;C:\ProgramData\chocolatey\lib\mingw\
 choco install mingw --version=8.1.0 -y
 :: choco install mingw -y müsste die aktuellste Version installieren, falls irgendwann 8.1.0 defekt
 
-:: VSCode installieren bzw. neu installieren, falls fehlerhaft
+:: Installiert Python Version 3.11.0
+choco install python3 --version=3.11.0 -y
 
+:: Installiert JavaDevelopment Kit
+choco install openjdk --version=20.0.1 -y
+
+:: VSCode installieren bzw. neu installieren, falls fehlerhaft
 if "%modus%"=="install" (
     if NOT EXIST "C:\Program Files\Microsoft VS Code\Code.exe" if EXIST "C:\ProgramData\chocolatey\choco.exe" (choco uninstall vscode vscode.install -y)
     choco install vscode -y
@@ -89,6 +94,10 @@ EXIT /B
 
 :UNINSTALL
 
+:: Python Deinstallieren
+choco uninstall python3 --version=3.11.0 -y
+::JDK Deinstallieren
+choco uninstall openjdk -y 
 :: choco Verzeichnis löschen
 rd /s /q "C:\ProgramData\chocolatey"
 :: VSCode deinstallieren

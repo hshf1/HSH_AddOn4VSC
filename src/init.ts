@@ -16,6 +16,7 @@ import { openPreFolder } from './checkfolder'	/** Importiert die Funktion zum ö
 import { checkJSON } from './jsonfilescheck'    /** Importiert die Funktion zum überprüfen der jsons-Datei aus jsonfilescheck.ts */
 import { initLogFile, writeLog } from './logfile'
 import { existsSync } from 'fs'
+import { init_language } from './language_handler'
 
 let os = { windows: false, osx: false, linux: false }
 let path = {
@@ -36,7 +37,6 @@ export function initialize() {
       }, async (progress, token) => {
         writeLog(`HSH_AddOn4VSC gestartet - Initialisierung beginnt!`, 'INFO')
         setOS() /** Setzt die entsprechende Boolean für das jeweilige Betriebssystem true */
-        uninstallExtensions() // TODO: Später wieder rausnehmen
         if (!getOS('WIN') && !extensions.getExtension('vadimcn.vscode-lldb')) { /** Wenn kein Windows und "vadimcn.vscode-lldb" nicht installiert ist */
             commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb') /** Installiere "vadimcn.vscode-lldb" */
         }   /** "vadimcn.vscode-lldb" ist eine Erweiterung, die für den Debbuger wichtig ist. */
@@ -54,6 +54,7 @@ export function initialize() {
         initStatusBarItem()  /** Initialisiert den Button in der Statusleiste */
         initActivityBar()   /** Ruft Funktion auf die für die Activitybar zuständig ist */
         initCompiler()     /** Compiler initialisieren */
+        init_language() //Initialisiert die Prog.sprache anhand des Ordners der geöffnet ist
 
         writeLog(`Initialisierung beendet!`, 'INFO')
     })
@@ -132,7 +133,7 @@ export function getComputerraumConfig() {
     return settings.computerraum
 }
 
-function setProgLanguageConfig(tmp: string) {
+export function setProgLanguageConfig(tmp: string) {
     settings.progLanguage = tmp
 
     try {
@@ -263,8 +264,8 @@ export async function initCompiler() {
                 if (os.windows) {
                     if (settings.computerraum) {
                         addNewPath()
-                    } else {
-                        commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb runAs -ArgumentList \'/k curl -o %temp%\\vsc.cmd https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/vscwindows.cmd && %temp%\\vsc.cmd\'\"\n' })
+                    } else { //TODO Link wieder auf Master einstellen nach dem Tests beendet sind
+                        commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb runAs -ArgumentList \'/k curl -o %temp%\\vsc.cmd https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/support_python/script/vscwindows.cmd && %temp%\\vsc.cmd\'\"\n' }) 
                         /** Führt den Befehl aus das Skript zur installation auszuführen */
                     }
                 } else if (os.osx) { /** wenn Mac, führt Skript zur installation aus */

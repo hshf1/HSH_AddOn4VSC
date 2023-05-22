@@ -11,7 +11,8 @@ import { extname, dirname, basename, join, parse } from 'path'
 */  
 import { existsSync } from 'fs' /** Importiert das existsSync Modul aus node.js, dadurch ist es möglich zu überprüfen ob eine Datei auf dem Dateisystem vorhanden ist */
 
-import { getOS } from './init' /** Importiert die Funktion zur bestimmung des Betriebssystems aus init.ts */
+import { getOS } from './init' /** I
+mportiert die Funktion zur bestimmung des Betriebssystems aus init.ts */
 import { writeLog } from './logfile'
 
 let firstInit: boolean = false /** Deklariert eine Variable die auskunft darüber gibt ob eine erste Initalisierung schonmal statt gefunden hat */
