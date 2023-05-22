@@ -9,22 +9,21 @@ import {
     Uri, workspace, ConfigurationTarget, ProgressLocation
 } from 'vscode'                     /** Importiert die genannten Befehle aus der VS-Code Erweiterung */
 import { homedir } from 'os'        /** Importiert die homedir Funktion aus dem Node.js Modul.  Die homedir-Funktion gibt das Heimatverzeichnis des aktuellen Benutzers als Zeichenfolge zurück. */
-import { exec } from 'child_process'/** Importiert die exec Funktion aus dem Node.js Modul. Die exec-Funktion wird verwendet, um einen Befehl in der Befehlszeile auszuführen. */
+import { exec, spawn } from 'child_process'/** Importiert die exec Funktion aus dem Node.js Modul. Die exec-Funktion wird verwendet, um einen Befehl in der Befehlszeile auszuführen. */
 
 import { initActivityBar } from './activity_bar'/** Importiert die Funktion die in der Activitybar die Links einfügt */
 import { openPreFolder } from './checkfolder'	/** Importiert die Funktion zum öffnen des Vorgefertigten Ordner aus  checkfolder.ts */
 import { checkJSON } from './jsonfilescheck'    /** Importiert die Funktion zum überprüfen der jsons-Datei aus jsonfilescheck.ts */
 import { initLogFile, writeLog } from './logfile'
 import { existsSync } from 'fs'
-import { init_language } from './language_handler'
 
 let os = { windows: false, osx: false, linux: false }
 let path = {
     userHomeFolder: "", CUebung: "", JavaUebung: "", PythonUebung: "", settingsJSON: "",
-    tasksJSON: "", testProgC: "", testProgJava: "", testProgPython: "", logFileDir: ""
+    tasksJSON: "", testProgC: "", testProgJava: "", testProgPython: "", addOnDir: ""
 }
 let settings = {
-    computerraum: false, progLanguage: "", compiler: false,
+    computerraum: false, progLanguage: "", compiler: false, reloadNeeded: false,
     statusBarButton: window.createStatusBarItem(StatusBarAlignment.Right, 100) /** Definiert statusbar_button als StatusBarItem */
 }
 
@@ -34,7 +33,7 @@ export function initialize() {
         location: ProgressLocation.Notification,
         title: 'Initialisiere...',
         cancellable: false
-      }, async (progress, token) => {
+    }, async (progress, token) => {
         writeLog(`HSH_AddOn4VSC gestartet - Initialisierung beginnt!`, 'INFO')
         setOS() /** Setzt die entsprechende Boolean für das jeweilige Betriebssystem true */
         if (!getOS('WIN') && !extensions.getExtension('vadimcn.vscode-lldb')) { /** Wenn kein Windows und "vadimcn.vscode-lldb" nicht installiert ist */
@@ -94,19 +93,20 @@ export function getOS(tmp: string) {
     }
 }
 
+/** Funktion die vorübergehend, die Extensions deinstalliert um verwirrung bei Studenten zu vermeiden */
 function uninstallExtensions() {
     try {
         if (extensions.getExtension('vscjava.vscode-java-pack')) {
             commands.executeCommand('workbench.extensions.uninstallExtension', 'vscjava.vscode-java-pack', true)
         }
-        if (extensions.getExtension('ms-python.python')) { 
-            commands.executeCommand('workbench.extensions.uninstallExtension', 'ms-python.python', true) 
-        }  
+        if (extensions.getExtension('ms-python.python')) {
+            commands.executeCommand('workbench.extensions.uninstallExtension', 'ms-python.python', true)
+        }
     } catch (error) {
         console.log(error)
     }
 }
-
+/** initialisiert die Programmiersprache zu C */
 export function initConfigurations() {
     try {
         settings.progLanguage = workspace.getConfiguration('addon4vsc').get('sprache', 'C')
@@ -114,7 +114,7 @@ export function initConfigurations() {
         writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')
     }
 }
-
+/** Funktion die anhand des Compilers überprüft ob man sich an einem HSH Rechner befindet */
 function initLocation() {
     if (existsSync(`C:\\Program Files\\mingw64\\bin`)) {
         settings.computerraum = true
@@ -124,16 +124,16 @@ function initLocation() {
 
     writeLog(`Location: ${settings.computerraum ? 'HsH-Rechner' : 'Privater Rechner'}`, 'INFO')
 }
-
+/** Funktion die die Einstellung ob im Computerraum in den settings einstellt */
 export function setComputerraumConfig(tmp: boolean) {
     settings.computerraum = tmp
 }
-
+/** Funktion die die Einstellungen vom Computerraum zurückgibt */
 export function getComputerraumConfig() {
     return settings.computerraum
 }
 
-export function setProgLanguageConfig(tmp: string) {
+function setProgLanguageConfig(tmp: string) {
     settings.progLanguage = tmp
 
     try {
@@ -142,7 +142,7 @@ export function setProgLanguageConfig(tmp: string) {
         writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')
     }
 }
-
+/** Funktion die die Einstellungen der Programmiersprache zurückgibt */
 export function getProgLanguageConfig() {
     return settings.progLanguage
 }
@@ -151,7 +151,7 @@ export function getProgLanguageConfig() {
 export function initPath() {
     path.userHomeFolder = homedir()
     if (os.windows && settings.computerraum) {
-        path.logFileDir = `${path.userHomeFolder}\\AppData\\Roaming\\Code\\User`
+        path.addOnDir = `${path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\HSH_AddOn4VSC`
         path.CUebung = `U:\\C_Uebung`
         path.JavaUebung = `U:\\Java_Uebung`
         path.PythonUebung = `U:\\Python_Uebung`
@@ -161,7 +161,7 @@ export function initPath() {
         path.testProgJava = `${path.JavaUebung}\\HelloWorld.java`
         path.testProgPython = `${path.PythonUebung}\\HelloWorld.py`
     } else if (os.windows && !settings.computerraum) {
-        path.logFileDir = `${path.userHomeFolder}\\AppData\\Roaming\\Code\\User`
+        path.addOnDir = `${path.userHomeFolder}\\AppData\\Roaming\\Code\\User\\HSH_AddOn4VSC`
         path.CUebung = `${path.userHomeFolder}\\Documents\\C_Uebung`
         path.JavaUebung = `${path.userHomeFolder}\\Documents\\Java_Uebung`
         path.PythonUebung = `${path.userHomeFolder}\\Documents\\Python_Uebung`
@@ -171,7 +171,7 @@ export function initPath() {
         path.testProgJava = `${path.JavaUebung}\\HelloWorld.java`
         path.testProgPython = `${path.PythonUebung}\\HelloWorld.py`
     } else if (os.osx) { /** Wenn MAC */
-        path.logFileDir = `${path.userHomeFolder}/Library/Application Support/Code/User`
+        path.addOnDir = `${path.userHomeFolder}/Library/Application Support/Code/User/HSH_AddOn4VSC`
         path.CUebung = `${path.userHomeFolder}/Documents/C_Uebung`
         path.JavaUebung = `${path.userHomeFolder}/Documents/Java_Uebung`
         path.PythonUebung = `${path.userHomeFolder}/Documents/Python_Uebung`
@@ -181,7 +181,7 @@ export function initPath() {
         path.testProgJava = `${path.JavaUebung}/HelloWorld.java`
         path.testProgPython = `${path.PythonUebung}/HelloWorld.py`
     } else if (os.linux) { /** Wenn Linux */
-        path.logFileDir = `${path.userHomeFolder}/.config/Code/User`
+        path.addOnDir = `${path.userHomeFolder}/.config/Code/User/HSH_AddOn4VSC`
         path.CUebung = `${path.userHomeFolder}/Documents/C_Uebung`
         path.JavaUebung = `${path.userHomeFolder}/Documents/Java_Uebung`
         path.PythonUebung = `${path.userHomeFolder}/Documents/Python_Uebung`
@@ -190,6 +190,14 @@ export function initPath() {
         path.testProgC = `${path.CUebung}/testprog.c`
         path.testProgJava = `${path.JavaUebung}/HelloWorld.java`
         path.testProgPython = `${path.PythonUebung}/HelloWorld.py`
+    }
+
+    if (!existsSync(path.addOnDir)) {
+        try {
+            mkdirSync(path.addOnDir)
+        } catch (error: any) {
+            writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')
+        }
     }
 }
 
@@ -203,7 +211,7 @@ export function initPath() {
  * - compiler
  * - testprog
  * - uebungfolder
- * - logfiledir
+ * - addondirÌ
 */
 export function getPath(tmp: string) {
     switch (tmp) {
@@ -233,8 +241,8 @@ export function getPath(tmp: string) {
                 default:
                     return ''
             }
-        case 'logfiledir':
-            return path.logFileDir
+        case 'addondir':
+            return path.addOnDir
         default:
             writeLog(`Unbekanntes Argument für getPath: ${tmp}`, 'ERROR')
             return ''
@@ -254,18 +262,26 @@ export function getStatusBarItem() {
     return settings.statusBarButton
 }
 
-/** Globale Funktion die den Compiler installiert */
+/** Globale Funktion die den Compiler installiert und die Pfade setzt*/
 export async function initCompiler() {
-    await deleteOldPath()
+    if (getOS('WIN')) {
+        await deleteOldPath('C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin')
+        if (getComputerraumConfig()) {
+            await addNewPath('C:\\Program Files\\mingw64\\bin')
+        } else {
+            await addNewPath('C:\\ProgramData\\chocolatey\\bin')
+            await addNewPath('C:\\ProgramData\\chocolatey\\lib\\mingw\\tools\\install\\mingw64\\bin')
+        }
+    }
 
     exec('gcc --version', (error, stdout) => { /** Prüft ob eine gcc version installiert ist */
         if (error) { /** Wenn Fehler auftritt (keine Version installiert ist) */
-            commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(path.userHomeFolder)).then(() => { /** Erzeugt neues Terminal und setzt das Verzeichnis auf das Heimatverzeichnis */
-                if (os.windows) {
+            commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(path.userHomeFolder)).then(async () => { /** Erzeugt neues Terminal und setzt das Verzeichnis auf das Heimatverzeichnis */
+                if (getOS('WIN')) {
                     if (settings.computerraum) {
                         addNewPath()
-                    } else { //TODO Link wieder auf Master einstellen nach dem Tests beendet sind
-                        commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb runAs -ArgumentList \'/k curl -o %temp%\\vsc.cmd https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/support_python/script/vscwindows.cmd && %temp%\\vsc.cmd\'\"\n' }) 
+                    } else {
+                        commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb runAs -ArgumentList \'/k curl -o %temp%\\vsc.cmd https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/vscwindows.cmd && %temp%\\vsc.cmd\'\"\n' })
                         /** Führt den Befehl aus das Skript zur installation auszuführen */
                     }
                 } else if (os.osx) { /** wenn Mac, führt Skript zur installation aus */
@@ -282,33 +298,44 @@ export async function initCompiler() {
                 settings.compiler = true
             }
         }
-    })
-}
+})
 
-async function deleteOldPath() {
-    if (os.windows) {
-        const pathToRemove = 'C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin'
-        let pathVar = await getUserEnvironmentPath()
-        const pathDirs = pathVar.split(';')
-        const index = pathDirs.indexOf(pathToRemove)
-        if (index !== -1) {
-            pathDirs.splice(index, 1)
-            pathVar = pathDirs.join(';')
-            exec(`setx PATH "${pathVar}"`, (error, stdout, stderr) => {
-                if (error) {
-                    writeLog(`Fehler beim entfernen alter Umgebungsvariable: ${error.message}`, 'ERROR')
-                } else {
-                    writeLog(`Alte Umgebungsvariable erfolgreich entfernt: ${stdout.trim()}`, 'INFO')
-                }
+    if ((settings.reloadNeeded && getOS('WIN'))) {
+        /*const vsc = `${process.argv[0]}`
+        commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(path.userHomeFolder)).then(() => {
+            commands.executeCommand('workbench.action.terminal.sendSequence', { 
+                text: `Start-Process cmd '/c taskkill /F /IM Code.exe && start "" "${vsc}"'\n`
+            }).then((error: any) => {
+                writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')
             })
-        } else {
-            writeLog(`Alte Umgebungsvariable ist bereits gelöscht.`, 'INFO')
-        }
+        })*/
+        window.showWarningMessage(writeLog(`VSCode muss neu gestartet werden!`, 'WARNING'))
     }
 }
-
-async function addNewPath() {
-    const pathToAdd = 'C:\\Program Files\\mingw64\\bin';
+/** Funktion die nach dem Dev-C++ Pfad in den systempfaden sucht und löscht */
+async function deleteOldPath(tmp: string) {
+    const pathToRemove: string = 'C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin'
+    let pathVar = await getUserEnvironmentPath()
+    const pathDirs = pathVar.split(';')
+    const index = pathDirs.indexOf(pathToRemove)
+    if (index !== -1) {
+        pathDirs.splice(index, 1)
+        pathVar = pathDirs.join(';')
+        exec(`setx PATH "${pathVar}"`, (error, stdout, stderr) => {
+            if (error) {
+                writeLog(`Fehler beim entfernen alter Umgebungsvariable: ${error.message}`, 'ERROR')
+            } else {
+                writeLog(`Alte Umgebungsvariable erfolgreich entfernt: ${stdout.trim()}`, 'INFO')
+                settings.reloadNeeded = true
+            }
+        })
+    } else {
+        writeLog(`Alte Umgebungsvariable ist bereits gelöscht.`, 'INFO')
+    }
+}
+/** Funtkion die einen neue Pfade in den Benutzerumgebungsvariablen hinzufügen kann  */
+async function addNewPath(tmp: string) {
+    const pathToAdd: string = tmp
     let pathVar = await getUserEnvironmentPath()
     const pathDirs = pathVar.split(';')
     if (!pathDirs.includes(pathToAdd)) {
@@ -318,15 +345,16 @@ async function addNewPath() {
             if (error) {
                 writeLog(`Fehler beim entfernen alter Umgebungsvariable: ${error.message}`, 'ERROR')
             } else {
-                writeLog(`Alte Umgebungsvariable erfolgreich entfernt: ${stdout.trim()}`, 'INFO')
+                writeLog(`Neue Umgebungsvariable (${pathToAdd}) erfolgreich hinzugefügt: ${stdout.trim()}`, 'INFO')
+                settings.reloadNeeded = true
             }
         })
     } else {
         writeLog(`Umgebungsvariable ist bereits vorhanden.`, 'INFO')
     }
 }
-
-function getUserEnvironmentPath(): Promise<string> {
+/** Funktion die die Pfade der Umgebungsvariablen auslesen und zurückgeben kann */
+export function getUserEnvironmentPath(): Promise<string> {
     return new Promise((resolve, reject) => {
         exec('reg query HKCU\\Environment /v Path', (error, stdout) => {
             if (error) {
