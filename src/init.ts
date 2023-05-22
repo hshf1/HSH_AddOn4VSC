@@ -272,6 +272,7 @@ export async function initCompiler() {
         } else {
             await addNewPath('C:\\ProgramData\\chocolatey\\bin')
             await addNewPath('C:\\ProgramData\\chocolatey\\lib\\mingw\\tools\\install\\mingw64\\bin')
+            //await addNewPath('C:\\Program Files\\OpenJDK\\jdk-20.0.1\\bin')
         }
     }
 
@@ -281,14 +282,14 @@ export async function initCompiler() {
                 if (getOS('WIN')) {
                     if (settings.computerraum) {
                         await addNewPath('C:\\Program Files\\mingw64\\bin')
-                    } else {
-                        commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb runAs -ArgumentList \'/k curl -o %temp%\\vsc.cmd https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/vscwindows.cmd && %temp%\\vsc.cmd\'\"\n' })
+                    } else { //TODO Links wieder auf Master Branch ändern
+                        commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb runAs -ArgumentList \'/k curl -o %temp%\\vsc.cmd https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/support_python/script/vscwindows.cmd && %temp%\\vsc.cmd\'\"\n' })
                         /** Führt den Befehl aus das Skript zur installation auszuführen */
                     }
                 } else if (os.osx) { /** wenn Mac, führt Skript zur installation aus */
-                    commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'curl -sL https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/vsclinuxosx.sh | bash\n' })
+                    commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'curl -sL https://github.com/hshf1/HSH_AddOn4VSC/blob/support_python/script/vsclinuxosx.sh | bash\n' })
                 } else if (os.linux) { /** wenn Linux, führt Skript zur installation aus */
-                    commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'sudo snap install curl && curl -sL https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/vsclinuxosx.sh | bash\n' })
+                    commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'sudo snap install curl && curl -sL https://github.com/hshf1/HSH_AddOn4VSC/blob/support_python/script/vsclinuxosx.sh | bash\n' })
                 }
             })
         } else {
