@@ -15,7 +15,8 @@ import { initActivityBar } from './activity_bar'/** Importiert die Funktion die 
 import { openPreFolder } from './checkfolder'	/** Importiert die Funktion zum öffnen des Vorgefertigten Ordner aus  checkfolder.ts */
 import { checkJSON } from './jsonfilescheck'    /** Importiert die Funktion zum überprüfen der jsons-Datei aus jsonfilescheck.ts */
 import { initLogFile, writeLog } from './logfile'
-import { existsSync } from 'fs'
+import { existsSync, mkdirSync } from 'fs'
+import { init_language } from './language_handler'
 
 let os = { windows: false, osx: false, linux: false }
 let path = {
@@ -133,7 +134,7 @@ export function getComputerraumConfig() {
     return settings.computerraum
 }
 
-function setProgLanguageConfig(tmp: string) {
+export function setProgLanguageConfig(tmp: string) {
     settings.progLanguage = tmp
 
     try {
@@ -279,7 +280,7 @@ export async function initCompiler() {
             commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(path.userHomeFolder)).then(async () => { /** Erzeugt neues Terminal und setzt das Verzeichnis auf das Heimatverzeichnis */
                 if (getOS('WIN')) {
                     if (settings.computerraum) {
-                        addNewPath()
+                        await addNewPath('C:\\Program Files\\mingw64\\bin')
                     } else {
                         commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb runAs -ArgumentList \'/k curl -o %temp%\\vsc.cmd https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/vscwindows.cmd && %temp%\\vsc.cmd\'\"\n' })
                         /** Führt den Befehl aus das Skript zur installation auszuführen */
