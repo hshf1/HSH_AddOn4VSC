@@ -31,7 +31,8 @@ if [ "$uninstall" = "true" ]; then
         rm -R ~/Library/Application\ Support/Code
         # Löschen aller Extensions
         rm -R ~/.vscode
-
+        # Löschen von HomeBrew mit allen seinen Ordnern
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)"
         #### Ende Deinstallation MacOS ####
     else
         #### Beginn Deinstallation Linux ####
