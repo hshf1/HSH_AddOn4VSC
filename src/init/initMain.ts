@@ -21,7 +21,7 @@ import { getOSBoolean, setOS } from './os'
 import { join } from 'path'
 
 let settings = {
-    computerraum: false, progLanguage: "C", compiler: false, reloadNeeded: false,
+    computerraum: false, progLanguage: "C", compiler: false, reloadNeeded: false, initExtensionsDirRunning: false,
     statusBarButton: window.createStatusBarItem(StatusBarAlignment.Right, 100) /** Definiert statusbar_button als StatusBarItem */
 }
 
@@ -188,7 +188,7 @@ async function deleteOldPath(tmp: string) {
     }
 }
 
-/** Funtkion die einen neue Pfade in den Benutzerumgebungsvariablen hinzufügen kann  */
+/** Funktion die einen neue Pfade in den Benutzerumgebungsvariablen hinzufügen kann  */
 async function addNewPath(tmp: string) {
     const pathToAdd: string = tmp
     let pathVar = await getUserEnvironmentPath()
@@ -228,54 +228,79 @@ export function getUserEnvironmentPath(): Promise<string> {
 }
 
 async function initExtensionsDir() {
-    const USERHOME = getPath().userHome //Speichert den Username für den Pfad ein
-    const VSCUSERDATA = getPath().vscUserData
+    if(!settings.initExtensionsDirRunning) {
+        settings.initExtensionsDirRunning = true
+        const USERHOME = getPath().userHome //Speichert den Username für den Pfad ein
+        const VSCUSERDATA = getPath().vscUserData
 
-    const EXTENSIONSDIRPATH = `${USERHOME}\\.vscode\\extensions` //Standard Pfad für die Extensions
-    const EXTENSIONSDIRPATH_HSH = join(VSCUSERDATA, 'VSCODE_Extensions') //Neuer Pfad für HSH Rechner
+        const EXTENSIONSDIRPATH = `${USERHOME}\\.vscode\\extensions` //Standard Pfad für die Extensions
+        const EXTENSIONSDIRPATH_HSH = join(VSCUSERDATA, 'VSCODE_Extensions') //Neuer Pfad für HSH Rechner
 
-    const CURRENTEXTENSIONPATH = extensions.getExtension('addon4vsc')?.extensionPath
+        const CURRENTEXTENSIONPATH = await getUserExtensionDir() //Überpüft die aktuelle Variable
 
-    if (settings.computerraum) { //Wenn im Computerraum aktiv
-        if (CURRENTEXTENSIONPATH == EXTENSIONSDIRPATH_HSH) { //Wenn Pfad schon besteht
-            writeLog(`Extensionpfad bereits gesetzt: ${EXTENSIONSDIRPATH_HSH}`, "INFO")
-        } else {
-            exec(`setx VSCODE_EXTENSIONS ${EXTENSIONSDIRPATH_HSH}`) //setzt die Umgebungsvariable
-            writeLog(`Extensionspfad neu gesetzt: ${EXTENSIONSDIRPATH_HSH}`, 'INFO')
-            await copyExtensions(EXTENSIONSDIRPATH, EXTENSIONSDIRPATH_HSH) //Kopiert die derzeitigen Addons ins neue Verzeichnis
+        if (settings.computerraum) { //Wenn im Computerraum aktiv
+            if (CURRENTEXTENSIONPATH == EXTENSIONSDIRPATH_HSH) { //Wenn Pfad schon besteht
+                writeLog(`Extensionpfad bereits gesetzt: ${EXTENSIONSDIRPATH_HSH}`, "INFO")
+            } else {
+                exec(`setx VSCODE_EXTENSIONS ${EXTENSIONSDIRPATH_HSH}`) //setzt die Umgebungsvariable
+                writeLog(`Extensionspfad neu gesetzt: ${EXTENSIONSDIRPATH_HSH}`, 'INFO')
+                copyExtensions(EXTENSIONSDIRPATH, EXTENSIONSDIRPATH_HSH) //Kopiert die derzeitigen Addons ins neue Verzeichnis
+            }
+        } else if (!settings.computerraum && CURRENTEXTENSIONPATH != "%VSCODE_EXTENSIONS%") { //Wenn privater Windowsrechner und es ist ein Pfad gesetzt
+            exec(`setx VSCODE_EXTENSIONS ""`) //Setzt die Variable wieder zurück
+            writeLog(`Extensionspfad zurückgesetzt`, 'INFO')
         }
-    } else if (!settings.computerraum && CURRENTEXTENSIONPATH != "%VSCODE_EXTENSIONS%") { //Wenn privater Windowsrechner und es ist ein Pfad gesetzt
-        exec(`setx VSCODE_EXTENSIONS ""`) //Setzt die Variable wieder zurück
-        writeLog(`Extensionspfad zurückgesetzt`, 'INFO')
+        settings.initExtensionsDirRunning = false
     }
+}
+
+/** Funktion die den VSCODE_EXTENSIONS Pfad ausliest */
+export function getUserExtensionDir(): Promise<string> {
+    return new Promise((resolve, reject) => {
+        exec('echo %VSCODE_EXTENSIONS%', (error, stdout) => {
+            if (error) {
+                reject(error)
+            } else {
+                resolve(stdout.trim())
+            }
+        })
+    })
 }
 
 //Funktion die den Ordner der Extensions kopiert
-async function copyExtensions(sourcePath: string, destPath: string) {
-    try {
-        window.withProgress({
-            location: ProgressLocation.Notification,
-            title: 'Kopiere Extensions...',
-            cancellable: false
-        }, async (progress, token) => {
-            await fs.ensureDir(destPath); // Create destination directory if it doesn't exist
+function copyExtensions(sourcePath: string, destPath: string) {
+    window.withProgress({
+        location: ProgressLocation.Notification,
+        title: 'Kopiere Extensions...',
+        cancellable: false
+    }, async (progress, token) => {
+        try {
+            await fs.ensureDir(destPath)
             writeLog(`Kopiervorgang der Extensions begonnen`, 'INFO')
-            await fs.copy(sourcePath, destPath); // Copy all files and subdirectories from the source to the destination director
+            progress.report({ message: "Kopiervorgang...", increment: 50 })
+            await fs.copy(sourcePath, destPath, {
+                overwrite: true,
+                errorOnExist: false,
+            })
             writeLog(`Kopiervorgang der Extensions abgeschlossen`, 'INFO')
+            progress.report({ message: "Kopiervorgang beendet", increment: 100 })
             //TODO Auto Neustart der die Umgebungsvariablen mit aktualisiert.
-            restartVSC()
-        })
-    } catch (err) {
-        writeLog(`Fehler beim kopieren des Addons: ${err}`, 'ERROR')
-        window.showErrorMessage("Bei dem Kopieren ist ein Fehler aufgetreten!")
-    }
+        } catch (err) {
+            writeLog(`Fehler beim kopieren des Addons: ${err}`, 'ERROR')
+            window.showErrorMessage("Bei dem Kopieren ist ein Fehler aufgetreten!")
+        }
+    }).then(() => {
+        restartVSC()
+    })
 }
 
 function restartVSC() {
-    window.showWarningMessage(writeLog(`VSCode wird jetzt beendet, bitte VSCode manuell neu starten!`, 'WARNING'), { modal: true, title: 'Neustart erforderlich!' })
-    exec('taskkill /im code.exe /f', (error, stdout, stderr) => {
-        if (error) {
-            writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')
-        }
-    })
+    window.showWarningMessage(writeLog(`VSCode wird jetzt beendet, bitte VSCode manuell neu starten!`, 'WARNING'), { modal: true }, 'OK')
+        .then(() => {
+            exec('taskkill /im code.exe /f', (error, stdout, stderr) => {
+                if (error) {
+                    writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')
+                }
+            })
+        })
 }
