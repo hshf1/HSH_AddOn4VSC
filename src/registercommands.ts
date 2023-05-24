@@ -74,23 +74,27 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
     },
     {
         name: getConstCommands()[6].command,
-        callback: () => {     /** Erstellt asynchrone Funktion  */
+        callback: async () => {     /** Erstellt asynchrone Funktion  */
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[6].command}`, 'INFO')
             const COMPUTERRAUM = getComputerraumConfig()
             if (!getOSBoolean('Windows')) { /** Überprüft ob es sich um einen Windows PC handelt */
                 window.showInformationMessage('Diese Einstellung ist nur für Windows-Betriebssysteme notwendig.')
                 return
             }
+            
+            let userSelection = await window.showWarningMessage("Möchtest du wirklich den Standort des Windows-Rechners wechseln?", "Ja", "Nein")
 
-            if (COMPUTERRAUM) {
-                setComputerraumConfig(false)
-                window.showInformationMessage('Auf privater Windows-Rechner gestellt.')
-            } else {
-                setComputerraumConfig(true)
-                window.showInformationMessage('Auf HsH Windows-Rechner im Rechenzentrum gestellt.')
+            if (userSelection === "Ja") {
+                if (COMPUTERRAUM) {
+                    setComputerraumConfig(false)
+                    window.showInformationMessage('Auf privater Windows-Rechner gestellt.')
+                } else {
+                    setComputerraumConfig(true)
+                    window.showInformationMessage('Auf HsH Windows-Rechner im Rechenzentrum gestellt.')
+                }
+    
+                treeDataProvider.refresh()
             }
-
-            treeDataProvider.refresh()
         }
     },
     {
