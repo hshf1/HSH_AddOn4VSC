@@ -51,7 +51,7 @@ export function initialize() {
         checkJSON() /** Ruft die Funktion auf, die sicherstellt, dass die Konfigurationsdateien vorhanden sind */
         initStatusBarItem()  /** Initialisiert den Button in der Statusleiste */
         initActivityBar()   /** Ruft Funktion auf die für die Activitybar zuständig ist */
-        initCompiler()     /** Compiler initialisieren */
+        initCompiler()     /** Überprüft auf Pfade für Compiler und führt ggf. das Skript zu der installation aus */
 
         writeLog(`Initialisierung beendet!`, 'INFO')
     })
@@ -128,9 +128,9 @@ export async function initCompiler() {
         initExtensionsDir() /** Funktion die überprüft ob HSH Rechner und ggf. Extensions Pfad einstellt */
         await deleteOldPath('C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin')
         if (getComputerraumConfig()) {
-            await addNewPath('C:\\Program Files\\mingw64\\bin')
+            await addNewPath('C:\\Program Files\\mingw64\\bin') //Pfad für den HSH Rechner
         } else {
-            await addNewPath('C:\\ProgramData\\chocolatey\\bin')
+            await addNewPath('C:\\ProgramData\\chocolatey\\bin') //Pfade für den privaten Windows Rechner
             await addNewPath('C:\\ProgramData\\chocolatey\\lib\\mingw\\tools\\install\\mingw64\\bin')
         }
     }
@@ -161,6 +161,7 @@ export async function initCompiler() {
         }
     })
 
+    /** Falls Pfade neu gesetzt wurden wird neustart gestartet */ //FIXME Funktion wird zu früh aufgerufen, Variable wurde noch nicht gesetzt Zeile 205
     if ((settings.reloadNeeded && getOSBoolean('Windows'))) {
         restartVSC()
     }
@@ -226,9 +227,9 @@ export function getUserEnvironmentPath(): Promise<string> {
         })
     })
 }
-
+/** Funktion die den Pfad für die Extensions einstellt und ggf. die Extensions noch in das neue Verzeichnis kopiert */
 async function initExtensionsDir() {
-    if(!settings.initExtensionsDirRunning) {
+    if (!settings.initExtensionsDirRunning) {
         settings.initExtensionsDirRunning = true
         const USERHOME = getPath().userHome //Speichert den Username für den Pfad ein
         const VSCUSERDATA = getPath().vscUserData
@@ -254,7 +255,7 @@ async function initExtensionsDir() {
     }
 }
 
-/** Funktion die den VSCODE_EXTENSIONS Pfad ausliest */
+/** Funktion die den VSCODE_EXTENSIONS Pfad ausliest und als Sting zurück gibt*/
 export function getUserExtensionDir(): Promise<string> {
     return new Promise((resolve, reject) => {
         exec('echo %VSCODE_EXTENSIONS%', (error, stdout) => {
@@ -267,7 +268,7 @@ export function getUserExtensionDir(): Promise<string> {
     })
 }
 
-//Funktion die den Ordner der Extensions kopiert
+//Funktion die den Ordner der Extensions kopiert und anschließend VSCode neustartet
 function copyExtensions(sourcePath: string, destPath: string) {
     window.withProgress({
         location: ProgressLocation.Notification,
@@ -284,20 +285,20 @@ function copyExtensions(sourcePath: string, destPath: string) {
             })
             writeLog(`Kopiervorgang der Extensions abgeschlossen`, 'INFO')
             progress.report({ message: "Kopiervorgang beendet", increment: 100 })
-            //TODO Auto Neustart der die Umgebungsvariablen mit aktualisiert.
         } catch (err) {
             writeLog(`Fehler beim kopieren des Addons: ${err}`, 'ERROR')
             window.showErrorMessage("Bei dem Kopieren ist ein Fehler aufgetreten!")
         }
     }).then(() => {
-        restartVSC()
+        restartVSC() //Ruft Funktion auf die VSCode neustartet
     })
 }
 
+/** Funktion die VSCode schließt und den Benutzer auffordert VSCode manuel neu zu starten */
 function restartVSC() {
     window.showWarningMessage(writeLog(`VSCode wird jetzt beendet, bitte VSCode manuell neu starten!`, 'WARNING'), { modal: true }, 'OK')
         .then(() => {
-            exec('taskkill /im code.exe /f', (error, stdout, stderr) => {
+            exec('taskkill /im code.exe /f', (error, stdout, stderr) => { //Befehl schließt VSCode
                 if (error) {
                     writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')
                 }
