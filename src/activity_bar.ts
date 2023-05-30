@@ -125,7 +125,7 @@ async function aktualisieren() {
         new Dependency('GitHub: Vorlesung C', TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: ['https://github.com/hshf1/VorlesungC', ''] }),
         new Dependency((getStatusBarItem().command === 'extension.off') ? 'Erweiterung pausieren' : 'Erweiterung wieder aktivieren', TreeItemCollapsibleState.None, getConstCommands()[(getStatusBarItem().command === 'extension.off') ? 1 : 0]),
         new Dependency('Programmiersprache ändern', TreeItemCollapsibleState.None, getConstCommands()[8]),
-        new Dependency('Verzeichnis wechsel', TreeItemCollapsibleState.None, getConstCommands()[9]),
+        new Dependency('Verzeichnis wechseln', TreeItemCollapsibleState.None, getConstCommands()[9]),
         new Dependency('Einstellungen', TreeItemCollapsibleState.Collapsed),
         new Dependency('Nützliche Links', TreeItemCollapsibleState.Expanded),
         new Dependency('Problem melden', TreeItemCollapsibleState.None, getConstCommands()[7]),
