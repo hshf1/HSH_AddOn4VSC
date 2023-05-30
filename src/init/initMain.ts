@@ -125,7 +125,7 @@ export function getStatusBarItem() {
 /** Globale Funktion die den Compiler installiert und die Pfade setzt*/
 export async function initCompiler() {
     if (getOSBoolean('Windows')) {
-        initExtensionsDir() /** Funktion die überprüft ob HSH Rechner und ggf. Extensions Pfad einstellt */
+        await initExtensionsDir() /** Funktion die überprüft ob HSH Rechner und ggf. Extensions Pfad einstellt */
         await deleteOldPath('C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin')
         if (getComputerraumConfig()) {
             await addNewPath('C:\\Program Files\\mingw64\\bin') //Pfad für den HSH Rechner
@@ -157,7 +157,7 @@ export async function initCompiler() {
                 window.showInformationMessage(`Compiler bereits installiert!`)
             } else { /** Falls compiler_stat noch false, wird dann auf true gesetzt */
                 settings.compiler = true
-            }
+            }            
         }
     })
 
