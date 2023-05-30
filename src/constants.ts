@@ -15,7 +15,8 @@ export function getConstCommands(): Command[] {
         { command: 'install.compiler', title: 'Compiler installieren' },
         { command: 'setRZHsH.setting', title: 'HsH Rechenzentrum' },
         { command: 'report.problem', title: 'Problem melden' },
-        { command: 'switch.language', title: 'C' }
+        { command: 'switch.language', title: 'C' },
+        { command: 'switch.folder', title: 'In das Verzeichnis der aktuell geöffneten Datei wechseln' }
         //TODO Compiler Check für C, Java und Python ohne automatischen Dowload ?
     ]
 }

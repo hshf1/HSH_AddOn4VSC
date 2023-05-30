@@ -15,6 +15,7 @@ import {
 import { reportAProblem } from './reportaproblem'
 import { writeLog } from './logfile'
 import { getOSBoolean } from './init/os'
+import { switch_directory } from './filefoldername'
 
 const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert und beziehen ihre Namen und Beschreibungen aus der Datei constants.ts */
     {
@@ -111,6 +112,14 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
             window.showWarningMessage(writeLog('Programmiersprache wechseln ist derzeit nicht verfügbar!', 'WARNING'))
 		    return
             // await set_language() /** Ruft Funktion auf die die Sprache neu einstellt und ändert den Offenen Ordner ggf. */
+        }
+    },
+    {
+        name: getConstCommands()[9].command,
+        callback: () => {
+            writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[9].command}`, 'INFO')
+            //window.showWarningMessage(writeLog('Verzeichnis wird gewechselt', 'INfo'))
+		    switch_directory()
         }
     }
 ]
