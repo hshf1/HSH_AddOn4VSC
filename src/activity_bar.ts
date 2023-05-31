@@ -86,7 +86,7 @@ class DepNodeProvider implements TreeDataProvider<Dependency> {
             return [
                 ...dependencies_link    /** Gibt die links Dependencies zurück */
             ]
-        } else if (dependency.label === 'Programmiersprache ändern (Nur HSH Rechner!)') { /** Programmiersprache ändern  */
+        } else if (dependency.label === 'Programmiersprache ändern (Nur HSH Rechner!)') { /** Programmiersprache ändern  */ //TODO Code Leiche ?
             return [
             ...dependencies_program_languages   /** Gibt die program_languages Dependencies zurück */
         ]    

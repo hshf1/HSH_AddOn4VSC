@@ -19,9 +19,14 @@ import { initLogFile, writeLog } from '../logfile'
 import { getPath, initPath } from './paths'
 import { getOSBoolean, setOS } from './os'
 import { join } from 'path'
+import { init_language } from '../language_handler'
 
 let settings = {
-    computerraum: false, progLanguage: "C", compiler: false, reloadNeeded: false, initExtensionsDirRunning: false,
+    computerraum: false, 
+    progLanguage: "C", 
+    compiler: false, 
+    reloadNeeded: false, 
+    initExtensionsDirRunning: false,
     statusBarButton: window.createStatusBarItem(StatusBarAlignment.Right, 100) /** Definiert statusbar_button als StatusBarItem */
 }
 
@@ -51,6 +56,7 @@ export function initialize() {
         checkJSON() /** Ruft die Funktion auf, die sicherstellt, dass die Konfigurationsdateien vorhanden sind */
         initStatusBarItem()  /** Initialisiert den Button in der Statusleiste */
         initActivityBar()   /** Ruft Funktion auf die für die Activitybar zuständig ist */
+        init_language()
         initCompiler()     /** Überprüft auf Pfade für Compiler und führt ggf. das Skript zu der installation aus */
 
         writeLog(`Initialisierung beendet!`, 'INFO')

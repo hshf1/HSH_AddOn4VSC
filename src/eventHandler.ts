@@ -16,10 +16,10 @@ export function eventHandler_changeProgLanguage() {
 	const COMPUTERRAUM = getComputerraumConfig()
     const OPENWORKSPACE = workspace.workspaceFolders?.toString() || ''
 
-    if (!getOSBoolean('Windows') || !COMPUTERRAUM) {
-        window.showWarningMessage(writeLog('Programmiersprache wechseln ist derzeit nur an HsH Rechnern verfügbar!', 'WARNING'))
-        return
-    }
+    // if (!getOSBoolean('Windows') || !COMPUTERRAUM) {
+    //     window.showWarningMessage(writeLog('Programmiersprache wechseln ist derzeit nur an HsH Rechnern verfügbar!', 'WARNING'))
+    //     return
+    // }
     initPath()
     if (OPENWORKSPACE.includes(getPath().uebungsFolder)) { /** überprüft ob sich der Wert geändert hat */
         commands.executeCommand('workbench.action.closeFolder')

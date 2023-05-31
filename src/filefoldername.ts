@@ -73,6 +73,7 @@ async function rename(currentPath: string) {
                 '.': '_',
             }[char] || char;
         })
+        
         const newName = replacedBasename.concat(constextname); /** fügt die Endung an den Dateinamen  */
         newfullname = join(constdirname, newName) /** Verbindet den Ordnerpfad und den neuen Dateinamen und speichert ihn */
 
