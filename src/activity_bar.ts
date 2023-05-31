@@ -1,6 +1,6 @@
 /** Dieses Modul stellt ein Menü in der Aktivitätsleiste bereit, das dem Benutzer nützliche Links und Optionen bietet, um die Erweiterung zu konfigurieren.
  *  Der Code definiert eine Klasse, die als Datenquelle für das Menü dient, und erstellt dann eine Instanz dieser Klasse und registriert sie als Datenquelle 
- *  für das Menü. Der Code verfügt auch über eine Funktion, die die Daten des Addons aktualisiert.
+ *  für das Menü. Der Code verfügt auch über eine Funktion, die die Daten des Addons aktualisiert. 
  */
 
 import {
