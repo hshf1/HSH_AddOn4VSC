@@ -31,7 +31,7 @@ export function openPreFolder() {
 
 	if (!existsSync(uebungsFolder)) {	/** Überprüft ob der Pfad inklusive des Ordners noch nicht existiert */
 		try {
-			mkdirSync(uebungsFolder)	/** Versucht CUebung zu erstellen */
+			mkdirSync(uebungsFolder)	/** Versucht Uebungsordner zu erstellen */
 		} catch (error: any) {
 			writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')	/** Falls ein Fehler entsteht wird dieser in die Konsole geschrieben */
 		}

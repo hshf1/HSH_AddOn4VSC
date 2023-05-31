@@ -31,7 +31,8 @@ if [ "$uninstall" = "true" ]; then
         rm -R ~/Library/Application\ Support/Code
         # Löschen aller Extensions
         rm -R ~/.vscode
-
+        # Löschen von HomeBrew mit allen seinen Ordnern
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)"
         #### Ende Deinstallation MacOS ####
     else
         #### Beginn Deinstallation Linux ####
@@ -56,20 +57,26 @@ else
     if [ "$os_name" = "Darwin" ]; then
         #### Beginn Installation MacOS ####
 	
-        # VSCode installieren, falls nicht vorhanden
-        if [ -e "/Applications/Visual Studio Code.app" ]; then
-        echo >nul
-        else
-            # Downloaden der Zip
-            curl -Lo ~/Downloads/vsc.zip "https://code.visualstudio.com/sha/download?build=stable&os=darwin-universal" 
-            # unzip mit Zielordner /Applications
-            unzip ~/Downloads/vsc.zip -d /Applications
-            # Nach unzip die zip in Downloads löschen
-            rm -R ~/Downloads/vsc.zip
-        fi
+        # # VSCode installieren, falls nicht vorhanden
+        # if [ -e "/Applications/Visual Studio Code.app" ]; then
+        # echo >nul
+        # else
+        #     # Downloaden der Zip
+        #     curl -Lo ~/Downloads/vsc.zip "https://code.visualstudio.com/sha/download?build=stable&os=darwin-universal" 
+        #     # unzip mit Zielordner /Applications
+        #     unzip ~/Downloads/vsc.zip -d /Applications
+        #     # Nach unzip die zip in Downloads löschen
+        #     rm -R ~/Downloads/vsc.zip
+        # fi
 
         # Compiler installieren, falls nicht vorhanden
         command xcode-select --install
+        # Installiert HomeBrew
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        # Java installieren 
+        brew install openjdk -y
+        # Python 3.11 Installieren
+        brew install python@3.11 -y
         
 	#### Ende Installation MacOS ####
     else

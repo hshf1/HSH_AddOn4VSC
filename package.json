@@ -99,7 +99,10 @@
   "extensionDependencies": [
     "formulahendry.code-runner",
     "ms-vscode.cpptools",
-    "ms-vsliveshare.vsliveshare"
+    "ms-vsliveshare.vsliveshare",
+    "vscjava.vscode-java-pack",
+    "ms-python.python"
+
   ],
   "devDependencies": {
     "@types/fs-extra": "^11.0.1",

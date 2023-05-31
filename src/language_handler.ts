@@ -1,28 +1,30 @@
 import { ConfigurationTarget, window, workspace } from 'vscode'
 
 import { writeLog } from './logfile'
-import { getProgLanguageConfig } from './init/initMain'
+import { getProgLanguageConfig, setProgLanguageConfig } from './init/initMain'
 import { openPreFolder } from './checkfolder'
 
+
 export async function init_language() { //Initialisiert einmalig eine Sprache
+    const folders = workspace.workspaceFolders // Überprüft ob Ordner geöffnet ist und speichert den Namen falls vorhanden
+    
+    if (!folders || folders.length === 0) { // kein Ordner ist geöffnet wird einfach der C Ordner geöffnet            
+        setProgLanguageConfig('C')
+        openPreFolder()
+        return
+    }
 
-        // const folders = workspace.workspaceFolders // Überprüft ob Ordner geöffnet ist und speichert den Namen falls vorhanden
-        // if (!folders || folders.length === 0) { // kein Ordner ist geöffnet wird einfach der C Ordner geöffnet            
-        //     active_language = "C"
-        //     openprefolder(active_language)
-        //     return
-        // }
-
-        // const currentFolderName = folders[0].name
-        // if (currentFolderName === 'C_Uebung') { // wenn im C Ordner speicher C als aktive Sprache
-        //     active_language = 'C'
-        // } else if (currentFolderName === 'Java_Uebung') { // wenn im Java Ordner speicher java als aktive Sprache
-        //     active_language = 'Java'
-        // } else if (currentFolderName === 'Python_Uebung') { // wenn im Java Ordner speicher java als aktive Sprache
-        //     active_language = 'Python'
-        // } else {
-        //     active_language = 'C'  //Falls unbekannter Ordner geöffnet ist wird einfach C als aktive Sprache gesetzt
-        // }
+    const currentFolderName = folders[0].name
+    if (currentFolderName === 'C_Uebung') { // wenn im C Ordner speicher C als aktive Sprache
+        setProgLanguageConfig('C')
+    } else if (currentFolderName === 'Java_Uebung') { // wenn im Java Ordner speicher java als aktive Sprache
+        setProgLanguageConfig('Java')
+    } else if (currentFolderName === 'Python_Uebung') { // wenn im Java Ordner speicher java als aktive Sprache
+        setProgLanguageConfig('Python')
+    } else {
+        //Falls unbekannter Ordner geöffnet ist wird einfach C als aktive Sprache gesetzt
+        setProgLanguageConfig('C')
+    }
 }
 
 export async function set_language() {
@@ -44,11 +46,11 @@ export async function set_language() {
         return
     }
 
-    changeSettingsLanguage(newLanguage)
+    setProgLanguageConfig(newLanguage)
     window.showInformationMessage(writeLog(`${newLanguage} ausgewählt`, 'INFO'))
     openPreFolder() // TODO: Code nochmal ansehen
 }
 
-function changeSettingsLanguage(newLanguage: string) {
-    workspace.getConfiguration('addon4vsc').update('sprache', newLanguage, ConfigurationTarget.Global)
-}
+// function changeSettingsLanguage(newLanguage: string) {
+//     workspace.getConfiguration('addon4vsc').update('sprache', newLanguage, ConfigurationTarget.Global)
+// }
