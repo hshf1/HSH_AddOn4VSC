@@ -1,3 +1,5 @@
+/** Modul das Funtionen bereitstellt die entsprechende Pfade zurückgeben */
+
 import { homedir } from 'os' /** Importiert die homedir Funktion aus dem Node.js Modul. Die homedir-Funktion gibt das Heimatverzeichnis des aktuellen Benutzers als Zeichenfolge zurück. */
 import { existsSync, mkdirSync } from 'fs'
 

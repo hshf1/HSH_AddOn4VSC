@@ -1,3 +1,4 @@
+/** Modul das Funktion zur Bestimmung des Betriebssystem bereit stellt */
 import { writeLog } from "../logfile"
 
 let os = { windows: false, osx: false, linux: false, string: '' }
