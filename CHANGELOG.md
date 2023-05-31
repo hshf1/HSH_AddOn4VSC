@@ -13,11 +13,12 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 - Java implementierung
 - Python implementierung
 
-## [1.7.0] - [1.7.8] - 30.04.2023 - 06.05.2023
+## [1.7.0] - [1.7.9] - 30.04.2023 - 31.05.2023
 
 ### neu hinzugefügt
 - ProgressBar für Initialisierung und Problem melden
-
+- Befehl um in aktuelles Verzeichnis der offenen Datei zu wechseln in der Activity Bar
+- Das Addon muss nun nicht mehr jedes mal erneut im PC Raum heruntergeladen werden, sondern wird auf dem Benutzerprofil des Studenten gespeichert
 ### geändert
 
 - Bugfix in den Umgebungsvariablen am Windows

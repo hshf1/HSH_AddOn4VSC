@@ -100,13 +100,15 @@ async function save_rename(currentPath: string, newfullname: any) {
     }
 }
 
+
+/** Funktion die in das aktuelle Verzeichnis der offenen Datei wechselt */
 export async function switch_directory() {
-    const activeEditor = vscode.window.activeTextEditor;
+    const activeEditor = vscode.window.activeTextEditor; //Überprüft ob Datei geöffnet ist
     if (activeEditor) {
-        const currentFilePath = activeEditor.document.uri.fsPath;
-        const currentFileDirectory = path.dirname(currentFilePath);
-        const folderUri = Uri.file(currentFileDirectory)
-        commands.executeCommand(`vscode.openFolder`, folderUri)	/** Öffnet den Ordner */
+        const currentFilePath = activeEditor.document.uri.fsPath; //Holt den Pfad der offenen Datei
+        const currentFileDirectory = path.dirname(currentFilePath); //Bestimmt Pfad zum Verzeichnis
+        const folderUri = Uri.file(currentFileDirectory) //Wandelt in URI Format um
+        commands.executeCommand(`vscode.openFolder`, folderUri)	// Öffnet den Ordner
     } else {
         vscode.window.showInformationMessage('Es ist keine Datei zum Wechseln des Verzeichnisses geöffnet.');
     }
