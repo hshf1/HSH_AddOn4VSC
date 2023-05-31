@@ -94,7 +94,7 @@ export function getComputerraumConfig() {
 }
 
 /** Funktion mit der sich die Programmiersprache in den Settings einstellen lässt */
-function setProgLanguageConfig(tmp: string) {
+export function setProgLanguageConfig(tmp: string) {
     settings.progLanguage = tmp
 
     try {
