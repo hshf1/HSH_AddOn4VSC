@@ -3,7 +3,7 @@
 
 import { window, commands, Uri } from "vscode"
 import * as vscode from 'vscode'
-import { exec } from 'child_process'
+import { exec, ExecException } from 'child_process'
 
 import { getComputerraumConfig } from "./initMain"
 import { getOSBoolean } from "./os"
@@ -37,52 +37,46 @@ export async function global_compiler_checker() {
 /** Funktion die überprüft welche Compiler bereit installiert sind und ggf. nach installiert */
 
 async function windows_check_compiler() {
-    let Version_INFO:String
 
-    commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(getPath().userHome)).then(async () => {
+    let Version_INFO = "";
+
+    await commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(getPath().userHome)).then(async () => {
+       
         /*______________ Chocolatey ________________*/
-        exec('choco --version', (error, stdout) => {
-            if (error) {
-                Version_INFO = "NULL"
-            } else {     
-                window.showInformationMessage(`Chocolatey gefunden! Informationen zum choco: ${stdout.trim()} `, { modal: true }, 'OK')
-                Version_INFO = Version_INFO + stdout.trim()
-            }
-        })
+        try {
+            const chocoVersion = await executeCommand('choco --version');
+            Version_INFO += `Chocolatey gefunden!\n${chocoVersion}\n\n`;
+        } catch (error) {
+            Version_INFO += "Chocolatey: FEHLT\n\n";
+        }
+
         /*_________________ C _____________________*/
-        exec('gcc --version', (error, stdout) => {
-            if (error) {
-                Version_INFO = "NULL"
-            } else {
-                //window.showInformationMessage(`Compiler gefunden! Informationen zum Compiler: ${stdout.trim()} `, { modal: true }, 'OK')
-                Version_INFO = Version_INFO + stdout.trim()
-            }
-        })
+        try {
+            const gccVersion = await executeCommand('gcc --version');
+            Version_INFO += `GCC gefunden!\n${gccVersion}\n\n`;
+        } catch (error) {
+            Version_INFO += "GCC Compiler: FEHLT \n\n";
+        }
 
         /*_________________ JAVA ___________________*/
-        exec('java --version', (error, stdout) => {
-            if (error) {
-                Version_INFO = "NULL"
-            } else {
-                //window.showInformationMessage(`Java gefunden! Informationen zu Java: ${stdout.trim()} `, { modal: true }, 'OK')
-                Version_INFO = Version_INFO + stdout.trim()
-            }
-        })
-
+        try {
+            const javaVersion = await executeCommand('java --version');
+            Version_INFO += `Java gefunden!\n${javaVersion}\n\n`;
+        } catch (error) {
+            Version_INFO += "Java: FEHLT\n\n";
+        }
 
         /*________________ PYTHON __________________*/
-        exec('python --version', (error, stdout) => {
-            if (error) {
-                Version_INFO = "NULL"
-            } else {
-                //window.showInformationMessage(`Python3 gefunden! Informationen zu Pythonpytho: ${stdout.trim()} `, { modal: true }, 'OK')
-                Version_INFO = Version_INFO + stdout.trim()
-            }
-        })
-        
+        try {
+            const pythonVersion = await executeCommand('python --version');
+            Version_INFO += `Python gefunden!\n${pythonVersion}\n\n`;
+        } catch (error) {
+            Version_INFO += "Python: FEHLT\n\n";
+        }
+
     })
 
-    //window.showInformationMessage(`Version_INFO: ${Version_INFO} `, { modal: true }, 'OK')
+    window.showInformationMessage(Version_INFO, { modal: true }, 'OK');
 }
 
 /**************************** MAC *********************************/
@@ -119,3 +113,15 @@ async function windows_hsh_check_compiler() {
 
     /*________________ PYTHON __________________*/
 }
+
+function executeCommand(command: string): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      exec(command, (error: ExecException | null, stdout: string, stderr: string) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve(stdout.trim());
+      });
+    });
+  }
