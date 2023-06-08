@@ -41,7 +41,7 @@ async function windows_check_compiler() {
     let Version_INFO = "";
 
     await commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(getPath().userHome)).then(async () => {
-       
+        //TODO Durch Funktionen ersetzen
         /*______________ Chocolatey ________________*/
         try {
             const chocoVersion = await executeCommand('choco --version');
