@@ -114,7 +114,7 @@ export function getSettingsContent() {
                 "externalConsole": false,
                 // macos-spezifische Einstellungen
                 "osx": {
-                    "type": "lldb",
+                    //"type": "lldb",
                     "MIMode": "lldb",
                     "program": "\${fileDirname}/\${fileBasenameNoExtension}",
                     "cwd": "\${fileDirname}",
