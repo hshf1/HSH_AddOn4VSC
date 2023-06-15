@@ -20,7 +20,7 @@ import { getPath, initPath } from './paths'
 import { getOSBoolean, setOS } from './os'
 import { join } from 'path'
 import { init_language } from '../language_handler'
-import { global_compiler_checker } from './compiler_manager'
+import { general_compiler_check } from './compiler_manager'
 
 let settings = {
     computerraum: false, 
@@ -58,8 +58,8 @@ export function initialize() {
         initStatusBarItem()  /** Initialisiert den Button in der Statusleiste */
         initActivityBar()   /** Ruft Funktion auf die für die Activitybar zuständig ist */
         init_language()
-        initCompiler()     /** Überprüft auf Pfade für Compiler und führt ggf. das Skript zu der installation aus */
-        global_compiler_checker()
+        //initCompiler()     /** Überprüft auf Pfade für Compiler und führt ggf. das Skript zu der installation aus */
+        general_compiler_check(true) /** Führt den Compilercheck im Hintergrund durch */
         writeLog(`Initialisierung beendet!`, 'INFO')
     })
 }

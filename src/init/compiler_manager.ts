@@ -8,120 +8,173 @@ import { exec, ExecException } from 'child_process'
 import { getComputerraumConfig } from "./initMain"
 import { getOSBoolean } from "./os"
 import { getPath } from "./paths"
+import { info } from "console"
+import { writeLog } from "../logfile"
 
+let chocoVersion = ""; let gccVersion = ""; let javaVersion = ""; let pythonVersion = ""; let homebrewVersion = "";
+let script_needed = 0;
 
+/** Funktion die den exec()-Befehl await Fähigmacht */
+function executeCommand(command: string): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+        exec(command, (error: ExecException | null, stdout: string, stderr: string) => {
+            if (error) {
+                reject(error);
+                return;
+            }
+            resolve(stdout.trim());
+        });
+    });
+}
 
+/*********************************************** Hauptfunktion zum Überprüfen ************************************************/
 
-/** Funktion die Aufgerufen wird und dann je nach Betriebssystem den entsprechenden Compiler Check macht */
-export async function global_compiler_checker() {
-    if (getOSBoolean('Windows')) {
+/** Funktion die überprüft welche Compiler bereit installiert sind und ggf. nach installiert */
+export async function general_compiler_check(silent: boolean) {
 
-        if (getComputerraumConfig()) {
-            await windows_hsh_check_compiler() //Compiler Check HSH Windows
-        } else {
-            await windows_check_compiler() //Compiler Check Privat Winwos
-        }
+    let Version_INFO = ""; script_needed = 0;
 
-    } else if (getOSBoolean('MacOS')) {
+    // if (getOSBoolean('Windows') && !getComputerraumConfig()) {
+    //     /*______________ Chocolatey ________________*/
+    //     if (await chocolatey_check()) {
+    //         Version_INFO += `Chocolatey gefunden!\n${chocoVersion}\n\n`;
+    //     } else {
+    //         Version_INFO += "Chocolatey: FEHLT\n\n";
+    //     }
+    // } else if (getOSBoolean('MacOS')) {
+    //     /*______________ Homebrew ___________________*/
+    //     if (await homebrew_check()) {
+    //         Version_INFO += `Homebrew gefunden!\n${homebrewVersion}\n\n`;
+    //     } else {
+    //         Version_INFO += "Homebrew: FEHLT\n\n";
+    //     }
+    // } else if (getOSBoolean('Linux')) {
+    //     /*______________ Linux Installer ____________*/
+    // }
 
-        await osx_check_compiler() //Compiler Check MacOS
+    /*___________________ C _____________________*/
+    if (await gcc_check()) {
+        writeLog("GCC gefunden!", "INFO")
+        Version_INFO += `GCC gefunden!\n${gccVersion}\n\n`;
+    } else {
+        writeLog("GCC Fehlt!", "ERROR")
+        Version_INFO += "GCC Compiler: Nicht gefunden \n\n";
+        script_needed = 1;
+    }
 
-    } else if (getOSBoolean('Linux')) {
+    /*_________________ JAVA ___________________*/
+    if (await java_check()) {
+        writeLog("Java gefunden!", "INFO")
+        Version_INFO += `Java gefunden!\n${javaVersion}\n\n`;
 
-        await linux_check_compiler() //Compiler Check Linux
+    } else {
+        writeLog("Java Fehlt!", "ERROR")
+        Version_INFO += "Java: Nicht gefunden\n\n";
+        script_needed = 1;
+    }
 
+    /*________________ PYTHON __________________*/
+    if (await python_check()) {
+        writeLog("Python gefunden!", "INFO")
+        Version_INFO += `Python gefunden!\n${pythonVersion}\n\n`;
+    } else {
+        writeLog("Python Fehlt!", "ERROR")
+        Version_INFO += "Python: Nicht gefunden\n\n";
+        script_needed = 1;
+    }
+
+    /*________________ Ausgabe des Checks ______________*/
+    if (script_needed && !getComputerraumConfig() && !silent) {
+        await window.showInformationMessage(Version_INFO, { modal: true }, 'Install Missing');
+        await script_installer()
+        script_needed = 0;
+
+    } else if ((script_needed && !getComputerraumConfig() && silent)) {
+        await script_installer()
+        script_needed = 0;
+
+    } else if (!silent) {
+        window.showInformationMessage(Version_INFO, { modal: true }, 'OK');
     }
 }
 
-/************************** WINDOWS *******************************/
-/** Funktion die überprüft welche Compiler bereit installiert sind und ggf. nach installiert */
+/************************************* Unterfunktionen zum Überprüfen **********************************************************/
 
-async function windows_check_compiler() {
+/*______________ Chocolatey ________________*/
+async function chocolatey_check() {
+    chocoVersion = "";
+    try {
+        chocoVersion = await executeCommand('choco --version');
+        return 1
+    } catch (error) {
+        return 0
+    }
+}
 
-    let Version_INFO = "";
+/*_________________ Homebrew _____________________*/
+async function homebrew_check() {
+    homebrewVersion = "";
+    try {
+        homebrewVersion = await executeCommand('homebrew --version'); //TODO Homebrew checker
+        return 1
+    } catch (error) {
+        return 0
+    }
+}
 
-    await commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(getPath().userHome)).then(async () => {
-        //TODO Durch Funktionen ersetzen
-        /*______________ Chocolatey ________________*/
-        try {
-            const chocoVersion = await executeCommand('choco --version');
-            Version_INFO += `Chocolatey gefunden!\n${chocoVersion}\n\n`;
-        } catch (error) {
-            Version_INFO += "Chocolatey: FEHLT\n\n";
+/*_________________ C _____________________*/
+async function gcc_check() {
+    gccVersion = "";
+    try {
+        gccVersion = await executeCommand('gcc --version');
+        return 1
+    } catch (error) {
+        return 0
+    }
+}
+
+/*_________________ JAVA ___________________*/
+async function java_check() {
+    javaVersion = "";
+    try {
+        javaVersion = await executeCommand('java --version');
+        return 1
+    } catch (error) {
+        return 0
+    }
+
+}
+
+/*________________ PYTHON __________________*/
+async function python_check() {
+    pythonVersion = "";
+    try {
+        pythonVersion = await executeCommand('python --version');
+        return 1
+    } catch (error) {
+        return 0
+    }
+
+}
+
+/******************************************* Skript zum Installieren ******************************************************/
+async function script_installer() {
+    /** Erzeugt Admin Terminal und setzt das Verzeichnis auf das Heimatverzeichnis */
+    commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(getPath().userHome)).then(async () => {
+        if (getOSBoolean('Windows')) {
+            if (getComputerraumConfig()) {
+                //await addNewPath('C:\\Program Files\\mingw64\\bin')
+            } else {
+                /** Führt den Befehl aus das Skript zur installation auszuführen */
+                writeLog("Windows Skript wurde ausgeführt", "INFO")
+                commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb runAs -ArgumentList \'/k curl -o %temp%\\vsc.cmd https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/support_python_java/script/vscwindows.cmd && %temp%\\vsc.cmd\'\"\n' })
+            }
+        } else if (getOSBoolean('MacOS')) { /** wenn Mac, führt Skript zur installation aus */
+            writeLog("Mac Skript wurde ausgeführt", "INFO")
+            commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'curl -sL https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/vsclinuxosx.sh | bash\n' })
+        } else if (getOSBoolean('Linux')) { /** wenn Linux, führt Skript zur installation aus */
+            writeLog("Linux Skript wurde ausgeführt", "INFO")
+            commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'sudo snap install curl && curl -sL https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/vsclinuxosx.sh | bash\n' })
         }
-
-        /*_________________ C _____________________*/
-        try {
-            const gccVersion = await executeCommand('gcc --version');
-            Version_INFO += `GCC gefunden!\n${gccVersion}\n\n`;
-        } catch (error) {
-            Version_INFO += "GCC Compiler: FEHLT \n\n";
-        }
-
-        /*_________________ JAVA ___________________*/
-        try {
-            const javaVersion = await executeCommand('java --version');
-            Version_INFO += `Java gefunden!\n${javaVersion}\n\n`;
-        } catch (error) {
-            Version_INFO += "Java: FEHLT\n\n";
-        }
-
-        /*________________ PYTHON __________________*/
-        try {
-            const pythonVersion = await executeCommand('python --version');
-            Version_INFO += `Python gefunden!\n${pythonVersion}\n\n`;
-        } catch (error) {
-            Version_INFO += "Python: FEHLT\n\n";
-        }
-
     })
-
-    window.showInformationMessage(Version_INFO, { modal: true }, 'OK');
 }
-
-/**************************** MAC *********************************/
-/** Funktion die überprüft welche Compiler bereit installiert sind und ggf. nach installiert */
-
-async function osx_check_compiler() {
-    /*______________ Homebrew __________________*/
-
-    /*_________________ C _____________________*/
-
-    /*_________________ JAVA ___________________*/
-
-    /*________________ PYTHON __________________*/
-}
-
-/**************************** LINUX ********************************/
-/** Funktion die überprüft welche Compiler bereit installiert sind und ggf. nach installiert */
-
-async function linux_check_compiler() {
-    /*_________________ C _____________________*/
-
-    /*_________________ JAVA ___________________*/
-
-    /*________________ PYTHON __________________*/
-}
-
-/************************ HSH-Rechner ****************************/
-/** Funktion die überprüft welche Compiler bereit installiert sind und ggf. nach installiert */
-
-async function windows_hsh_check_compiler() {
-    /*_________________ C _____________________*/
-
-    /*_________________ JAVA ___________________*/
-
-    /*________________ PYTHON __________________*/
-}
-
-function executeCommand(command: string): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-      exec(command, (error: ExecException | null, stdout: string, stderr: string) => {
-        if (error) {
-          reject(error);
-          return;
-        }
-        resolve(stdout.trim());
-      });
-    });
-  }

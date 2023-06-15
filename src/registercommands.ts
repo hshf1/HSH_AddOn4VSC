@@ -17,6 +17,7 @@ import { writeLog } from './logfile'
 import { getOSBoolean } from './init/os'
 import { switch_directory } from './filefoldername'
 import { set_language } from './language_handler' //Importiert die Funktion mit der sich die Prog.sprache einstellen lässt
+import { general_compiler_check } from './init/compiler_manager'
 
 const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert und beziehen ihre Namen und Beschreibungen aus der Datei constants.ts */
     {
@@ -71,7 +72,8 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
         name: getConstCommands()[5].command,
         callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[5].command}`, 'INFO')
-            initCompiler()     /** Ruft Funktion auf die den Compiler initialisiert */
+            //initCompiler()     /** Ruft Funktion auf die den Compiler initialisiert */
+            general_compiler_check(false) /** Führt den Compilercheck mit Anzeige durch */
         }
     },
     {
