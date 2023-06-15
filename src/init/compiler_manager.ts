@@ -15,7 +15,7 @@ let chocoVersion = ""; let gccVersion = ""; let javaVersion = ""; let pythonVers
 let script_needed = 0;
 
 /** Funktion die den exec()-Befehl await Fähigmacht */
-function executeCommand(command: string): Promise<string> {
+export function executeCommand(command: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
         exec(command, (error: ExecException | null, stdout: string, stderr: string) => {
             if (error) {
@@ -85,8 +85,10 @@ export async function general_compiler_check(silent: boolean) {
 
     /*________________ Ausgabe des Checks ______________*/
     if (script_needed && !getComputerraumConfig() && !silent) {
-        await window.showInformationMessage(Version_INFO, { modal: true }, 'Install Missing');
-        await script_installer()
+        let answer = await window.showInformationMessage(Version_INFO, { modal: true }, 'Install Missing');
+        if (answer == "Install Missing") {
+            await script_installer()
+        }
         script_needed = 0;
 
     } else if ((script_needed && !getComputerraumConfig() && silent)) {

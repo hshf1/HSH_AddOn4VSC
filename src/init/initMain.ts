@@ -21,12 +21,13 @@ import { getOSBoolean, setOS } from './os'
 import { join } from 'path'
 import { init_language } from '../language_handler'
 import { general_compiler_check } from './compiler_manager'
+import { executeCommand } from './compiler_manager'
 
 let settings = {
-    computerraum: false, 
-    progLanguage: "C", 
-    compiler: false, 
-    reloadNeeded: false, 
+    computerraum: false,
+    progLanguage: "C",
+    compiler: false,
+    reloadNeeded: false,
     initExtensionsDirRunning: false,
     statusBarButton: window.createStatusBarItem(StatusBarAlignment.Right, 100) /** Definiert statusbar_button als StatusBarItem */
 }
@@ -45,7 +46,7 @@ export function initialize() {
             commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb') /** Installiere "vadimcn.vscode-lldb" */
         }   /** "vadimcn.vscode-lldb" ist eine Erweiterung, die für den Debbuger wichtig ist. */
 
-        initLocation() /** Funktion die anhand des Compilers überprüft ob man sich an einem HSH Rechner befindet */
+        initLocation() /** Funktion die anhand des Ortes des GCC Compilers überprüft ob man sich an einem HSH Rechner befindet */
         initConfigurations() /** initialisiert die Programmiersprache zu C */
         initPath() /** Setzt die Pfade für .jsons und Übungsordner */
         initLogFile()
@@ -58,7 +59,7 @@ export function initialize() {
         initStatusBarItem()  /** Initialisiert den Button in der Statusleiste */
         initActivityBar()   /** Ruft Funktion auf die für die Activitybar zuständig ist */
         init_language()
-        //initCompiler()     /** Überprüft auf Pfade für Compiler und führt ggf. das Skript zu der installation aus */
+        initUmgebungsvariablen()     /** Überprüft auf Pfade für Compiler und führt ggf. das Skript zu der installation aus */
         general_compiler_check(true) /** Führt den Compilercheck im Hintergrund durch */
         writeLog(`Initialisierung beendet!`, 'INFO')
     })
@@ -91,7 +92,7 @@ export function setComputerraumConfig(tmp: boolean) {
     if (oldConfig !== tmp) {
         initPath()
         initExtensionsDir()
-        initCompiler()
+        initUmgebungsvariablen()
     }
 }
 
@@ -130,7 +131,7 @@ export function getStatusBarItem() {
 }
 
 /** Globale Funktion die den Compiler installiert und die Pfade setzt*/
-export async function initCompiler() {
+export async function initUmgebungsvariablen() {
     if (getOSBoolean('Windows')) {
         await initExtensionsDir() /** Funktion die überprüft ob HSH Rechner und ggf. Extensions Pfad einstellt */
         await deleteOldPath('C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin')
@@ -142,31 +143,6 @@ export async function initCompiler() {
         }
     }
 
-    exec('gcc --version', (error, stdout) => { /** Prüft ob eine gcc version installiert ist */
-        if (error) { /** Wenn Fehler auftritt (keine Version installiert ist) */
-            commands.executeCommand('workbench.action.terminal.newWithCwd', Uri.file(getPath().userHome)).then(async () => { /** Erzeugt neues Terminal und setzt das Verzeichnis auf das Heimatverzeichnis */
-                if (getOSBoolean('Windows')) {
-                    if (settings.computerraum) {
-                        await addNewPath('C:\\Program Files\\mingw64\\bin')
-                    } else {
-                        commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'powershell -Command \"Start-Process cmd -Verb runAs -ArgumentList \'/k curl -o %temp%\\vsc.cmd https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/vscwindows.cmd && %temp%\\vsc.cmd\'\"\n' })
-                        /** Führt den Befehl aus das Skript zur installation auszuführen */
-                    }
-                } else if (getOSBoolean('MacOS')) { /** wenn Mac, führt Skript zur installation aus */
-                    commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'curl -sL https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/vsclinuxosx.sh | bash\n' })
-                } else if (getOSBoolean('Linux')) { /** wenn Linux, führt Skript zur installation aus */
-                    commands.executeCommand('workbench.action.terminal.sendSequence', { text: 'sudo snap install curl && curl -sL https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/vsclinuxosx.sh | bash\n' })
-                }
-            })
-        } else {
-            writeLog(`Compiler gefunden! Informationen zum Compiler: ${stdout.trim()} `, 'INFO')
-            if (settings.compiler) { /** Falls compiler_stat schon true */
-                window.showInformationMessage(`Compiler bereits installiert!`)
-            } else { /** Falls compiler_stat noch false, wird dann auf true gesetzt */
-                settings.compiler = true
-            }            
-        }
-    })
 
     /** Falls Pfade neu gesetzt wurden wird neustart gestartet */ //FIXME Funktion wird zu früh aufgerufen, Variable wurde noch nicht gesetzt Zeile 205
     if ((settings.reloadNeeded && getOSBoolean('Windows'))) {
@@ -183,14 +159,16 @@ async function deleteOldPath(tmp: string) {
     if (index !== -1) {
         pathDirs.splice(index, 1)
         pathVar = pathDirs.join(';')
-        exec(`setx PATH "${pathVar}"`, (error, stdout, stderr) => {
-            if (error) {
-                writeLog(`Fehler beim entfernen alter Umgebungsvariable: ${error.message}`, 'ERROR')
-            } else {
-                writeLog(`Alte Umgebungsvariable erfolgreich entfernt: ${stdout.trim()}`, 'INFO')
-                settings.reloadNeeded = true
-            }
-        })
+
+        try {
+            await executeCommand(`setx PATH "${pathVar}"`);
+        } catch (error) {
+            writeLog(`Fehler beim entfernen der Umgebungsvariable`, 'ERROR')
+            return
+        }
+        writeLog(`Alte Umgebungsvariable erfolgreich entfernt`, 'INFO')
+        settings.reloadNeeded = true
+
     } else {
         writeLog(`Alte Umgebungsvariable ist bereits gelöscht.`, 'INFO')
     }
@@ -204,14 +182,16 @@ async function addNewPath(tmp: string) {
     if (!pathDirs.includes(pathToAdd)) {
         pathDirs.push(pathToAdd)
         pathVar = pathDirs.join(';')
-        exec(`setx PATH "${pathVar}"`, (error, stdout, stderr) => {
-            if (error) {
-                writeLog(`Fehler beim entfernen alter Umgebungsvariable: ${error.message}`, 'ERROR')
-            } else {
-                writeLog(`Neue Umgebungsvariable (${pathToAdd}) erfolgreich hinzugefügt: ${stdout.trim()}`, 'INFO')
-                settings.reloadNeeded = true
-            }
-        })
+
+        try {
+            await executeCommand(`setx PATH "${pathVar}"`);
+        } catch (error) {
+            writeLog(`Fehler beim hinzufügen der Umgebungsvariable`, 'ERROR')
+            return
+        }
+        writeLog(`Neue Umgebungsvariable (${pathToAdd}) erfolgreich hinzugefügt`, 'INFO')
+        settings.reloadNeeded = true
+
     } else {
         writeLog(`Umgebungsvariable ist bereits vorhanden.`, 'INFO')
     }
@@ -234,6 +214,7 @@ export function getUserEnvironmentPath(): Promise<string> {
         })
     })
 }
+
 /** Funktion die den Pfad für die Extensions einstellt und ggf. die Extensions noch in das neue Verzeichnis kopiert */
 async function initExtensionsDir() {
     if (!settings.initExtensionsDirRunning) {

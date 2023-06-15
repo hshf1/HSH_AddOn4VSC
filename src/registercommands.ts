@@ -9,7 +9,7 @@ import { treeDataProvider } from './activity_bar'   /** Importiert den TreeDataP
 import { getConstCommands } from './constants'         /** Importiert die Namen und Beschreibungen der Commands aus constants.ts*/
 import { setsettingsjson, settasksjson } from './jsonfilescheck'       /** Importiert die Funktion zur Überprüfung und aktualisierung der .jsons Dateien aus jsonfilescheck.ts*/ 
 import { 
-    getStatusBarItem, initCompiler,
+    getStatusBarItem, initUmgebungsvariablen,
     getComputerraumConfig, setComputerraumConfig,
 } from './init/initMain' /** Importiert Funktionen aus init.ts */
 import { reportAProblem } from './reportaproblem'
