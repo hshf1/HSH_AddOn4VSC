@@ -59,7 +59,7 @@ export class Paths {
     }
 
     get uebungsFolder(): string {
-        switch (this.langRO) {
+        switch (getProgLanguageConfig()) {
             case 'C':
                 return join(this.userWorkParentFolder, 'C_Uebung')
             case 'Java':
@@ -72,7 +72,7 @@ export class Paths {
     }
 
     get testProgFile(): string {
-        switch (this.langRO) {
+        switch (getProgLanguageConfig()) {
             case 'C':
                 return join(this.uebungsFolder, 'testprog.c')
             case 'Java':
