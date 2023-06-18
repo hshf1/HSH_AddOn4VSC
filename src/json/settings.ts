@@ -1,7 +1,8 @@
 import { copyFileSync, existsSync, readFileSync, statSync, unlinkSync, writeFileSync } from "fs";
-import { getPath } from "../init/paths";
 import { join } from "path";
 import { window, workspace } from "vscode";
+
+import { getPath } from "../init/paths";
 import { getOSBoolean } from "../init/os";
 import { getComputerraumConfig } from "../init/initMain";
 import { writeLog } from "../logfile";
@@ -43,7 +44,16 @@ export function addMissingSettings() {
     if (existsSync(SETTINGSPATH)) {
         const existingSettingsContent = readFileSync(SETTINGSPATH, 'utf8');
         const existingSettingsWithoutComments = existingSettingsContent.replace(/\/\/.*/g, '');
-        const existingSettings: Record<string, any> = JSON.parse(existingSettingsWithoutComments);
+        let existingSettings: Record<string, any> = {}
+
+        try{
+            existingSettings = JSON.parse(existingSettingsWithoutComments)
+        }
+        catch (error) {
+            writeLog(`${SETTINGSPATH} ist eine fehlerhafte JSON-Datei. Die Datei wird jetzt erneuert.`, 'ERROR') /** Falls Fehler auftritt wird Fehler ausgegeben */
+            setSettingsFile()
+            return
+        }
         
         function mergeObjects(target: any, source: any) {
             for (const key in source) {
