@@ -7,6 +7,7 @@
 */
 
 // TODO: VSCode Version in HsH prüfen, dann package.json min. Version auf 1.75 setzen
+// TODO: Kommentare stimmen zum Teil nicht mehr -> eine Dokumentation über genutzte Funktionen sinnvoller?
 
 import {									
 	ExtensionContext, commands, workspace,	

@@ -1,9 +1,5 @@
 /** Dieses Modul behandelt den Code rund um die Problemmeldefunktion */
-import {
-    ProgressLocation,
-    Terminal, commands,
-    env, window
-} from "vscode"
+import { ProgressLocation, Terminal, commands, env, window } from "vscode"
 import { promisify } from 'util'
 import { exec } from 'child_process'
 import { join } from "path"

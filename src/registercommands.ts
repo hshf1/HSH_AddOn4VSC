@@ -7,7 +7,7 @@ import { env, Uri, window } from 'vscode'           /** Importiert die genannten
 
 import { treeDataProvider } from './activity_bar'   /** Importiert den TreeDataProvider von activity_bar.ts */
 import { getConstCommands } from './constants'         /** Importiert die Namen und Beschreibungen der Commands aus constants.ts*/
-import { setsettingsjson, settasksjson } from './jsonfilescheck'       /** Importiert die Funktion zur Überprüfung und aktualisierung der .jsons Dateien aus jsonfilescheck.ts*/ 
+import { setTasksFile } from './json/tasks'       /** Importiert die Funktion zur Überprüfung und aktualisierung der .jsons Dateien aus jsonfilescheck.ts*/ 
 import { 
     getStatusBarItem, initCompiler,
     getComputerraumConfig, setComputerraumConfig,
@@ -16,6 +16,7 @@ import { reportAProblem } from './reportaproblem'
 import { writeLog } from './logfile'
 import { getOSBoolean } from './init/os'
 import { switch_directory } from './filefoldername'
+import { addMissingSettings, openOldSettingsFile, openSettingsFile, setSettingsFile } from './json/settings'
 
 const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert und beziehen ihre Namen und Beschreibungen aus der Datei constants.ts */
     {
@@ -42,7 +43,8 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
         name: getConstCommands()[2].command,     
         callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[2].command}`, 'INFO')
-            setsettingsjson() /** Aktualisiert die settings.json */
+            setSettingsFile();
+            //setsettingsjson() /** Aktualisiert die settings.json */
             window.showInformationMessage('settings.json wurde zurückgesetzt.') /** Erzeugt kleines Fenster mit entsprechenden Inhalt */
         }
     },
@@ -50,7 +52,7 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
         name: getConstCommands()[3].command,     
         callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[3].command}`, 'INFO')
-            settasksjson()    /** Aktualisiert die task.json */
+            setTasksFile()    /** Aktualisiert die task.json */
             window.showInformationMessage('tasks.json wurde zurückgesetzt.') /** Erzeugt kleines Fenster mit entsprechenden Inhalt */
         }
     },
@@ -120,6 +122,27 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[9].command}`, 'INFO')
             //window.showWarningMessage(writeLog('Verzeichnis wird gewechselt', 'INfo'))
 		    switch_directory()
+        }
+    },
+    {
+        name: getConstCommands()[10].command,
+        callback: () => {
+            writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[10].command}`, 'INFO')
+		    openSettingsFile()
+        }
+    },
+    {
+        name: getConstCommands()[11].command,
+        callback: () => {
+            writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[11].command}`, 'INFO')
+		    openOldSettingsFile()
+        }
+    },
+    {
+        name: getConstCommands()[12].command,
+        callback: () => {
+            writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[12].command}`, 'INFO')
+		    addMissingSettings()
         }
     }
 ]
