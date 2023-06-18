@@ -24,6 +24,7 @@ export function checkSettingsFile() {
 export function setSettingsFile() {
 	const CONTENT = getSettingsContent()
 	const PATH = join(getPath().vscUserData, 'settings.json')
+
     createSettingsBackup()
 
 	try {
@@ -60,7 +61,7 @@ export function addMissingSettings() {
         
         writeFileSync(SETTINGSPATH, JSON.stringify(existingSettings, null, 4));
     } else {
-        // The settings.json file doesn't exist
+        setSettingsFile()
     }
 }
 
@@ -78,7 +79,7 @@ export function openSettingsFile() {
 }
 
 export function openOldSettingsFile() {
-    const OLDSETTINGSPATH: string = join(getPath().vscUserData, 'old_settings.json');
+    const OLDSETTINGSPATH: string = join(getPath().tempAddOn, 'old_settings.json');
 
     if (existsSync(OLDSETTINGSPATH)) {
         workspace.openTextDocument(OLDSETTINGSPATH)
@@ -154,7 +155,7 @@ function getSettingsContent() {
 
 function createSettingsBackup() { // TODO: Backup nur ausführen, wenn was geändert wird in der JSON
     const SETTINGSPATH: string = join(getPath().vscUserData, 'settings.json');
-    const OLDSETTINGSPATH: string = join(getPath().vscUserData, 'old_settings.json');
+    const OLDSETTINGSPATH: string = join(getPath().tempAddOn, 'old_settings.json');
 
     try {
         if (existsSync(SETTINGSPATH)) {

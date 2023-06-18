@@ -6,7 +6,7 @@ import { writeLog } from '../logfile'
 import { join } from 'path'
 
 /** Funktion überprüft ob die beiden .jsons vorhanden sind und fügt ggf. neu hinzu */
-function checkTasksFile() {
+export function checkTasksFile() {
 	const TASKSJSON = join(getPath().vscUserData, 'tasks.json')
 
 	try {
@@ -21,6 +21,7 @@ function checkTasksFile() {
 export function setTasksFile() {
 	const PATH = join(getPath().vscUserData, 'tasks.json')
 	const CONTENT = getTasksContent()
+
 	createTasksBackup()
 
 	try {
@@ -33,13 +34,59 @@ export function setTasksFile() {
 
 function getTasksContent() {
 	return {
-
+		"version": "2.0.0",
+		"tasks": [
+			{
+				"type": "cppbuild",
+				"label": "C/C++: gcc Aktive Datei kompilieren",
+				"command": "/usr/bin/gcc",
+				"args": [
+					"-g",
+					"\${file}",
+					"-o",
+					"\${fileDirname}/\${fileBasenameNoExtension}"
+				],
+				"options": {
+					"cwd": "\${fileDirname}"
+				},
+				"problemMatcher": [
+					"$gcc"
+				],
+				"group": {
+					"kind": "build",
+					"isDefault": true
+				},
+				"detail": "Vom Debugger generierte Aufgabe."
+			},
+			{
+				"type": "cppbuild",
+				"label": "C/C++: gcc.exe Aktive Datei kompilieren",
+				"command": "gcc.exe",
+				"args": [
+					"-g",
+					"\${file}",
+					"-o",
+					"\${fileDirname}\\\\\${fileBasenameNoExtension}.exe"
+				],
+				"options": {
+					"cwd": "\${workspaceFolder}"
+				},
+				"problemMatcher": [
+					"$gcc"
+				],
+				"group": {
+					"kind": "build",
+					"isDefault": true
+				},
+				"detail": "Compiler: gcc.exe"
+			}
+		]
 	}
 }
 
 function createTasksBackup() {
     const TASKSSPATH: string = join(getPath().vscUserData, 'tasks.json');
-    const OLDTASKSPATH: string = join(getPath().vscUserData, 'old_tasks.json');
+    const OLDTASKSPATH: string = join(getPath().tempAddOn, 'old_tasks.json');
 
     try {
         if (existsSync(TASKSSPATH)) {

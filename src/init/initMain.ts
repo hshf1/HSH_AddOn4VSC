@@ -19,6 +19,7 @@ import { getPath, initPath } from './paths'
 import { getOSBoolean, setOS } from './os'
 import { join } from 'path'
 import { checkSettingsFile } from '../json/settings'
+import { checkTasksFile } from '../json/tasks'
 
 let settings = {
     computerraum: false, progLanguage: "C", compiler: false, reloadNeeded: false, initExtensionsDirRunning: false,
@@ -49,6 +50,7 @@ export function initialize() {
         }
 
         checkSettingsFile()
+        checkTasksFile()
         initStatusBarItem()  /** Initialisiert den Button in der Statusleiste */
         initActivityBar()   /** Ruft Funktion auf die für die Activitybar zuständig ist */
         initCompiler()     /** Überprüft auf Pfade für Compiler und führt ggf. das Skript zu der installation aus */

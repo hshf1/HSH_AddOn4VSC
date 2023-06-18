@@ -1,9 +1,6 @@
-/** Dieses Modul enthält den Inhalt der .json Dateien, das testprogc und die Eigenschaften der Befehle  */
-
 import { Command } from "vscode" /** Importiert die Command Schnittstelle aus der VSCode Modul */
 
-import { getComputerraumConfig, getProgLanguageConfig } from "./init/initMain" /** Importiert die Funktion die den CompilerPfad bestimmt und die Funktion die das Encoding Format bestimmt */
-import { getOSBoolean } from "./init/os"
+import { getProgLanguageConfig } from "./init/initMain" /** Importiert die Funktion die den CompilerPfad bestimmt und die Funktion die das Encoding Format bestimmt */
 
 export function getConstCommands(): Command[] {
     return [ /** Definiert die einzelnen Befehle in einem Array. */
@@ -76,57 +73,4 @@ print(i)`
     } else {
         return ''
     }
-}
-
-/** Globale Funktion die den Inhalt für Task.json zurückgibt */
-function getTasksContent() {
-    return `{
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "type": "cppbuild",
-            "label": "C/C++: gcc Aktive Datei kompilieren",
-            "command": "/usr/bin/gcc",
-            "args": [
-                "-g",
-                "\${file}",
-                "-o",
-                "\${fileDirname}/\${fileBasenameNoExtension}"
-            ],
-            "options": {
-                "cwd": "\${fileDirname}"
-            },
-            "problemMatcher": [
-                "$gcc"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "detail": "Vom Debugger generierte Aufgabe."
-        },
-        {
-            "type": "cppbuild",
-            "label": "C/C++: gcc.exe Aktive Datei kompilieren",
-            "command": "gcc.exe",
-            "args": [
-                "-g",
-                "\${file}",
-                "-o",
-                "\${fileDirname}\\\\\${fileBasenameNoExtension}.exe"
-            ],
-            "options": {
-                "cwd": "\${workspaceFolder}"
-            },
-            "problemMatcher": [
-                "$gcc"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "detail": "Compiler: gcc.exe"
-        }
-    ]
-}`
 }
