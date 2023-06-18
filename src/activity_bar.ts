@@ -25,7 +25,7 @@ import { writeLog } from './logfile'
 
 export let treeDataProvider: DepNodeProvider /** Deklariert Globale Variable treeDataProvider, die für die Baumstruktur der Seitenleiste wichtig ist  */
 let treeViewOptions: TreeViewOptions<Dependency> 
-let dependencies_link: Dependency[] = [], dependencies_main: Dependency[] = [], dependencies_settings: Dependency[] = [], dependencies_program_languages: Dependency[] = []
+let dependencies_link: Dependency[] = [], dependencies_main: Dependency[] = [], dependencies_settings: Dependency[] = [], dependencies_settingsjson: Dependency[] = [], dependencies_program_languages: Dependency[] = []
 /** Definiert leere Dependency Arrays, die später die Elemente enthalten die in der Seitenleiste angezeigt werden */
 
 /** Dependency Erweitert die TreeItem Klasse */
@@ -82,6 +82,10 @@ class DepNodeProvider implements TreeDataProvider<Dependency> {
             return [
                 ...dependencies_settings /** Gibt die settings Dependencies zurück */
             ]
+        } else if (dependency.label === 'settings.json') { /** Wenn Label Einstellungen  */
+        return [
+            ...dependencies_settingsjson /** Gibt die settings Dependencies zurück */
+        ]
         } else if (dependency.label === 'Nützliche Links') { /** Wenn Label Nützliche Links  */
             return [
                 ...dependencies_link    /** Gibt die links Dependencies zurück */
@@ -132,9 +136,16 @@ async function aktualisieren() {
     ]
 
     dependencies_settings = [ /** Definiert die Dependencies des settings Arrays neu */
-        new Dependency('settings.json zurücksetzen', TreeItemCollapsibleState.None, getConstCommands()[2]),
+        new Dependency('settings.json', TreeItemCollapsibleState.Collapsed),
         new Dependency('tasks.json zurücksetzen', TreeItemCollapsibleState.None, getConstCommands()[3]),
         new Dependency('Compiler prüfen', TreeItemCollapsibleState.None, getConstCommands()[5]),
         new Dependency(getComputerraumConfig() ? 'Ändern auf privaten Windows-Rechner' : 'Ändern auf HsH Windows-Rechner', TreeItemCollapsibleState.None, getConstCommands()[6])
+    ]
+
+    dependencies_settingsjson = [
+        new Dependency('settings.json überprüfen', TreeItemCollapsibleState.None, getConstCommands()[12]),
+        new Dependency('settings.json zurücksetzen', TreeItemCollapsibleState.None, getConstCommands()[2]),
+        new Dependency('aktuelle settings.json öffnen', TreeItemCollapsibleState.None, getConstCommands()[10]),
+        new Dependency('alte settings.json öffnen', TreeItemCollapsibleState.None, getConstCommands()[11])
     ]
 }
