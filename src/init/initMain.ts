@@ -14,11 +14,12 @@ import * as fs from 'fs-extra'
 
 import { initActivityBar } from '../activity_bar'/** Importiert die Funktion die in der Activitybar die Links einfügt */
 import { openPreFolder } from '../checkfolder'	 /** Importiert die Funktion zum öffnen des Vorgefertigten Ordner aus  checkfolder.ts */
-import { checkJSON } from '../jsonfilescheck'    /** Importiert die Funktion zum überprüfen der jsons-Datei aus jsonfilescheck.ts */
 import { initLogFile, writeLog } from '../logfile'
 import { getPath, initPath } from './paths'
 import { getOSBoolean, setOS } from './os'
 import { join } from 'path'
+import { checkSettingsFile } from '../json/settings'
+import { checkTasksFile } from '../json/tasks'
 
 let settings = {
     computerraum: false, progLanguage: "C", compiler: false, reloadNeeded: false, initExtensionsDirRunning: false,
@@ -48,7 +49,8 @@ export function initialize() {
             openPreFolder() /** Öffnet Ordner je nach dem welche Prog.sprache aktiv ist */
         }
 
-        checkJSON() /** Ruft die Funktion auf, die sicherstellt, dass die Konfigurationsdateien vorhanden sind */
+        checkSettingsFile()
+        checkTasksFile()
         initStatusBarItem()  /** Initialisiert den Button in der Statusleiste */
         initActivityBar()   /** Ruft Funktion auf die für die Activitybar zuständig ist */
         initCompiler()     /** Überprüft auf Pfade für Compiler und führt ggf. das Skript zu der installation aus */
