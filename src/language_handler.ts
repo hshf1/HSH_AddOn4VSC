@@ -1,7 +1,7 @@
 import { ConfigurationTarget, window, workspace } from 'vscode'
 
 import { writeLog } from './logfile'
-import { getProgLanguageConfig } from './init/initMain'
+import { getProgLanguageConfig } from './init/init'
 import { openPreFolder } from './checkfolder'
 
 export async function init_language() { //Initialisiert einmalig eine Sprache

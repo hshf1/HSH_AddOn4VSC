@@ -6,12 +6,14 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 
 --------- 
 
-## [Unreleased]
+## [1.8.0] - 24.08.2023
 
-### neu hinzugefügt / geplant
+### neu hinzugefügt
+- 
 
-- Java implementierung
-- Python implementierung
+### geändert
+- Pfade den Umgebungen in der HsH angepasst
+- Alle Skripte in die Erweiterung implementiert
 
 ## [1.7.0] - [1.7.10] - 30.04.2023 - 07.06.2023
 
@@ -19,8 +21,8 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 - ProgressBar für Initialisierung und Problem melden
 - Befehl um in aktuelles Verzeichnis der offenen Datei zu wechseln in der Activity Bar
 - Das Addon muss nun nicht mehr jedes mal erneut im PC Raum heruntergeladen werden, sondern wird auf dem Benutzerprofil des Studenten gespeichert
-### geändert
 
+### geändert
 - Bugfix in den Umgebungsvariablen am Windows
 - E-Mail Adresse wird beim Problem melden automatisch vorgefüllt mit "@stud.hs-hannover.de"
 - Neuer Ordner .../Code/User/HSH_AddOn4VSC für logFile und VersionControl
@@ -40,7 +42,6 @@ Das Changelog-Format basiert auf [Keep a Changelog](https://keepachangelog.com/e
 - Wechseln der Programmiersprache zu einer anderen Sprache als C ist derzeit nur für HsH Rechner möglich
 - AutoUpdate bei Änderung in der Master-Branch
 
-   
 ### geändert
 - bugfixes
 - Compilerpfad auf "gcc.exe" geändert

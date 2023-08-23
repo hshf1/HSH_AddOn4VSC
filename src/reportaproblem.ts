@@ -8,7 +8,7 @@ import { tmpdir } from "os"
 import { createTransport } from "nodemailer"
 
 import { getSmtpEMail, getSmtpHost, getSmtpPW, getSmtpPort } from "./smtpconfig"
-import { getUserEnvironmentPath } from "./init/initMain"
+import { getUserEnvironmentPath } from "./init/init"
 import { getLogFileName, getLogFilePath, writeLog } from "./logfile"
 import { getPath } from './init/paths'
 import { getOSBoolean } from "./init/os"

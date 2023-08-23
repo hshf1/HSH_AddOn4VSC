@@ -1,36 +1,28 @@
-/**  Dieses Modul deklariert eine Reihe von Befehlobjekten.
-Jedes Befehlsobjekt hat eine "name"-Eigenschaft, die einem bestimmten Befehl entspricht, 
-sowie eine "callback"-Eigenschaft, die eine Funktion enthält die ausgeführt wird, wenn der Befehl benutzt wird.
-*/
+import { commands, env, ExtensionContext, Uri, window } from 'vscode'
 
-import { env, Uri, window } from 'vscode'           /** Importiert die genannten Befehle aus der VS-Code Erweiterung */
-
-import { treeDataProvider } from './activity_bar'   /** Importiert den TreeDataProvider von activity_bar.ts */
-import { getConstCommands } from './constants'         /** Importiert die Namen und Beschreibungen der Commands aus constants.ts*/
-import { setTasksFile } from './json/tasks'       /** Importiert die Funktion zur Überprüfung und aktualisierung der .jsons Dateien aus jsonfilescheck.ts*/ 
-import { 
-    getStatusBarItem, initCompiler,
-    getComputerraumConfig, setComputerraumConfig,
-} from './init/initMain' /** Importiert Funktionen aus init.ts */
+import { treeDataProvider } from './activity_bar'
+import { getConstCommands } from './constants'
+import { setTasksFile } from './json/tasks'
+import { getStatusBarItem, initCompiler, getComputerraumConfig, setComputerraumConfig } from './init/init'
 import { reportAProblem } from './reportaproblem'
 import { writeLog } from './logfile'
 import { getOSBoolean } from './init/os'
 import { switch_directory } from './filefoldername'
 import { addMissingSettings, openOldSettingsFile, openSettingsFile, setSettingsFile } from './json/settings'
 
-const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert und beziehen ihre Namen und Beschreibungen aus der Datei constants.ts */
+const constregistercommands = [
     {
-        name: getConstCommands()[0].command, /** Der Name wird aus der constants.ts geholt  */
-        callback: () => {                    /** Funktion die keine Paramter erwartet und keinen Rückgabewert hat */
+        name: getConstCommands()[0].command,
+        callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[0].command}`, 'INFO')
-            getStatusBarItem().text = 'AddOn4VSC pausieren' /** Übergibt dem Statusbar Button die Beschriftung */
-            getStatusBarItem().tooltip = 'Klicken, um die Erweiterung AddOn4VSC zu pausieren (spätestens, bis wenn VSCode neu startet)' /** Übergibt dem Statusbar Button die Beschriftung beim rüberfahren mit der Maus */
-            getStatusBarItem().command = 'extension.off' /** Übergibt den Command der mit dem Drücken verknüpft ist aus constants.ts */
-            treeDataProvider.refresh() /** Aktualisiert den TreeView (Sidebar) */
+            getStatusBarItem().text = 'AddOn4VSC pausieren'
+            getStatusBarItem().tooltip = 'Klicken, um die Erweiterung AddOn4VSC zu pausieren (spätestens, bis wenn VSCode neu startet)'
+            getStatusBarItem().command = 'extension.off'
+            treeDataProvider.refresh()
         }
     },
     {
-        name: getConstCommands()[1].command,     /** Wie vorheriger Befehl */
+        name: getConstCommands()[1].command,
         callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[1].command}`, 'INFO')
             getStatusBarItem().text = 'AddOn4VSC wieder aktivieren'
@@ -40,20 +32,20 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
         }
     },
     {
-        name: getConstCommands()[2].command,     
+        name: getConstCommands()[2].command,
         callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[2].command}`, 'INFO')
             setSettingsFile();
             //setsettingsjson() /** Aktualisiert die settings.json */
-            window.showInformationMessage('settings.json wurde zurückgesetzt.') /** Erzeugt kleines Fenster mit entsprechenden Inhalt */
+            window.showInformationMessage('settings.json wurde zurückgesetzt.')
         }
     },
     {
-        name: getConstCommands()[3].command,     
+        name: getConstCommands()[3].command,
         callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[3].command}`, 'INFO')
             setTasksFile()    /** Aktualisiert die task.json */
-            window.showInformationMessage('tasks.json wurde zurückgesetzt.') /** Erzeugt kleines Fenster mit entsprechenden Inhalt */
+            window.showInformationMessage('tasks.json wurde zurückgesetzt.')
         }
     },
     {
@@ -61,10 +53,10 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
         callback: (...args: any) => {   /** Übernimmt eine variable Anzahl von Argumenten (in diesem Fall einen Link), dessen Typ nicht spezifiziert sind */
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[4].command}`, 'INFO')
             if (args[0] === '') {       /** Überprüft ob das erste Argument 0 ist, falls dies der Fall ist wird eine Fehlermeldung ausgegeben und die Funktion beendet */
-                window.showErrorMessage(writeLog(`Es wurde kein Link zum Öffnen übergeben!`, 'ERROR') )
+                window.showErrorMessage(writeLog(`Es wurde kein Link zum Öffnen übergeben!`, 'ERROR'))
                 return
-            } else {                    
-                env.openExternal(Uri.parse(args[0]))    /** Ist das Argument nicht leer wird, der Link aufgerufen*/
+            } else {
+                env.openExternal(Uri.parse(args[0]))
             }
         }
     },
@@ -72,19 +64,19 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
         name: getConstCommands()[5].command,
         callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[5].command}`, 'INFO')
-            initCompiler()     /** Ruft Funktion auf die den Compiler initialisiert */
+            initCompiler()
         }
     },
     {
         name: getConstCommands()[6].command,
-        callback: async () => {     /** Erstellt asynchrone Funktion  */
+        callback: async () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[6].command}`, 'INFO')
             const COMPUTERRAUM = getComputerraumConfig()
-            if (!getOSBoolean('Windows')) { /** Überprüft ob es sich um einen Windows PC handelt */
+            if (!getOSBoolean('Windows')) {
                 window.showInformationMessage('Diese Einstellung ist nur für Windows-Betriebssysteme notwendig.')
                 return
             }
-            
+
             let userSelection = await window.showWarningMessage("Möchtest du wirklich den Standort des Windows-Rechners wechseln?", "Ja", "Nein")
 
             if (userSelection === "Ja") {
@@ -95,7 +87,7 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
                     setComputerraumConfig(true)
                     window.showInformationMessage('Auf HsH Windows-Rechner im Rechenzentrum gestellt.')
                 }
-    
+
                 treeDataProvider.refresh()
             }
         }
@@ -104,7 +96,7 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
         name: getConstCommands()[7].command,
         callback: async () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[7].command}`, 'INFO')
-            reportAProblem() /** Führt die Fehlermelden Funktion aus */
+            reportAProblem()
         }
     },
     {
@@ -112,7 +104,7 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
         callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[8].command}`, 'INFO')
             window.showWarningMessage(writeLog('Programmiersprache wechseln ist derzeit nicht verfügbar!', 'WARNING'))
-		    return
+            return
             // await set_language() /** Ruft Funktion auf die die Sprache neu einstellt und ändert den Offenen Ordner ggf. */
         }
     },
@@ -121,33 +113,34 @@ const constregistercommands = [ /** Die Befehle sind in einem Array gespeichert 
         callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[9].command}`, 'INFO')
             //window.showWarningMessage(writeLog('Verzeichnis wird gewechselt', 'INfo'))
-		    switch_directory()
+            switch_directory()
         }
     },
     {
         name: getConstCommands()[10].command,
         callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[10].command}`, 'INFO')
-		    openSettingsFile()
+            openSettingsFile()
         }
     },
     {
         name: getConstCommands()[11].command,
         callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[11].command}`, 'INFO')
-		    openOldSettingsFile()
+            openOldSettingsFile()
         }
     },
     {
         name: getConstCommands()[12].command,
         callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[12].command}`, 'INFO')
-		    addMissingSettings()
+            addMissingSettings()
         }
     }
 ]
 
-/** Exportiert Funktion die das Array an Befehls-Objekten für andere Module des Codes verfügbar macht */
-export function getCommands() {
-    return constregistercommands
+export function initCommands(context: ExtensionContext) {
+    constregistercommands.forEach(command => {
+        context.subscriptions.push(commands.registerCommand(command.name, command.callback))
+    })
 }

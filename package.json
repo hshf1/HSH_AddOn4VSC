@@ -9,7 +9,7 @@
     "type": "git",
     "url": "https://github.com/hshf1/HSH_AddOn4VSC"
   },
-  "version": "1.7.12",
+  "version": "1.8.0",
   "engines": {
     "vscode": "^1.50.0"
   },
@@ -33,6 +33,7 @@
       "properties": {
         "addon4vsc.sprache": {
           "type": "string",
+          "enum": ["C", "Java", "Python"],
           "description": "Hier kann die Programmiersprache ausgewählt werden, die genutzt werden soll.",
           "default": "C",
           "scope": "application"

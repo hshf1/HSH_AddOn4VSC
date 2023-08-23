@@ -1,6 +1,6 @@
-import { commands, window, workspace } from "vscode"
+import { ConfigurationChangeEvent, commands, debug, window, workspace } from "vscode"
 
-import { getComputerraumConfig, getStatusBarItem } from "./init/initMain"
+import { getComputerraumConfig, getStatusBarItem } from "./init/init"
 import { writeLog } from "./logfile"
 import { checkName } from "./filefoldername" /** Importiert die Funktion zum überprüfen des Dateinames aus filefoldername.ts */
 import { getPath, initPath } from "./init/paths"
@@ -10,6 +10,16 @@ export function eventHandler_checkName() {    /** Code definiert eine Funktion d
     if (getStatusBarItem().command === 'extension.off') {	/** überprüft ob der Statusleisten Button auf "pausiert" steht */
         checkName()                         			/**	Führt die Funktion aus die den Namen überprüft und wartet bis sie fertig ist */
     }
+}
+
+export function initEvents() {
+    workspace.onDidSaveTextDocument(eventHandler_checkName)
+	debug.onDidChangeBreakpoints(eventHandler_checkName)
+	workspace.onDidChangeConfiguration((event: ConfigurationChangeEvent) => {	
+		if (event.affectsConfiguration('addon4vsc.sprache')) {
+			eventHandler_changeProgLanguage()
+		}
+	})
 }
 
 export function eventHandler_changeProgLanguage() {

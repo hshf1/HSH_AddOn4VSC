@@ -1,9 +1,9 @@
-import { Command } from "vscode" /** Importiert die Command Schnittstelle aus der VSCode Modul */
+import { Command } from "vscode"
 
-import { getProgLanguageConfig } from "./init/initMain" /** Importiert die Funktion die den CompilerPfad bestimmt und die Funktion die das Encoding Format bestimmt */
+import { getProgLanguageConfig } from "./init/init"
 
 export function getConstCommands(): Command[] {
-    return [ /** Definiert die einzelnen Befehle in einem Array. */
+    return [
         { command: 'extension.on', title: "Erweiterung wieder aktivieren" },
         { command: "extension.off", title: "Erweiterung bis zum nächsten (Neu-)Start von VSCode pausieren" },
         { command: 'default.settingsjson', title: 'settings.json zurücksetzen' },

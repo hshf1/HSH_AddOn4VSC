@@ -4,58 +4,57 @@ import { window, workspace } from "vscode";
 
 import { getPath } from "../init/paths";
 import { getOSBoolean } from "../init/os";
-import { getComputerraumConfig } from "../init/initMain";
+import { getComputerraumConfig } from "../init/init";
 import { writeLog } from "../logfile";
 
-export function checkSettingsFile() {
-	const SETTINGSJSONPATH = join(getPath().vscUserData, 'settings.json')
+export function checkSettingsFile(): void {
+    const SETTINGSJSONPATH = join(getPath().vscUserData, 'settings.json');
 
-	try {
-		statSync(SETTINGSJSONPATH) /** Überprüft ob Datei vorhanden ist */
-		writeLog(`${SETTINGSJSONPATH} wurde gefunden.`, 'INFO')
-	} catch (error) {
-		writeLog(`${SETTINGSJSONPATH} wurde nicht gefunden.`, 'WARNING')
-		setSettingsFile()	/** Falls Fehler auftritt, sie also nicht vorhanden ist, wird sie neu erstellt */
-	}
+    try {
+        statSync(SETTINGSJSONPATH);
+        writeLog(`${SETTINGSJSONPATH} wurde gefunden.`, 'INFO');
+    } catch (error) {
+        writeLog(`${SETTINGSJSONPATH} wurde nicht gefunden.`, 'WARNING');
+        setSettingsFile();
+    }
 
-    addMissingSettings()
+    addMissingSettings();
 }
 
-/** Funktion die settings.json erstellt oder aktualisiert */
-export function setSettingsFile() {
-	const CONTENT = getSettingsContent()
-	const PATH = join(getPath().vscUserData, 'settings.json')
+export function setSettingsFile(): void {
+    const CONTENT = getSettingsContent();
+    const PATH = join(getPath().vscUserData, 'settings.json');
 
-    createSettingsBackup()
+    createSettingsBackup();
 
-	try {
-		writeFileSync(PATH, JSON.stringify(CONTENT, null, 4), { flag: 'w' }) /**Erstellt die settings.json in dem Pfad von getPath() und mit dem Inhalt aus constants.ts */
-	} catch (err: any) {
-		writeLog(`[${err.stack?.split('\n')[2]?.trim()}] ${err}`, 'ERROR')	/** Falls Fehler auftritt wird Fehler ausgegeben */
-	} finally {
-		writeLog(`${PATH} wurde erfolgreich erstellt.`, 'INFO')
-	}
+    try {
+        writeFileSync(PATH, JSON.stringify(CONTENT, null, 4), { flag: 'w' });
+    } catch (err: any) {
+        writeLog(`[${err.stack?.split('\n')[2]?.trim()}] ${err}`, 'ERROR');
+    } finally {
+        writeLog(`${PATH} wurde erfolgreich erstellt.`, 'INFO');
+    }
 }
 
-export function addMissingSettings() {
+export function addMissingSettings(): void {
     const SETTINGSPATH: string = join(getPath().vscUserData, 'settings.json');
     createSettingsBackup();
 
     if (existsSync(SETTINGSPATH)) {
         const existingSettingsContent = readFileSync(SETTINGSPATH, 'utf8');
         const existingSettingsWithoutComments = existingSettingsContent.replace(/\/\/.*/g, '');
-        let existingSettings: Record<string, any> = {}
+        let existingSettings: Record<string, any> = {};
 
-        try{
-            existingSettings = JSON.parse(existingSettingsWithoutComments)
+        try {
+            existingSettings = JSON.parse(existingSettingsWithoutComments);
         }
         catch (error) {
-            writeLog(`${SETTINGSPATH} ist eine fehlerhafte JSON-Datei. Die Datei wird jetzt erneuert.`, 'ERROR') /** Falls Fehler auftritt wird Fehler ausgegeben */
-            setSettingsFile()
-            return
+            writeLog(`${SETTINGSPATH} ist eine fehlerhafte JSON-Datei. Die Datei wird jetzt erneuert.`, 'ERROR');
+            setSettingsFile();
+            return;
         }
-        
-        function mergeObjects(target: any, source: any) {
+
+        function mergeObjects(target: any, source: any): void {
             for (const key in source) {
                 if (source.hasOwnProperty(key)) {
                     if (!target.hasOwnProperty(key)) {
@@ -68,42 +67,43 @@ export function addMissingSettings() {
         }
 
         mergeObjects(existingSettings, getSettingsContent());
-        
+
         writeFileSync(SETTINGSPATH, JSON.stringify(existingSettings, null, 4));
+        writeLog(`Fehlende Einstellungen in der settings.json wurden hinzugefügt`, 'INFO');
     } else {
-        setSettingsFile()
+        setSettingsFile();
     }
 }
 
-export function openSettingsFile() {
+export function openSettingsFile(): void {
     const SETTINGSPATH: string = join(getPath().vscUserData, 'settings.json');
 
     if (existsSync(SETTINGSPATH)) {
         workspace.openTextDocument(SETTINGSPATH)
-        .then((document) => {
-            window.showTextDocument(document);
-        });
+            .then((document) => {
+                window.showTextDocument(document);
+            });
     } else {
         window.showErrorMessage('Keine alte settings.json gefunden!');
     }
 }
 
-export function openOldSettingsFile() {
+export function openOldSettingsFile(): void {
     const OLDSETTINGSPATH: string = join(getPath().tempAddOn, 'old_settings.json');
 
     if (existsSync(OLDSETTINGSPATH)) {
         workspace.openTextDocument(OLDSETTINGSPATH)
-        .then((document) => {
-            window.showTextDocument(document);
-        });
+            .then((document) => {
+                window.showTextDocument(document);
+            });
     } else {
         window.showErrorMessage('Keine alte settings.json gefunden!');
     }
 }
 
 function getSettingsContent() {
-    const ENCODING = getOSBoolean('Windows') ? `cp437` : `utf8`
-    const AUTOUPDATE = getComputerraumConfig() ? `manual` : `default`
+    const ENCODING = getOSBoolean('Windows') ? `cp437` : `utf8`;
+    const AUTOUPDATE = getComputerraumConfig() ? `manual` : `default`;
 
     return {
         "addon4vsc.sprache": "C",
@@ -163,21 +163,18 @@ function getSettingsContent() {
     }
 }
 
-function createSettingsBackup() { // TODO: Backup nur ausführen, wenn was geändert wird in der JSON
+function createSettingsBackup(): void { // TODO: Backup nur ausführen, wenn was geändert wird in der JSON
     const SETTINGSPATH: string = join(getPath().vscUserData, 'settings.json');
     const OLDSETTINGSPATH: string = join(getPath().tempAddOn, 'old_settings.json');
 
     try {
         if (existsSync(SETTINGSPATH)) {
-            // The settings.json file exists
-    
-            // Create a backup copy of existing settings
             if (existsSync(OLDSETTINGSPATH)) {
                 unlinkSync(OLDSETTINGSPATH);
             }
             copyFileSync(SETTINGSPATH, OLDSETTINGSPATH);
         }
     } catch (error: any) {
-        writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')	/** Falls Fehler auftritt wird Fehler ausgegeben */
+        writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR');
     }
 }
