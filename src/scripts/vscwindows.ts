@@ -15,14 +15,6 @@ if %errorlevel% == 0 (
     EXIT /B
 )
 
-:: Prüfen ob es installieren oder deinstallieren soll
-if /i "%~1"=="uninstall" (GOTO UNINSTALL)
-if /i "%~1"=="install" (
-    set modus=install
-)
-
-:::: Beginn Installation ::::
-
 :: installiere choco, wenn nicht vorhanden
 choco -v
 if %errorlevel% == 0 (
@@ -49,47 +41,10 @@ setx PATH "%ALLUSERSPROFILE%\\chocolatey\\bin;C:\\ProgramData\\chocolatey\\lib\\
 choco install mingw --version=8.1.0 -y
 :: choco install mingw -y müsste die aktuellste Version installieren, falls irgendwann 8.1.0 defekt
 
-:: VSCode installieren bzw. neu installieren, falls fehlerhaft
-
-if "%modus%"=="install" (
-    if NOT EXIST "C:\\Program Files\\Microsoft VS Code\\Code.exe" if EXIST "C:\\ProgramData\\chocolatey\\choco.exe" (choco uninstall vscode vscode.install -y)
-    choco install vscode -y
-)
-
-:: VSCode Extension AddOn4VSC - Rest wird darüber automatisch installiert
-if /i "%modus%"=="install" (
-    call "C:\\Program Files\\Microsoft VS Code\\bin\\code" --install-extension cako.addon4vsc
-)
-
 :: Ausgabe vom Ende und exit skript
 echo #################################################################################################>CON
 echo.>CON
 echo Installation beendet! Das Terminal kann jetzt geschlossen werden.>CON
 echo.>CON
 echo #################################################################################################>CON
-EXIT /B
-
-:::: Ende Installation ::::
-
-:::: Beginn Deinstallation ::::
-
-:UNINSTALL
-
-:: choco Verzeichnis löschen
-rd /s /q "C:\\ProgramData\\chocolatey"
-:: VSCode deinstallieren
-call "C:\\Program Files\\Microsoft VS Code\\unins000.exe"
-:: Einstellungen löschen
-rd /s /q "%APPDATA%\\Code"
-:: VSCode Extensions löschen
-rd /s /q "%USERPROFILE%\\.vscode"
-
-:: Ausgabe vom Ende und exit skript
-echo #################################################################################################>CON
-echo.>CON
-echo Deinstallation beendet! Das Terminal kann jetzt geschlossen werden.>CON
-echo.>CON
-echo #################################################################################################>CON
-EXIT /B
-
-:::: Ende Deinstallation ::::`
+EXIT /B`
