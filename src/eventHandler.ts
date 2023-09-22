@@ -1,15 +1,13 @@
-import { ConfigurationChangeEvent, commands, debug, window, workspace } from "vscode"
+import { ConfigurationChangeEvent, commands, debug, workspace } from "vscode"
 
-import { getComputerraumConfig, getStatusBarItem } from "./init/init"
-import { writeLog } from "./logfile"
-import { checkName } from "./filefoldername" /** Importiert die Funktion zum überprüfen des Dateinames aus filefoldername.ts */
+import { getStatusBarItem } from "./init/init";
+import { checkName } from "./filefoldername";
 import { getPath, initPath } from "./init/paths"
-import { getOSBoolean } from "./init/os"
-import { openPreFolder } from "./checkfolder"
+import { openPreFolder } from "./checkfolder";
 
-export function eventHandler_checkName() {    /** Code definiert eine Funktion die als Event Handler fungiert */
-    if (getStatusBarItem().command === 'extension.off') {	/** überprüft ob der Statusleisten Button auf "pausiert" steht */
-        checkName()                         			/**	Führt die Funktion aus die den Namen überprüft und wartet bis sie fertig ist */
+export function eventHandler_checkName() {  
+    if (getStatusBarItem().command === 'extension.off') {
+        checkName()
     }
 }
 
@@ -28,7 +26,7 @@ export function eventHandler_changeProgLanguage() {
 
     initPath()
 
-    if (OPENWORKSPACE.includes(getPath().uebungsFolder)) { /** überprüft ob sich der Wert geändert hat */
+    if (OPENWORKSPACE.includes(getPath().uebungsFolder)) {
         commands.executeCommand('workbench.action.closeFolder')
     }
 

@@ -37,7 +37,6 @@ const constregistercommands = [
         callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[2].command}`, 'INFO')
             setSettingsFile();
-            //setsettingsjson() /** Aktualisiert die settings.json */
             window.showInformationMessage('settings.json wurde zurückgesetzt.')
         }
     },
@@ -45,15 +44,15 @@ const constregistercommands = [
         name: getConstCommands()[3].command,
         callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[3].command}`, 'INFO')
-            setTasksFile()    /** Aktualisiert die task.json */
+            setTasksFile();
             window.showInformationMessage('tasks.json wurde zurückgesetzt.')
         }
     },
     {
         name: getConstCommands()[4].command,
-        callback: (...args: any) => {   /** Übernimmt eine variable Anzahl von Argumenten (in diesem Fall einen Link), dessen Typ nicht spezifiziert sind */
+        callback: (...args: any) => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[4].command}`, 'INFO')
-            if (args[0] === '') {       /** Überprüft ob das erste Argument 0 ist, falls dies der Fall ist wird eine Fehlermeldung ausgegeben und die Funktion beendet */
+            if (args[0] === '') {
                 window.showErrorMessage(writeLog(`Es wurde kein Link zum Öffnen übergeben!`, 'ERROR'))
                 return
             } else {
@@ -104,22 +103,22 @@ const constregistercommands = [
         name: getConstCommands()[8].command,
         callback: async () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[8].command}`, 'INFO')
-            await set_language() /** Ruft Funktion auf die die Sprache neu einstellt und ändert den Offenen Ordner ggf. */
+            await set_language();
         }
     },
     {
         name: getConstCommands()[9].command,
         callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[9].command}`, 'INFO')
-            //window.showWarningMessage(writeLog('Verzeichnis wird gewechselt', 'INfo'))
-            switch_directory()
+            //window.showWarningMessage(writeLog('Verzeichnis wird gewechselt', 'INFO'))
+            switch_directory();
         }
     },
     {
         name: getConstCommands()[10].command,
         callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[10].command}`, 'INFO')
-            openSettingsFile()
+            openSettingsFile();
         }
     },
     {

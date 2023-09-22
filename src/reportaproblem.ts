@@ -1,4 +1,3 @@
-/** Dieses Modul behandelt den Code rund um die Problemmeldefunktion */
 import { ProgressLocation, Terminal, commands, env, window } from "vscode"
 import { promisify } from 'util'
 import { exec } from 'child_process'
@@ -15,7 +14,6 @@ import { getOSBoolean } from "./init/os"
 
 const execAsync = promisify(exec)
 
-/** Definiert eine neues Objekt um alle Daten des Users zu sammeln */
 interface UserReport {
     mail: string
     problem: string
@@ -31,9 +29,8 @@ interface UserReport {
     }[]
 }
 
-/** Definiert die Hauptfunktion um Problem zu melden */
 export function reportAProblem() {
-    let userReport: UserReport = { /** Definiert das ein neues leeres Objekt */
+    let userReport: UserReport = {
         mail: "", problem: "", codeAttachPermission: "", terminalContentPath: "",
         screenshot: { permission: "", filePath: "" }, attachments: []
     }
@@ -43,7 +40,7 @@ export function reportAProblem() {
         title: 'Problem melden gestartet!',
         cancellable: false
     }, async (progress, token) => {
-        try { /** Läuft die verschiedenen Schritte der Reihe nach ab und ruft die entsprechenden Funktionen auf */
+        try {
             progress.report({ message: "Warten auf Nutzereingabe...", increment: 0 })
             await userReportInput(userReport)
             if (userReport.screenshot.permission === 'Ja') {
@@ -70,16 +67,15 @@ export function reportAProblem() {
 async function userReportInput(userReport: UserReport) {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-    /** Funktion die den Benutzer auffordert seine e-Mail einzugeben */
     userReport.mail = await window.showInputBox({
         prompt: `$(info)Bitte E-Mail Adresse für künftige Korrespondenz angeben. Eine Kopie dieser Problemmeldung wird an die angegebene E-Mail Adresse gesendet.
         (Zum Bestätigen die ENTER-Taste oder zum Abbrechen ESC-Taste drücken)`,
-        value: "@stud.hs-hannover.de", /** Voreinstellung */
+        value: "@stud.hs-hannover.de",
         valueSelection: [0, 0],
         title: "E-Mail Adresse eingeben:",
         ignoreFocusOut: true,
         validateInput: (email: string) => {
-            if (emailPattern.test(email)) { /** Überprüft ob e-mail format erfüllt ist */
+            if (emailPattern.test(email)) {
               return null
             } else {
               return `$(error)Bitte eine gültige E-Mail Adresse angeben! (max@mustermail.de) Zum Abbrechen die ESC-Taste drücken.`
@@ -91,7 +87,7 @@ async function userReportInput(userReport: UserReport) {
         window.showInformationMessage('Problem melden abgebrochen!')
         throw new Error("E-Mail Eingabe abgebrochen!")
     }
-    /** Funktion die den User auffordert sein Problem zu beschreiben */
+
     userReport.problem = await window.showInputBox({
         title: 'Problem beschreiben:',
         prompt: `$(info)Bitte beschreibe dein Problem.
@@ -99,14 +95,14 @@ async function userReportInput(userReport: UserReport) {
         placeHolder: "Hier reinschreiben...",
         ignoreFocusOut: true
     }) || ''
-    /** Funktion die den User fragt ob ein Screenshot mit angehängt werden soll */
+
     userReport.screenshot.permission = await window.showQuickPick(['Ja', 'Nein'], {
         title: 'Screenshot anhängen:',
         canPickMany: false,
         placeHolder: 'Soll ein Screenshot von VSCode mitangehängt werden? (gesamter Bildschirm wird gecaptured!)',
         ignoreFocusOut: true
     }) || 'Nein'
-    /** Funktion die den User fragt ob der offene Code mit angehängt werden soll */
+
     userReport.codeAttachPermission = await window.showQuickPick(['Ja', 'Nein'], {
         title: 'Datei anhängen:',
         canPickMany: false,
@@ -115,7 +111,7 @@ async function userReportInput(userReport: UserReport) {
     }) || 'Nein'
 
 }
-/** Funktion die einen Screenshot vom Bildschirm macht und in das Objekt speichert */
+
 async function getScreenshot(userReport: UserReport) {
     try {
         userReport.screenshot.filePath = join(tmpdir(), `screenshot_${Date.now()}.png`)
@@ -134,13 +130,12 @@ async function getScreenshot(userReport: UserReport) {
         writeLog(`Fehler beim erstellen eines Screenshots für Problemreport: ${error}`, 'ERROR')
     }
 }
-/** Funktion die die Umgebungsvariablen kopiert und in das Objekt speichert */
 async function getUserEnvironment() {
     let userEnvironment = await getUserEnvironmentPath()
     userEnvironment.replace(';', '\n')
     writeFileSync(join(getPath().vscUserData, 'userEnvironmentPaths.txt'), userEnvironment, { flag: 'w'})
 }
-/** Funktion die, den LogFile, und die Jsons kopiert und in das Objekt speichert */
+
 async function getAttachments(userReport: UserReport) {
     userReport.attachments.push({ filename: getLogFileName(), path: getLogFilePath() })
     userReport.attachments.push({ filename: 'terminalcontent.txt', path: userReport.terminalContentPath })
@@ -162,7 +157,7 @@ async function getAttachments(userReport: UserReport) {
         }
     }
 }
-/** Funktion die den Report verschickt */
+
 async function sendReport(userReport: UserReport) {
     const sendPermission = await window.showQuickPick(['Ja', 'Nein'], {
         canPickMany: false,
@@ -198,7 +193,6 @@ async function sendReport(userReport: UserReport) {
     }
 }
 
-/** Die Funktion speichert den Inhalt aller geöffneten Terminals in eine Log-Datei */
 async function getTerminalContent(userReport: UserReport) {
     try {
         userReport.terminalContentPath = join(tmpdir(), `logs_${Date.now()}.txt`)
@@ -214,7 +208,6 @@ async function getTerminalContent(userReport: UserReport) {
         writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')
     }
 }
-/** Die Funktion speichert den Inhalt aller geöffneten Terminals */
 async function captureAllTerminalContents(): Promise<Map<string, string>> {
     const terminalMap = new Map<string, string>()
     const terminals = window.terminals
@@ -228,7 +221,6 @@ async function captureAllTerminalContents(): Promise<Map<string, string>> {
 
     return terminalMap
 }
-/** Verschlüsselungs Algorithmus */
 function setString(tmp: string, num: number): string {
     let str = ''
     for (let i = 0; i < tmp.length; i++) {
@@ -243,7 +235,6 @@ function setString(tmp: string, num: number): string {
     }
     return str
 }
-/** Die Funktion kopiert den Inhalt eines bestimmten Terminal-Objekts in die Zwischenablage und gibt ihn als String zurück.  */
 async function copyToClipboard(terminal: Terminal): Promise<string> {
     await commands.executeCommand('workbench.action.terminal.focusNext')
     await commands.executeCommand('workbench.action.terminal.selectAll')
@@ -255,7 +246,6 @@ async function copyToClipboard(terminal: Terminal): Promise<string> {
     return text || 'Dieses Terminal hat keinen Inhalt'
 }
 
-/** Die Funktion gibt ein Array von Objekten zurück, das Informationen über alle geöffneten Editor-Dateien enthält. */
 function getActiveEditorFilepaths(): { filename: string, path: string }[] {
     // FIXME: Aktuelle Dateien pro geöffnetem Editor wird angehängt
     const activeEditor = window.activeTextEditor

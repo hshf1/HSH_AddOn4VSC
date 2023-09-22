@@ -4,7 +4,7 @@ import { writeLog } from './logfile'
 import { getProgLanguageConfig, setProgLanguageConfig } from './init/init'
 import { openPreFolder } from './checkfolder'
 
-export async function init_language() { //Initialisiert einmalig eine Sprache
+export async function init_language() {
 
         // const folders = workspace.workspaceFolders // Überprüft ob Ordner geöffnet ist und speichert den Namen falls vorhanden
         // if (!folders || folders.length === 0) { // kein Ordner ist geöffnet wird einfach der C Ordner geöffnet            
@@ -39,7 +39,7 @@ export async function set_language() {
         return
     }
 
-    if (newLanguage === PROGLANGUAGE) { /** Überprüft ob Sprache bereits aktiv ist */
+    if (newLanguage === PROGLANGUAGE) {
         window.showInformationMessage('Programmiersprache bereits aktiv')
         return
     }
