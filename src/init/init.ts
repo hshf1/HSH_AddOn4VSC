@@ -60,7 +60,7 @@ function initWinLocation(): void {
     writeLog(`Location: ${settings.computerraum ? 'HsH-Rechner' : 'Privater Rechner'}`, 'INFO');
 }
 
-function initProgLang(): void {
+export function initProgLang(): void {
     try {
         settings.progLanguage = workspace.getConfiguration('addon4vsc').get('sprache', 'C');
         writeLog(`Gewählte Programmiersprache: ${settings.progLanguage}`, 'INFO');
@@ -83,9 +83,7 @@ export function getComputerraumConfig() {
     return settings.computerraum
 }
 
-function setProgLanguageConfig(tmp: string) {
-    settings.progLanguage = tmp
-
+export function setProgLanguageConfig(tmp: string) {
     try {
         workspace.getConfiguration('addon4vsc').update('sprache', tmp, ConfigurationTarget.Global)
     } catch (error: any) {

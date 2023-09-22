@@ -2,13 +2,14 @@ import { commands, env, ExtensionContext, Uri, window } from 'vscode'
 
 import { treeDataProvider } from './activity_bar'
 import { getConstCommands } from './constants'
-import { setTasksFile } from './json/tasks'
+import { openTasksFile, setTasksFile } from './json/tasks'
 import { getStatusBarItem, initCompiler, getComputerraumConfig, setComputerraumConfig } from './init/init'
 import { reportAProblem } from './reportaproblem'
 import { writeLog } from './logfile'
 import { getOSBoolean } from './init/os'
 import { switch_directory } from './filefoldername'
 import { addMissingSettings, openOldSettingsFile, openSettingsFile, setSettingsFile } from './json/settings'
+import { set_language } from './language_handler'
 
 const constregistercommands = [
     {
@@ -101,11 +102,9 @@ const constregistercommands = [
     },
     {
         name: getConstCommands()[8].command,
-        callback: () => {
+        callback: async () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[8].command}`, 'INFO')
-            window.showWarningMessage(writeLog('Programmiersprache wechseln ist derzeit nicht verfügbar!', 'WARNING'))
-            return
-            // await set_language() /** Ruft Funktion auf die die Sprache neu einstellt und ändert den Offenen Ordner ggf. */
+            await set_language() /** Ruft Funktion auf die die Sprache neu einstellt und ändert den Offenen Ordner ggf. */
         }
     },
     {
@@ -127,14 +126,21 @@ const constregistercommands = [
         name: getConstCommands()[11].command,
         callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[11].command}`, 'INFO')
-            openOldSettingsFile()
+            openOldSettingsFile();
         }
     },
     {
         name: getConstCommands()[12].command,
         callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[12].command}`, 'INFO')
-            addMissingSettings()
+            addMissingSettings();
+        }
+    },
+    {
+        name: getConstCommands()[13].command,
+        callback: () => {
+            writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[13].command}`, 'INFO')
+            openTasksFile();
         }
     }
 ]

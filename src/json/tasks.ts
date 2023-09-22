@@ -3,6 +3,7 @@ import { join } from 'path';
 
 import { getPath } from '../init/paths';
 import { writeLog } from '../logfile';
+import { window, workspace } from 'vscode';
 
 export function checkTasksFile(): void {
 	const TASKSJSON = join(getPath().vscUserData, 'tasks.json');
@@ -96,4 +97,18 @@ function createTasksBackup(): void {
 	} catch (error: any) {
 		writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR');
 	}
+}
+
+export function openTasksFile(): void {
+    const TASKSPATH: string = join(getPath().vscUserData, 'tasks.json');
+
+    if (existsSync(TASKSPATH)) {
+        workspace.openTextDocument(TASKSPATH)
+            .then((document) => {
+                window.showTextDocument(document);
+            });
+    } else {
+		writeLog('Keine tasks.json gefunden!', 'ERROR');
+        window.showErrorMessage('Keine alte settings.json gefunden!');
+    }
 }

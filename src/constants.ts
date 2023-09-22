@@ -9,14 +9,15 @@ export function getConstCommands(): Command[] {
         { command: 'default.settingsjson', title: 'settings.json zurücksetzen' },
         { command: 'default.tasksjson', title: 'tasks.json zurücksetzen' },
         { command: 'open.link', title: 'Öffne Link' },
-        { command: 'install.compiler', title: 'Compiler installieren' },
+        { command: 'install.compiler', title: 'Compiler installieren' }, // 5
         { command: 'setRZHsH.setting', title: 'HsH Rechenzentrum' },
         { command: 'report.problem', title: 'Problem melden' },
         { command: 'switch.language', title: 'C' },
         { command: 'switch.folder', title: 'In das Verzeichnis der aktuell geöffneten Datei wechseln' },
         { command: 'settingsjson.open', title: 'Aktuelle settings.json öffnen'}, // 10
         { command: 'oldsettingsjson.open', title: 'Alte settings.json öffnen'},
-        { command: 'settingsjson.add', title: 'Fehlende Einstellungen in die settings.json setzen'}
+        { command: 'settingsjson.add', title: 'Fehlende Einstellungen in die settings.json setzen'},
+        { command: 'tasks.open', title: 'Aktuelle tasks.json öffnen'}
         //TODO Compiler Check für C, Java und Python ohne automatischen Dowload ?
     ]
 }

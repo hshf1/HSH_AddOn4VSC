@@ -17,8 +17,6 @@ export function checkSettingsFile(): void {
         writeLog(`${SETTINGSJSONPATH} wurde nicht gefunden.`, 'WARNING');
         setSettingsFile();
     }
-
-    addMissingSettings();
 }
 
 export function setSettingsFile(): void {

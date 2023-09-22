@@ -2,7 +2,7 @@ import { homedir } from 'os';
 import { existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
 
-import { getComputerraumConfig, getProgLanguageConfig } from './init';
+import { getComputerraumConfig, getProgLanguageConfig, initProgLang } from './init';
 import { writeLog } from '../logfile';
 import { getOSString } from './os';
 
@@ -78,6 +78,7 @@ export class Paths {
 }
 
 export function initPath(): void {
+    initProgLang();
     paths = new Paths();
     if (!existsSync(paths.tempAddOn)) {
         try {

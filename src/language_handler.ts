@@ -1,7 +1,7 @@
 import { ConfigurationTarget, window, workspace } from 'vscode'
 
 import { writeLog } from './logfile'
-import { getProgLanguageConfig } from './init/init'
+import { getProgLanguageConfig, setProgLanguageConfig } from './init/init'
 import { openPreFolder } from './checkfolder'
 
 export async function init_language() { //Initialisiert einmalig eine Sprache
@@ -44,11 +44,6 @@ export async function set_language() {
         return
     }
 
-    changeSettingsLanguage(newLanguage)
+    setProgLanguageConfig(newLanguage)
     window.showInformationMessage(writeLog(`${newLanguage} ausgewählt`, 'INFO'))
-    openPreFolder() // TODO: Code nochmal ansehen
-}
-
-function changeSettingsLanguage(newLanguage: string) {
-    workspace.getConfiguration('addon4vsc').update('sprache', newLanguage, ConfigurationTarget.Global)
 }

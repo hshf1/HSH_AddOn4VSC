@@ -11,19 +11,12 @@
   },
   "version": "1.8.0",
   "engines": {
-    "vscode": "^1.50.0"
+    "vscode": "^1.75.0"
   },
   "categories": [
     "Other"
   ],
   "activationEvents": [
-    "onCommand:default.settingsjson",
-    "onCommand:default.tasksjson",
-    "onCommand:extension.on",
-    "onCommand:extension.off",
-    "onCommand:open.link",
-    "onCommand:report.problem",
-    "onCommand:switch.language",
     "onStartupFinished"
   ],
   "main": "./out/main.js",
@@ -33,7 +26,11 @@
       "properties": {
         "addon4vsc.sprache": {
           "type": "string",
-          "enum": ["C", "Java", "Python"],
+          "enum": [
+            "C",
+            "Java",
+            "Python"
+          ],
           "description": "Hier kann die Programmiersprache ausgewählt werden, die genutzt werden soll.",
           "default": "C",
           "scope": "application"
@@ -58,40 +55,7 @@
         }
       ]
     },
-    "commands": [
-      {
-        "command": "open.link",
-        "title": "Öffne Link '%link%'"
-      },
-      {
-        "command": "default.settingsjson",
-        "title": "settings.json zurücksetzen"
-      },
-      {
-        "command": "default.tasksjson",
-        "title": "tasks.json zurücksetzen"
-      },
-      {
-        "command": "extension.on",
-        "title": "Erweiterung wieder aktivieren"
-      },
-      {
-        "command": "extension.off",
-        "title": "Erweiterung pausieren"
-      },
-      {
-        "command": "report.problem",
-        "title": "Problem melden"
-      },
-      {
-        "command": "switch.language",
-        "title": "Programmiersprache wechseln"
-      },
-      {
-        "command": "switch.folder",
-        "title": "In das Verzeichnis der aktuell geöffneten Datei wechseln"
-      }
-    ]
+    "commands": []
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
