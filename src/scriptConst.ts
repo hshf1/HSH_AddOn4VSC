@@ -1,4 +1,4 @@
-export const vsclinuxosxCScript = `# System bestimmen
+export const cScriptLinuxOSX = `# System bestimmen
 os_name=$(uname -s)
 
 #### Beginn Installation, wenn uninstall!=true ####
@@ -39,7 +39,7 @@ echo "##########################################################################
 # exit script
 exit 0`
 
-export const vscwindowsCScript = `:: Auszuführende Befehle nicht nochmal im Terminal anzeigen
+export const cScriptWindows = `:: Auszuführende Befehle nicht nochmal im Terminal anzeigen
 @echo off
 
 :: Prüfen, ob Terminal als Administrator gestartet wurde, sonst abbrechen
