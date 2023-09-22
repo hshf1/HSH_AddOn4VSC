@@ -51,11 +51,22 @@ export function initExtension(): void {
 }
 
 function initWinLocation(): void {
-    if (existsSync(`U:\\Systemordner`) || existsSync(`C:\\Program Files\\mingw64\\bin`)) { //TODO: Verbessern der Erkennung
-        settings.computerraum = true;
-    } else {
-        settings.computerraum = false;
-    }
+    exec('whoami', (error, stdout, stderr) => {
+        if (error) {
+            writeLog(`Error: ${error.message}`, 'ERROR');
+            return;
+        }
+
+        const username = stdout.trim();
+
+        writeLog(`Username: ${username}`, 'INFO');
+
+        if ((username.startsWith('fh-h/') || username.startsWith('fh-h\\') && existsSync(`U:\\Systemordner`))) {
+            settings.computerraum = true;
+        } else {
+            settings.computerraum = false;
+        }
+    });
 
     writeLog(`Location: ${settings.computerraum ? 'HsH-Rechner' : 'Privater Rechner'}`, 'INFO');
 }

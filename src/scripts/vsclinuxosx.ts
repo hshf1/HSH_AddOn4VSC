@@ -1,18 +1,4 @@
-###############################################
-#     VSCode Installation für MacOS und Linux #
-#           Hochschule Hannover - Vorlesung C #
-#              zuletzt geändert am 05.04.2023 #
-###############################################
-
-# zum installieren folgenden Code im Terminal ausführen (ohne #) (für Linux "sudo snap install curl &&" vorhängen)
-#
-# curl -sL https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/vsclinuxosx.sh | bash 
-
-# zum deinstallieren folgenden Code im Terminal ausführen (ohne #) (für Linux "sudo snap install curl &&" vorhängen)
-#
-# curl -sL https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/vsclinuxosx.sh | uninstall=true bash
-
-# System bestimmen
+export const vsclinuxosxCScript = `# System bestimmen
 os_name=$(uname -s)
 
 if [ "$uninstall" = "true" ]; then
@@ -26,9 +12,9 @@ if [ "$uninstall" = "true" ]; then
         #### Beginn Deinstallation MacOS ####
         
 	# Löschen von VSCode
-        rm -R /Applications/Visual\ Studio\ Code.app
+        rm -R /Applications/Visual\\ Studio\\ Code.app
         # Löschen aller Einstellungen
-        rm -R ~/Library/Application\ Support/Code
+        rm -R ~/Library/Application\\ Support/Code
         # Löschen aller Extensions
         rm -R ~/.vscode
 
@@ -87,7 +73,7 @@ else
     # Umgebungsvariable für die aktuelle Terminalsitzung hinzufügen und aktualisieren
     cat <<-EOF >>~/.bash_profile
 	# Add Visual Studio Code (code)
-	export PATH="\$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+	export PATH="\\$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 	EOF
     source ~/.bash_profile
     
@@ -104,4 +90,4 @@ echo "$usageinfo beendet! Das Terminal kann jetzt geschlossen werden."
 echo "#################################################################################################"
 
 # exit script
-exit 0
+exit 0`

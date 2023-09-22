@@ -142,6 +142,20 @@ const constregistercommands = [
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[13].command}`, 'INFO')
             openTasksFile();
         }
+    },
+    {
+        name: getConstCommands()[14].command,
+        callback: () => {
+            writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[14].command}`, 'INFO')
+            window.showInformationMessage('Die Funktion ist derzeit nicht verfügbar!')
+        }
+    },
+    {
+        name: getConstCommands()[15].command,
+        callback: () => {
+            writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[15].command}`, 'INFO')
+            window.showInformationMessage('Die Funktion ist derzeit nicht verfügbar!')
+        }
     }
 ]
 

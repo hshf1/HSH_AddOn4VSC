@@ -1,18 +1,4 @@
-:::::::::::::::::::::::::::::::::::::::
-::   VSCode Installation für Windows ::
-:: Hochschule Hannover - Vorlesung C ::
-::    zuletzt geändert am 05.04.2023 ::
-:::::::::::::::::::::::::::::::::::::::
-
-:: Zum installieren Terminal als Adminstrator ausführen! und folgende Zeile Code ausführen (ohne ::)
-::
-:: curl -o %temp%\vsc.cmd https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/vscwindows.cmd && %temp%\vsc.cmd install
-
-:: Zum deinstallieren Terminal als Administrator ausführen! und folgende Zeile Code ausführen (ohne ::)
-::
-:: curl -o %temp%\vsc.cmd https://raw.githubusercontent.com/hshf1/HSH_AddOn4VSC/master/script/vscwindows.cmd && %temp%\vsc.cmd uninstall
-
-:: Auszuführende Befehle nicht nochmal im Terminal anzeigen
+export const vscwindowsCScript = `:: Auszuführende Befehle nicht nochmal im Terminal anzeigen
 @echo off
 
 :: Prüfen, ob Terminal als Administrator gestartet wurde, sonst abbrechen
@@ -42,8 +28,8 @@ choco -v
 if %errorlevel% == 0 (
     echo. >nul
 ) ELSE (
-    call %systemroot%\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "((new-object net.webclient).DownloadFile('https://community.chocolatey.org/install.ps1','%temp%/installChoco.ps1'))"
-    rd /s /q C:\ProgramData\chocolatey
+    call %systemroot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "((new-object net.webclient).DownloadFile('https://community.chocolatey.org/install.ps1','%temp%/installChoco.ps1'))"
+    rd /s /q C:\\ProgramData\\chocolatey
     :: Da alles im Hintergrund läuft hier was für den USER
     echo #################################################################################################>CON
     echo.>CON
@@ -51,13 +37,13 @@ if %errorlevel% == 0 (
     echo.>CON
     echo #################################################################################################>CON
     shift
-    call %systemroot%\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "& '%temp%/installChoco.ps1'"
-    del "%temp%\installChoco.ps1"
+    call %systemroot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "& '%temp%/installChoco.ps1'"
+    del "%temp%\\installChoco.ps1"
 )
 
 :: Umgebungsvariable setzen um code zu nutzen und libraries zu finden
-for /f "usebackq tokens=2,*" %%A in (`reg query HKCU\Environment /v PATH`) do set my_user_path=%%B
-setx PATH "%ALLUSERSPROFILE%\chocolatey\bin;C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin;%my_user_path%"
+for /f "usebackq tokens=2,*" %%A in ('reg query HKCU\\Environment /v PATH') do set my_user_path=%%B
+setx PATH "%ALLUSERSPROFILE%\\chocolatey\\bin;C:\\ProgramData\\chocolatey\\lib\\mingw\\tools\\install\\mingw64\\bin;%my_user_path%"
 
 :: Compiler und Debugger mit choco installieren (hier ist Version vorderfiniert, ggf. in Zukunft ändern)
 choco install mingw --version=8.1.0 -y
@@ -66,13 +52,13 @@ choco install mingw --version=8.1.0 -y
 :: VSCode installieren bzw. neu installieren, falls fehlerhaft
 
 if "%modus%"=="install" (
-    if NOT EXIST "C:\Program Files\Microsoft VS Code\Code.exe" if EXIST "C:\ProgramData\chocolatey\choco.exe" (choco uninstall vscode vscode.install -y)
+    if NOT EXIST "C:\\Program Files\\Microsoft VS Code\\Code.exe" if EXIST "C:\\ProgramData\\chocolatey\\choco.exe" (choco uninstall vscode vscode.install -y)
     choco install vscode -y
 )
 
 :: VSCode Extension AddOn4VSC - Rest wird darüber automatisch installiert
 if /i "%modus%"=="install" (
-    call "C:\Program Files\Microsoft VS Code\bin\code" --install-extension cako.addon4vsc
+    call "C:\\Program Files\\Microsoft VS Code\\bin\\code" --install-extension cako.addon4vsc
 )
 
 :: Ausgabe vom Ende und exit skript
@@ -90,13 +76,13 @@ EXIT /B
 :UNINSTALL
 
 :: choco Verzeichnis löschen
-rd /s /q "C:\ProgramData\chocolatey"
+rd /s /q "C:\\ProgramData\\chocolatey"
 :: VSCode deinstallieren
-call "C:\Program Files\Microsoft VS Code\unins000.exe"
+call "C:\\Program Files\\Microsoft VS Code\\unins000.exe"
 :: Einstellungen löschen
-rd /s /q "%APPDATA%\Code"
+rd /s /q "%APPDATA%\\Code"
 :: VSCode Extensions löschen
-rd /s /q "%USERPROFILE%\.vscode"
+rd /s /q "%USERPROFILE%\\.vscode"
 
 :: Ausgabe vom Ende und exit skript
 echo #################################################################################################>CON
@@ -106,4 +92,4 @@ echo.>CON
 echo #################################################################################################>CON
 EXIT /B
 
-:::: Ende Deinstallation ::::
+:::: Ende Deinstallation ::::`

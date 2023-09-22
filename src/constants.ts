@@ -4,12 +4,12 @@ import { getProgLanguageConfig } from "./init/init"
 
 export function getConstCommands(): Command[] {
     return [
-        { command: 'extension.on', title: "Erweiterung wieder aktivieren" },
+        { command: 'extension.on', title: "Erweiterung wieder aktivieren" }, // 0
         { command: "extension.off", title: "Erweiterung bis zum nächsten (Neu-)Start von VSCode pausieren" },
         { command: 'default.settingsjson', title: 'settings.json zurücksetzen' },
         { command: 'default.tasksjson', title: 'tasks.json zurücksetzen' },
         { command: 'open.link', title: 'Öffne Link' },
-        { command: 'install.compiler', title: 'Compiler installieren' }, // 5
+        { command: 'install.compiler', title: 'C Compiler prüfen / installieren' }, // 5
         { command: 'setRZHsH.setting', title: 'HsH Rechenzentrum' },
         { command: 'report.problem', title: 'Problem melden' },
         { command: 'switch.language', title: 'C' },
@@ -17,12 +17,12 @@ export function getConstCommands(): Command[] {
         { command: 'settingsjson.open', title: 'Aktuelle settings.json öffnen'}, // 10
         { command: 'oldsettingsjson.open', title: 'Alte settings.json öffnen'},
         { command: 'settingsjson.add', title: 'Fehlende Einstellungen in die settings.json setzen'},
-        { command: 'tasks.open', title: 'Aktuelle tasks.json öffnen'}
-        //TODO Compiler Check für C, Java und Python ohne automatischen Dowload ?
+        { command: 'tasks.open', title: 'Aktuelle tasks.json öffnen'},
+        { command: 'javacompiler.install', title: 'Java Compiler prüfen / installieren' },
+        { command: 'pythoncompiler.install', title: 'Python Compiler prüfen / installieren' } // 15
     ]
 }
 
-/** Globale Funktion die das Testprogramm zurückgibt */
 export function getTestProg() {
     const PROGLANGUAGE = getProgLanguageConfig()
 

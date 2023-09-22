@@ -11,6 +11,7 @@ let dependencies_settings: Dependency[] = [];
 let dependencies_settingsjson: Dependency[] = [];
 let dependencies_program_languages: Dependency[] = [];
 let dependencies_tasksjson: Dependency[] = [];
+let dependencies_compiler: Dependency[] = [];
 
 export let treeDataProvider: DepNodeProvider;
 
@@ -61,6 +62,8 @@ class DepNodeProvider implements TreeDataProvider<Dependency> {
             return [...dependencies_tasksjson];
         } else if (dependency.label === 'Programmiersprache ändern') {
             return [...dependencies_program_languages];
+        } else if (dependency.label === 'Compiler') {
+            return [...dependencies_compiler];
         } else {
             return [];
         }
@@ -94,7 +97,7 @@ async function aktualisieren(): Promise<void> {
     dependencies_settings = [ /** Definiert die Dependencies des settings Arrays neu */
         new Dependency('settings.json', TreeItemCollapsibleState.Collapsed),
         new Dependency('tasks.json', TreeItemCollapsibleState.Collapsed),
-        new Dependency('Compiler prüfen', TreeItemCollapsibleState.None, getConstCommands()[5]),
+        new Dependency('Compiler', TreeItemCollapsibleState.Collapsed),
         ...(getOSBoolean('Windows')
             ? [new Dependency(getComputerraumConfig() ? 'Ändern auf privaten Windows-Rechner' : 'Ändern auf HsH Windows-Rechner', TreeItemCollapsibleState.None, getConstCommands()[6])]
             : [])];
@@ -111,4 +114,10 @@ async function aktualisieren(): Promise<void> {
         new Dependency('tasks.json zurücksetzen', TreeItemCollapsibleState.None, getConstCommands()[3]),
         new Dependency('aktuelle tasks.json öffnen', TreeItemCollapsibleState.None, getConstCommands()[13])
     ];
+
+    dependencies_compiler = [
+        new Dependency('C-Compiler prüfen / installieren', TreeItemCollapsibleState.None, getConstCommands()[5]),
+        new Dependency('Java-Compiler prüfen / installieren', TreeItemCollapsibleState.None, getConstCommands()[14]),
+        new Dependency('Python-Compiler prüfen / installieren', TreeItemCollapsibleState.None, getConstCommands()[15]),
+    ]
 }
