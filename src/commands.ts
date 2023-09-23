@@ -65,7 +65,7 @@ const constregistercommands = [
         name: getConstCommands()[5].command,
         callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[5].command}`, 'INFO')
-            initCompiler()
+            initCompiler('C')
         }
     },
     {
@@ -147,14 +147,14 @@ const constregistercommands = [
         name: getConstCommands()[14].command,
         callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[14].command}`, 'INFO')
-            window.showInformationMessage('Die Funktion ist derzeit nicht verfügbar!')
+            initCompiler('Java');
         }
     },
     {
         name: getConstCommands()[15].command,
         callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[15].command}`, 'INFO')
-            window.showInformationMessage('Die Funktion ist derzeit nicht verfügbar!')
+            initCompiler('Python');
         }
     }
 ]

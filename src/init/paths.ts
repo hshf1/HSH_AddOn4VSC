@@ -2,11 +2,14 @@ import { homedir } from 'os';
 import { existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
 
-import { getComputerraumConfig, getProgLanguageConfig, initProgLang } from './init';
+import { getComputerraumConfig, getProgLanguageConfig, initProgLang, restartVSC } from './init';
 import { writeLog } from '../logfile';
-import { getOSString } from './os';
+import { getOSBoolean, getOSString } from './os';
+import { exec } from 'child_process';
+import { initExtensionsDir } from '../extensionPath';
 
 let paths: Paths;
+let reloadNeeded: boolean = false;
 
 export class Paths {
     private readonly userHomeRO: string;
@@ -88,9 +91,85 @@ export function initPath(): void {
             writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR');
         }
     }
-    
+
 }
 
 export function getPath(): Paths {
     return paths
+}
+
+export async function checkPaths() {
+    if (getOSBoolean('Windows')) {
+        await initExtensionsDir()
+        await deleteOldPath('C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin')
+
+        if (getComputerraumConfig()) {
+            await addNewPath('C:\\Program Files\\mingw64\\bin')
+        } else {
+            await addNewPath('C:\\ProgramData\\chocolatey\\bin')
+            await addNewPath('C:\\ProgramData\\chocolatey\\lib\\mingw\\tools\\install\\mingw64\\bin')
+        }
+        
+        if (reloadNeeded) {
+            restartVSC();
+        }
+    }
+}
+
+export async function addNewPath(tmp: string) {
+    const pathToAdd: string = tmp
+    let pathVar = await getUserEnvironmentPath()
+    const pathDirs = pathVar.split(';')
+    if (!pathDirs.includes(pathToAdd)) {
+        pathDirs.push(pathToAdd)
+        pathVar = pathDirs.join(';')
+        exec(`setx PATH "${pathVar}"`, (error, stdout, stderr) => {
+            if (error) {
+                writeLog(`Fehler beim entfernen alter Umgebungsvariable: ${error.message}`, 'ERROR')
+            } else {
+                writeLog(`Neue Umgebungsvariable (${pathToAdd}) erfolgreich hinzugefügt: ${stdout.trim()}`, 'INFO')
+                reloadNeeded = true
+            }
+        })
+    } else {
+        writeLog(`Umgebungsvariable ist bereits vorhanden.`, 'INFO')
+    }
+}
+
+export async function deleteOldPath(tmp: string) {
+    const pathToRemove: string = tmp
+    let pathVar = await getUserEnvironmentPath()
+    const pathDirs = pathVar.split(';')
+    const index = pathDirs.indexOf(pathToRemove)
+    if (index !== -1) {
+        pathDirs.splice(index, 1)
+        pathVar = pathDirs.join(';')
+        exec(`setx PATH "${pathVar}"`, (error, stdout, stderr) => {
+            if (error) {
+                writeLog(`Fehler beim entfernen alter Umgebungsvariable: ${error.message}`, 'ERROR')
+            } else {
+                writeLog(`Alte Umgebungsvariable erfolgreich entfernt: ${stdout.trim()}`, 'INFO')
+                reloadNeeded = true
+            }
+        })
+    } else {
+        writeLog(`Alte Umgebungsvariable ist bereits gelöscht.`, 'INFO')
+    }
+}
+
+export function getUserEnvironmentPath(): Promise<string> {
+    return new Promise((resolve, reject) => {
+        exec('reg query HKCU\\Environment /v Path', (error, stdout) => {
+            if (error) {
+                reject(error)
+            } else {
+                const matches = stdout.match(/Path\s+REG_SZ\s+(.*)/)
+                if (matches) {
+                    resolve(matches[1])
+                } else {
+                    resolve('')
+                }
+            }
+        })
+    })
 }
