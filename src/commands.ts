@@ -3,20 +3,21 @@ import { commands, env, ExtensionContext, Uri, window } from 'vscode'
 import { treeDataProvider } from './activity_bar'
 import { getConstCommands } from './constants'
 import { openTasksFile, setTasksFile } from './json/tasks'
-import { getStatusBarItem, initCompiler, getComputerraumConfig, setComputerraumConfig } from './init/init'
+import { getStatusBarItem, getComputerraumConfig, setComputerraumConfig } from './init/init'
 import { reportAProblem } from './reportaproblem'
 import { writeLog } from './logfile'
 import { getOSBoolean } from './init/os'
 import { switch_directory } from './filefoldername'
 import { addMissingSettings, openOldSettingsFile, openSettingsFile, setSettingsFile } from './json/settings'
 import { set_language } from './language_handler'
+import { initCompiler } from './compiler/initCompiler'
 
 const constregistercommands = [
     {
         name: getConstCommands()[0].command,
         callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[0].command}`, 'INFO')
-            getStatusBarItem().text = 'AddOn4VSC pausieren'
+            getStatusBarItem().text = 'HsH_AddOn4VSC pausieren'
             getStatusBarItem().tooltip = 'Klicken, um die Erweiterung AddOn4VSC zu pausieren (spätestens, bis wenn VSCode neu startet)'
             getStatusBarItem().command = 'extension.off'
             treeDataProvider.refresh()
@@ -26,7 +27,7 @@ const constregistercommands = [
         name: getConstCommands()[1].command,
         callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[1].command}`, 'INFO')
-            getStatusBarItem().text = 'AddOn4VSC wieder aktivieren'
+            getStatusBarItem().text = 'HsH_AddOn4VSC wieder aktivieren'
             getStatusBarItem().tooltip = 'Klicken, um die Erweiterung AddOn4VSC wieder zu aktivieren'
             getStatusBarItem().command = 'extension.on'
             treeDataProvider.refresh()
