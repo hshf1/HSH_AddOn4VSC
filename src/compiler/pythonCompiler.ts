@@ -28,9 +28,11 @@ if %errorlevel% == 0 (
     shift
     call %systemroot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "& '%temp%/installChoco.ps1'"
     del "%temp%\\installChoco.ps1"
+    for /f "usebackq tokens=2,*" %%A in ('reg query HKCU\\Environment /v PATH') do set my_user_path=%%B
+    setx PATH "%ALLUSERSPROFILE%\\chocolatey\\bin;%my_user_path%"
 )
 
-choco install python3 --version=3.11.0 -y
+choco install python3 -y
 
 echo #################################################################################################>CON
 echo.>CON
@@ -44,7 +46,7 @@ export function getScriptPythonCompilerInstall(): string {
         case 'windows':
             return PYTHONCOMPILERINSTALLWINDOWS;
         case 'macos':
-            return `brew install python@3.11 -y`;
+            return `brew install --overwrite python -q`;
         case 'linux':
             return ``;
         default:

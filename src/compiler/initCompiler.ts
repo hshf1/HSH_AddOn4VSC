@@ -16,7 +16,7 @@ export function initCompiler(tmp?: string) {
         title: `Initialisiere ${tmp ? tmp : getProgLanguageConfig()}-Compiler ...`,
         cancellable: false
     }, async (progress, token) => {
-        switch (tmp ? tmp.toLowerCase(): getProgLanguageConfig().toLowerCase()) {
+        switch (tmp ? tmp.toLowerCase() : getProgLanguageConfig().toLowerCase()) {
             case 'c':
                 initCCompiler();
                 break;
@@ -35,6 +35,10 @@ export function initCompiler(tmp?: string) {
 function initCCompiler() {
     exec('gcc --version', (error, stdout) => {
         if (error) {
+            if (getComputerraumConfig()) {
+                window.showErrorMessage(writeLog(`C-Compiler nicht gefunden! Informationen zum Fehler: ${error} `, 'ERROR'))
+                return;
+            }
             exec(`${getScriptCCompilerInstall()}\n`, (error, stdout) => {
                 if (error) {
                     window.showErrorMessage(writeLog(`Bei der Installation des C-Compilers am ${getOSString()} ist ein Fehler aufgetreten: ${error}`, 'ERROR'))
@@ -56,6 +60,10 @@ function initCCompiler() {
 function initJavaCompiler() {
     exec('java -version', (error, stdout) => {
         if (error) {
+            if (getComputerraumConfig()) {
+                window.showErrorMessage(writeLog(`Java-Compiler nicht gefunden! Informationen zum Fehler: ${error} `, 'ERROR'))
+                return;
+            }
             exec(`${getScriptJavaCompilerInstall()}\n`, (error, stdout) => {
                 if (error) {
                     window.showErrorMessage(writeLog(`Bei der Installation des Java-Compilers am ${getOSString()} ist ein Fehler aufgetreten: ${error}`, 'ERROR'))
@@ -77,7 +85,12 @@ function initJavaCompiler() {
 function initPythonCompiler() {
     exec('python --version', (error, stdout) => {
         if (error) {
+            if (getComputerraumConfig()) {
+                window.showErrorMessage(writeLog(`Python-Compiler nicht gefunden! Informationen zum Fehler: ${error} `, 'ERROR'))
+                return;
+            }
             exec(`${getScriptPythonCompilerInstall()}\n`, (error, stdout) => {
+                console.log(error, stdout)
                 if (error) {
                     window.showErrorMessage(writeLog(`Bei der Installation des Python-Compilers am ${getOSString()} ist ein Fehler aufgetreten: ${error}`, 'ERROR'))
                 } else {

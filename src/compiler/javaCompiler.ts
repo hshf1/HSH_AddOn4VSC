@@ -28,6 +28,8 @@ if %errorlevel% == 0 (
     shift
     call %systemroot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "& '%temp%/installChoco.ps1'"
     del "%temp%\\installChoco.ps1"
+    for /f "usebackq tokens=2,*" %%A in ('reg query HKCU\\Environment /v PATH') do set my_user_path=%%B
+    setx PATH "%ALLUSERSPROFILE%\\chocolatey\\bin;%my_user_path%"
 )
 
 choco install openjdk --version=20.0.1 -y
@@ -44,7 +46,7 @@ export function getScriptJavaCompilerInstall(): string {
         case 'windows':
             return JAVACOMPILERINSTALLWINDOWS;
         case 'macos':
-            return `brew install openjdk -y`;
+            return ``;
         case 'linux':
             return ``;
         default:
