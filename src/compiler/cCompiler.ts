@@ -29,15 +29,9 @@ if %errorlevel% == 0 (
     shift
     call %systemroot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "& '%temp%/installChoco.ps1'"
     del "%temp%\\installChoco.ps1"
-    for /f "usebackq tokens=2,*" %%A in ('reg query HKCU\\Environment /v PATH') do set my_user_path=%%B
-    setx PATH "%ALLUSERSPROFILE%\\chocolatey\\bin;%my_user_path%"
 )
 
 choco install mingw --version=8.1.0 -y
-
-for /f "usebackq tokens=2,*" %%A in ('reg query HKCU\\Environment /v PATH') do set my_user_path=%%B
-setx PATH "C:\\ProgramData\\chocolatey\\lib\\mingw\\tools\\install\\mingw64\\bin;%my_user_path%"
-
 
 echo #################################################################################################>CON
 echo.>CON
