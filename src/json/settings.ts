@@ -124,7 +124,9 @@ function getSettingsContent() {
         "code-runner.runInTerminal": true,
         "code-runner.preserveFocus": false,
         "code-runner.defaultLanguage": "C",
-        "update.mode": `${AUTOUPDATE}`,
+        "code-runner.executorMap": {
+            "python": "python3 -u",
+        },
         "launch": {
             "version": "0.2.0",
             "configurations": [

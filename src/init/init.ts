@@ -14,7 +14,7 @@ import { initCompiler } from '../compiler/initCompiler';
 import { OS, ProgLang } from '../enum';
 
 let settings = {
-    computerraum: false, progLanguage: ProgLang[ProgLang.C], compiler: false, reloadNeeded: false,
+    computerraum: false, progLanguage: ProgLang.C, compiler: false, reloadNeeded: false,
     statusBarButton: window.createStatusBarItem(StatusBarAlignment.Right, 0)
 };
 
@@ -82,7 +82,7 @@ function initWinLocation(): void {
 
 export function initProgLang(): void {
     try {
-        settings.progLanguage = workspace.getConfiguration('addon4vsc').get('sprache', ProgLang[ProgLang.C]);
+        settings.progLanguage = workspace.getConfiguration('addon4vsc').get('sprache', ProgLang.C);
         writeLog(`Initialisierte Programmiersprache: ${settings.progLanguage}`, 'INFO');
     } catch (error: any) {
         writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR');
@@ -116,7 +116,7 @@ export function getProgLanguageString(): string {
 }
 
 export function getProgLanguageBoolean(tmp: ProgLang): boolean {
-    return settings.progLanguage === ProgLang[tmp];
+    return settings.progLanguage === tmp;
 }
 
 async function initStatusBarItem(): Promise<void> {

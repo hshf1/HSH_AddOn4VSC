@@ -9,11 +9,11 @@ export function setOS(): void {
     os.linux = process.platform == 'linux';
 
     if (os.windows) {
-        os.string = OS[OS.Windows];
+        os.string = OS.Windows;
     } else if (os.osx) {
-        os.string = OS[OS.MacOS];
+        os.string = OS.MacOS;
     } else if (os.linux) {
-        os.string = OS[OS.Linux];
+        os.string = OS.Linux;
     } else {
         os.string = "Betriebssystem wurde nicht erkannt!";
     }
