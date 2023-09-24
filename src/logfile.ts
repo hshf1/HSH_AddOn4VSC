@@ -2,6 +2,7 @@ import { appendFileSync, existsSync, readdirSync, unlinkSync, writeFileSync } fr
 import { join } from 'path';
 
 import { getPath } from './init/paths';
+import { window, workspace } from 'vscode';
 
 let logFileName: string = '';
 let logFilePath: string = '';
@@ -79,5 +80,16 @@ function deleteLog(): void {
         }
     } catch (error) {
         writeLog(`Fehler beim Löschen der Log-Dateien: ${error}`, 'ERROR');
+    }
+}
+
+export function openLogFile(): void {
+    if (existsSync(logFilePath)) {
+        workspace.openTextDocument(logFilePath)
+            .then((document) => {
+                window.showTextDocument(document);
+            });
+    } else {
+        window.showErrorMessage('Kein aktuelles LogFile gefunden!');
     }
 }

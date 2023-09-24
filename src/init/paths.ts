@@ -2,11 +2,12 @@ import { homedir } from 'os';
 import { existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
 
-import { getComputerraumConfig, getProgLanguageConfig, initProgLang, restartVSC } from './init';
+import { getComputerraumConfig, getProgLanguageString, initProgLang, restartVSC } from './init';
 import { writeLog } from '../logfile';
 import { getOSBoolean, getOSString } from './os';
 import { exec } from 'child_process';
 import { initExtensionsDir } from '../extensionPath';
+import { OS } from '../enum';
 
 let paths: Paths;
 let reloadNeeded: boolean = false;
@@ -19,7 +20,7 @@ export class Paths {
 
     constructor() {
         this.osRO = getOSString();
-        this.langRO = getProgLanguageConfig();
+        this.langRO = getProgLanguageString();
         this.userHomeRO = homedir();
         this.hshRO = getComputerraumConfig();
     }
@@ -99,7 +100,7 @@ export function getPath(): Paths {
 }
 
 export async function checkPaths() {
-    if (getOSBoolean('Windows')) {
+    if (getOSBoolean(OS.Windows)) {
         await initExtensionsDir()
         await deleteOldPath('C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin')
 

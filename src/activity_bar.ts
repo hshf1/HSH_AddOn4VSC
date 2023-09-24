@@ -4,6 +4,7 @@ import { getConstCommands } from './constants';
 import { getComputerraumConfig, getStatusBarItem } from './init/init';
 import { writeLog } from './logfile';
 import { getOSBoolean } from './init/os';
+import { OS } from './enum';
 
 let treeViewOptions: TreeViewOptions<Dependency>;
 let dependencies_main: Dependency[] = [];
@@ -98,7 +99,8 @@ async function aktualisieren(): Promise<void> {
         new Dependency('settings.json', TreeItemCollapsibleState.Collapsed),
         new Dependency('tasks.json', TreeItemCollapsibleState.Collapsed),
         new Dependency('Compiler', TreeItemCollapsibleState.Collapsed),
-        ...(getOSBoolean('Windows')
+        new Dependency('LogFile öffnen', TreeItemCollapsibleState.None, getConstCommands()[16]),
+        ...(getOSBoolean(OS.Windows)
             ? [new Dependency(getComputerraumConfig() ? 'Ändern auf privaten Windows-Rechner' : 'Ändern auf HsH Windows-Rechner', TreeItemCollapsibleState.None, getConstCommands()[6])]
             : [])];
 

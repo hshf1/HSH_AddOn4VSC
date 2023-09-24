@@ -10,6 +10,7 @@ import { getSmtpEMail, getSmtpHost, getSmtpPW, getSmtpPort } from "./smtpconfig"
 import { getLogFileName, getLogFilePath, writeLog } from "./logfile"
 import { getPath, getUserEnvironmentPath } from './init/paths'
 import { getOSBoolean } from "./init/os"
+import { OS } from "./enum"
 
 const execAsync = promisify(exec)
 
@@ -46,7 +47,7 @@ export function reportAProblem() {
                 progress.report({ message: "Mache ein Screenshot...", increment: 20 })
                 await getScreenshot(userReport)
             }
-            if (getOSBoolean('Windows')) {
+            if (getOSBoolean(OS.Windows)) {
                 progress.report({ message: "Speichern der aktuellen Nutzer-Umgebungsvariablen...", increment: 30})
                 await getUserEnvironment()
             }
@@ -115,11 +116,11 @@ async function getScreenshot(userReport: UserReport) {
     try {
         userReport.screenshot.filePath = join(tmpdir(), `screenshot_${Date.now()}.png`)
         // TODO: ggf. Möglichkeit bieten, ganzen Bildschirm oder nur VSC Window zu screenshotten?
-        if (getOSBoolean("Windows")) {
+        if (getOSBoolean(OS.Windows)) {
             await execAsync(`powershell -Command "& { Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('%{PRTSC}'); Start-Sleep -Milliseconds 250; $image = [System.Windows.Forms.Clipboard]::GetImage(); $image.Save('${userReport.screenshot.filePath}'); }"`)
-        } else if (getOSBoolean("MacOS")) {
+        } else if (getOSBoolean(OS.MacOS)) {
             await execAsync(`screencapture "${userReport.screenshot.filePath}"`) // TODO: Derzeit gesamter Bildschirm - ändern, dass nur VSC Window gecaptured wird
-        } else if (getOSBoolean("Linux")) {
+        } else if (getOSBoolean(OS.Linux)) {
             await execAsync(`gnome-screenshot -f "${userReport.screenshot.filePath}"`) // TODO: Linux muss noch getestet werden
         } else {
             throw new Error(`Ungültige Plattform: ${process.platform}`)
@@ -140,7 +141,7 @@ async function getAttachments(userReport: UserReport) {
     userReport.attachments.push({ filename: 'terminalcontent.txt', path: userReport.terminalContentPath })
     userReport.attachments.push({ filename: 'settings.json', path: join(getPath().vscUserData, 'settings.json') })
     userReport.attachments.push({ filename: 'tasks.json', path: join(getPath().vscUserData, 'tasks.json') })
-    if (getOSBoolean('Windows')) {
+    if (getOSBoolean(OS.Windows)) {
         userReport.attachments.push({ filename: 'userEnvironmentPaths.txt', path: join(getPath().vscUserData, 'userEnvironmentPaths.txt')})
     }
     

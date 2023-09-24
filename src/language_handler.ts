@@ -1,7 +1,7 @@
 import { ConfigurationTarget, window, workspace } from 'vscode'
 
 import { writeLog } from './logfile'
-import { getProgLanguageConfig, setProgLanguageConfig } from './init/init'
+import { getProgLanguageString, setProgLanguageConfig } from './init/init'
 import { openPreFolder } from './checkfolder'
 
 export async function init_language() {
@@ -26,7 +26,7 @@ export async function init_language() {
 }
 
 export async function set_language() {
-    const PROGLANGUAGE = getProgLanguageConfig()
+    const PROGLANGUAGE = getProgLanguageString()
 
     const newLanguage = await window.showQuickPick(['C', 'Java', 'Python', 'Abbrechen'], {
         canPickMany: false,

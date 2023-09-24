@@ -1,6 +1,6 @@
 import { Command } from "vscode"
 
-import { getProgLanguageConfig } from "./init/init"
+import { getProgLanguageString } from "./init/init"
 
 export function getConstCommands(): Command[] {
     return [
@@ -19,12 +19,13 @@ export function getConstCommands(): Command[] {
         { command: 'settingsjson.add', title: 'Fehlende Einstellungen in die settings.json setzen'},
         { command: 'tasks.open', title: 'Aktuelle tasks.json öffnen'},
         { command: 'javacompiler.install', title: 'Java Compiler prüfen / installieren' },
-        { command: 'pythoncompiler.install', title: 'Python Compiler prüfen / installieren' } // 15
+        { command: 'pythoncompiler.install', title: 'Python Compiler prüfen / installieren' }, // 15
+        { command: 'logfile.open', title: 'Aktuelle LogFile öffnen'}
     ]
 }
 
 export function getTestProg() {
-    const PROGLANGUAGE = getProgLanguageConfig()
+    const PROGLANGUAGE = getProgLanguageString()
 
     if (PROGLANGUAGE === 'C') {
         return `#include <stdio.h>

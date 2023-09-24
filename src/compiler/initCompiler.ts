@@ -1,29 +1,29 @@
-import { getComputerraumConfig, getProgLanguageConfig } from "../init/init";
-import { getOSBoolean, getOSString } from "../init/os";
-import { addNewPath } from "../init/paths";
+import { getComputerraumConfig, getProgLanguageString } from "../init/init";
+import { getOSString } from "../init/os";
 import { writeLog } from "../logfile";
 import { exec } from "child_process";
 import { ProgressLocation, window } from "vscode";
 import { getScriptCCompilerInstall } from "./cCompiler";
 import { getScriptJavaCompilerInstall } from "./javaCompiler";
 import { getScriptPythonCompilerInstall } from "./pythonCompiler";
+import { ProgLang } from "../enum";
 
 let compiler: boolean = false;
 
-export function initCompiler(tmp?: string) {
+export function initCompiler(tmp?: ProgLang) {
     window.withProgress({
         location: ProgressLocation.Notification,
-        title: `Initialisiere ${tmp ? tmp : getProgLanguageConfig()}-Compiler ...`,
+        title: `Initialisiere ${tmp ? ProgLang[tmp] : getProgLanguageString()}-Compiler ...`,
         cancellable: false
     }, async (progress, token) => {
-        switch (tmp ? tmp.toLowerCase() : getProgLanguageConfig().toLowerCase()) {
-            case 'c':
+        switch (tmp ? ProgLang[tmp] : getProgLanguageString()) {
+            case ProgLang[ProgLang.C]:
                 initCCompiler();
                 break;
-            case 'java':
+            case ProgLang[ProgLang.Java]:
                 initJavaCompiler();
                 break;
-            case 'python':
+            case ProgLang[ProgLang.Python]:
                 initPythonCompiler();
                 break;
             default:

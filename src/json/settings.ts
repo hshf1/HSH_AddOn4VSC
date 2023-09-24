@@ -6,6 +6,7 @@ import { getPath } from "../init/paths";
 import { getOSBoolean } from "../init/os";
 import { getComputerraumConfig } from "../init/init";
 import { writeLog } from "../logfile";
+import { OS } from "../enum";
 
 export function checkSettingsFile(): void {
     const SETTINGSJSONPATH = join(getPath().vscUserData, 'settings.json');
@@ -100,7 +101,7 @@ export function openOldSettingsFile(): void {
 }
 
 function getSettingsContent() {
-    const ENCODING = getOSBoolean('Windows') ? `cp437` : `utf8`;
+    const ENCODING = getOSBoolean(OS.Windows) ? `cp437` : `utf8`;
     const AUTOUPDATE = getComputerraumConfig() ? `manual` : `default`;
 
     return {

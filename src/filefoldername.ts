@@ -6,6 +6,7 @@ import { existsSync } from 'fs';
 
 import { getOSBoolean } from './init/os';
 import { writeLog } from './logfile';
+import { OS } from './enum';
 
 let firstInit: boolean = false;
 
@@ -17,7 +18,7 @@ export async function checkName() {
     const basenameWithoutExt = parse(constbasename).name;
     const constextname = extname(filePath);
 
-    if (getOSBoolean('Windows') && (constdirname.indexOf('ä') !== -1 || constdirname.indexOf('ö') !== -1 || constdirname.indexOf('ü') !== -1 || constdirname.indexOf(' ') !== -1)) {
+    if (getOSBoolean(OS.Windows) && (constdirname.indexOf('ä') !== -1 || constdirname.indexOf('ö') !== -1 || constdirname.indexOf('ü') !== -1 || constdirname.indexOf(' ') !== -1)) {
         window.showWarningMessage(writeLog(`${constdirname} enthält Umlaute oder Leerzeichen! Diese müssen manuell umbenannt werden!`, 'WARNING'))
     }
 

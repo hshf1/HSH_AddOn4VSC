@@ -5,12 +5,13 @@ import { getConstCommands } from './constants'
 import { openTasksFile, setTasksFile } from './json/tasks'
 import { getStatusBarItem, getComputerraumConfig, setComputerraumConfig } from './init/init'
 import { reportAProblem } from './reportaproblem'
-import { writeLog } from './logfile'
+import { openLogFile, writeLog } from './logfile'
 import { getOSBoolean } from './init/os'
 import { switch_directory } from './filefoldername'
 import { addMissingSettings, openOldSettingsFile, openSettingsFile, setSettingsFile } from './json/settings'
 import { set_language } from './language_handler'
 import { initCompiler } from './compiler/initCompiler'
+import { OS, ProgLang } from './enum'
 
 const constregistercommands = [
     {
@@ -65,7 +66,7 @@ const constregistercommands = [
         name: getConstCommands()[5].command,
         callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[5].command}`, 'INFO')
-            initCompiler('C')
+            initCompiler(ProgLang.C)
         }
     },
     {
@@ -73,7 +74,7 @@ const constregistercommands = [
         callback: async () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[6].command}`, 'INFO')
             const COMPUTERRAUM = getComputerraumConfig()
-            if (!getOSBoolean('Windows')) {
+            if (!getOSBoolean(OS.Windows)) {
                 window.showInformationMessage('Diese Einstellung ist nur für Windows-Betriebssysteme notwendig.')
                 return
             }
@@ -147,14 +148,21 @@ const constregistercommands = [
         name: getConstCommands()[14].command,
         callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[14].command}`, 'INFO')
-            initCompiler('Java');
+            initCompiler(ProgLang.Java);
         }
     },
     {
         name: getConstCommands()[15].command,
         callback: () => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[15].command}`, 'INFO')
-            initCompiler('Python');
+            initCompiler(ProgLang.Python);
+        }
+    },
+    {
+        name: getConstCommands()[16].command,
+        callback: () => {
+            writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[16].command}`, 'INFO')
+            openLogFile();
         }
     }
 ]

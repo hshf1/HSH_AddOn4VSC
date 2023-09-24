@@ -1,3 +1,4 @@
+import { OS } from "../enum";
 import { writeLog } from "../logfile";
 
 let os = { windows: false, osx: false, linux: false, string: '' };
@@ -8,11 +9,11 @@ export function setOS(): void {
     os.linux = process.platform == 'linux';
 
     if (os.windows) {
-        os.string = "Windows";
+        os.string = OS[OS.Windows];
     } else if (os.osx) {
-        os.string = "MacOS";
+        os.string = OS[OS.MacOS];
     } else if (os.linux) {
-        os.string = "Linux";
+        os.string = OS[OS.Linux];
     } else {
         os.string = "Betriebssystem wurde nicht erkannt!";
     }
@@ -20,22 +21,13 @@ export function setOS(): void {
     writeLog(`Folgendes Betriebssystem wurde erkannt: ${os.string}`, 'INFO');
 }
 
-/** Mögliche Argument:
-- Windows
-- MacOS
-- Linux
-
-Beispiel:
-`getOSBoolean('Windows')`*/
-export function getOSBoolean(osString: string): boolean {
-    const TEMP = osString.toLowerCase();
-
-    switch (TEMP) {
-        case 'windows':
+export function getOSBoolean(tmp: OS): boolean {
+    switch (tmp) {
+        case OS.Windows:
             return os.windows;
-        case 'macos':
+        case OS.MacOS:
             return os.osx;
-        case 'linux':
+        case OS.Linux:
             return os.linux;
         default:
             return false;

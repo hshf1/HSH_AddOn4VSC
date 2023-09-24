@@ -1,4 +1,4 @@
-import { extensions, commands, window, StatusBarAlignment, workspace, ConfigurationTarget, ThemeColor } from 'vscode';
+import { extensions, commands, window, StatusBarAlignment, workspace, ConfigurationTarget, StatusBarItem } from 'vscode';
 import { exec } from 'child_process';
 import { existsSync } from 'fs';
 
@@ -11,31 +11,44 @@ import { checkSettingsFile } from '../json/settings';
 import { checkTasksFile } from '../json/tasks';
 import { initExtensionsDir } from '../extensionPath';
 import { initCompiler } from '../compiler/initCompiler';
+import { OS, ProgLang } from '../enum';
 
 let settings = {
-    computerraum: false, progLanguage: "C", compiler: false, reloadNeeded: false,
+    computerraum: false, progLanguage: ProgLang[ProgLang.C], compiler: false, reloadNeeded: false,
     statusBarButton: window.createStatusBarItem(StatusBarAlignment.Right, 0)
 };
 
 export function initExtension(): void {
     writeLog(`Initialisierung beginnt!`, 'INFO');
     setOS();
-    if ((getOSBoolean('macos') || getOSBoolean('linux')) && !extensions.getExtension('vadimcn.vscode-lldb')) {
-        writeLog(`VSCode-lldb wird nachinstalliert`, 'INFO');
-        commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb');
-    }
 
-    if (getOSBoolean('windows')) {
+    if (getOSBoolean(OS.Windows)) {
         initWinLocation();
     }
 
     initProgLang();
     initPath();
     initLogFile();
+
+    if ((getOSBoolean(OS.MacOS) || getOSBoolean(OS.Linux)) && !extensions.getExtension('vadimcn.vscode-lldb')) {
+        writeLog(`vadimcn.vscode-lldb wird nachinstalliert`, 'INFO');
+        commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb');
+    }
+
+    if (getProgLanguageBoolean(ProgLang.Java) && !extensions.getExtension('vscjava.vscode-java-pack')) {
+        writeLog(`vscjava.vscode-java-pack wird nachinstalliert`, 'INFO');
+        commands.executeCommand('workbench.extensions.installExtension', 'vscjava.vscode-java-pack');
+    }
+
+    if (getProgLanguageBoolean(ProgLang.Python) && !extensions.getExtension('ms-python.python')) {
+        writeLog(`ms-python.python wird nachinstalliert`, 'INFO');
+        commands.executeCommand('workbench.extensions.installExtension', 'ms-python.python');
+    }
+
     checkSettingsFile();
     checkTasksFile();
-    initStatusBarItem();
     initActivityBar();
+    initStatusBarItem();
     checkPaths();
     initCompiler();
 
@@ -69,8 +82,8 @@ function initWinLocation(): void {
 
 export function initProgLang(): void {
     try {
-        settings.progLanguage = workspace.getConfiguration('addon4vsc').get('sprache', 'C');
-        writeLog(`Gewählte Programmiersprache: ${settings.progLanguage}`, 'INFO');
+        settings.progLanguage = workspace.getConfiguration('addon4vsc').get('sprache', ProgLang[ProgLang.C]);
+        writeLog(`Initialisierte Programmiersprache: ${settings.progLanguage}`, 'INFO');
     } catch (error: any) {
         writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR');
     }
@@ -98,8 +111,12 @@ export function setProgLanguageConfig(tmp: string) {
     }
 }
 
-export function getProgLanguageConfig() {
-    return settings.progLanguage
+export function getProgLanguageString(): string {
+    return settings.progLanguage;
+}
+
+export function getProgLanguageBoolean(tmp: ProgLang): boolean {
+    return settings.progLanguage === ProgLang[tmp];
 }
 
 async function initStatusBarItem(): Promise<void> {
@@ -110,8 +127,8 @@ async function initStatusBarItem(): Promise<void> {
     settings.statusBarButton.show();
 }
 
-export function getStatusBarItem() {
-    return settings.statusBarButton
+export function getStatusBarItem(): StatusBarItem {
+    return settings.statusBarButton;
 }
 
 export function restartVSC() {
