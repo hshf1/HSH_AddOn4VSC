@@ -1,5 +1,3 @@
-import * as vscode from 'vscode';
-import * as path from 'path';
 import { Uri, workspace, window, commands } from 'vscode';
 import { extname, dirname, basename, join, parse } from 'path';
 import { existsSync } from 'fs';
@@ -87,13 +85,13 @@ async function saveRename(currentPath: string, newfullname: any) {
 }
 
 export async function switchDirectory() {
-    const activeEditor = vscode.window.activeTextEditor;
+    const activeEditor = window.activeTextEditor;
     if (activeEditor) {
         const currentFilePath = activeEditor.document.uri.fsPath;
-        const currentFileDirectory = path.dirname(currentFilePath);
+        const currentFileDirectory = dirname(currentFilePath);
         const folderUri = Uri.file(currentFileDirectory);
         commands.executeCommand(`vscode.openFolder`, folderUri);
     } else {
-        vscode.window.showInformationMessage('Es ist keine Datei zum Wechseln des Verzeichnisses geöffnet.');
+        window.showInformationMessage('Es ist keine Datei zum Wechseln des Verzeichnisses geöffnet.');
     }
 }
