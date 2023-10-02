@@ -1,4 +1,3 @@
-import { getComputerraumConfig } from "../init/init";
 import { getOSString } from "../init/os";
 
 const CCOMPILERINSTALLWINDOWS = `@echo off
