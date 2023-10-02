@@ -1,19 +1,21 @@
 import { OS } from "../enum";
 import { writeLog } from "../logfile";
+import { initWinLocation } from "./init";
 
 let os = { windows: false, osx: false, linux: false, string: '' };
 
 export function setOS(): void {
     os.windows = process.platform.startsWith('win');
-    os.osx = process.platform == 'darwin';
-    os.linux = process.platform == 'linux';
+    os.osx = process.platform === 'darwin';
+    os.linux = process.platform === 'linux';
 
     if (os.windows) {
-        os.string = OS.Windows;
+        os.string = OS.windows;
+        initWinLocation();
     } else if (os.osx) {
-        os.string = OS.MacOS;
+        os.string = OS.macOS;
     } else if (os.linux) {
-        os.string = OS.Linux;
+        os.string = OS.linux;
     } else {
         os.string = "Betriebssystem wurde nicht erkannt!";
     }
@@ -23,11 +25,11 @@ export function setOS(): void {
 
 export function getOSBoolean(tmp: OS): boolean {
     switch (tmp) {
-        case OS.Windows:
+        case OS.windows:
             return os.windows;
-        case OS.MacOS:
+        case OS.macOS:
             return os.osx;
-        case OS.Linux:
+        case OS.linux:
             return os.linux;
         default:
             return false;

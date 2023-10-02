@@ -4,6 +4,8 @@ import { join } from 'path';
 import { getPath } from '../init/paths';
 import { writeLog } from '../logfile';
 import { window, workspace } from 'vscode';
+import { getOSBoolean } from '../init/os';
+import { OS } from '../enum';
 
 export function checkTasksFile(): void {
 	const TASKSJSON = join(getPath().vscUserData, 'tasks.json');
@@ -32,55 +34,12 @@ export function setTasksFile(): void {
 }
 
 function getTasksContent() {
+	const tasks = getOSBoolean(OS.windows) ? tasksWindows : tasksLinuxMacOS;
+
 	return {
 		"version": "2.0.0",
-		"tasks": [
-			{
-				"type": "cppbuild",
-				"label": "C/C++: gcc Aktive Datei kompilieren",
-				"command": "/usr/bin/gcc",
-				"args": [
-					"-g",
-					"\${file}",
-					"-o",
-					"\${fileDirname}/\${fileBasenameNoExtension}"
-				],
-				"options": {
-					"cwd": "\${fileDirname}"
-				},
-				"problemMatcher": [
-					"$gcc"
-				],
-				"group": {
-					"kind": "build",
-					"isDefault": true
-				},
-				"detail": "Vom Debugger generierte Aufgabe."
-			},
-			{
-				"type": "cppbuild",
-				"label": "C/C++: gcc.exe Aktive Datei kompilieren",
-				"command": "gcc.exe",
-				"args": [
-					"-g",
-					"\${file}",
-					"-o",
-					"\${fileDirname}\\\\\${fileBasenameNoExtension}.exe"
-				],
-				"options": {
-					"cwd": "\${workspaceFolder}"
-				},
-				"problemMatcher": [
-					"$gcc"
-				],
-				"group": {
-					"kind": "build",
-					"isDefault": true
-				},
-				"detail": "Compiler: gcc.exe"
-			}
-		]
-	}
+		tasks
+	};
 }
 
 function createTasksBackup(): void {
@@ -100,15 +59,65 @@ function createTasksBackup(): void {
 }
 
 export function openTasksFile(): void {
-    const TASKSPATH: string = join(getPath().vscUserData, 'tasks.json');
+	const TASKSPATH: string = join(getPath().vscUserData, 'tasks.json');
 
-    if (existsSync(TASKSPATH)) {
-        workspace.openTextDocument(TASKSPATH)
-            .then((document) => {
-                window.showTextDocument(document);
-            });
-    } else {
+	if (existsSync(TASKSPATH)) {
+		workspace.openTextDocument(TASKSPATH)
+			.then((document) => {
+				window.showTextDocument(document);
+			});
+	} else {
 		writeLog('Keine tasks.json gefunden!', 'ERROR');
-        window.showErrorMessage('Keine alte settings.json gefunden!');
-    }
+		window.showErrorMessage('Keine alte settings.json gefunden!');
+	}
 }
+
+const tasksWindows = [
+	{
+		"type": "cppbuild",
+		"label": "C/C++: gcc.exe Aktive Datei kompilieren",
+		"command": "gcc.exe",
+		"args": [
+			"-g",
+			"\${file}",
+			"-o",
+			"\${fileDirname}\\\\\${fileBasenameNoExtension}.exe"
+		],
+		"options": {
+			"cwd": "\${workspaceFolder}"
+		},
+		"problemMatcher": [
+			"$gcc"
+		],
+		"group": {
+			"kind": "build",
+			"isDefault": true
+		},
+		"detail": "Compiler: gcc.exe"
+	}
+];
+
+const tasksLinuxMacOS = [
+	{
+		"type": "cppbuild",
+		"label": "C/C++: gcc Aktive Datei kompilieren",
+		"command": "/usr/bin/gcc",
+		"args": [
+			"-g",
+			"\${file}",
+			"-o",
+			"\${fileDirname}/\${fileBasenameNoExtension}"
+		],
+		"options": {
+			"cwd": "\${fileDirname}"
+		},
+		"problemMatcher": [
+			"$gcc"
+		],
+		"group": {
+			"kind": "build",
+			"isDefault": true
+		},
+		"detail": "Vom Debugger generierte Aufgabe."
+	}
+];

@@ -1,11 +1,11 @@
 export enum OS {
-    Windows = 'Windows',
-    MacOS = 'MacOS',
-    Linux = 'Linux'
+    windows = 'Windows',
+    macOS = 'MacOS',
+    linux = 'Linux'
 }
 
 export enum ProgLang {
-    C = 'C',
-    Java = 'Java',
-    Python = 'Python'
+    c = 'C',
+    java = 'Java',
+    python = 'Python'
 }

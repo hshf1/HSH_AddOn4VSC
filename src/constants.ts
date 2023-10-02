@@ -1,6 +1,6 @@
-import { Command } from "vscode"
+import { Command } from "vscode";
 
-import { getProgLanguageString } from "./init/init"
+import { getProgLanguageString } from "./init/init";
 
 export function getConstCommands(): Command[] {
     return [
@@ -21,11 +21,11 @@ export function getConstCommands(): Command[] {
         { command: 'javacompiler.install', title: 'Java Compiler prüfen / installieren' },
         { command: 'pythoncompiler.install', title: 'Python Compiler prüfen / installieren' }, // 15
         { command: 'logfile.open', title: 'Aktuelle LogFile öffnen'}
-    ]
+    ];
 }
 
 export function getTestProg() {
-    const PROGLANGUAGE = getProgLanguageString()
+    const PROGLANGUAGE = getProgLanguageString();
 
     if (PROGLANGUAGE === 'C') {
         return `#include <stdio.h>
@@ -45,7 +45,7 @@ int main()
     printf("Hallo 3!\\n");
     y = 12 + 4 % 3 * 7 / 8;
     return 0;
-}`
+}`;
     } else if (PROGLANGUAGE === 'Java') {
         return `public class HelloWorld {
     public static void main(String[] args) {
@@ -61,7 +61,7 @@ int main()
         System.out.println(i);
 
     }
-}`
+}`;
     } else if (PROGLANGUAGE === 'Python') {
         return `print("Python said, Hello World!")
 i = 1
@@ -71,8 +71,8 @@ print(i)
 i += 1
 print(i)
 i += 1
-print(i)`
+print(i)`;
     } else {
-        return ''
+        return '';
     }
 }

@@ -11,15 +11,15 @@ import { OS } from './enum';
 let firstInit: boolean = false;
 
 export async function checkName() {
-    const filePath: string = window.activeTextEditor?.document.uri.fsPath || "no_file_defined"
+    const filePath: string = window.activeTextEditor?.document.uri.fsPath || "no_file_defined";
 
     const constdirname = dirname(filePath).toLowerCase();
     const constbasename = basename(filePath).toLowerCase();
     const basenameWithoutExt = parse(constbasename).name;
     const constextname = extname(filePath);
 
-    if (getOSBoolean(OS.Windows) && (constdirname.indexOf('ä') !== -1 || constdirname.indexOf('ö') !== -1 || constdirname.indexOf('ü') !== -1 || constdirname.indexOf(' ') !== -1)) {
-        window.showWarningMessage(writeLog(`${constdirname} enthält Umlaute oder Leerzeichen! Diese müssen manuell umbenannt werden!`, 'WARNING'))
+    if (getOSBoolean(OS.windows) && (constdirname.indexOf('ä') !== -1 || constdirname.indexOf('ö') !== -1 || constdirname.indexOf('ü') !== -1 || constdirname.indexOf(' ') !== -1)) {
+        window.showWarningMessage(writeLog(`${constdirname} enthält Umlaute oder Leerzeichen! Diese müssen manuell umbenannt werden!`, 'WARNING'));
     }
 
     if (basenameWithoutExt.indexOf('ä') !== -1 || basenameWithoutExt.indexOf('ö') !== -1 || basenameWithoutExt.indexOf('ü') !== -1 || basenameWithoutExt.indexOf(' ') !== -1 || basenameWithoutExt.indexOf('.') !== -1 /** || constextname !== '.c' */) {
@@ -40,7 +40,7 @@ async function rename(currentPath: string) {
         writeLog(`Es sind Fehler im Dateinamen vorhanden!`, 'WARNING') + 'Sollen diese automatisch angepasst werden?',
         'Ja',
         'Nein',
-    ) || ''
+    ) || '';
 
     if (renameanfrage === 'Ja') {
         let newfullname: any;
@@ -59,7 +59,7 @@ async function rename(currentPath: string) {
                 'Ü': 'UE',
                 '.': '_',
             }[char] || char;
-        })
+        });
         const newName = replacedBasename.concat(constextname);
         newfullname = join(constdirname, newName);
 
@@ -72,21 +72,21 @@ async function rename(currentPath: string) {
         //     }
         // }
 
-        save_rename(currentPath, newfullname);
+        saveRename(currentPath, newfullname);
     }
 }
 
-async function save_rename(currentPath: string, newfullname: any) {
+async function saveRename(currentPath: string, newfullname: any) {
     if (existsSync(newfullname)) {
         let parsedPath = parse(newfullname);
         let newName = join(parsedPath.dir, `${parsedPath.name}_1${parsedPath.ext}`);
-        save_rename(currentPath, newName);
+        saveRename(currentPath, newName);
     } else {
         await workspace.fs.rename(Uri.file(currentPath), Uri.file(currentPath).with({ path: newfullname }));
     }
 }
 
-export async function switch_directory() {
+export async function switchDirectory() {
     const activeEditor = vscode.window.activeTextEditor;
     if (activeEditor) {
         const currentFilePath = activeEditor.document.uri.fsPath;

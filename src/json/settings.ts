@@ -101,8 +101,9 @@ export function openOldSettingsFile(): void {
 }
 
 function getSettingsContent() {
-    const ENCODING = getOSBoolean(OS.Windows) ? `cp437` : `utf8`;
+    const ENCODING = getOSBoolean(OS.windows) ? `cp437` : `utf8`;
     const AUTOUPDATE = getComputerraumConfig() ? `manual` : `default`;
+    const launch = getOSBoolean(OS.windows) ? launchWindows : launchLinuxMacOs;
 
     return {
         "addon4vsc.sprache": "C",
@@ -111,7 +112,6 @@ function getSettingsContent() {
         "liveshare.guestApprovalRequired": false,
         "extensions.ignoreRecommendations": true,
         "files.encoding": `${ENCODING}`,
-        //"files.autoGuessEncoding": true,
         "editor.unicodeHighlight.nonBasicASCII": false,
         "files.autoSave": "onFocusChange",
         "code-runner.saveFileBeforeRun": true,
@@ -119,7 +119,6 @@ function getSettingsContent() {
         "editor.insertSpaces": true,
         "editor.tabSize": 4,
         "editor.renderWhitespace": "none",
-        //"editor.renderWhitespace": "selection",
         "C_Cpp.debugShortcut": false,
         "code-runner.runInTerminal": true,
         "code-runner.preserveFocus": false,
@@ -127,41 +126,8 @@ function getSettingsContent() {
         "code-runner.executorMap": {
             "python": "python3 -u",
         },
-        "launch": {
-            "version": "0.2.0",
-            "configurations": [
-                {
-                    "name": "debuggen",
-                    "type": "cppdbg",
-                    "request": "launch",
-                    "stopAtEntry": false,
-                    "externalConsole": false,
-                    // macos-spezifische Einstellungen
-                    "osx": {
-                        "type": "lldb",
-                        "MIMode": "lldb",
-                        "program": "\${fileDirname}/\${fileBasenameNoExtension}",
-                        "cwd": "\${fileDirname}",
-                        "preLaunchTask": "C/C++: gcc Aktive Datei kompilieren"
-                    },
-                    // windows-spezifische Einstellungen
-                    "windows": {
-                        "MIMode": "gdb",
-                        "program": "\${fileDirname}\\\\\${fileBasenameNoExtension}.exe",
-                        "cwd": "\${workspaceFolder}",
-                        "preLaunchTask": "C/C++: gcc.exe Aktive Datei kompilieren"
-                    },
-                    // linux-spezifische Einstellungen
-                    "linux": {
-                        "MIMode": "lldb",
-                        "program": "\${fileDirname}/\${fileBasenameNoExtension}",
-                        "cwd": "\${fileDirname}",
-                        "preLaunchTask": "C/C++: gcc Aktive Datei kompilieren"
-                    }
-                }
-            ]
-        }
-    }
+        launch
+    };
 }
 
 function createSettingsBackup(): void { // TODO: Backup nur ausführen, wenn was geändert wird in der JSON
@@ -179,3 +145,36 @@ function createSettingsBackup(): void { // TODO: Backup nur ausführen, wenn was
         writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR');
     }
 }
+
+const launchWindows = {
+    "launch": {
+        "version": "0.2.0",
+        "configurations": [
+            {
+                "name": "debuggen",
+                "type": "cppdbg",
+                "request": "launch",
+                "stopAtEntry": false,
+                "externalConsole": false,
+                "MIMode": "gdb",
+                "program": "\${fileDirname}\\\\\${fileBasenameNoExtension}.exe",
+                "cwd": "\${workspaceFolder}",
+                "preLaunchTask": "C/C++: gcc.exe Aktive Datei kompilieren"
+            }
+        ]
+    }
+};
+
+const launchLinuxMacOs = {
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "debuggen",
+            "type": "lldb",
+            "request": "launch",
+            "program": "\${fileDirname}/\${fileBasenameNoExtension}",
+            "cwd": "\${fileDirname}",
+            "preLaunchTask": "C/C++: gcc Aktive Datei kompilieren"
+        }
+    ]
+};

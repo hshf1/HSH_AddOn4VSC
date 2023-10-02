@@ -13,97 +13,96 @@ let compiler: boolean = false;
 export function initCompiler(tmp?: ProgLang) {
     window.withProgress({
         location: ProgressLocation.Notification,
-        title: `Initialisiere ${tmp ? ProgLang[tmp] : getProgLanguageString()}-Compiler ...`,
+        title: `Initialisiere ${tmp ? tmp : getProgLanguageString()}-Compiler ...`,
         cancellable: false
     }, async (progress, token) => {
-        switch (tmp ? ProgLang[tmp] : getProgLanguageString()) {
-            case ProgLang[ProgLang.C]:
+        switch (tmp ? tmp : getProgLanguageString()) {
+            case ProgLang.c:
                 initCCompiler();
                 break;
-            case ProgLang[ProgLang.Java]:
+            case ProgLang.java:
                 initJavaCompiler();
                 break;
-            case ProgLang[ProgLang.Python]:
+            case ProgLang.python:
                 initPythonCompiler();
                 break;
             default:
                 return;
         }
-    })
+    });
 }
 
 function initCCompiler() {
     exec('gcc --version', (error, stdout) => {
         if (error) {
             if (getComputerraumConfig()) {
-                window.showErrorMessage(writeLog(`C-Compiler nicht gefunden! Informationen zum Fehler: ${error} `, 'ERROR'))
+                window.showErrorMessage(writeLog(`C-Compiler nicht gefunden! Informationen zum Fehler: ${error} `, 'ERROR'));
                 return;
             }
             exec(`${getScriptCCompilerInstall()}\n`, (error, stdout) => {
                 if (error) {
-                    window.showErrorMessage(writeLog(`Bei der Installation des C-Compilers am ${getOSString()} ist ein Fehler aufgetreten: ${error}`, 'ERROR'))
+                    window.showErrorMessage(writeLog(`Bei der Installation des C-Compilers am ${getOSString()} ist ein Fehler aufgetreten: ${error}`, 'ERROR'));
                 } else {
-                    window.showInformationMessage(writeLog(`Die Installation des C-Compilers am ${getOSString()} wurde erfolgreich durchgeführt!`, 'INFO'))
+                    window.showInformationMessage(writeLog(`Die Installation des C-Compilers am ${getOSString()} wurde erfolgreich durchgeführt!`, 'INFO'));
                 }
             });
         } else {
-            writeLog(`C-Compiler gefunden! Informationen zum C-Compiler: ${stdout.trim()} `, 'INFO')
+            writeLog(`C-Compiler gefunden! Informationen zum C-Compiler: ${stdout.trim()} `, 'INFO');
             if (compiler) {
-                window.showInformationMessage(`C-Compiler bereits installiert!`)
+                window.showInformationMessage(`C-Compiler bereits installiert!`);
             } else {
-                compiler = true
+                compiler = true;
             }
         }
-    })
+    });
 }
 
 function initJavaCompiler() {
     exec('java -version', (error, stdout) => {
         if (error) {
             if (getComputerraumConfig()) {
-                window.showErrorMessage(writeLog(`Java-Compiler nicht gefunden! Informationen zum Fehler: ${error} `, 'ERROR'))
+                window.showErrorMessage(writeLog(`Java-Compiler nicht gefunden! Informationen zum Fehler: ${error} `, 'ERROR'));
                 return;
             }
             exec(`${getScriptJavaCompilerInstall()}\n`, (error, stdout) => {
                 if (error) {
-                    window.showErrorMessage(writeLog(`Bei der Installation des Java-Compilers am ${getOSString()} ist ein Fehler aufgetreten: ${error}`, 'ERROR'))
+                    window.showErrorMessage(writeLog(`Bei der Installation des Java-Compilers am ${getOSString()} ist ein Fehler aufgetreten: ${error}`, 'ERROR'));
                 } else {
-                    window.showInformationMessage(writeLog(`Die Installation des Java-Compilers am ${getOSString()} wurde erfolgreich durchgeführt!`, 'INFO'))
+                    window.showInformationMessage(writeLog(`Die Installation des Java-Compilers am ${getOSString()} wurde erfolgreich durchgeführt!`, 'INFO'));
                 }
             });
         } else {
-            writeLog(`Java-Compiler gefunden! Informationen zum Java-Compiler: ${stdout.trim()} `, 'INFO')
+            writeLog(`Java-Compiler gefunden! Informationen zum Java-Compiler: ${stdout.trim()} `, 'INFO');
             if (compiler) {
-                window.showInformationMessage(`Java-Compiler bereits installiert!`)
+                window.showInformationMessage(`Java-Compiler bereits installiert!`);
             } else {
-                compiler = true
+                compiler = true;
             }
         }
-    })
+    });
 }
 
 function initPythonCompiler() {
     exec('python --version', (error, stdout) => {
         if (error) {
             if (getComputerraumConfig()) {
-                window.showErrorMessage(writeLog(`Python-Compiler nicht gefunden! Informationen zum Fehler: ${error} `, 'ERROR'))
+                window.showErrorMessage(writeLog(`Python-Compiler nicht gefunden! Informationen zum Fehler: ${error} `, 'ERROR'));
                 return;
             }
             exec(`${getScriptPythonCompilerInstall()}\n`, (error, stdout) => {
-                console.log(error, stdout)
                 if (error) {
-                    window.showErrorMessage(writeLog(`Bei der Installation des Python-Compilers am ${getOSString()} ist ein Fehler aufgetreten: ${error}`, 'ERROR'))
+                    window.showErrorMessage(writeLog(`Bei der Installation des Python-Compilers am ${getOSString()} ist ein Fehler aufgetreten: ${error}`, 'ERROR'));
                 } else {
-                    window.showInformationMessage(writeLog(`Die Installation des Python-Compilers am ${getOSString()} wurde erfolgreich durchgeführt!`, 'INFO'))
+                    window.showInformationMessage(writeLog(`Die Installation des Python-Compilers am ${getOSString()} wurde erfolgreich durchgeführt!`, 'INFO'));
                 }
             });
         } else {
-            writeLog(`Python-Compiler gefunden! Informationen zum Python-Compiler: ${stdout.trim()} `, 'INFO')
+            writeLog(`Python-Compiler gefunden! Informationen zum Python-Compiler: ${stdout.trim()} `, 'INFO');
             if (compiler) {
-                window.showInformationMessage(`Python-Compiler bereits installiert!`)
+                window.showInformationMessage(`Python-Compiler bereits installiert!`);
             } else {
-                compiler = true
+                compiler = true;
             }
         }
-    })
+    });
 }

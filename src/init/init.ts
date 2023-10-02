@@ -1,4 +1,4 @@
-import { extensions, commands, window, StatusBarAlignment, workspace, ConfigurationTarget, StatusBarItem } from 'vscode';
+import { extensions, commands, window, workspace, ConfigurationTarget, ProgressLocation } from 'vscode';
 import { exec } from 'child_process';
 import { existsSync } from 'fs';
 
@@ -14,52 +14,35 @@ import { initCompiler } from '../compiler/initCompiler';
 import { OS, ProgLang } from '../enum';
 
 let settings = {
-    computerraum: false, progLanguage: ProgLang.C, compiler: false, reloadNeeded: false,
-    statusBarButton: window.createStatusBarItem(StatusBarAlignment.Right, 0)
+    computerraum: false, progLanguage: ProgLang.c, compiler: false, reloadNeeded: false
 };
 
 export function initExtension(): void {
-    writeLog(`Initialisierung beginnt!`, 'INFO');
-    setOS();
-
-    if (getOSBoolean(OS.Windows)) {
-        initWinLocation();
-    }
-
-    initProgLang();
-    initPath();
-    initLogFile();
-
-    if ((getOSBoolean(OS.MacOS) || getOSBoolean(OS.Linux)) && !extensions.getExtension('vadimcn.vscode-lldb')) {
-        writeLog(`vadimcn.vscode-lldb wird nachinstalliert`, 'INFO');
-        commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb');
-    }
-
-    if (getProgLanguageBoolean(ProgLang.Java) && !extensions.getExtension('vscjava.vscode-java-pack')) {
-        writeLog(`vscjava.vscode-java-pack wird nachinstalliert`, 'INFO');
-        commands.executeCommand('workbench.extensions.installExtension', 'vscjava.vscode-java-pack');
-    }
-
-    if (getProgLanguageBoolean(ProgLang.Python) && !extensions.getExtension('ms-python.python')) {
-        writeLog(`ms-python.python wird nachinstalliert`, 'INFO');
-        commands.executeCommand('workbench.extensions.installExtension', 'ms-python.python');
-    }
-
-    checkSettingsFile();
-    checkTasksFile();
-    initActivityBar();
-    initStatusBarItem();
-    checkPaths();
-    initCompiler();
-
-    if (!(workspace.workspaceFolders?.toString)) {
-        openPreFolder();
-    }
-
-    writeLog(`Initialisierung beendet!`, 'INFO');
+    window.withProgress({
+        location: ProgressLocation.Notification,
+        title: 'Initialisierung...',
+        cancellable: false,
+    }, async () => {
+        writeLog(`Initialisierung beginnt!`, 'INFO');
+        setOS();
+        initProgLang();
+        initPath();
+        initLogFile();
+        checkMissingExtension();
+        checkSettingsFile();
+        checkTasksFile();
+        initCompiler();
+        checkPaths();
+        initActivityBar();
+    }).then(() => {
+        writeLog(`Initialisierung beendet!`, 'INFO');
+        if (!(workspace.workspaceFolders?.toString)) {
+            openPreFolder();
+        }
+    });
 }
 
-function initWinLocation(): void {
+export function initWinLocation(): void {
     exec('whoami', (error, stdout, stderr) => {
         if (error) {
             writeLog(`Error: ${error.message}`, 'ERROR');
@@ -82,7 +65,7 @@ function initWinLocation(): void {
 
 export function initProgLang(): void {
     try {
-        settings.progLanguage = workspace.getConfiguration('addon4vsc').get('sprache', ProgLang.C);
+        settings.progLanguage = workspace.getConfiguration('addon4vsc').get('sprache', ProgLang.c);
         writeLog(`Initialisierte Programmiersprache: ${settings.progLanguage}`, 'INFO');
     } catch (error: any) {
         writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR');
@@ -90,24 +73,24 @@ export function initProgLang(): void {
 }
 
 export function setComputerraumConfig(tmp: boolean) {
-    const oldConfig = getComputerraumConfig()
-    settings.computerraum = tmp
+    const oldConfig = getComputerraumConfig();
+    settings.computerraum = tmp;
     if (oldConfig !== tmp) {
-        initPath()
-        initExtensionsDir()
-        initCompiler()
+        initPath();
+        initExtensionsDir();
+        initCompiler();
     }
 }
 
 export function getComputerraumConfig() {
-    return settings.computerraum
+    return settings.computerraum;
 }
 
 export function setProgLanguageConfig(tmp: string) {
     try {
-        workspace.getConfiguration('addon4vsc').update('sprache', tmp, ConfigurationTarget.Global)
+        workspace.getConfiguration('addon4vsc').update('sprache', tmp, ConfigurationTarget.Global);
     } catch (error: any) {
-        writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')
+        writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR');
     }
 }
 
@@ -119,25 +102,30 @@ export function getProgLanguageBoolean(tmp: ProgLang): boolean {
     return settings.progLanguage === tmp;
 }
 
-async function initStatusBarItem(): Promise<void> {
-    settings.statusBarButton.text = '$(info) HSH_AddOn4VSC pausieren';
-    settings.statusBarButton.tooltip = 'Klicken, um die Erweiterung HsH_AddOn4VSC zu pausieren (spätestens, bis wenn VSCode neu startet)';
-    settings.statusBarButton.command = 'extension.off';
-    settings.statusBarButton.color = "red";
-    settings.statusBarButton.show();
-}
-
-export function getStatusBarItem(): StatusBarItem {
-    return settings.statusBarButton;
-}
-
 export function restartVSC() {
     window.showWarningMessage(writeLog(`VSCode wird jetzt beendet, bitte VSCode manuell neu starten!`, 'WARNING'), { modal: true }, 'OK')
         .then(() => {
             exec('taskkill /im code.exe /f', (error, stdout, stderr) => {
                 if (error) {
-                    writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR')
+                    writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR');
                 }
-            })
-        })
+            });
+        });
+}
+
+function checkMissingExtension() {
+    if ((getOSBoolean(OS.macOS) || getOSBoolean(OS.linux)) && !extensions.getExtension('vadimcn.vscode-lldb')) {
+        writeLog(`vadimcn.vscode-lldb wird nachinstalliert`, 'INFO');
+        commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb');
+    }
+
+    if (getProgLanguageBoolean(ProgLang.java) && !extensions.getExtension('vscjava.vscode-java-pack')) {
+        writeLog(`vscjava.vscode-java-pack wird nachinstalliert`, 'INFO');
+        commands.executeCommand('workbench.extensions.installExtension', 'vscjava.vscode-java-pack');
+    }
+
+    if (getProgLanguageBoolean(ProgLang.python) && !extensions.getExtension('ms-python.python')) {
+        writeLog(`ms-python.python wird nachinstalliert`, 'INFO');
+        commands.executeCommand('workbench.extensions.installExtension', 'ms-python.python');
+    }
 }

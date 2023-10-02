@@ -37,7 +37,7 @@ echo.>CON
 echo Installation beendet! Das Terminal kann jetzt geschlossen werden.>CON
 echo.>CON
 echo #################################################################################################>CON
-EXIT /B`
+EXIT /B`;
 
 export function getScriptJavaCompilerInstall(): string {
     switch (getOSString().toLowerCase()) {

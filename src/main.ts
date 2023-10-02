@@ -12,7 +12,7 @@ export function activate(context: ExtensionContext): void {
 		initEvents();
 		initCommands(context);
 	} catch (error) {
-		console.log(error)
+		console.log(error);
 	}
 
 }
