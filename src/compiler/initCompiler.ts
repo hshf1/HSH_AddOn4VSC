@@ -36,7 +36,7 @@ function initCCompiler() {
     exec('gcc --version', (error, stdout) => {
         if (error) {
             if (getComputerraumConfig()) {
-                window.showErrorMessage(writeLog(`C-Compiler nicht gefunden! Informationen zum Fehler: ${error} `, 'ERROR'));
+                window.showErrorMessage(writeLog(`C-Compiler nicht gefunden! Informationen zum Fehler: ${error}`, 'ERROR'));
                 return;
             }
             exec(`${getScriptCCompilerInstall()}\n`, (error, stdout) => {
