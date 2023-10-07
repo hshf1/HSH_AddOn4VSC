@@ -60,7 +60,7 @@ for /f "usebackq tokens=2,*" %%A in (`reg query HKCU\Environment /v PATH`) do se
 setx PATH "%ALLUSERSPROFILE%\chocolatey\bin;C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin;%my_user_path%"
 
 :: Compiler und Debugger mit choco installieren (hier ist Version vorderfiniert, ggf. in Zukunft ändern)
-choco install mingw --version=8.1.0 -y
+choco install mingw --version=8.1.0 -y -f
 :: choco install mingw -y müsste die aktuellste Version installieren, falls irgendwann 8.1.0 defekt
 
 :: VSCode installieren bzw. neu installieren, falls fehlerhaft
