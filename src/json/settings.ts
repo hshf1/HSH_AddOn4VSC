@@ -119,6 +119,7 @@ function getSettingsContent() {
         "editor.insertSpaces": true,
         "editor.tabSize": 4,
         "editor.renderWhitespace": "none",
+        "update.enableWindowsBackgroundUpdates": false,
         "C_Cpp.debugShortcut": false,
         "code-runner.runInTerminal": true,
         "code-runner.preserveFocus": false,
