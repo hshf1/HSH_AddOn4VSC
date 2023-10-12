@@ -124,6 +124,7 @@ function getSettingsContent() {
         "C_Cpp.debugShortcut": false,
         "code-runner.runInTerminal": true,
         "code-runner.preserveFocus": false,
+        "update.enableWindowsBackgroundUpdates": false,
         "code-runner.defaultLanguage": "C",
         "update.mode": `${AUTOUPDATE}`,
         "launch": {
