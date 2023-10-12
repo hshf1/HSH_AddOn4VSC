@@ -10,3 +10,23 @@ export function installJavaWindows() {
         }
     }
 }
+
+export function installJavaMacOS() {
+    if (true) {
+        try {
+            execSync(`brew install openjdk -y`);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+}
+
+export function installJavaLinux() {
+    if (true) {
+        try {
+            execSync(``);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+}

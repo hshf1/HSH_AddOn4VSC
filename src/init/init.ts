@@ -10,7 +10,7 @@ import { getOSBoolean, setOS } from './os';
 import { checkSettingsFile } from '../json/settings';
 import { checkTasksFile } from '../json/tasks';
 import { initExtensionsDir } from '../extensionPath';
-import { initCompiler } from '../scripts/initCompiler';
+import { initCompiler } from '../compiler/compiler';
 import { OS, ProgLang } from '../enum';
 
 let settings = {

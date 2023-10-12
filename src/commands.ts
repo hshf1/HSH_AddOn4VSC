@@ -10,7 +10,7 @@ import { getOSBoolean } from './init/os';
 import { switchDirectory } from './filefoldername';
 import { addMissingSettings, openOldSettingsFile, openSettingsFile, setSettingsFile } from './json/settings';
 import { setLanguage } from './language_handler';
-import { initCompiler } from './scripts/initCompiler';
+import { initCompiler } from './compiler/compiler';
 import { OS, ProgLang } from './enum';
 
 const constregistercommands = [
