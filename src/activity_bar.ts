@@ -13,6 +13,10 @@ let dependenciesSettingsjson: Dependency[] = [];
 let dependenciesProgramLanguages: Dependency[] = [];
 let dependenciesTasksjson: Dependency[] = [];
 let dependenciesCompiler: Dependency[] = [];
+let dependenciesChocolatey: Dependency[] = [];
+let dependenciesCCompiler: Dependency[] = [];
+let dependenciesJavaCompiler: Dependency[] = [];
+let dependenciesPythonCompiler: Dependency[] = [];
 
 export let treeDataProvider: DepNodeProvider;
 
@@ -65,6 +69,14 @@ class DepNodeProvider implements TreeDataProvider<Dependency> {
             return [...dependenciesProgramLanguages];
         } else if (dependency.label === 'Compiler') {
             return [...dependenciesCompiler];
+        } else if (dependency.label === 'Chocolatey (Zur installation von Compilern)') {
+            return [...dependenciesChocolatey];
+        } else if (dependency.label === 'C-Compiler') {
+            return [...dependenciesCCompiler];
+        } else if (dependency.label === 'Java-Compiler') {
+            return [...dependenciesJavaCompiler];
+        } else if (dependency.label === 'Python-Compiler') {
+            return [...dependenciesPythonCompiler];
         } else {
             return [];
         }
@@ -94,7 +106,7 @@ async function aktualisieren(): Promise<void> {
         new Dependency('Problem melden', TreeItemCollapsibleState.None, getConstCommands()[7]),
     ];
 
-    dependenciesSettings = [ /** Definiert die Dependencies des settings Arrays neu */
+    dependenciesSettings = [
         new Dependency('settings.json', TreeItemCollapsibleState.Collapsed),
         new Dependency('tasks.json', TreeItemCollapsibleState.Collapsed),
         new Dependency('Compiler', TreeItemCollapsibleState.Collapsed),
@@ -117,8 +129,25 @@ async function aktualisieren(): Promise<void> {
     ];
 
     dependenciesCompiler = [
+        ...(getOSBoolean(OS.windows)
+        ? [new Dependency('Chocolatey (Zur installation von Compilern)', TreeItemCollapsibleState.Collapsed)] : []),
+        new Dependency('C-Compiler', TreeItemCollapsibleState.Collapsed),
+        new Dependency('Java-Compiler', TreeItemCollapsibleState.Collapsed),
+        new Dependency('Python-Compiler', TreeItemCollapsibleState.Collapsed),
+    ];
+
+    dependenciesChocolatey = [
+
+    ];
+
+    dependenciesCCompiler = [
         new Dependency('C-Compiler prüfen / installieren', TreeItemCollapsibleState.None, getConstCommands()[5]),
+    ];
+
+    dependenciesJavaCompiler = [
         new Dependency('Java-Compiler prüfen / installieren', TreeItemCollapsibleState.None, getConstCommands()[14]),
+    ];
+    dependenciesPythonCompiler = [
         new Dependency('Python-Compiler prüfen / installieren', TreeItemCollapsibleState.None, getConstCommands()[15]),
     ];
 }

@@ -35,9 +35,9 @@ export function initExtension(): void {
         checkMissingExtension();
         checkSettingsFile();
         checkTasksFile();
-        initCompiler();
         checkPaths();
         initActivityBar();
+        initCompiler();
     }).then(() => {
         writeLog(`Initialisierung beendet!`, 'INFO');
     });

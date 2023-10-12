@@ -7,7 +7,7 @@ export function installMingW() {
         execSync(`gcc --version`);
     } catch (error) {
         try {
-            execSync(`powershell -Command "Start-Process cmd -Wait -Verb runAs -ArgumentList '/k choco install mingw --version=8.1.0 -y -f'"`);
+            execSync(`powershell -Command "Start-Process cmd -Wait -Verb runAs -ArgumentList '/k choco install mingw --version=8.1.0 -y -f && EXIT /B'"`);
             compilerInstalled(ProgLang.c);
         } catch (error) {
             compilerInstallError(ProgLang.c, error);

@@ -7,7 +7,7 @@ export function installPythonWindows() {
         execSync(`python --version`);
     } catch (error) {
         try {
-            execSync(`powershell -Command "Start-Process cmd -Wait -Verb runAs -ArgumentList '/k choco install python3 -y -f'"`);
+            execSync(`powershell -Command "Start-Process cmd -Wait -Verb runAs -ArgumentList '/k choco install python3 -y -f && EXIT /B'"`);
             compilerInstalled(ProgLang.python);
         } catch (error) {
             compilerInstallError(ProgLang.python, error);
