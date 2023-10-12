@@ -1,6 +1,6 @@
 import { ProgressLocation, window } from "vscode";
 
-import { getProgLanguageString } from "../init/init";
+import { getProgLanguageString } from "../init/language";
 import { getOSString } from "../init/os";
 import { installPythonLinux, installPythonMacOS, installPythonWindows } from "./python";
 import { ProgLang } from "../enum";

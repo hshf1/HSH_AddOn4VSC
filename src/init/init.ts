@@ -1,5 +1,5 @@
-import { extensions, commands, window, workspace, ConfigurationTarget, ProgressLocation } from 'vscode';
-import { exec } from 'child_process';
+import { extensions, commands, window, workspace, ProgressLocation } from 'vscode';
+import { exec, execSync } from 'child_process';
 import { existsSync } from 'fs';
 
 import { initActivityBar } from '../activity_bar';
@@ -12,6 +12,7 @@ import { checkTasksFile } from '../json/tasks';
 import { initExtensionsDir } from '../extensionPath';
 import { initCompiler } from '../compiler/compiler';
 import { OS, ProgLang } from '../enum';
+import { getProgLanguageBoolean, initLanguage } from './language';
 
 let settings = {
     computerraum: false, progLanguage: ProgLang.c, compiler: false, reloadNeeded: false
@@ -25,7 +26,7 @@ export function initExtension(): void {
     }, async () => {
         writeLog(`Initialisierung beginnt!`, 'INFO');
         setOS();
-        initProgLang();
+        initLanguage();
         initPath();
         initLogFile();
         checkMissingExtension();
@@ -43,13 +44,8 @@ export function initExtension(): void {
 }
 
 export function initWinLocation(): void {
-    exec('whoami', (error, stdout, stderr) => {
-        if (error) {
-            writeLog(`Error: ${error.message}`, 'ERROR');
-            return;
-        }
-
-        const username = stdout.trim();
+    try {
+        const username = execSync(`whoami`).toString().trim();
 
         writeLog(`Username: ${username}`, 'INFO');
 
@@ -58,17 +54,10 @@ export function initWinLocation(): void {
         } else {
             settings.computerraum = false;
         }
-    });
-
-    writeLog(`Location: ${settings.computerraum ? 'HsH-Rechner' : 'Privater Rechner'}`, 'INFO');
-}
-
-export function initProgLang(): void {
-    try {
-        settings.progLanguage = workspace.getConfiguration('addon4vsc').get('sprache', ProgLang.c);
-        writeLog(`Initialisierte Programmiersprache: ${settings.progLanguage}`, 'INFO');
-    } catch (error: any) {
-        writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR');
+    } catch (error) {
+        writeLog(`Error: ${error}`, 'ERROR');
+    } finally {
+        writeLog(`Location: ${settings.computerraum ? 'HsH-Rechner' : 'Privater Rechner'}`, 'INFO');
     }
 }
 
@@ -84,22 +73,6 @@ export function setComputerraumConfig(tmp: boolean) {
 
 export function getComputerraumConfig() {
     return settings.computerraum;
-}
-
-export function setProgLanguageConfig(tmp: string) {
-    try {
-        workspace.getConfiguration('addon4vsc').update('sprache', tmp, ConfigurationTarget.Global);
-    } catch (error: any) {
-        writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR');
-    }
-}
-
-export function getProgLanguageString(): string {
-    return settings.progLanguage;
-}
-
-export function getProgLanguageBoolean(tmp: ProgLang): boolean {
-    return settings.progLanguage === tmp;
 }
 
 export function restartVSC() {

@@ -1,6 +1,6 @@
 import { Command } from "vscode";
 
-import { getProgLanguageString } from "./init/init";
+import { getProgLanguageString } from "./init/language";
 
 export function getConstCommands(): Command[] {
     return [

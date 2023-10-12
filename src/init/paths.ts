@@ -2,12 +2,13 @@ import { homedir } from 'os';
 import { existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
 
-import { getComputerraumConfig, getProgLanguageString, initProgLang, restartVSC } from './init';
+import { getComputerraumConfig, restartVSC } from './init';
 import { writeLog } from '../logfile';
 import { getOSBoolean, getOSString } from './os';
 import { exec } from 'child_process';
 import { initExtensionsDir } from '../extensionPath';
 import { OS } from '../enum';
+import { getProgLanguageString, initLanguage } from './language';
 
 let paths: Paths;
 let reloadNeeded: boolean = false;
@@ -82,7 +83,7 @@ export class Paths {
 }
 
 export function initPath(): void {
-    initProgLang();
+    initLanguage();
     paths = new Paths();
     if (!existsSync(paths.tempAddOn)) {
         try {
