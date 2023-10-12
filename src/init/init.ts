@@ -28,6 +28,9 @@ export function initExtension(): void {
         setOS();
         initLanguage();
         initPath();
+        if (!(workspace.workspaceFolders?.toString)) {
+            openPreFolder();
+        }
         initLogFile();
         checkMissingExtension();
         checkSettingsFile();
@@ -37,9 +40,6 @@ export function initExtension(): void {
         initActivityBar();
     }).then(() => {
         writeLog(`Initialisierung beendet!`, 'INFO');
-        if (!(workspace.workspaceFolders?.toString)) {
-            openPreFolder();
-        }
     });
 }
 
@@ -49,7 +49,7 @@ export function initWinLocation(): void {
 
         writeLog(`Username: ${username}`, 'INFO');
 
-        if ((username.startsWith('fh-h/') || username.startsWith('fh-h\\') && existsSync(`U:\\Systemordner`))) {
+        if (username.startsWith('fh-h/') || username.startsWith('fh-h\\') || existsSync(`U:\\Systemordner`)) {
             settings.computerraum = true;
         } else {
             settings.computerraum = false;

@@ -1,4 +1,6 @@
 import { execSync } from "child_process";
+import { compilerInstallError, compilerInstalled } from "../notifications";
+import { ProgLang } from "../enum";
 
 export function installPythonWindows() {
     try {
@@ -6,8 +8,9 @@ export function installPythonWindows() {
     } catch (error) {
         try {
             execSync(`powershell -Command "Start-Process cmd -Wait -Verb runAs -ArgumentList '/k choco install python3 -y -f'"`);
+            compilerInstalled(ProgLang.python);
         } catch (error) {
-            console.log(error);
+            compilerInstallError(ProgLang.python, error);
         }
     }
 }
@@ -18,8 +21,9 @@ export function installPythonMacOS() {
     } catch (error) {
         try {
             execSync(`brew install --overwrite python -q`);
+            compilerInstalled(ProgLang.python);
         } catch (error) {
-            console.log(error);
+            compilerInstallError(ProgLang.python, error);
         }
     }
 }
@@ -30,8 +34,9 @@ export function installPythonLinux() {
     } catch (error) {
         try {
             execSync(``);
+            compilerInstalled(ProgLang.python);
         } catch (error) {
-            console.log(error);
+            compilerInstallError(ProgLang.python, error);
         }
     }
 }
