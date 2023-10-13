@@ -59,7 +59,7 @@ function getTasksContent() {
 			{
 				"type": "cppbuild",
 				"label": "C/C++: gcc.exe Aktive Datei kompilieren",
-				"command": "gcc.exe",
+				"command": "g++.exe",
 				"args": [
 					"-g",
 					"\${file}",
@@ -95,5 +95,18 @@ function createTasksBackup(): void {
 		}
 	} catch (error: any) {
 		writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR');
+	}
+}
+
+export function setTaskOnce() {
+	try {
+		if (existsSync(join(getPath().tempAddOn, 'setTaskOnce.txt'))) {
+			return;
+		} else {
+			writeFileSync(join(getPath().tempAddOn), '');
+			setTasksFile();
+		}
+	} catch (error) {
+		writeLog(`Fehler: ${error}`, 'ERROR')
 	}
 }

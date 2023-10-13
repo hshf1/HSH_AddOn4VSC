@@ -10,7 +10,7 @@ import { initLogFile, writeLog } from '../logfile';
 import { getPath, initPath } from './paths';
 import { getOSBoolean, setOS } from './os';
 import { checkSettingsFile } from '../json/settings';
-import { checkTasksFile } from '../json/tasks';
+import { checkTasksFile, setTaskOnce } from '../json/tasks';
 
 let settings = {
     computerraum: false, progLanguage: "C", compiler: false, reloadNeeded: false, initExtensionsDirRunning: false,
@@ -37,6 +37,7 @@ export function initExtension(): void {
         initPath();
         initLogFile();
         checkSettingsFile();
+        setTaskOnce();
         checkTasksFile();
         initStatusBarItem();
         initActivityBar();
