@@ -6,15 +6,10 @@ import { initEvents } from './eventHandler';
 import { initCommands } from './commands';
 
 export function activate(context: ExtensionContext): void {
-	try {
-		writeLog(`HSH_AddOn4VSC gestartet!`, 'INFO');
-		initExtension();
-		initEvents();
-		initCommands(context);
-	} catch (error) {
-		console.log(error);
-	}
-
+	writeLog(`HSH_AddOn4VSC gestartet!`, 'INFO');
+	initExtension();
+	initEvents();
+	initCommands(context);
 }
 
 export function deactivate(): void {

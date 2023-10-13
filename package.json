@@ -65,11 +65,7 @@
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js"
   },
-  "extensionDependencies": [
-    "formulahendry.code-runner",
-    "ms-vscode.cpptools",
-    "ms-vsliveshare.vsliveshare"
-  ],
+  "extensionDependencies": [],
   "devDependencies": {
     "@types/fs-extra": "^11.0.1",
     "@types/glob": "^8.0.0",

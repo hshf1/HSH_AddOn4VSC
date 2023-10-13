@@ -33,10 +33,10 @@ export function initExtension(): void {
         }
         initLogFile();
         checkMissingExtension();
+        initActivityBar();
         checkSettingsFile();
         checkTasksFile();
         checkPaths();
-        initActivityBar();
         initCompiler();
     }).then(() => {
         writeLog(`Initialisierung beendet!`, 'INFO');
@@ -87,6 +87,21 @@ export function restartVSC() {
 }
 
 function checkMissingExtension() {
+    if (!extensions.getExtension('formulahendry.code-runner')) {
+        writeLog(`formulahendry.code-runner wird nachinstalliert`, 'INFO');
+        commands.executeCommand('workbench.extensions.installExtension', 'formulahendry.code-runner');
+    }
+
+    if (!extensions.getExtension('ms-vsliveshare.vsliveshare')) {
+        writeLog(`ms-vsliveshare.vsliveshare wird nachinstalliert`, 'INFO');
+        commands.executeCommand('workbench.extensions.installExtension', 'ms-vsliveshare.vsliveshare');
+    }
+
+    if (!extensions.getExtension('ms-vscode.cpptools')) {
+        writeLog(`ms-vscode.cpptools wird nachinstalliert`, 'INFO');
+        commands.executeCommand('workbench.extensions.installExtension', 'ms-vscode.cpptools');
+    }
+
     if ((getOSBoolean(OS.macOS) || getOSBoolean(OS.linux)) && !extensions.getExtension('vadimcn.vscode-lldb')) {
         writeLog(`vadimcn.vscode-lldb wird nachinstalliert`, 'INFO');
         commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb');

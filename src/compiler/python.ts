@@ -4,7 +4,7 @@ import { ProgLang } from "../enum";
 
 export function installPythonWindows() {
     try {
-        execSync(`python --version`);
+        execSync(`python3 --version`);
     } catch (error) {
         try {
             execSync(`powershell -Command "Start-Process cmd -Wait -Verb runAs -ArgumentList '/k choco install python3 -y -f && EXIT /B'"`);
