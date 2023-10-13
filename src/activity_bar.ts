@@ -137,17 +137,21 @@ async function aktualisieren(): Promise<void> {
     ];
 
     dependenciesChocolatey = [
-
+        new Dependency('Chocolatey installieren', TreeItemCollapsibleState.None),
+        new Dependency('Chocolatey löschen', TreeItemCollapsibleState.None)
     ];
 
     dependenciesCCompiler = [
         new Dependency('C-Compiler prüfen / installieren', TreeItemCollapsibleState.None, getConstCommands()[5]),
+        new Dependency('C-Compiler deinstallieren', TreeItemCollapsibleState.None)
     ];
 
     dependenciesJavaCompiler = [
         new Dependency('Java-Compiler prüfen / installieren', TreeItemCollapsibleState.None, getConstCommands()[14]),
+        new Dependency('Java-Compiler deinstallieren', TreeItemCollapsibleState.None)
     ];
     dependenciesPythonCompiler = [
         new Dependency('Python-Compiler prüfen / installieren', TreeItemCollapsibleState.None, getConstCommands()[15]),
+        new Dependency('Python-Compiler deinstallieren', TreeItemCollapsibleState.None)
     ];
 }
