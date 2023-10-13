@@ -30,10 +30,10 @@ export function installPythonMacOS() {
 
 export function installPythonLinux() {
     try {
-        execSync(`python --version`);
+        execSync(`python3 --version`);
     } catch (error) {
         try {
-            execSync(``);
+            execSync(`sudo apt python3 -y`);
             compilerInstalled(ProgLang.python);
         } catch (error) {
             compilerInstallError(ProgLang.python, error);

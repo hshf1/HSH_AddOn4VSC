@@ -16,7 +16,9 @@ export function installJavaWindows() {
 }
 
 export function installJavaMacOS() {
-    if (true) {
+    try {
+        execSync(`openjdk`)
+    } catch (error) {
         try {
             execSync(`brew install openjdk -y`);
             compilerInstalled(ProgLang.java);
@@ -27,9 +29,11 @@ export function installJavaMacOS() {
 }
 
 export function installJavaLinux() {
-    if (true) {
+    try {
+        execSync(`openjdk`)
+    } catch (error) {
         try {
-            execSync(``);
+            execSync(`snap install openjdk`);
             compilerInstalled(ProgLang.java);
         } catch (error) {
             compilerInstallError(ProgLang.java, error);
