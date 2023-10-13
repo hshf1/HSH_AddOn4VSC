@@ -76,7 +76,7 @@ const tasksWindows = [
 	{
 		"type": "cppbuild",
 		"label": "C/C++: gcc.exe Aktive Datei kompilieren",
-		"command": "gcc.exe",
+		"command": "g++.exe",
 		"args": [
 			"-g",
 			"\${file}",
