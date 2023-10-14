@@ -12,6 +12,7 @@ import { addMissingSettings, openOldSettingsFile, openSettingsFile, setSettingsF
 import { setLanguage } from './init/language';
 import { initCompiler } from './compiler/compiler';
 import { OS, ProgLang } from './enum';
+import { errorNotification } from './notifications';
 
 const constregistercommands = [
     {
@@ -49,7 +50,7 @@ const constregistercommands = [
         callback: (...args: any) => {
             writeLog(`Folgender Command wird ausgeführt: ${getConstCommands()[4].command}`, 'INFO');
             if (args[0] === '') {
-                window.showErrorMessage(writeLog(`Es wurde kein Link zum Öffnen übergeben!`, 'ERROR'));
+                errorNotification(`Es wurde kein Link zum Öffnen übergeben!`, true);
                 return;
             } else {
                 env.openExternal(Uri.parse(args[0]));

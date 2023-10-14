@@ -1,6 +1,6 @@
 import { execSync } from "child_process";
-import { compilerInstallError, compilerInstalled } from "../notifications";
-import { ProgLang } from "../enum";
+
+import { errorNotification, infoNotification } from "../notifications";
 
 export function installMingW() {
     try {
@@ -8,9 +8,9 @@ export function installMingW() {
     } catch (error) {
         try {
             execSync(`powershell -Command "Start-Process cmd -Wait -Verb runAs -ArgumentList '/k choco install mingw --version=8.1.0 -y -f && EXIT /B'"`);
-            compilerInstalled(ProgLang.c);
+            infoNotification(`C-Compiler Installation wurde erfolgreich durchgeführt`);
         } catch (error) {
-            compilerInstallError(ProgLang.c, error);
+            errorNotification(`C-Compiler Installation wurde nicht erfolgreich durchgeführt`);
         }
     }
 }
@@ -21,9 +21,9 @@ export function installCCompilerMacOS() {
     } catch (error) {
         try {
             execSync(`command xcode-select --install`);
-            compilerInstalled(ProgLang.c);
+            infoNotification(`C-Compiler Installation wurde erfolgreich durchgeführt`);
         } catch (error) {
-            compilerInstallError(ProgLang.c, error);
+            errorNotification(`C-Compiler Installation wurde nicht erfolgreich durchgeführt`);
         }
     }
 }
@@ -34,9 +34,9 @@ export function installCCompilerLinux() {
     } catch (error) {
         try {
             execSync(`sudo apt install gcc`);
-            compilerInstalled(ProgLang.c);
+            infoNotification(`C-Compiler Installation wurde erfolgreich durchgeführt`);
         } catch (error) {
-            compilerInstallError(ProgLang.c, error);
+            errorNotification(`C-Compiler Installation wurde nicht erfolgreich durchgeführt`);
         }
     }
 }

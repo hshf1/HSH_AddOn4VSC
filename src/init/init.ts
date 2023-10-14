@@ -76,7 +76,7 @@ export function getComputerraumConfig() {
 }
 
 export function restartVSC() {
-    window.showWarningMessage(writeLog(`VSCode wird jetzt beendet, bitte VSCode manuell neu starten!`, 'WARNING'), { modal: true }, 'OK')
+    window.showWarningMessage(`VSCode wird jetzt beendet, bitte VSCode manuell neu starten!`, { modal: true }, 'OK')
         .then(() => {
             exec('taskkill /im code.exe /f', (error, stdout, stderr) => {
                 if (error) {

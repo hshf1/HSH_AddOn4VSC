@@ -2,6 +2,7 @@ import { ConfigurationTarget, window, workspace } from "vscode";
 
 import { ProgLang } from "../enum";
 import { writeLog } from "../logfile";
+import { infoNotification } from "../notifications";
 
 let language: string = ProgLang.c;
 
@@ -50,5 +51,5 @@ export async function setLanguage() {
     }
 
     setProgLanguageConfig(newLanguage);
-    window.showInformationMessage(writeLog(`${newLanguage} ausgewählt`, 'INFO'));
+    infoNotification(`${newLanguage} ausgewählt`);
 }

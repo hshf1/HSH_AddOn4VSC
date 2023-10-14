@@ -1,6 +1,6 @@
 import { execSync } from "child_process";
 
-import { writeLog } from "../logfile";
+import { errorNotification, infoNotification } from "../notifications";
 
 export function installChoco() {
     try {
@@ -10,9 +10,9 @@ export function installChoco() {
             execSync(`powershell -NoProfile -ExecutionPolicy Bypass -Command \"((new-object net.webclient).DownloadFile('https://community.chocolatey.org/install.ps1','%temp%\\installChoco.ps1'))\"\n`);
             execSync(`powershell -Command "Start-Process cmd -Wait -Verb runAs -ArgumentList '/k powershell -NoProfile -ExecutionPolicy Bypass -File \"%temp%\\installChoco.ps1\"'"`);
             execSync(`del "%temp%\\installChoco.ps1"`);
-            writeLog(`Installation von chocolatey durchgeführt!`, 'INFO');
+            infoNotification(`Installation von chocolatey durchgeführt!`);
         } catch (error) {
-            writeLog(`Installation von chocolatey fehlgeschlagen!`, 'ERROR');
+            errorNotification(`Installation von chocolatey fehlgeschlagen!`);
         }
     }
 }
@@ -20,8 +20,8 @@ export function installChoco() {
 export function removeChoco() {
     try {
         execSync(`rd /s /q C:\\ProgramData\\chocolatey`);
-        writeLog(`Löschen von chocolatey durchgeführt!`, 'INFO');
+        infoNotification(`Löschen von chocolatey durchgeführt!`);
     } catch (error) {
-        writeLog(`Löschen von chocolatey fehlgeschlagen!`, 'ERROR');
+        errorNotification(`Löschen von chocolatey fehlgeschlagen!`);
     }
 }

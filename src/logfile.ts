@@ -1,8 +1,9 @@
 import { appendFileSync, existsSync, readdirSync, unlinkSync, writeFileSync } from 'fs';
 import { join } from 'path';
+import { window, workspace } from 'vscode';
+
 
 import { getPath } from './init/paths';
-import { window, workspace } from 'vscode';
 
 let logFileName: string = '';
 let logFilePath: string = '';
@@ -40,7 +41,7 @@ export function getLogFilePath(): string {
  * 
  * `writeLog('Folgende Meldung wurde ausgegeben: '+${error}, 'ERROR')`
  */
-export function writeLog(msg: string, lvl: string): string {
+export function writeLog(msg: string, lvl: string): void {
     logBuffer.push(`[${currentDateString} ${new Date(Date.now()).toLocaleTimeString('de-DE')}][${lvl}] - ${msg}\n`);
 
     if (logFilePath !== '' && logBuffer.length > 0) {
@@ -55,8 +56,6 @@ export function writeLog(msg: string, lvl: string): string {
             }
         }
     }
-
-    return msg;
 }
 
 function deleteLog(): void {

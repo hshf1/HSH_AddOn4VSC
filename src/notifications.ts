@@ -2,10 +2,26 @@ import { window } from "vscode";
 
 import { writeLog } from "./logfile";
 
-export function compilerInstalled(language: string) {
-    window.showWarningMessage(writeLog(`${language}-Compiler wurde installiert!`, 'INFO'), { modal: true }, 'OK');
+export function infoNotification(msg: string, showUser?: boolean, modal?: boolean) {
+    writeLog(`${msg}`, 'INFO');
+
+    if (showUser) {
+        window.showInformationMessage(msg, { modal: modal ? modal : false }, 'OK');
+    }
 }
 
-export function compilerInstallError(language: string, error: any) {
-    window.showWarningMessage(writeLog(`${language}-Compiler wurde nicht erfolgreich installiert! Fehlermeldung: ${error}`, 'ERROR'), { modal: true }, 'OK');
+export function errorNotification(msg: string, showUser?: boolean, modal?: boolean) {
+    writeLog(`${msg}`, 'ERROR');
+
+    if (showUser) {
+        window.showErrorMessage(msg, { modal: modal ? modal : false }, 'OK');
+    }
+}
+
+export function warningNotification(msg: string, showUser?: boolean, modal?: boolean) {
+    writeLog(`${msg}`, 'WARNING');
+
+    if (showUser) {
+        window.showWarningMessage(msg, { modal: modal ? modal : false }, 'OK');
+    }
 }

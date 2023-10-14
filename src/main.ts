@@ -1,17 +1,19 @@
-import { ExtensionContext } from 'vscode';
+import { ExtensionContext, window } from 'vscode';
 
 import { initExtension } from './init/init';
-import { writeLog } from './logfile';
 import { initEvents } from './eventHandler';
 import { initCommands } from './commands';
+import { infoNotification } from './notifications';
 
 export function activate(context: ExtensionContext): void {
-	writeLog(`HSH_AddOn4VSC gestartet!`, 'INFO');
+	const test = process.env.TEST;
+	window.showInformationMessage(`${test}`);
+	infoNotification(`HSH_AddOn4VSC gestartet!`);
 	initExtension();
 	initEvents();
 	initCommands(context);
 }
 
 export function deactivate(): void {
-	writeLog('HSH_AddOn4VSC wird ordnungsgemäß beendet!', 'INFO');
+	infoNotification(`HSH_AddOn4VSC wird ordnungsgemäß beendet!`);
 }

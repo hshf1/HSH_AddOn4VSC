@@ -1,6 +1,6 @@
 import { execSync } from "child_process";
-import { compilerInstallError, compilerInstalled } from "../notifications";
-import { ProgLang } from "../enum";
+
+import { errorNotification, infoNotification } from "../notifications";
 
 export function installPythonWindows() {
     try {
@@ -8,9 +8,9 @@ export function installPythonWindows() {
     } catch (error) {
         try {
             execSync(`powershell -Command "Start-Process cmd -Wait -Verb runAs -ArgumentList '/k choco install python3 -y -f && EXIT /B'"`);
-            compilerInstalled(ProgLang.python);
+            infoNotification(`Python-Compiler Installation wurde erfolgreich durchgeführt`);
         } catch (error) {
-            compilerInstallError(ProgLang.python, error);
+            errorNotification(`Python-Compiler Installation wurde nicht erfolgreich durchgeführt`);
         }
     }
 }
@@ -21,9 +21,9 @@ export function installPythonMacOS() {
     } catch (error) {
         try {
             execSync(`brew install --overwrite python -q`);
-            compilerInstalled(ProgLang.python);
+            infoNotification(`Python-Compiler Installation wurde erfolgreich durchgeführt`);
         } catch (error) {
-            compilerInstallError(ProgLang.python, error);
+            errorNotification(`Python-Compiler Installation wurde nicht erfolgreich durchgeführt`);
         }
     }
 }
@@ -34,9 +34,9 @@ export function installPythonLinux() {
     } catch (error) {
         try {
             execSync(`sudo apt python3 -y`);
-            compilerInstalled(ProgLang.python);
+            infoNotification(`Python-Compiler Installation wurde erfolgreich durchgeführt`);
         } catch (error) {
-            compilerInstallError(ProgLang.python, error);
+            errorNotification(`Python-Compiler Installation wurde nicht erfolgreich durchgeführt`);
         }
     }
 }

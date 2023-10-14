@@ -1,10 +1,12 @@
 import { join } from "path";
-import { getPath } from "./init/paths";
-import { getComputerraumConfig, restartVSC } from "./init/init";
-import { writeLog } from "./logfile";
 import { exec } from "child_process";
 import { ProgressLocation, window } from "vscode";
 import { copy, ensureDir } from "fs-extra";
+
+import { getPath } from "./init/paths";
+import { getComputerraumConfig, restartVSC } from "./init/init";
+import { writeLog } from "./logfile";
+import { errorNotification, infoNotification } from "./notifications";
 
 let initExtensionsDirRunning = false;
 
@@ -55,15 +57,15 @@ function copyExtensions(sourcePath: string, destPath: string) {
     }, async (progress, token) => {
         try {
             await ensureDir(destPath);
-            writeLog(`Kopiervorgang der Extensions begonnen`, 'INFO');
+            infoNotification(`Kopiervorgang der Extensions begonnen`);
             progress.report({ message: "Kopiervorgang...", increment: 50 });
             await copy(sourcePath, destPath, {
                 overwrite: true,
                 errorOnExist: false,
             });
-            progress.report({ message: writeLog(`Kopiervorgang der Extensions abgeschlossen`, 'INFO'), increment: 100 });
-        } catch (err) {
-            window.showErrorMessage(writeLog(`Fehler beim kopieren des Addons: ${err}`, 'ERROR'));
+            progress.report({ message: `Kopiervorgang der Extensions abgeschlossen`, increment: 100 });
+        } catch (error) {
+            errorNotification(`Fehler beim kopieren des Addons: ${error}`, true);
         }
     }).then(() => {
         restartVSC();

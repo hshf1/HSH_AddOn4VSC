@@ -11,6 +11,7 @@ import { getLogFileName, getLogFilePath, writeLog } from "./logfile";
 import { getPath, getUserEnvironmentPath } from './init/paths';
 import { getOSBoolean } from "./init/os";
 import { OS } from "./enum";
+import { infoNotification } from "./notifications";
 
 const execAsync = promisify(exec);
 
@@ -187,7 +188,7 @@ async function sendReport(userReport: UserReport) {
             text: `Bitte keine Dateien oder Programme unbedenklich ausführen!\nSollte ein Code mitgeschickt worden sein, immer stets manuell überprüfen vor dem Ausführen!\n\nFolgendes Problem wurde vom Nutzer ${userReport.mail} gemeldet:\n\n${userReport.problem}`,
             attachments: userReport.attachments
         });
-        window.showInformationMessage(writeLog('Problem erfolgreich per E-Mail versendet!', 'INFO'));
+        infoNotification(`Problem erfolgreich per E-Mail versendet!`, true);
     } catch (error: any) {;
         writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR');
     }

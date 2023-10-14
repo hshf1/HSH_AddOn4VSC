@@ -1,11 +1,11 @@
 import { homedir } from 'os';
 import { existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
+import { exec } from 'child_process';
 
 import { getComputerraumConfig, restartVSC } from './init';
 import { writeLog } from '../logfile';
 import { getOSBoolean, getOSString } from './os';
-import { exec } from 'child_process';
 import { initExtensionsDir } from '../extensionPath';
 import { OS } from '../enum';
 import { getProgLanguageString, initLanguage } from './language';

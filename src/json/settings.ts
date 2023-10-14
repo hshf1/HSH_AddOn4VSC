@@ -4,7 +4,6 @@ import { window, workspace } from "vscode";
 
 import { getPath } from "../init/paths";
 import { getOSBoolean } from "../init/os";
-import { getComputerraumConfig } from "../init/init";
 import { writeLog } from "../logfile";
 import { OS } from "../enum";
 
@@ -102,7 +101,6 @@ export function openOldSettingsFile(): void {
 
 function getSettingsContent() {
     const ENCODING = getOSBoolean(OS.windows) ? `cp437` : `utf8`;
-    const AUTOUPDATE = getComputerraumConfig() ? `manual` : `default`;
     const launch = getOSBoolean(OS.windows) ? launchWindows : launchLinuxMacOs;
 
     return {
