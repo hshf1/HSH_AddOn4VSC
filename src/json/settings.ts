@@ -116,7 +116,6 @@ function getSettingsContent() {
         "editor.insertSpaces": true,
         "editor.tabSize": 4,
         "editor.renderWhitespace": "none",
-        "update.enableWindowsBackgroundUpdates": false,
         "C_Cpp.debugShortcut": false,
         "code-runner.runInTerminal": true,
         "code-runner.preserveFocus": false,
@@ -145,6 +144,7 @@ function createSettingsBackup(): void { // TODO: Backup nur ausführen, wenn was
 }
 
 const launchWindows = {
+    "update.enableWindowsBackgroundUpdates": false,
     "launch": {
         "version": "0.2.0",
         "configurations": [
