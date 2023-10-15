@@ -7,7 +7,7 @@ import { getComputerraumConfig, restartVSC } from './init';
 import { writeLog } from '../logfile';
 import { getOSBoolean, getOSString } from './os';
 import { initExtensionsDir } from '../extensionPath';
-import { OS } from '../enum';
+import { OS } from './enum';
 import { getProgLanguageString, initLanguage } from './language';
 
 let paths: Paths;
@@ -79,6 +79,10 @@ export class Paths {
             default:
                 return ``;
         }
+    }
+
+    get reportAProblemString(): string {
+        return 'zehpziuruwsucfzf';
     }
 }
 

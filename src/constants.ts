@@ -20,7 +20,11 @@ export function getConstCommands(): Command[] {
         { command: 'tasks.open', title: 'Aktuelle tasks.json öffnen'},
         { command: 'javacompiler.install', title: 'Java Compiler prüfen / installieren' },
         { command: 'pythoncompiler.install', title: 'Python Compiler prüfen / installieren' }, // 15
-        { command: 'logfile.open', title: 'Aktuelle LogFile öffnen'}
+        { command: 'logfile.open', title: 'Aktuelle LogFile öffnen'},
+        { command: 'chocolatey.install', title: 'Chocolatey installieren'},
+        { command: 'chocolatey.uninstall', title: 'Chocolatey deinstallieren'},
+        { command: 'logfile.open', title: 'Aktuelle LogFile öffnen'},
+        { command: 'logfile.open', title: 'Aktuelle LogFile öffnen'} // 20
     ];
 }
 

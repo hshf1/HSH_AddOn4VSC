@@ -1,6 +1,6 @@
 import { ConfigurationTarget, window, workspace } from "vscode";
 
-import { ProgLang } from "../enum";
+import { ProgLang } from "./enum";
 import { writeLog } from "../logfile";
 import { infoNotification } from "../notifications";
 

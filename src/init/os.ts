@@ -1,4 +1,4 @@
-import { OS } from "../enum";
+import { OS } from "./enum";
 import { writeLog } from "../logfile";
 import { initWinLocation } from "./init";
 

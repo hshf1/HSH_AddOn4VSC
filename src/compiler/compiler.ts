@@ -3,7 +3,7 @@ import { ProgressLocation, window } from "vscode";
 import { getProgLanguageString } from "../init/language";
 import { getOSString } from "../init/os";
 import { installPythonLinux, installPythonMacOS, installPythonWindows } from "./python";
-import { OS, ProgLang } from "../enum";
+import { OS, ProgLang } from "../init/enum";
 import { installChoco } from "./chocolatey";
 import { installCCompilerLinux, installCCompilerMacOS, installMingW } from "./c";
 import { installJavaLinux, installJavaMacOS, installJavaWindows } from "./java";
@@ -31,15 +31,15 @@ export function initCompiler(tmp?: ProgLang) {
 }
 
 function initCCompiler() {
-    switch (getOSString().toLowerCase()) {
-        case 'windows':
+    switch (getOSString()) {
+        case OS.windows:
             installChoco();
             installMingW();
             break;
-        case 'macos':
+        case OS.macOS:
             installCCompilerMacOS();
             break;
-        case 'linux':
+        case OS.linux:
             installCCompilerLinux();
             break;
         default:
@@ -65,15 +65,15 @@ function initJavaCompiler() {
 }
 
 function initPythonCompiler() {
-    switch (getOSString().toLowerCase()) {
-        case 'windows':
+    switch (getOSString()) {
+        case OS.windows:
             installChoco();
             installPythonWindows();
             break;
-        case 'macos':
+        case OS.macOS:
             installPythonMacOS();
             break;
-        case 'linux':
+        case OS.linux:
             installPythonLinux();
             break;
         default:

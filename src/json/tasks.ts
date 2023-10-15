@@ -2,19 +2,19 @@ import { copyFileSync, existsSync, statSync, unlinkSync, writeFileSync } from 'f
 import { join } from 'path';
 
 import { getPath } from '../init/paths';
-import { writeLog } from '../logfile';
 import { window, workspace } from 'vscode';
 import { getOSBoolean } from '../init/os';
-import { OS } from '../enum';
+import { OS } from '../init/enum';
+import { errorNotification, infoNotification, warningNotification } from '../notifications';
 
 export function checkTasksFile(): void {
 	const TASKSJSON = join(getPath().vscUserData, 'tasks.json');
 
 	try {
 		statSync(TASKSJSON);
-		writeLog(`${TASKSJSON} wurde gefunden.`, 'INFO');
+		infoNotification(`${TASKSJSON} wurde gefunden.`);
 	} catch (error) {
-		writeLog(`${TASKSJSON} wurde nicht gefunden.`, 'WARNING');
+		warningNotification(`${TASKSJSON} wurde nicht gefunden.`);
 		setTasksFile();
 	}
 }
@@ -27,9 +27,9 @@ export function setTasksFile(): void {
 
 	try {
 		writeFileSync(PATH, JSON.stringify(CONTENT, null, 4), { flag: 'w' });
-		writeLog(`${PATH} wurde erfolgreich erstellt.`, 'INFO');
+		infoNotification(`${PATH} wurde erfolgreich erstellt.`, true);
 	} catch (err: any) {
-		writeLog(`[${err.stack?.split('\n')[2]?.trim()}] ${err}`, 'ERROR');
+		errorNotification(`[${err.stack?.split('\n')[2]?.trim()}] ${err}`);
 	}
 }
 
@@ -54,7 +54,7 @@ function createTasksBackup(): void {
 			copyFileSync(TASKSSPATH, OLDTASKSPATH);
 		}
 	} catch (error: any) {
-		writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR');
+		errorNotification(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`);
 	}
 }
 
@@ -67,8 +67,7 @@ export function openTasksFile(): void {
 				window.showTextDocument(document);
 			});
 	} else {
-		writeLog('Keine tasks.json gefunden!', 'ERROR');
-		window.showErrorMessage('Keine alte settings.json gefunden!');
+		errorNotification('Keine tasks.json gefunden!', true);
 	}
 }
 

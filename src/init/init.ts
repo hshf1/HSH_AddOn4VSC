@@ -11,7 +11,7 @@ import { checkSettingsFile } from '../json/settings';
 import { checkTasksFile } from '../json/tasks';
 import { initExtensionsDir } from '../extensionPath';
 import { initCompiler } from '../compiler/compiler';
-import { OS, ProgLang } from '../enum';
+import { OS, ProgLang } from './enum';
 import { getProgLanguageBoolean, initLanguage } from './language';
 
 let settings = {

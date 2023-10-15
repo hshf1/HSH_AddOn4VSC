@@ -15,16 +15,36 @@ export function installPythonWindows() {
     }
 }
 
+export function uninstallPythonWindows() {
+    try {
+        execSync(`python3 --version`);
+        execSync(`powershell -Command "Start-Process cmd -Wait -Verb runAs -ArgumentList '/k choco install python3 -y -f && EXIT /B'"`);
+        infoNotification(`Python-Compiler Deinstallation wurde erfolgreich durchgeführt`);
+    } catch (error) {
+        errorNotification(`Python-Compiler Deinstallation wurde nicht erfolgreich durchgeführt`);
+    }
+}
+
 export function installPythonMacOS() {
     try {
-        execSync(`python --version`);
+        execSync(`python3 --version`);
     } catch (error) {
         try {
-            execSync(`brew install --overwrite python -q`);
+            execSync(`brew install python3`);
             infoNotification(`Python-Compiler Installation wurde erfolgreich durchgeführt`);
         } catch (error) {
             errorNotification(`Python-Compiler Installation wurde nicht erfolgreich durchgeführt`);
         }
+    }
+}
+
+export function uninstallPythonMacOS() {
+    try {
+        execSync(`python3 --version`);
+        execSync(`brew uninstall --ignore-dependencies python3`);
+        infoNotification(`Python-Compiler Deinstallation wurde erfolgreich durchgeführt`);
+    } catch (error) {
+        errorNotification(`Python-Compiler Deinstallation wurde nicht erfolgreich durchgeführt`);
     }
 }
 
@@ -38,5 +58,15 @@ export function installPythonLinux() {
         } catch (error) {
             errorNotification(`Python-Compiler Installation wurde nicht erfolgreich durchgeführt`);
         }
+    }
+}
+
+export function uninstallPythonLinux() {
+    try {
+        execSync(`python3 --version`);
+        execSync(`sudo apt python3 -y`);
+        infoNotification(`Python-Compiler Deinstallation wurde erfolgreich durchgeführt`);
+    } catch (error) {
+        errorNotification(`Python-Compiler Deinstallation wurde nicht erfolgreich durchgeführt`);
     }
 }

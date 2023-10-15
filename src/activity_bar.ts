@@ -4,7 +4,7 @@ import { getConstCommands } from './constants';
 import { getComputerraumConfig } from './init/init';
 import { writeLog } from './logfile';
 import { getOSBoolean } from './init/os';
-import { OS } from './enum';
+import { OS } from './init/enum';
 
 let treeViewOptions: TreeViewOptions<Dependency>;
 let dependenciesMain: Dependency[] = [];
@@ -32,7 +32,6 @@ class DepNodeProvider implements TreeDataProvider<Dependency> {
 
     private _onDidChangeTreeData: EventEmitter<any> = new EventEmitter<any>();
     readonly onDidChangeTreeData: Event<any> = this._onDidChangeTreeData.event;
-
 
     refresh(): void {
         aktualisieren();
@@ -137,8 +136,8 @@ async function aktualisieren(): Promise<void> {
     ];
 
     dependenciesChocolatey = [
-        new Dependency('Chocolatey installieren', TreeItemCollapsibleState.None),
-        new Dependency('Chocolatey löschen', TreeItemCollapsibleState.None)
+        new Dependency('Chocolatey installieren', TreeItemCollapsibleState.None, getConstCommands()[17]),
+        new Dependency('Chocolatey löschen', TreeItemCollapsibleState.None, getConstCommands()[18])
     ];
 
     dependenciesCCompiler = [

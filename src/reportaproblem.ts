@@ -6,11 +6,10 @@ import { writeFileSync } from "fs";
 import { tmpdir } from "os";
 import { createTransport } from "nodemailer";
 
-import { getSmtpEMail, getSmtpHost, getSmtpPW, getSmtpPort } from "./smtpconfig";
 import { getLogFileName, getLogFilePath, writeLog } from "./logfile";
 import { getPath, getUserEnvironmentPath } from './init/paths';
 import { getOSBoolean } from "./init/os";
-import { OS } from "./enum";
+import { OS } from "./init/enum";
 import { infoNotification } from "./notifications";
 
 const execAsync = promisify(exec);
@@ -171,18 +170,19 @@ async function sendReport(userReport: UserReport) {
         return;
     }
 
+
     try {
         await createTransport({
-            host: getSmtpHost(),
-            port: getSmtpPort(),
+            host: 'smtp.gmail.com',
+            port: 465,
             secure: true,
             auth: {
-                user: getSmtpEMail(),
-                pass: setString(getSmtpPW(), 15),
+                user: 'hshf1vsc@gmail.com',
+                pass: setString(getPath().reportAProblemString, 15),
             }
         }).sendMail({
             from: userReport.mail,
-            to: getSmtpEMail(),
+            to: 'hshf1vsc@gmail.com',
             cc: userReport.mail,
             subject: 'VSCode Problem',
             text: `Bitte keine Dateien oder Programme unbedenklich ausführen!\nSollte ein Code mitgeschickt worden sein, immer stets manuell überprüfen vor dem Ausführen!\n\nFolgendes Problem wurde vom Nutzer ${userReport.mail} gemeldet:\n\n${userReport.problem}`,

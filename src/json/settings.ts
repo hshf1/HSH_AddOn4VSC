@@ -4,17 +4,17 @@ import { window, workspace } from "vscode";
 
 import { getPath } from "../init/paths";
 import { getOSBoolean } from "../init/os";
-import { writeLog } from "../logfile";
-import { OS } from "../enum";
+import { OS } from "../init/enum";
+import { errorNotification, infoNotification, warningNotification } from "../notifications";
 
 export function checkSettingsFile(): void {
     const SETTINGSJSONPATH = join(getPath().vscUserData, 'settings.json');
 
     try {
         statSync(SETTINGSJSONPATH);
-        writeLog(`${SETTINGSJSONPATH} wurde gefunden.`, 'INFO');
+        infoNotification(`${SETTINGSJSONPATH} wurde gefunden.`);
     } catch (error) {
-        writeLog(`${SETTINGSJSONPATH} wurde nicht gefunden.`, 'WARNING');
+        warningNotification(`${SETTINGSJSONPATH} wurde nicht gefunden.`);
         setSettingsFile();
     }
 }
@@ -27,10 +27,9 @@ export function setSettingsFile(): void {
 
     try {
         writeFileSync(PATH, JSON.stringify(CONTENT, null, 4), { flag: 'w' });
+        infoNotification(`${PATH} wurde erfolgreich erstellt.`);
     } catch (err: any) {
-        writeLog(`[${err.stack?.split('\n')[2]?.trim()}] ${err}`, 'ERROR');
-    } finally {
-        writeLog(`${PATH} wurde erfolgreich erstellt.`, 'INFO');
+        errorNotification(`[${err.stack?.split('\n')[2]?.trim()}] ${err}`);
     }
 }
 
@@ -47,7 +46,7 @@ export function addMissingSettings(): void {
             existingSettings = JSON.parse(existingSettingsWithoutComments);
         }
         catch (error) {
-            writeLog(`${SETTINGSPATH} ist eine fehlerhafte JSON-Datei. Die Datei wird jetzt erneuert.`, 'ERROR');
+            errorNotification(`${SETTINGSPATH} ist eine fehlerhafte JSON-Datei. Die Datei wird jetzt erneuert.`);
             setSettingsFile();
             return;
         }
@@ -67,7 +66,7 @@ export function addMissingSettings(): void {
         mergeObjects(existingSettings, getSettingsContent());
 
         writeFileSync(SETTINGSPATH, JSON.stringify(existingSettings, null, 4));
-        writeLog(`Fehlende Einstellungen in der settings.json wurden hinzugefügt`, 'INFO');
+        infoNotification(`Fehlende Einstellungen in der settings.json wurden hinzugefügt`);
     } else {
         setSettingsFile();
     }
@@ -141,7 +140,7 @@ function createSettingsBackup(): void { // TODO: Backup nur ausführen, wenn was
             copyFileSync(SETTINGSPATH, OLDSETTINGSPATH);
         }
     } catch (error: any) {
-        writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR');
+        errorNotification(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`);
     }
 }
 
@@ -150,7 +149,21 @@ const launchWindows = {
         "version": "0.2.0",
         "configurations": [
             {
-                "name": "debuggen",
+                "name": "Python -> Aktive-Datei",
+                "type": "python",
+                "request": "launch",
+                "program": "${file}",
+                "console": "integratedTerminal",
+                "justMyCode": true
+            },
+            {
+                "type": "java",
+                "name": "Java -> Aktive-Datei",
+                "request": "launch",
+                "mainClass": "${file}"
+            },
+            {
+                "name": "C -> Aktive-Datei",
                 "type": "cppdbg",
                 "request": "launch",
                 "stopAtEntry": false,
@@ -168,7 +181,21 @@ const launchLinuxMacOs = {
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "debuggen",
+            "name": "Python -> Aktive-Datei",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "type": "java",
+            "name": "Java -> Aktive-Datei",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "name": "C -> Aktive-Datei",
             "type": "lldb",
             "request": "launch",
             "program": "\${fileDirname}/\${fileBasenameNoExtension}",

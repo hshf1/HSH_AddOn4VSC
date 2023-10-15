@@ -2,12 +2,12 @@ import { appendFileSync, existsSync, readdirSync, unlinkSync, writeFileSync } fr
 import { join } from 'path';
 import { window, workspace } from 'vscode';
 
-
 import { getPath } from './init/paths';
 
 let logFileName: string = '';
 let logFilePath: string = '';
 let logBuffer: string[] = [];
+
 const currentDateString = new Date(Date.now()).toLocaleDateString('de-DE', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/(\d+)\.(\d+)\.(\d+)/, '$3-$2-$1');
 
 export function initLogFile(): void {

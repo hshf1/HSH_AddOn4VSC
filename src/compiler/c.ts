@@ -15,6 +15,16 @@ export function installMingW() {
     }
 }
 
+export function uninstallMingW() {
+    try {
+        execSync(`gcc --version`);
+        execSync(`powershell -Command "Start-Process cmd -Wait -Verb runAs -ArgumentList '/k choco install mingw --version=8.1.0 -y -f && EXIT /B'"`);
+        infoNotification(`C-Compiler Deinstallation wurde erfolgreich durchgeführt`);
+    } catch (error) {
+        errorNotification(`C-Compiler Deinstallation wurde nicht erfolgreich durchgeführt`);
+    }
+}
+
 export function installCCompilerMacOS() {
     try {
         execSync(`gcc --version`);
@@ -28,6 +38,16 @@ export function installCCompilerMacOS() {
     }
 }
 
+export function uninstallCCompilerMacOS() {
+    try {
+        execSync(`gcc --version`);
+        execSync(``);
+        infoNotification(`C-Compiler Deinstallation wurde erfolgreich durchgeführt`);
+    } catch (error) {
+        errorNotification(`C-Compiler Deinstallation wurde nicht erfolgreich durchgeführt`);
+    }
+}
+
 export function installCCompilerLinux() {
     try {
         execSync(`gcc --version`);
@@ -38,5 +58,15 @@ export function installCCompilerLinux() {
         } catch (error) {
             errorNotification(`C-Compiler Installation wurde nicht erfolgreich durchgeführt`);
         }
+    }
+}
+
+export function uninstallCCompilerLinux() {
+    try {
+        execSync(`gcc --version`);
+        execSync(`sudo apt install gcc`);
+        infoNotification(`C-Compiler Deinstallation wurde erfolgreich durchgeführt`);
+    } catch (error) {
+        errorNotification(`C-Compiler Deinstallation wurde nicht erfolgreich durchgeführt`);
     }
 }

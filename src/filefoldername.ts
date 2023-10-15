@@ -4,7 +4,7 @@ import { existsSync } from 'fs';
 
 import { getOSBoolean } from './init/os';
 import { writeLog } from './logfile';
-import { OS } from './enum';
+import { OS } from './init/enum';
 import { warningNotification } from './notifications';
 
 let firstInit: boolean = false;

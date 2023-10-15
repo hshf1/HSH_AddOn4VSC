@@ -1,7 +1,6 @@
 import { execSync } from "child_process";
 import { existsSync } from "fs";
 
-import { ProgLang } from "../enum";
 import { errorNotification, infoNotification } from "../notifications";
 
 export function installJavaWindows() {
@@ -20,7 +19,9 @@ export function installJavaMacOS() {
         execSync(`openjdk`)
     } catch (error) {
         try {
-            execSync(`brew install openjdk -y`);
+            execSync(`brew install openjdk`);
+            execSync(`echo 'export PATH="/usr/local/opt/openjdk/bin:$PATH"' >> ~/.zshrc`);
+            execSync(`export CPPFLAGS="-I/usr/local/opt/openjdk/include"`);
             infoNotification(`Java-Compiler Installation wurde erfolgreich durchgeführt`);
         } catch (error) {
             errorNotification(`Java-Compiler Installation wurde nicht erfolgreich durchgeführt`);
