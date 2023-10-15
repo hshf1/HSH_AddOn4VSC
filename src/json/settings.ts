@@ -27,7 +27,7 @@ export function setSettingsFile(): void {
 
     try {
         writeFileSync(PATH, JSON.stringify(CONTENT, null, 4), { flag: 'w' });
-        infoNotification(`${PATH} wurde erfolgreich erstellt.`);
+        infoNotification(`${PATH} wurde erfolgreich erstellt.`, true);
     } catch (err: any) {
         errorNotification(`[${err.stack?.split('\n')[2]?.trim()}] ${err}`);
     }
@@ -66,7 +66,7 @@ export function addMissingSettings(): void {
         mergeObjects(existingSettings, getSettingsContent());
 
         writeFileSync(SETTINGSPATH, JSON.stringify(existingSettings, null, 4));
-        infoNotification(`Fehlende Einstellungen in der settings.json wurden hinzugefügt`);
+        infoNotification(`Fehlende Einstellungen in der settings.json wurden hinzugefügt`, true);
     } else {
         setSettingsFile();
     }
@@ -81,7 +81,7 @@ export function openSettingsFile(): void {
                 window.showTextDocument(document);
             });
     } else {
-        window.showErrorMessage('Keine alte settings.json gefunden!');
+        errorNotification('Keine alte settings.json gefunden!', true);
     }
 }
 
@@ -94,7 +94,7 @@ export function openOldSettingsFile(): void {
                 window.showTextDocument(document);
             });
     } else {
-        window.showErrorMessage('Keine alte settings.json gefunden!');
+        errorNotification('Keine alte settings.json gefunden!', true);
     }
 }
 
