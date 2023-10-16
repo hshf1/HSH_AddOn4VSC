@@ -11,7 +11,7 @@ export function installPython() {
 
     switch (getOSString()) {
         case OS.windows:
-            withProgressNotification(``, false, installChoco);
+            withProgressNotification(`Installiere / Überprüfe Chocolatey...`, false, installChoco);
             callback = installPythonWindows;
             break;
         case OS.macOS:
@@ -26,6 +26,28 @@ export function installPython() {
 
     if (callback !== undefined) {
         withProgressNotification(`Installiere / Überprüfe Python-Compiler...`, false, callback);
+    }
+}
+
+export function uninstallPython() {
+    let callback: (() => void) | undefined = undefined;
+
+    switch (getOSString()) {
+        case OS.windows:
+            callback = uninstallPythonWindows;
+            break;
+        case OS.macOS:
+            callback = uninstallPythonMacOS;
+            break;
+        case OS.linux:
+            callback = uninstallPythonLinux;
+            break;
+        default:
+            break;
+    }
+
+    if (callback !== undefined) {
+        withProgressNotification(`Deinstalliere Python-Compiler...`, false, callback);
     }
 }
 

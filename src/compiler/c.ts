@@ -29,6 +29,28 @@ export function installC(): void {
     }
 }
 
+export function uninstallC(): void {
+    let callback: (() => void) | undefined = undefined;
+
+    switch (getOSString()) {
+        case OS.windows:
+            callback = uninstallMingW;
+            break;
+        case OS.macOS:
+            callback = uninstallCCompilerMacOS;
+            break;
+        case OS.linux:
+            callback = uninstallCCompilerLinux;
+            break;
+        default:
+            break;
+    }
+
+    if (callback !== undefined) {
+        withProgressNotification(`Deinstalliere C-Compiler...`, false, callback);
+    }
+}
+
 function installMingW(): void {
     const settingsInit = getSettingsInit();
 

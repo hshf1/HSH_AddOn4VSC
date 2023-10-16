@@ -31,6 +31,28 @@ export function installJava(): void {
     }
 }
 
+export function uninstallJava(): void {
+    let callback: (() => void) | undefined = undefined;
+
+    switch (getOSString()) {
+        case OS.windows:
+            callback = uninstallJavaWindows;
+            break;
+        case OS.macOS:
+            callback = uninstallJavaMacOS;
+            break;
+        case OS.linux:
+            callback = uninstallJavaLinux;
+            break;
+        default:
+            break;
+    }
+
+    if (callback !== undefined) {
+        withProgressNotification(`Deinstalliere Java-Compiler...`, false, callback);
+    }
+}
+
 function installJavaWindows(): void {
     const settingsInit = getSettingsInit();
 

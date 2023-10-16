@@ -149,6 +149,17 @@ const launchWindows = {
         "version": "0.2.0",
         "configurations": [
             {
+                "name": "C -> Aktive-Datei",
+                "type": "cppdbg",
+                "request": "launch",
+                "stopAtEntry": false,
+                "externalConsole": false,
+                "MIMode": "gdb",
+                "program": "\${fileDirname}\\\\\${fileBasenameNoExtension}.exe",
+                "cwd": "\${workspaceFolder}",
+                "preLaunchTask": "C/C++ Aktive Datei kompilieren"
+            },
+            {
                 "name": "Python -> Aktive-Datei",
                 "type": "python",
                 "request": "launch",
@@ -161,17 +172,6 @@ const launchWindows = {
                 "name": "Java -> Aktive-Datei",
                 "request": "launch",
                 "mainClass": "${file}"
-            },
-            {
-                "name": "C -> Aktive-Datei",
-                "type": "cppdbg",
-                "request": "launch",
-                "stopAtEntry": false,
-                "externalConsole": false,
-                "MIMode": "gdb",
-                "program": "\${fileDirname}\\\\\${fileBasenameNoExtension}.exe",
-                "cwd": "\${workspaceFolder}",
-                "preLaunchTask": "C/C++ Aktive Datei kompilieren"
             }
         ]
     }
