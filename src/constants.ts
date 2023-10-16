@@ -23,8 +23,9 @@ export function getConstCommands(): Command[] {
         { command: 'logfile.open', title: 'Aktuelle LogFile öffnen'},
         { command: 'chocolatey.install', title: 'Chocolatey installieren'},
         { command: 'chocolatey.uninstall', title: 'Chocolatey deinstallieren'},
-        { command: 'logfile.open', title: 'Aktuelle LogFile öffnen'},
-        { command: 'logfile.open', title: 'Aktuelle LogFile öffnen'} // 20
+        { command: 'uninstall.compiler', title: 'C Compiler deinstallieren'}, 
+        { command: 'javacompiler.uninstall', title: 'Java Compiler deinstallieren'}, // 20
+        { command: 'pythoncompiler.uninstall', title: 'Python Compiler deinstallieren'}
     ];
 }
 
