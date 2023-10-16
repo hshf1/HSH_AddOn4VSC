@@ -143,6 +143,8 @@ function createSettingsBackup(): void { // TODO: Backup nur ausführen, wenn was
     }
 }
 
+// TODO; envFile nutzen und hier schon die pfade mit angeben
+
 const launchWindows = {
     "update.enableWindowsBackgroundUpdates": false,
     "launch": {
@@ -184,6 +186,7 @@ const launchLinuxMacOs = {
             "name": "C -> Aktive-Datei",
             "type": "lldb",
             "request": "launch",
+            "MIMode": "gdb",
             "program": "\${fileDirname}/\${fileBasenameNoExtension}",
             "cwd": "\${fileDirname}",
             "preLaunchTask": "C/C++ Aktive Datei kompilieren"
