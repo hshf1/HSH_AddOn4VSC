@@ -1,4 +1,4 @@
-import { window } from "vscode";
+import { ProgressLocation, window } from "vscode";
 
 import { writeLog } from "./logfile";
 
@@ -24,4 +24,14 @@ export function warningNotification(msg: string, showUser?: boolean, modal?: boo
     if (showUser) {
         window.showWarningMessage(msg, { modal: modal ? modal : false }, 'OK');
     }
+}
+
+export function withProgressNotification(title: string, cancellableValue: boolean, callback: () => void) {
+    window.withProgress({
+        location: ProgressLocation.Notification,
+        title: `${title}`,
+        cancellable: cancellableValue
+    }, async (progress, token) => {
+        callback();
+    });
 }

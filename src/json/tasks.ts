@@ -74,7 +74,7 @@ export function openTasksFile(): void {
 const tasksWindows = [
 	{
 		"type": "cppbuild",
-		"label": "C/C++: gcc.exe Aktive Datei kompilieren",
+		"label": "C/C++ Aktive Datei kompilieren",
 		"command": "g++.exe",
 		"args": [
 			"-g",
@@ -99,8 +99,8 @@ const tasksWindows = [
 const tasksLinuxMacOS = [
 	{
 		"type": "cppbuild",
-		"label": "C/C++: gcc Aktive Datei kompilieren",
-		"command": "/usr/bin/gcc",
+		"label": "C/C++ Aktive Datei kompilieren",
+		"command": "/usr/bin/g++",
 		"args": [
 			"-g",
 			"\${file}",

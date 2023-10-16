@@ -1,72 +1,108 @@
 import { execSync } from "child_process";
 
-import { errorNotification, infoNotification } from "../notifications";
+import { errorNotification, infoNotification, withProgressNotification } from "../notifications";
+import { getOSString } from "../init/os";
+import { OS } from "../init/enum";
+import { installChoco } from "./chocolatey";
+import { getSettingsInit } from "../init/init";
 
-export function installPythonWindows() {
+export function installPython() {
+    let callback: (() => void) | undefined = undefined;
+
+    switch (getOSString()) {
+        case OS.windows:
+            withProgressNotification(``, false, installChoco);
+            callback = installPythonWindows;
+            break;
+        case OS.macOS:
+            callback = installPythonMacOS;
+            break;
+        case OS.linux:
+            callback = installPythonLinux;
+            break;
+        default:
+            break;
+    }
+
+    if (callback !== undefined) {
+        withProgressNotification(`Installiere / Überprüfe Python-Compiler...`, false, callback);
+    }
+}
+
+function installPythonWindows(): void {
+    const settingsInit = getSettingsInit();
+
     try {
         execSync(`python3 --version`);
+        infoNotification(`Python-Compiler ist bereits installiert!`, settingsInit, settingsInit);
     } catch (error) {
         try {
             execSync(`powershell -Command "Start-Process cmd -Wait -Verb runAs -ArgumentList '/k choco install python3 -y -f && EXIT /B'"`);
-            infoNotification(`Python-Compiler Installation wurde erfolgreich durchgeführt`);
+            infoNotification(`Python-Compiler Installation wurde erfolgreich durchgeführt`, true, true);
         } catch (error) {
-            errorNotification(`Python-Compiler Installation wurde nicht erfolgreich durchgeführt`);
+            errorNotification(`Python-Compiler Installation wurde nicht erfolgreich durchgeführt`, true, true);
         }
     }
 }
 
-export function uninstallPythonWindows() {
+function uninstallPythonWindows(): void {
     try {
         execSync(`python3 --version`);
-        execSync(`powershell -Command "Start-Process cmd -Wait -Verb runAs -ArgumentList '/k choco install python3 -y -f && EXIT /B'"`);
-        infoNotification(`Python-Compiler Deinstallation wurde erfolgreich durchgeführt`);
+        execSync(`powershell -Command "Start-Process cmd -Wait -Verb runAs -ArgumentList '/k choco uninstall python3 -y -f && EXIT /B'"`);
+        infoNotification(`Python-Compiler Deinstallation wurde erfolgreich durchgeführt`, true, true);
     } catch (error) {
-        errorNotification(`Python-Compiler Deinstallation wurde nicht erfolgreich durchgeführt`);
+        errorNotification(`Python-Compiler Deinstallation wurde nicht erfolgreich durchgeführt`, true, true);
     }
 }
 
-export function installPythonMacOS() {
+function installPythonMacOS(): void {
+    const settingsInit = getSettingsInit();
+
     try {
         execSync(`python3 --version`);
+        infoNotification(`Python-Compiler ist bereits installiert!`, settingsInit, settingsInit);
     } catch (error) {
         try {
             execSync(`brew install python3`);
-            infoNotification(`Python-Compiler Installation wurde erfolgreich durchgeführt`);
+            infoNotification(`Python-Compiler Installation wurde erfolgreich durchgeführt`, true, true);
         } catch (error) {
-            errorNotification(`Python-Compiler Installation wurde nicht erfolgreich durchgeführt`);
+            errorNotification(`Python-Compiler Installation wurde nicht erfolgreich durchgeführt`, true, true);
         }
     }
 }
 
-export function uninstallPythonMacOS() {
+function uninstallPythonMacOS(): void {
     try {
         execSync(`python3 --version`);
         execSync(`brew uninstall --ignore-dependencies python3`);
-        infoNotification(`Python-Compiler Deinstallation wurde erfolgreich durchgeführt`);
+        infoNotification(`Python-Compiler Deinstallation wurde erfolgreich durchgeführt`, true, true);
     } catch (error) {
-        errorNotification(`Python-Compiler Deinstallation wurde nicht erfolgreich durchgeführt`);
+        errorNotification(`Python-Compiler Deinstallation wurde nicht erfolgreich durchgeführt`, true, true);
     }
 }
 
-export function installPythonLinux() {
+function installPythonLinux(): void {
+    const settingsInit = getSettingsInit();
+
     try {
         execSync(`python3 --version`);
+        infoNotification(`Python-Compiler bereits installiert!`, settingsInit, settingsInit);
     } catch (error) {
         try {
             execSync(`sudo apt python3 -y`);
-            infoNotification(`Python-Compiler Installation wurde erfolgreich durchgeführt`);
+            infoNotification(`Python-Compiler Installation wurde erfolgreich durchgeführt`, true, true);
         } catch (error) {
-            errorNotification(`Python-Compiler Installation wurde nicht erfolgreich durchgeführt`);
+            errorNotification(`Python-Compiler Installation wurde nicht erfolgreich durchgeführt`, true, true);
         }
     }
 }
 
-export function uninstallPythonLinux() {
+function uninstallPythonLinux(): void {
     try {
         execSync(`python3 --version`);
-        execSync(`sudo apt python3 -y`);
-        infoNotification(`Python-Compiler Deinstallation wurde erfolgreich durchgeführt`);
+        execSync(`sudo apt remove python3 -y`);
+        infoNotification(`Python-Compiler Deinstallation wurde erfolgreich durchgeführt`, true, true);
     } catch (error) {
-        errorNotification(`Python-Compiler Deinstallation wurde nicht erfolgreich durchgeführt`);
+        errorNotification(`Python-Compiler Deinstallation wurde nicht erfolgreich durchgeführt`, true, true);
     }
 }

@@ -10,10 +10,12 @@ import { getOSBoolean } from './init/os';
 import { switchDirectory } from './filefoldername';
 import { addMissingSettings, openOldSettingsFile, openSettingsFile, setSettingsFile } from './json/settings';
 import { setLanguage } from './init/language';
-import { initCompiler } from './compiler/compiler';
 import { OS, ProgLang } from './init/enum';
 import { errorNotification, infoNotification } from './notifications';
 import { installChoco, removeChoco } from './compiler/chocolatey';
+import { installC } from './compiler/c';
+import { installJava } from './compiler/java';
+import { installPython } from './compiler/python';
 
 const constregistercommands = [
     {
@@ -60,7 +62,7 @@ const constregistercommands = [
         name: getConstCommands()[5].command,
         callback: () => {
             infoNotification(`Folgender Command wird ausgeführt: ${getConstCommands()[5].command}`);
-            initCompiler(ProgLang.c);
+            installC();
         }
     },
     {
@@ -141,14 +143,14 @@ const constregistercommands = [
         name: getConstCommands()[14].command,
         callback: () => {
             infoNotification(`Folgender Command wird ausgeführt: ${getConstCommands()[14].command}`);
-            initCompiler(ProgLang.java);
+            installJava();
         }
     },
     {
         name: getConstCommands()[15].command,
         callback: () => {
             infoNotification(`Folgender Command wird ausgeführt: ${getConstCommands()[15].command}`);
-            initCompiler(ProgLang.python);
+            installPython();
         }
     },
     {

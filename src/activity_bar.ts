@@ -101,6 +101,7 @@ async function aktualisieren(): Promise<void> {
         new Dependency('GitHub: Vorlesung C (HsH-Repository)', TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: ['https://github.com/hshf1/VorlesungC', ''] }),
         new Dependency('Programmiersprache ändern', TreeItemCollapsibleState.None, getConstCommands()[8]),
         new Dependency('Verzeichnis wechseln', TreeItemCollapsibleState.None, getConstCommands()[9]),
+        new Dependency('Compiler', TreeItemCollapsibleState.Collapsed),
         new Dependency('Einstellungen', TreeItemCollapsibleState.Collapsed),
         new Dependency('Problem melden', TreeItemCollapsibleState.None, getConstCommands()[7]),
     ];
@@ -108,7 +109,6 @@ async function aktualisieren(): Promise<void> {
     dependenciesSettings = [
         new Dependency('settings.json', TreeItemCollapsibleState.Collapsed),
         new Dependency('tasks.json', TreeItemCollapsibleState.Collapsed),
-        new Dependency('Compiler', TreeItemCollapsibleState.Collapsed),
         new Dependency('LogFile öffnen', TreeItemCollapsibleState.None, getConstCommands()[16]),
         ...(getOSBoolean(OS.windows)
             ? [new Dependency(getComputerraumConfig() ? 'Ändern auf privaten Windows-Rechner' : 'Ändern auf HsH Windows-Rechner', TreeItemCollapsibleState.None, getConstCommands()[6])]

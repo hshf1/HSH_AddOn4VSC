@@ -10,12 +10,14 @@ import { getOSBoolean, setOS } from './os';
 import { checkSettingsFile } from '../json/settings';
 import { checkTasksFile } from '../json/tasks';
 import { initExtensionsDir } from '../extensionPath';
-import { initCompiler } from '../compiler/compiler';
 import { OS, ProgLang } from './enum';
-import { getProgLanguageBoolean, initLanguage } from './language';
+import { getProgLanguageBoolean, getProgLanguageString, initLanguage } from './language';
+import { installC } from '../compiler/c';
+import { installJava } from '../compiler/java';
+import { installPython } from '../compiler/python';
 
 let settings = {
-    computerraum: false, progLanguage: ProgLang.c, compiler: false, reloadNeeded: false
+    computerraum: false, progLanguage: ProgLang.c, init: false, reloadNeeded: false
 };
 
 export function initExtension(): void {
@@ -39,6 +41,7 @@ export function initExtension(): void {
         checkPaths();
         initCompiler();
     }).then(() => {
+        settings.init = true;
         writeLog(`Initialisierung beendet!`, 'INFO');
     });
 }
@@ -75,6 +78,10 @@ export function getComputerraumConfig() {
     return settings.computerraum;
 }
 
+export function getSettingsInit() {
+    return settings.init;
+}
+
 export function restartVSC() {
     window.showWarningMessage(`VSCode wird jetzt beendet, bitte VSCode manuell neu starten!`, { modal: true }, 'OK')
         .then(() => {
@@ -84,6 +91,22 @@ export function restartVSC() {
                 }
             });
         });
+}
+
+export function initCompiler() {
+    switch (getProgLanguageString()) {
+        case ProgLang.c:
+            installC();
+            break;
+        case ProgLang.java:
+            installJava();
+            break;
+        case ProgLang.python:
+            installPython();
+            break;
+        default:
+            return;
+    }
 }
 
 function checkMissingExtension() {

@@ -171,7 +171,7 @@ const launchWindows = {
                 "MIMode": "gdb",
                 "program": "\${fileDirname}\\\\\${fileBasenameNoExtension}.exe",
                 "cwd": "\${workspaceFolder}",
-                "preLaunchTask": "C/C++: gcc.exe Aktive Datei kompilieren"
+                "preLaunchTask": "C/C++ Aktive Datei kompilieren"
             }
         ]
     }
@@ -180,6 +180,14 @@ const launchWindows = {
 const launchLinuxMacOs = {
     "version": "0.2.0",
     "configurations": [
+        {
+            "name": "C -> Aktive-Datei",
+            "type": "lldb",
+            "request": "launch",
+            "program": "\${fileDirname}/\${fileBasenameNoExtension}",
+            "cwd": "\${fileDirname}",
+            "preLaunchTask": "C/C++ Aktive Datei kompilieren"
+        },
         {
             "name": "Python -> Aktive-Datei",
             "type": "python",
@@ -193,14 +201,6 @@ const launchLinuxMacOs = {
             "name": "Java -> Aktive-Datei",
             "request": "launch",
             "mainClass": "${file}"
-        },
-        {
-            "name": "C -> Aktive-Datei",
-            "type": "lldb",
-            "request": "launch",
-            "program": "\${fileDirname}/\${fileBasenameNoExtension}",
-            "cwd": "\${fileDirname}",
-            "preLaunchTask": "C/C++: gcc Aktive Datei kompilieren"
         }
     ]
 };
