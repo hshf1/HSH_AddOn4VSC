@@ -7,6 +7,7 @@ import { OS } from "../init/enum";
 import { installChoco } from "./chocolatey";
 import { error } from "console";
 import { getSettingsInit } from "../init/init";
+import { checkSnap } from "./snapLinux";
 
 export function installJava(): void {
     let callback: (() => void) | undefined = undefined;
@@ -119,6 +120,7 @@ function installJavaLinux(): void {
         infoNotification(`Java-Compiler bereits installiert!`, settingsInit, settingsInit);
     } catch (error) {
         try {
+            checkSnap();
             execSync(`snap install openjdk`);
             infoNotification(`Java-Compiler Installation wurde erfolgreich durchgeführt`);
         } catch (error) {
@@ -129,7 +131,7 @@ function installJavaLinux(): void {
 
 function uninstallJavaLinux(): void {
     try {
-        execSync(`openjdk`)
+        execSync(`openjdk`);
         execSync(`sudo snap remove --purge openjdk`);
         infoNotification(`Java-Compiler Installation wurde erfolgreich durchgeführt`);
     } catch (error) {
