@@ -111,7 +111,7 @@ function installPythonLinux(): void {
         infoNotification(`Python-Compiler bereits installiert!`, settingsInit, settingsInit);
     } catch (error) {
         try {
-            execSync(`sudo apt python3 -y`);
+            execSync(`sudo apt install python3 -y`);
             infoNotification(`Python-Compiler Installation wurde erfolgreich durchgeführt`, true, true);
         } catch (error) {
             errorNotification(`Python-Compiler Installation wurde nicht erfolgreich durchgeführt`, true, true);
