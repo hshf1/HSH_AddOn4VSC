@@ -6,7 +6,6 @@ import { getOSBoolean } from './init/os';
 import { OS } from './init/enum';
 import { infoNotification } from './notifications';
 
-let treeViewOptions: TreeViewOptions<Dependency>;
 let dependenciesMain: Dependency[] = [];
 let dependenciesSettings: Dependency[] = [];
 let dependenciesSettingsjson: Dependency[] = [];
@@ -85,7 +84,7 @@ export async function initActivityBar(): Promise<void> {
     aktualisieren();
 
     treeDataProvider = new DepNodeProvider();
-    treeViewOptions = {
+    const treeViewOptions: TreeViewOptions<Dependency>  = {
         treeDataProvider: treeDataProvider
     };
 
