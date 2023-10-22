@@ -5,6 +5,7 @@ import { getComputerraumConfig } from './init/init';
 import { writeLog } from './logfile';
 import { getOSBoolean } from './init/os';
 import { OS } from './init/enum';
+import { infoNotification } from './notifications';
 
 let treeViewOptions: TreeViewOptions<Dependency>;
 let dependenciesMain: Dependency[] = [];
@@ -36,7 +37,7 @@ class DepNodeProvider implements TreeDataProvider<Dependency> {
     refresh(): void {
         aktualisieren();
         this._onDidChangeTreeData.fire(undefined);
-        writeLog(`Activity Bar aktualisiert!`, 'INFO');
+        infoNotification(`Activity Bar aktualisiert!`);
     }
 
     getTreeItem(element: Dependency): TreeItem {
@@ -92,13 +93,13 @@ export async function initActivityBar(): Promise<void> {
 
     window.registerTreeDataProvider('menue_bar_activity', treeDataProvider);
     window.createTreeView('menue_bar_activity', treeViewOptions);
-    writeLog(`Activity Bar geladen!`, 'INFO');
+    infoNotification(`Activity Bar geladen!`);
 }
 
 async function aktualisieren(): Promise<void> {
     dependenciesMain = [
-        new Dependency('GitHub: VSCode (HsH-Repository)', TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: ['https://github.com/hshf1/VSCode', ''] }),
-        new Dependency('GitHub: Vorlesung C (HsH-Repository)', TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: ['https://github.com/hshf1/VorlesungC', ''] }),
+        new Dependency('GitHub: VSCode (HsH-Repository)', TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: ['https://github.com/hshf1/VSCode'] }),
+        new Dependency('GitHub: Vorlesung C (HsH-Repository)', TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: ['https://github.com/hshf1/VorlesungC'] }),
         new Dependency('Programmiersprache ändern', TreeItemCollapsibleState.None, getConstCommands()[8]),
         new Dependency('In Verzeichnis der geöffneten Datei wechseln', TreeItemCollapsibleState.None, getConstCommands()[9]),
         new Dependency('Compiler', TreeItemCollapsibleState.Collapsed),
@@ -149,7 +150,7 @@ async function aktualisieren(): Promise<void> {
         new Dependency('Java-Compiler prüfen / installieren', TreeItemCollapsibleState.None, getConstCommands()[14]),
         new Dependency('Java-Compiler deinstallieren', TreeItemCollapsibleState.None, getConstCommands()[20])
     ];
-    
+
     dependenciesPythonCompiler = [
         new Dependency('Python-Compiler prüfen / installieren', TreeItemCollapsibleState.None, getConstCommands()[15]),
         new Dependency('Python-Compiler deinstallieren', TreeItemCollapsibleState.None, getConstCommands()[21])
