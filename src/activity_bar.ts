@@ -29,7 +29,6 @@ class Dependency extends TreeItem {
 }
 
 class DepNodeProvider implements TreeDataProvider<Dependency> {
-
     private _onDidChangeTreeData: EventEmitter<any> = new EventEmitter<any>();
     readonly onDidChangeTreeData: Event<any> = this._onDidChangeTreeData.event;
 
