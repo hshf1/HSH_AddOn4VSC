@@ -113,7 +113,8 @@ async function aktualisieren(): Promise<void> {
         new Dependency('LogFile öffnen', TreeItemCollapsibleState.None, getConstCommands()[16]),
         ...(getOSBoolean(OS.windows)
             ? [new Dependency(getComputerraumConfig() ? 'Ändern auf privaten Windows-Rechner' : 'Ändern auf HsH Windows-Rechner', TreeItemCollapsibleState.None, getConstCommands()[6])]
-            : [])];
+            : [])
+    ];
 
     dependenciesSettingsjson = [
         new Dependency('settings.json überprüfen', TreeItemCollapsibleState.None, getConstCommands()[12]),
