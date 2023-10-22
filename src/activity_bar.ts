@@ -100,7 +100,7 @@ async function aktualisieren(): Promise<void> {
         new Dependency('GitHub: VSCode (HsH-Repository)', TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: ['https://github.com/hshf1/VSCode', ''] }),
         new Dependency('GitHub: Vorlesung C (HsH-Repository)', TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: ['https://github.com/hshf1/VorlesungC', ''] }),
         new Dependency('Programmiersprache ändern', TreeItemCollapsibleState.None, getConstCommands()[8]),
-        new Dependency('Verzeichnis wechseln', TreeItemCollapsibleState.None, getConstCommands()[9]),
+        new Dependency('In Verzeichnis der geöffneten Datei wechseln', TreeItemCollapsibleState.None, getConstCommands()[9]),
         new Dependency('Compiler', TreeItemCollapsibleState.Collapsed),
         new Dependency('Einstellungen', TreeItemCollapsibleState.Collapsed),
         new Dependency('Problem melden', TreeItemCollapsibleState.None, getConstCommands()[7]),
@@ -142,15 +142,16 @@ async function aktualisieren(): Promise<void> {
 
     dependenciesCCompiler = [
         new Dependency('C-Compiler prüfen / installieren', TreeItemCollapsibleState.None, getConstCommands()[5]),
-        new Dependency('C-Compiler deinstallieren', TreeItemCollapsibleState.None)
+        new Dependency('C-Compiler deinstallieren', TreeItemCollapsibleState.None, getConstCommands()[19])
     ];
 
     dependenciesJavaCompiler = [
         new Dependency('Java-Compiler prüfen / installieren', TreeItemCollapsibleState.None, getConstCommands()[14]),
-        new Dependency('Java-Compiler deinstallieren', TreeItemCollapsibleState.None)
+        new Dependency('Java-Compiler deinstallieren', TreeItemCollapsibleState.None, getConstCommands()[20])
     ];
+    
     dependenciesPythonCompiler = [
         new Dependency('Python-Compiler prüfen / installieren', TreeItemCollapsibleState.None, getConstCommands()[15]),
-        new Dependency('Python-Compiler deinstallieren', TreeItemCollapsibleState.None)
+        new Dependency('Python-Compiler deinstallieren', TreeItemCollapsibleState.None, getConstCommands()[21])
     ];
 }
