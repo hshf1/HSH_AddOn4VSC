@@ -2,7 +2,6 @@ import { window, Command, TreeDataProvider, TreeViewOptions, TreeItemCollapsible
 
 import { getConstCommands } from './constants';
 import { getComputerraumConfig } from './init/init';
-import { writeLog } from './logfile';
 import { getOSBoolean } from './init/os';
 import { OS } from './init/enum';
 import { infoNotification } from './notifications';
