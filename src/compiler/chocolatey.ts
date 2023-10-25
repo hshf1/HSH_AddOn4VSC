@@ -4,6 +4,10 @@ import { errorNotification, infoNotification, warningNotification } from "../not
 import { existsSync } from "fs";
 
 export function installChoco(): void {
+    if (getComputerraumConfig()) {
+        return
+    }
+    
     try {
         execSync(`choco -v`);
         infoNotification(`Chocolatey ist bereits installiert!`);
