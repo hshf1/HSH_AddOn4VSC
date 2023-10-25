@@ -101,7 +101,7 @@ async function aktualisieren(): Promise<void> {
         new Dependency('In Verzeichnis der geöffneten Datei wechseln', TreeItemCollapsibleState.None, getConstCommands()[9]),
         new Dependency('Compiler', TreeItemCollapsibleState.Collapsed),
         new Dependency('Einstellungen', TreeItemCollapsibleState.Collapsed),
-        new Dependency('Problem melden', TreeItemCollapsibleState.None, getConstCommands()[7]),
+        new Dependency('Problem melden', TreeItemCollapsibleState.None, getConstCommands()[7])
     ];
 
     dependenciesSettings = [
@@ -121,7 +121,7 @@ async function aktualisieren(): Promise<void> {
     ];
 
     dependenciesTasksjson = [
-        new Dependency('tasks.json überprüfen', TreeItemCollapsibleState.None),
+        // new Dependency('tasks.json überprüfen', TreeItemCollapsibleState.None, getConstCommands()[]),
         new Dependency('tasks.json zurücksetzen', TreeItemCollapsibleState.None, getConstCommands()[3]),
         new Dependency('aktuelle tasks.json öffnen', TreeItemCollapsibleState.None, getConstCommands()[13])
     ];
@@ -131,7 +131,7 @@ async function aktualisieren(): Promise<void> {
         ? [new Dependency('Chocolatey (Zur installation von Compilern)', TreeItemCollapsibleState.Collapsed)] : []),
         new Dependency('C-Compiler', TreeItemCollapsibleState.Collapsed),
         new Dependency('Java-Compiler', TreeItemCollapsibleState.Collapsed),
-        new Dependency('Python-Compiler', TreeItemCollapsibleState.Collapsed),
+        new Dependency('Python-Compiler', TreeItemCollapsibleState.Collapsed)
     ];
 
     dependenciesChocolatey = [
