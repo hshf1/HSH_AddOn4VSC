@@ -1,4 +1,5 @@
 import { execSync } from "child_process";
+
 import { getSettingsInit } from "../init/init";
 import { errorNotification, infoNotification } from "../notifications";
 
@@ -13,9 +14,9 @@ export function checkSnap(): void {
             moveFile();
             updateAPT();
             installSnap();
-            infoNotification(``);
+            infoNotification(`Snap erfolgreich installiert!`);
         } catch (error) {
-            errorNotification(``);
+            errorNotification(`Snap nicht erfolgreich installiert!`);
         }
     }
 }
@@ -24,7 +25,7 @@ function moveFile() {
     try {
         execSync(`sudo mv /etc/apt/preferences.d/nosnap.pref ~/Documents/nosnap.backup`);
     } catch (error) {
-
+        errorNotification(`Es ist ein Fehler beim moveFile() für die snap installation aufgetreten!`);
     }
 }
 
@@ -39,7 +40,8 @@ function updateAPT() {
 function installSnap() {
     try {
         execSync(`sudo apt install snapd`);
+        infoNotification(`snapd Installation erfolgreich!`);
     } catch (error) {
-        
+        errorNotification(`Fehler bei der Ausführung von install snapd!`);
     }
 }

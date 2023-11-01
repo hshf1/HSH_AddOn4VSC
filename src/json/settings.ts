@@ -6,6 +6,7 @@ import { getPath } from "../init/paths";
 import { getOSBoolean } from "../init/os";
 import { OS } from "../init/enum";
 import { errorNotification, infoNotification, warningNotification } from "../notifications";
+import { getComputerraumConfig } from "../init/init";
 
 export function checkSettingsFile(): void {
     const SETTINGSJSONPATH = join(getPath().vscUserData, 'settings.json');
@@ -101,6 +102,7 @@ export function openOldSettingsFile(): void {
 function getSettingsContent() {
     const ENCODING = getOSBoolean(OS.windows) ? `cp437` : `utf8`;
     const launch = getOSBoolean(OS.windows) ? launchWindows : launchLinuxMacOs;
+    const pythonName = getComputerraumConfig() ? `` : `python3 -u`;
 
     return {
         "addon4vsc.sprache": "C",
@@ -117,11 +119,12 @@ function getSettingsContent() {
         "editor.tabSize": 4,
         "editor.renderWhitespace": "none",
         "C_Cpp.debugShortcut": false,
+        "update.enableWindowsBackgroundUpdates": false,
         "code-runner.runInTerminal": true,
         "code-runner.preserveFocus": false,
         "code-runner.defaultLanguage": "C",
         "code-runner.executorMap": {
-            "python": "python3 -u",
+            "python": `${pythonName}`,
         },
         launch
     };
@@ -146,7 +149,6 @@ function createSettingsBackup(): void { // TODO: Backup nur ausführen, wenn was
 // TODO; envFile nutzen und hier schon die pfade mit angeben
 
 const launchWindows = {
-    "update.enableWindowsBackgroundUpdates": false,
     "launch": {
         "version": "0.2.0",
         "configurations": [

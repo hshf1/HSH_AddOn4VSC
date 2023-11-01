@@ -39,7 +39,9 @@ export function initExtension(): void {
         checkSettingsFile();
         checkTasksFile();
         checkPaths();
-        initCompiler();
+        if (!getComputerraumConfig()) {
+            initCompiler();
+        }
     }).then(() => {
         settings.init = true;
         writeLog(`Initialisierung beendet!`, 'INFO');
