@@ -3,6 +3,7 @@ import { join } from 'path';
 
 import { getPath } from '../init/paths';
 import { writeLog } from '../logfile';
+import { getOSBoolean } from '../init/os';
 
 export function checkTasksFile(): void {
 	const TASKSJSON = join(getPath().vscUserData, 'tasks.json');
@@ -31,6 +32,7 @@ export function setTasksFile(): void {
 }
 
 function getTasksContent() {
+	const linuxVar = getOSBoolean('Linux') ? "-lm" : ""
 	return {
 		"version": "2.0.0",
 		"tasks": [
@@ -42,7 +44,8 @@ function getTasksContent() {
 					"-g",
 					"\${file}",
 					"-o",
-					"\${fileDirname}/\${fileBasenameNoExtension}"
+					"\${fileDirname}/\${fileBasenameNoExtension}",
+					linuxVar
 				],
 				"options": {
 					"cwd": "\${fileDirname}"
@@ -101,12 +104,12 @@ function createTasksBackup(): void {
 export function setTaskOnce() {
 	try {
 		console.log("inSetTaskOnce")
-		if (existsSync(join(getPath().tempAddOn, 'setTaskOnce.txt'))) {
+		if (existsSync(join(getPath().tempAddOn, 'v1_8_8_setTaskOnce.txt'))) {
 			console.log("exist")
 			return;
 		} else {
 			console.log("notexist")
-			writeFileSync(join(getPath().tempAddOn, 'setTaskOnce.txt'), '');
+			writeFileSync(join(getPath().tempAddOn, 'v1_8_8_setTaskOnce.txt'), '');
 			setTasksFile();
 		}
 	} catch (error) {
