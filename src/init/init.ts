@@ -9,7 +9,7 @@ import { openPreFolder } from '../checkfolder';
 import { initLogFile, writeLog } from '../logfile';
 import { getPath, initPath } from './paths';
 import { getOSBoolean, setOS } from './os';
-import { checkSettingsFile } from '../json/settings';
+import { checkSettingsFile, setSettingsOnce } from '../json/settings';
 import { checkTasksFile, setTaskOnce } from '../json/tasks';
 
 let settings = {
@@ -38,6 +38,7 @@ export function initExtension(): void {
         initLogFile();
         checkSettingsFile();
         setTaskOnce();
+        setSettingsOnce();
         checkTasksFile();
         initStatusBarItem();
         initActivityBar();

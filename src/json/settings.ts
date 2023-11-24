@@ -105,6 +105,8 @@ function getSettingsContent() {
     const ENCODING = getOSBoolean('Windows') ? `cp437` : `utf8`;
     const AUTOUPDATE = getComputerraumConfig() ? `manual` : `default`;
 
+    const linuxLM = getOSBoolean('Linux') ? "cd $dir && gcc $fileName -o $fileNameWithoutExt -lm && $dir$fileNameWithoutExt" : "cd $dir && gcc $fileName -o $fileNameWithoutExt && $dir$fileNameWithoutExt"
+
     return {
         "addon4vsc.sprache": "C",
         "terminal.integrated.scrollback": 10000,
@@ -126,6 +128,9 @@ function getSettingsContent() {
         "code-runner.preserveFocus": false,
         "update.enableWindowsBackgroundUpdates": false,
         "code-runner.defaultLanguage": "C",
+        "code-runner.executorMap": {
+            "c": `${linuxLM}`
+        },
         "update.mode": `${AUTOUPDATE}`,
         "launch": {
             "version": "0.2.0",
@@ -153,6 +158,7 @@ function getSettingsContent() {
                     },
                     // linux-spezifische Einstellungen
                     "linux": {
+                        "type": "lldb",
                         "MIMode": "lldb",
                         "program": "\${fileDirname}/\${fileBasenameNoExtension}",
                         "cwd": "\${fileDirname}",
@@ -178,4 +184,20 @@ function createSettingsBackup(): void { // TODO: Backup nur ausführen, wenn was
     } catch (error: any) {
         writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR');
     }
+}
+
+export function setSettingsOnce() {
+	try {
+		console.log("inSetSettingsOnce")
+		if (existsSync(join(getPath().tempAddOn, 'v1_8_9_setSettingsOnce.txt'))) {
+			console.log("exist")
+			return;
+		} else {
+			console.log("notexist")
+			writeFileSync(join(getPath().tempAddOn, 'v1_8_9_setSettingsOnce.txt'), '');
+			setSettingsFile();
+		}
+	} catch (error) {
+		writeLog(`Fehler: ${error}`, 'ERROR')
+	}
 }

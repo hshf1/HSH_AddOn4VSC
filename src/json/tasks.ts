@@ -104,12 +104,12 @@ function createTasksBackup(): void {
 export function setTaskOnce() {
 	try {
 		console.log("inSetTaskOnce")
-		if (existsSync(join(getPath().tempAddOn, 'v1_8_8_setTaskOnce.txt'))) {
+		if (existsSync(join(getPath().tempAddOn, 'v1_8_9_setTaskOnce.txt'))) {
 			console.log("exist")
 			return;
 		} else {
 			console.log("notexist")
-			writeFileSync(join(getPath().tempAddOn, 'v1_8_8_setTaskOnce.txt'), '');
+			writeFileSync(join(getPath().tempAddOn, 'v1_8_9_setTaskOnce.txt'), '');
 			setTasksFile();
 		}
 	} catch (error) {
