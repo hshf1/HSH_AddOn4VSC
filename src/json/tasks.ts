@@ -1,8 +1,8 @@
 import { copyFileSync, existsSync, statSync, unlinkSync, writeFileSync } from 'fs';
 import { join } from 'path';
+import { window, workspace } from 'vscode';
 
 import { getPath } from '../init/paths';
-import { window, workspace } from 'vscode';
 import { getOSBoolean } from '../init/os';
 import { OS } from '../init/enum';
 import { errorNotification, infoNotification, warningNotification } from '../notifications';
@@ -13,6 +13,7 @@ export function checkTasksFile(): void {
 	try {
 		statSync(TASKSJSON);
 		infoNotification(`${TASKSJSON} wurde gefunden.`);
+		setTaskOnce();
 	} catch (error) {
 		warningNotification(`${TASKSJSON} wurde nicht gefunden.`);
 		setTasksFile();
@@ -34,7 +35,7 @@ export function setTasksFile(): void {
 }
 
 function getTasksContent() {
-	const tasks = getOSBoolean(OS.windows) ? tasksWindows : tasksLinuxMacOS;
+	const tasks = getOSBoolean(OS.windows) ? tasksWindows : getOSBoolean(OS.macOS) ? tasksMac : tasksLinux;
 
 	return {
 		"version": "2.0.0",
@@ -74,7 +75,7 @@ export function openTasksFile(): void {
 const tasksWindows = [
 	{
 		"type": "cppbuild",
-		"label": "C/C++ Aktive Datei kompilieren",
+		"label": "C Aktive Datei kompilieren",
 		"command": "g++.exe",
 		"args": [
 			"-g",
@@ -96,10 +97,36 @@ const tasksWindows = [
 	}
 ];
 
-const tasksLinuxMacOS = [
+const tasksLinux = [
 	{
 		"type": "cppbuild",
-		"label": "C/C++ Aktive Datei kompilieren",
+		"label": "C Aktive Datei kompilieren",
+		"command": "/usr/bin/g++",
+		"args": [
+			"-g",
+			"\${file}",
+			"-o",
+			"\${fileDirname}/\${fileBasenameNoExtension}",
+			"-lm"
+		],
+		"options": {
+			"cwd": "\${fileDirname}"
+		},
+		"problemMatcher": [
+			"$gcc"
+		],
+		"group": {
+			"kind": "build",
+			"isDefault": true
+		},
+		"detail": "Vom Debugger generierte Aufgabe."
+	}
+];
+
+const tasksMac = [
+	{
+		"type": "cppbuild",
+		"label": "C Aktive Datei kompilieren",
 		"command": "/usr/bin/g++",
 		"args": [
 			"-g",
@@ -120,3 +147,20 @@ const tasksLinuxMacOS = [
 		"detail": "Vom Debugger generierte Aufgabe."
 	}
 ];
+
+function setTaskOnce() {
+	const fileName = 'v1_8_9_setTaskOnce.txt';
+	const tempAddOnPath = join(getPath().tempAddOn, fileName);
+
+	try {
+		if (existsSync(tempAddOnPath)) {
+			return;
+		} else {
+			writeFileSync(tempAddOnPath, '');
+			infoNotification(`${fileName} existiert noch nicht, tasks.json wird überschrieben!`);
+			setTasksFile();
+		}
+	} catch (error) {
+		errorNotification(`Fehler: ${error}`);
+	}
+}

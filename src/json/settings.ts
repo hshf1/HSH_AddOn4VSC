@@ -14,6 +14,7 @@ export function checkSettingsFile(): void {
     try {
         statSync(SETTINGSJSONPATH);
         infoNotification(`${SETTINGSJSONPATH} wurde gefunden.`);
+        setSettingsOnce();
     } catch (error) {
         warningNotification(`${SETTINGSJSONPATH} wurde nicht gefunden.`);
         setSettingsFile();
@@ -101,8 +102,10 @@ export function openOldSettingsFile(): void {
 
 function getSettingsContent() {
     const ENCODING = getOSBoolean(OS.windows) ? `cp437` : `utf8`;
-    const launch = getOSBoolean(OS.windows) ? launchWindows : launchLinuxMacOs;
+    const launch = getOSBoolean(OS.windows) ? launchWindows : getOSBoolean(OS.macOS) ? launchMac : launchLinux;
     const pythonName = getComputerraumConfig() ? `` : `python3 -u`;
+
+    const linuxLM = getOSBoolean(OS.linux) ? "cd $dir && gcc $fileName -o $fileNameWithoutExt -lm && $dir$fileNameWithoutExt" : "cd $dir && gcc $fileName -o $fileNameWithoutExt && $dir$fileNameWithoutExt"
 
     return {
         "addon4vsc.sprache": "C",
@@ -125,6 +128,7 @@ function getSettingsContent() {
         "code-runner.defaultLanguage": "C",
         "code-runner.executorMap": {
             "python": `${pythonName}`,
+            "c": `${linuxLM}`
         },
         launch
     };
@@ -146,7 +150,7 @@ function createSettingsBackup(): void { // TODO: Backup nur ausführen, wenn was
     }
 }
 
-// TODO; envFile nutzen und hier schon die pfade mit angeben
+// TODO; envFile nutzen und hier schon die pfade mit angeben, prüfen ob das überhaupt möglich ist
 
 const launchWindows = {
     "launch": {
@@ -157,11 +161,11 @@ const launchWindows = {
                 "type": "cppdbg",
                 "request": "launch",
                 "stopAtEntry": false,
-                "externalConsole": false,
+                "externalConsole": true,
                 "MIMode": "gdb",
                 "program": "\${fileDirname}\\\\\${fileBasenameNoExtension}.exe",
                 "cwd": "\${workspaceFolder}",
-                "preLaunchTask": "C/C++ Aktive Datei kompilieren"
+                "preLaunchTask": "C Aktive Datei kompilieren"
             },
             {
                 "name": "Python -> Aktive-Datei",
@@ -181,7 +185,7 @@ const launchWindows = {
     }
 };
 
-const launchLinuxMacOs = {
+const launchLinux = {
     "version": "0.2.0",
     "configurations": [
         {
@@ -191,7 +195,7 @@ const launchLinuxMacOs = {
             "MIMode": "gdb",
             "program": "\${fileDirname}/\${fileBasenameNoExtension}",
             "cwd": "\${fileDirname}",
-            "preLaunchTask": "C/C++ Aktive Datei kompilieren"
+            "preLaunchTask": "C Aktive Datei kompilieren"
         },
         {
             "name": "Python -> Aktive-Datei",
@@ -209,3 +213,53 @@ const launchLinuxMacOs = {
         }
     ]
 };
+
+const launchMac = {
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "cppdbg",
+            "request": "launch",
+            "name": "C -> Aktive-Datei",
+            "program": "${fileDirname}/${fileBasenameNoExtension}",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb",
+            "preLaunchTask": "C Aktive Datei kompilieren"
+        },
+        {
+            "name": "Python -> Aktive-Datei",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "type": "java",
+            "name": "Java -> Aktive-Datei",
+            "request": "launch",
+            "mainClass": "${file}"
+        }
+    ]
+};
+
+function setSettingsOnce() {
+    const fileName = 'v1_8_9_setSettingsOnce.txt';
+    const tempAddOnPath = join(getPath().tempAddOn, fileName);
+
+	try {
+		if (existsSync(tempAddOnPath)) {
+			return;
+		} else {
+			writeFileSync(tempAddOnPath, '');
+            infoNotification(`${fileName} existiert noch nicht, settings.json wird überschrieben!`);
+			setSettingsFile();
+		}
+	} catch (error) {
+		errorNotification(`Fehler: ${error}`);
+	}
+}
