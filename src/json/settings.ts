@@ -133,7 +133,8 @@ function getSettingsContent() {
     };
 }
 
-function createSettingsBackup(): void { // TODO: Backup nur ausführen, wenn was geändert wird in der JSON
+function createSettingsBackup(): void {
+    // TODO: Backup nur ausführen, wenn was geändert wird in der JSON
     const SETTINGSPATH: string = join(getPath().vscUserData, 'settings.json');
     const OLDSETTINGSPATH: string = join(getPath().tempAddOn, 'old_settings.json');
 
@@ -149,7 +150,7 @@ function createSettingsBackup(): void { // TODO: Backup nur ausführen, wenn was
     }
 }
 
-// TODO; envFile nutzen und hier schon die pfade mit angeben, prüfen ob das überhaupt möglich ist
+// TODO: envFile nutzen und hier schon die pfade mit angeben, prüfen ob das überhaupt möglich ist
 
 const launchWindows = {
     "version": "0.2.0",
@@ -255,7 +256,7 @@ const launchMac = {
     ]
 };
 
-function setSettingsOnce() {
+function setSettingsOnce(): void {
     const fileName = 'v2_0_0_setSettingsOnce.txt';
     const tempAddOnPath = join(getPath().tempAddOn, fileName);
 

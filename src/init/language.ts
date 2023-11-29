@@ -19,7 +19,7 @@ export function getProgLanguageString(): string {
     return language;
 }
 
-export function setProgLanguageConfig(tmp: string) {
+export function setProgLanguageConfig(tmp: string): void {
     try {
         workspace.getConfiguration('addon4vsc').update('sprache', tmp, ConfigurationTarget.Global);
     } catch (error: any) {
@@ -31,7 +31,7 @@ export function getProgLanguageBoolean(tmp: ProgLang): boolean {
     return language === tmp;
 }
 
-export async function setLanguage() {
+export async function setLanguage(): Promise<void> {
     const PROGLANGUAGE = getProgLanguageString();
 
     const newLanguage = await window.showQuickPick([ProgLang.c, ProgLang.java, ProgLang.python, 'Abbrechen'], {

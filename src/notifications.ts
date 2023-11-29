@@ -2,7 +2,7 @@ import { ProgressLocation, window } from "vscode";
 
 import { writeLog } from "./logfile";
 
-export function infoNotification(msg: string, showUser?: boolean, modal?: boolean) {
+export function infoNotification(msg: string, showUser?: boolean, modal?: boolean): void {
     writeLog(`${msg}`, 'INFO');
 
     if (showUser) {
@@ -10,7 +10,7 @@ export function infoNotification(msg: string, showUser?: boolean, modal?: boolea
     }
 }
 
-export function errorNotification(msg: string, showUser?: boolean, modal?: boolean) {
+export function errorNotification(msg: string, showUser?: boolean, modal?: boolean): void {
     writeLog(`${msg}`, 'ERROR');
 
     if (showUser) {
@@ -18,7 +18,7 @@ export function errorNotification(msg: string, showUser?: boolean, modal?: boole
     }
 }
 
-export function warningNotification(msg: string, showUser?: boolean, modal?: boolean) {
+export function warningNotification(msg: string, showUser?: boolean, modal?: boolean): void {
     writeLog(`${msg}`, 'WARNING');
 
     if (showUser) {
@@ -26,7 +26,7 @@ export function warningNotification(msg: string, showUser?: boolean, modal?: boo
     }
 }
 
-export function withProgressNotification(title: string, cancellableValue: boolean, callback: () => void) {
+export function withProgressNotification(title: string, cancellableValue: boolean, callback: () => void): void {
     window.withProgress({
         location: ProgressLocation.Notification,
         title: `${title}`,

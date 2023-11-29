@@ -104,7 +104,7 @@ export function getPath(): Paths {
     return paths;
 }
 
-export async function checkPaths() {
+export async function checkPaths(): Promise<void> {
     if (getOSBoolean(OS.windows)) {
         await initExtensionsDir();
         await deleteOldPath('C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin');
@@ -122,7 +122,7 @@ export async function checkPaths() {
     }
 }
 
-export async function addNewPath(tmp: string) {
+export async function addNewPath(tmp: string): Promise<void> {
     const pathToAdd: string = tmp;
     let pathVar = await getUserEnvironmentPath();
     const pathDirs = pathVar.split(';');
@@ -142,7 +142,7 @@ export async function addNewPath(tmp: string) {
     }
 }
 
-export async function deleteOldPath(tmp: string) {
+export async function deleteOldPath(tmp: string): Promise<void> {
     const pathToRemove: string = tmp;
     let pathVar = await getUserEnvironmentPath();
     const pathDirs = pathVar.split(';');

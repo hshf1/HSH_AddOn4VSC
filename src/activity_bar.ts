@@ -1,4 +1,7 @@
-import { window, Command, TreeDataProvider, TreeViewOptions, TreeItemCollapsibleState, EventEmitter, Event, TreeItem } from 'vscode';
+import { 
+    window, Command, TreeDataProvider, TreeViewOptions, TreeItemCollapsibleState,
+    EventEmitter, Event, TreeItem
+} from 'vscode';
 
 import { getConstCommands } from './constants';
 import { getComputerraumConfig } from './init/init';

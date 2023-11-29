@@ -176,7 +176,7 @@ const constregistercommands = [
     }
 ];
 
-export function initCommands(context: ExtensionContext) {
+export function initCommands(context: ExtensionContext): void {
     constregistercommands.forEach(command => {
         context.subscriptions.push(commands.registerCommand(command.name, command.callback));
     });

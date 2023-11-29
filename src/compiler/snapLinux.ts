@@ -21,7 +21,7 @@ export function checkSnap(): void {
     }
 }
 
-function moveFile() {
+function moveFile(): void {
     try {
         execSync(`sudo mv /etc/apt/preferences.d/nosnap.pref ~/Documents/nosnap.backup`);
     } catch (error) {
@@ -29,7 +29,7 @@ function moveFile() {
     }
 }
 
-function updateAPT() {
+function updateAPT(): void {
     try {
         execSync(`sudo apt update`);
     } catch (error) {
@@ -37,7 +37,7 @@ function updateAPT() {
     }
 }
 
-function installSnap() {
+function installSnap(): void {
     try {
         execSync(`sudo apt install snapd`);
         infoNotification(`snapd Installation erfolgreich!`);

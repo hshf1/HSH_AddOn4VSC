@@ -77,7 +77,7 @@ function uninstallMingW(): void {
     }
 }
 
-function installCCompilerMacOS() {
+function installCCompilerMacOS(): void {
     const settingsInit = getSettingsInit();
 
     try {
@@ -117,7 +117,7 @@ function installCCompilerLinux(): void {
     }
 }
 
-function uninstallCCompilerLinux() {
+function uninstallCCompilerLinux(): void {
     try {
         execSync(`gcc --version`);
         execSync(`sudo apt remove gcc`);

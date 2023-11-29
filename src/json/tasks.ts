@@ -170,7 +170,7 @@ const tasksMac = [
 	}
 ];
 
-function setTaskOnce() {
+function setTaskOnce(): void {
 	const fileName = 'v2_0_0_setTaskOnce.txt';
 	const tempAddOnPath = join(getPath().tempAddOn, fileName);
 

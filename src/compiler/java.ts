@@ -1,11 +1,11 @@
 import { execSync } from "child_process";
 import { existsSync } from "fs";
+import { error } from "console";
 
 import { errorNotification, infoNotification, withProgressNotification } from "../notifications";
 import { getOSString } from "../init/os";
 import { OS } from "../init/enum";
 import { installChoco } from "./chocolatey";
-import { error } from "console";
 import { getSettingsInit } from "../init/init";
 import { checkSnap } from "./snapLinux";
 

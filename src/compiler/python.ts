@@ -6,7 +6,7 @@ import { OS } from "../init/enum";
 import { installChoco } from "./chocolatey";
 import { getSettingsInit } from "../init/init";
 
-export function installPython() {
+export function installPython(): void {
     let callback: (() => void) | undefined = undefined;
 
     switch (getOSString()) {
@@ -29,7 +29,7 @@ export function installPython() {
     }
 }
 
-export function uninstallPython() {
+export function uninstallPython(): void {
     let callback: (() => void) | undefined = undefined;
 
     switch (getOSString()) {

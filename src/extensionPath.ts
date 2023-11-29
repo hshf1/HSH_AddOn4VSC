@@ -10,7 +10,7 @@ import { errorNotification, infoNotification } from "./notifications";
 
 let initExtensionsDirRunning = false;
 
-export async function initExtensionsDir() {
+export async function initExtensionsDir(): Promise<void> {
     if (!initExtensionsDirRunning) {
         initExtensionsDirRunning = true;
         const USERHOME = getPath().userHome;
@@ -49,7 +49,7 @@ export function getUserExtensionDir(): Promise<string> {
     });
 }
 
-function copyExtensions(sourcePath: string, destPath: string) {
+function copyExtensions(sourcePath: string, destPath: string): void {
     window.withProgress({
         location: ProgressLocation.Notification,
         title: 'Kopiere Extensions...',

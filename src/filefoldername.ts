@@ -9,7 +9,7 @@ import { warningNotification } from './notifications';
 
 let firstInit: boolean = false;
 
-export async function checkName() {
+export async function checkName(): Promise<void> {
     const filePath: string = window.activeTextEditor?.document.uri.fsPath || "no_file_defined";
 
     const constdirname = dirname(filePath).toLowerCase();
@@ -33,7 +33,7 @@ export async function checkName() {
     }
 }
 
-async function rename(currentPath: string) {
+async function rename(currentPath: string): Promise<void> {
     const invalidChars = /[äöü ÄÖÜ.]/g;
     let renameanfrage = await window.showWarningMessage(
         writeLog(`Es sind Fehler im Dateinamen vorhanden!`, 'WARNING') + 'Sollen diese automatisch angepasst werden?',
@@ -66,7 +66,7 @@ async function rename(currentPath: string) {
     }
 }
 
-async function saveRename(currentPath: string, newfullname: any) {
+async function saveRename(currentPath: string, newfullname: any): Promise<void> {
     if (existsSync(newfullname)) {
         let parsedPath = parse(newfullname);
         let newName = join(parsedPath.dir, `${parsedPath.name}_1${parsedPath.ext}`);
@@ -76,7 +76,7 @@ async function saveRename(currentPath: string, newfullname: any) {
     }
 }
 
-export async function switchDirectory() {
+export async function switchDirectory(): Promise<void> {
     const activeEditor = window.activeTextEditor;
     if (activeEditor) {
         const currentFilePath = activeEditor.document.uri.fsPath;

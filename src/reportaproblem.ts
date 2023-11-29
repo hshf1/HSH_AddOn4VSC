@@ -29,7 +29,7 @@ interface UserReport {
     }[]
 }
 
-export function reportAProblem() {
+export function reportAProblem(): void {
     let userReport: UserReport = {
         mail: "", problem: "", codeAttachPermission: "", terminalContentPath: "",
         screenshot: { permission: "", filePath: "" }, attachments: []
@@ -64,7 +64,7 @@ export function reportAProblem() {
     });
 }
 
-async function userReportInput(userReport: UserReport) {
+async function userReportInput(userReport: UserReport): Promise<void> {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     userReport.mail = await window.showInputBox({
@@ -111,7 +111,7 @@ async function userReportInput(userReport: UserReport) {
     }) || 'Nein';
 }
 
-async function getScreenshot(userReport: UserReport) {
+async function getScreenshot(userReport: UserReport): Promise<void> {
     try {
         userReport.screenshot.filePath = join(tmpdir(), `screenshot_${Date.now()}.png`);
         // TODO: ggf. Möglichkeit bieten, ganzen Bildschirm oder nur VSC Window zu screenshotten?
@@ -129,13 +129,13 @@ async function getScreenshot(userReport: UserReport) {
         writeLog(`Fehler beim erstellen eines Screenshots für Problemreport: ${error}`, 'ERROR');
     }
 }
-async function getUserEnvironment() {
+async function getUserEnvironment(): Promise<void> {
     let userEnvironment = await getUserEnvironmentPath();
     userEnvironment.replace(';', '\n');
     writeFileSync(join(getPath().vscUserData, 'userEnvironmentPaths.txt'), userEnvironment, { flag: 'w'});
 }
 
-async function getAttachments(userReport: UserReport) {
+async function getAttachments(userReport: UserReport): Promise<void> {
     userReport.attachments.push({ filename: getLogFileName(), path: getLogFilePath() });
     userReport.attachments.push({ filename: 'terminalcontent.txt', path: userReport.terminalContentPath });
     userReport.attachments.push({ filename: 'settings.json', path: join(getPath().vscUserData, 'settings.json') });
@@ -158,7 +158,7 @@ async function getAttachments(userReport: UserReport) {
     }
 }
 
-async function sendReport(userReport: UserReport) {
+async function sendReport(userReport: UserReport): Promise<void> {
     const sendPermission = await window.showQuickPick(['Ja', 'Nein'], {
         canPickMany: false,
         placeHolder: 'Soll die Meldung des Problems nun abgeschickt werden?',
@@ -194,7 +194,7 @@ async function sendReport(userReport: UserReport) {
     }
 }
 
-async function getTerminalContent(userReport: UserReport) {
+async function getTerminalContent(userReport: UserReport): Promise<void> {
     try {
         userReport.terminalContentPath = join(tmpdir(), `logs_${Date.now()}.txt`);
         const terminalContents = await captureAllTerminalContents();
@@ -209,6 +209,7 @@ async function getTerminalContent(userReport: UserReport) {
         writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR');
     }
 }
+
 async function captureAllTerminalContents(): Promise<Map<string, string>> {
     const terminalMap = new Map<string, string>();
     const terminals = window.terminals;
@@ -222,6 +223,7 @@ async function captureAllTerminalContents(): Promise<Map<string, string>> {
 
     return terminalMap;
 }
+
 function setString(tmp: string, num: number): string {
     let str = '';
 
@@ -237,6 +239,7 @@ function setString(tmp: string, num: number): string {
     }
     return str;
 }
+
 async function copyToClipboard(terminal: Terminal): Promise<string> {
     await commands.executeCommand('workbench.action.terminal.focusNext');
     await commands.executeCommand('workbench.action.terminal.selectAll');

@@ -66,7 +66,7 @@ export function initWinLocation(): void {
     }
 }
 
-export function setComputerraumConfig(tmp: boolean) {
+export function setComputerraumConfig(tmp: boolean): void {
     const oldConfig = getComputerraumConfig();
     settings.computerraum = tmp;
     if (oldConfig !== tmp) {
@@ -76,15 +76,15 @@ export function setComputerraumConfig(tmp: boolean) {
     }
 }
 
-export function getComputerraumConfig() {
+export function getComputerraumConfig(): boolean {
     return settings.computerraum;
 }
 
-export function getSettingsInit() {
+export function getSettingsInit(): boolean {
     return settings.init;
 }
 
-export function restartVSC() {
+export function restartVSC(): void {
     window.showWarningMessage(`VSCode wird jetzt beendet, bitte VSCode manuell neu starten!`, { modal: true }, 'OK')
         .then(() => {
             exec('taskkill /im code.exe /f', (error, stdout, stderr) => {
@@ -95,7 +95,7 @@ export function restartVSC() {
         });
 }
 
-export function initCompiler() {
+export function initCompiler(): void {
     switch (getProgLanguageString()) {
         case ProgLang.c:
             installC();
@@ -111,7 +111,7 @@ export function initCompiler() {
     }
 }
 
-function checkMissingExtension() {
+function checkMissingExtension(): void {
     if (!extensions.getExtension('formulahendry.code-runner')) {
         writeLog(`formulahendry.code-runner wird nachinstalliert`, 'INFO');
         commands.executeCommand('workbench.extensions.installExtension', 'formulahendry.code-runner');
