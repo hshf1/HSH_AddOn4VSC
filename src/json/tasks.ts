@@ -13,7 +13,7 @@ export function checkTasksFile(): void {
 	try {
 		statSync(TASKSJSON);
 		infoNotification(`${TASKSJSON} wurde gefunden.`);
-		setTaskOnce();
+		//setTaskOnce();
 	} catch (error) {
 		warningNotification(`${TASKSJSON} wurde nicht gefunden.`);
 		setTasksFile();
@@ -76,7 +76,7 @@ const tasksWindows = [
 	{
 		"type": "cppbuild",
 		"label": "C Aktive Datei kompilieren",
-		"command": "g++.exe",
+		"command": "gcc.exe",
 		"args": [
 			"-g",
 			"\${file}",
@@ -94,6 +94,28 @@ const tasksWindows = [
 			"isDefault": true
 		},
 		"detail": "Compiler: gcc.exe"
+	},
+	{
+		"type": "cppbuild",
+		"label": "C++ Aktive Datei kompilieren",
+		"command": "g++.exe",
+		"args": [
+			"-g",
+			"\${file}",
+			"-o",
+			"\${fileDirname}\\\\\${fileBasenameNoExtension}.exe"
+		],
+		"options": {
+			"cwd": "\${workspaceFolder}"
+		},
+		"problemMatcher": [
+			"$gcc"
+		],
+		"group": {
+			"kind": "build",
+			"isDefault": true
+		},
+		"detail": "Compiler: g++.exe"
 	}
 ];
 
@@ -149,7 +171,7 @@ const tasksMac = [
 ];
 
 function setTaskOnce() {
-	const fileName = 'v1_8_9_setTaskOnce.txt';
+	const fileName = 'v2_0_0_setTaskOnce.txt';
 	const tempAddOnPath = join(getPath().tempAddOn, fileName);
 
 	try {

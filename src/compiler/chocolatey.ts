@@ -14,8 +14,8 @@ export function installChoco(): void {
         infoNotification(`Chocolatey ist bereits installiert!`);
     } catch (error) {
         try {
-            // TODO: Automatisches Schließen mit EXIT /B testen
             execSync(`powershell -NoProfile -ExecutionPolicy Bypass -Command \"((new-object net.webclient).DownloadFile('https://community.chocolatey.org/install.ps1','%temp%\\installChoco.ps1'))\"\n`);
+            // TODO: Automatisches Schließen mit EXIT /B testen
             execSync(`powershell -Command "Start-Process cmd -Wait -Verb runAs -ArgumentList '/k powershell -NoProfile -ExecutionPolicy Bypass -File \"%temp%\\installChoco.ps1\"'"`);
             execSync(`del "%temp%\\installChoco.ps1"`);
             infoNotification(`Installation von chocolatey durchgeführt!`, true, true);

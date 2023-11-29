@@ -6,7 +6,6 @@ import { getPath } from "../init/paths";
 import { getOSBoolean } from "../init/os";
 import { OS } from "../init/enum";
 import { errorNotification, infoNotification, warningNotification } from "../notifications";
-import { getComputerraumConfig } from "../init/init";
 
 export function checkSettingsFile(): void {
     const SETTINGSJSONPATH = join(getPath().vscUserData, 'settings.json');
@@ -14,7 +13,7 @@ export function checkSettingsFile(): void {
     try {
         statSync(SETTINGSJSONPATH);
         infoNotification(`${SETTINGSJSONPATH} wurde gefunden.`);
-        setSettingsOnce();
+        //setSettingsOnce();
     } catch (error) {
         warningNotification(`${SETTINGSJSONPATH} wurde nicht gefunden.`);
         setSettingsFile();
@@ -103,7 +102,7 @@ export function openOldSettingsFile(): void {
 function getSettingsContent() {
     const ENCODING = getOSBoolean(OS.windows) ? `cp437` : `utf8`;
     const launch = getOSBoolean(OS.windows) ? launchWindows : getOSBoolean(OS.macOS) ? launchMac : launchLinux;
-    const pythonName = getComputerraumConfig() ? `` : `python3 -u`;
+    const pythonName = getOSBoolean(OS.windows) ? `python -u` : `python3 -u`;
 
     const linuxLM = getOSBoolean(OS.linux) ? "cd $dir && gcc $fileName -o $fileNameWithoutExt -lm && $dir$fileNameWithoutExt" : "cd $dir && gcc $fileName -o $fileNameWithoutExt && $dir$fileNameWithoutExt"
 
@@ -153,36 +152,45 @@ function createSettingsBackup(): void { // TODO: Backup nur ausführen, wenn was
 // TODO; envFile nutzen und hier schon die pfade mit angeben, prüfen ob das überhaupt möglich ist
 
 const launchWindows = {
-    "launch": {
-        "version": "0.2.0",
-        "configurations": [
-            {
-                "name": "C -> Aktive-Datei",
-                "type": "cppdbg",
-                "request": "launch",
-                "stopAtEntry": false,
-                "externalConsole": true,
-                "MIMode": "gdb",
-                "program": "\${fileDirname}\\\\\${fileBasenameNoExtension}.exe",
-                "cwd": "\${workspaceFolder}",
-                "preLaunchTask": "C Aktive Datei kompilieren"
-            },
-            {
-                "name": "Python -> Aktive-Datei",
-                "type": "python",
-                "request": "launch",
-                "program": "${file}",
-                "console": "integratedTerminal",
-                "justMyCode": true
-            },
-            {
-                "type": "java",
-                "name": "Java -> Aktive-Datei",
-                "request": "launch",
-                "mainClass": "${file}"
-            }
-        ]
-    }
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "C -> Aktive-Datei debuggen",
+            "type": "cppdbg",
+            "request": "launch",
+            "stopAtEntry": false,
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "program": "\${fileDirname}\\\\\${fileBasenameNoExtension}.exe",
+            "cwd": "\${workspaceFolder}",
+            "preLaunchTask": "C Aktive Datei kompilieren"
+        },
+        {
+            "name": "C++ -> Aktive-Datei debuggen",
+            "type": "cppdbg",
+            "request": "launch",
+            "stopAtEntry": false,
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "program": "\${fileDirname}\\\\\${fileBasenameNoExtension}.exe",
+            "cwd": "\${workspaceFolder}",
+            "preLaunchTask": "C++ Aktive Datei kompilieren"
+        },
+        {
+            "name": "Python -> Aktive-Datei debuggen",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Java -> Aktive-Datei debuggen",
+            "type": "java",
+            "request": "launch",
+            "mainClass": "${file}"
+        }
+    ]
 };
 
 const launchLinux = {
@@ -248,7 +256,7 @@ const launchMac = {
 };
 
 function setSettingsOnce() {
-    const fileName = 'v1_8_9_setSettingsOnce.txt';
+    const fileName = 'v2_0_0_setSettingsOnce.txt';
     const tempAddOnPath = join(getPath().tempAddOn, fileName);
 
 	try {
@@ -256,7 +264,7 @@ function setSettingsOnce() {
 			return;
 		} else {
 			writeFileSync(tempAddOnPath, '');
-            infoNotification(`${fileName} existiert noch nicht, settings.json wird überschrieben!`);
+            infoNotification(`${fileName}: Fehlende und neue Einstellungen werden gesetzt!`);
 			setSettingsFile();
 		}
 	} catch (error) {

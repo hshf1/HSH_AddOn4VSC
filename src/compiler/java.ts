@@ -65,7 +65,7 @@ function installJavaWindows(): void {
             errorNotification(`Java-Compiler Deinstallation wurde nicht erfolgreich durchgeführt`);
         }
     } else {
-        infoNotification(`Python-Compiler ist bereits installiert!`, settingsInit, settingsInit);
+        infoNotification(`Java-Compiler ist bereits installiert!`, settingsInit, settingsInit);
     }
 }
 

@@ -55,14 +55,20 @@ function installPythonWindows(): void {
     const settingsInit = getSettingsInit();
 
     try {
-        execSync(`python3 --version`);
+        execSync(`python --version`);
         infoNotification(`Python-Compiler ist bereits installiert!`, settingsInit, settingsInit);
-    } catch (error) {
+    }
+    catch (error) {
         try {
-            execSync(`powershell -Command "Start-Process cmd -Wait -Verb runAs -ArgumentList '/k choco install python3 -y -f && EXIT /B'"`);
-            infoNotification(`Python-Compiler Installation wurde erfolgreich durchgeführt`, true, true);
+            execSync(`python3 --version`);
+            infoNotification(`Python-Compiler ist bereits installiert!`, settingsInit, settingsInit);
         } catch (error) {
-            errorNotification(`Python-Compiler Installation wurde nicht erfolgreich durchgeführt`, true, true);
+            try {
+                execSync(`powershell -Command "Start-Process cmd -Wait -Verb runAs -ArgumentList '/k choco install python3 -y -f && EXIT /B'"`);
+                infoNotification(`Python-Compiler Installation wurde erfolgreich durchgeführt`, true, true);
+            } catch (error) {
+                errorNotification(`Python-Compiler Installation wurde nicht erfolgreich durchgeführt`, true, true);
+            }
         }
     }
 }
