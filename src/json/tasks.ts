@@ -123,6 +123,29 @@ const tasksLinux = [
 	{
 		"type": "cppbuild",
 		"label": "C Aktive Datei kompilieren",
+		"command": "/usr/bin/gcc",
+		"args": [
+			"-g",
+			"\${file}",
+			"-o",
+			"\${fileDirname}/\${fileBasenameNoExtension}",
+			"-lm"
+		],
+		"options": {
+			"cwd": "\${fileDirname}"
+		},
+		"problemMatcher": [
+			"$gcc"
+		],
+		"group": {
+			"kind": "build",
+			"isDefault": true
+		},
+		"detail": "Vom Debugger generierte Aufgabe."
+	},
+	{
+		"type": "cppbuild",
+		"label": "C++ Aktive Datei kompilieren",
 		"command": "/usr/bin/g++",
 		"args": [
 			"-g",
@@ -149,6 +172,28 @@ const tasksMac = [
 	{
 		"type": "cppbuild",
 		"label": "C Aktive Datei kompilieren",
+		"command": "/usr/bin/gcc",
+		"args": [
+			"-g",
+			"\${file}",
+			"-o",
+			"\${fileDirname}/\${fileBasenameNoExtension}"
+		],
+		"options": {
+			"cwd": "\${fileDirname}"
+		},
+		"problemMatcher": [
+			"$gcc"
+		],
+		"group": {
+			"kind": "build",
+			"isDefault": true
+		},
+		"detail": "Vom Debugger generierte Aufgabe."
+	},
+	{
+		"type": "cppbuild",
+		"label": "C++ Aktive Datei kompilieren",
 		"command": "/usr/bin/g++",
 		"args": [
 			"-g",

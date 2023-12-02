@@ -207,6 +207,15 @@ const launchLinux = {
             "preLaunchTask": "C Aktive Datei kompilieren"
         },
         {
+            "name": "C++ -> Aktive-Datei debuggen",
+            "type": "lldb",
+            "request": "launch",
+            "MIMode": "gdb",
+            "program": "\${fileDirname}/\${fileBasenameNoExtension}",
+            "cwd": "\${fileDirname}",
+            "preLaunchTask": "C++ Aktive Datei kompilieren"
+        },
+        {
             "name": "Python -> Aktive-Datei",
             "type": "python",
             "request": "launch",
@@ -235,9 +244,22 @@ const launchMac = {
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],
-            "externalConsole": false,
+            "externalConsole": true,
             "MIMode": "lldb",
             "preLaunchTask": "C Aktive Datei kompilieren"
+        },
+        {
+            "type": "cppdbg",
+            "request": "launch",
+            "name": "C++ -> Aktive-Datei debuggen",
+            "program": "${fileDirname}/${fileBasenameNoExtension}",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": true,
+            "MIMode": "lldb",
+            "preLaunchTask": "C++ Aktive Datei kompilieren"
         },
         {
             "name": "Python -> Aktive-Datei",
