@@ -1,6 +1,6 @@
 import { debug, workspace } from "vscode";
 
-import { checkName } from "./filefoldername";
+import { checkName } from "./FileFolderName";
 
 export function eventHandlerCheckName(): void {  
     checkName();

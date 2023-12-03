@@ -2,11 +2,11 @@ import { homedir } from 'os';
 import { join } from 'path';
 import { exec } from 'child_process';
 
-import { getComputerraumConfig, restartVSC } from './init';
+import { getComputerraumConfig, restartVSC } from './Init';
 import { writeLog } from '../LogFile';
-import { getOSBoolean, getOSString } from './os';
+import { getOSBoolean, getOSString } from './OS';
 import { initExtensionsDir } from '../extensionPath';
-import { OS } from './init';
+import { OS } from './Init';
 import { file, folder } from '../CreateFileFolder';
 import { getCTestProg, getJavaTestProg, getPythonTestProg } from '../Constants';
 

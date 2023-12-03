@@ -4,10 +4,10 @@ import {
 } from 'vscode';
 
 import { getConstCommands } from './Constants';
-import { getComputerraumConfig } from './init/init';
-import { getOSBoolean } from './init/os';
-import { OS } from './init/init';
-import { infoNotification } from './notifications';
+import { getComputerraumConfig } from './init/Init';
+import { getOSBoolean } from './init/OS';
+import { OS } from './init/Init';
+import { infoNotification } from './Notifications';
 
 let dependenciesMain: Dependency[] = [];
 let dependenciesSettings: Dependency[] = [];

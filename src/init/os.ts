@@ -1,6 +1,6 @@
-import { OS } from "./init";
+import { OS } from "./Init";
 import { writeLog } from "../LogFile";
-import { initWinLocation } from "./init";
+import { initWinLocation } from "./Init";
 
 let os = { windows: false, osx: false, linux: false, string: '' };
 

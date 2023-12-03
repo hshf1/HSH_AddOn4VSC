@@ -2,10 +2,10 @@ import { copyFileSync, existsSync, statSync, unlinkSync, writeFileSync } from 'f
 import { join } from 'path';
 import { window, workspace } from 'vscode';
 
-import { getPath } from '../init/paths';
-import { getOSBoolean } from '../init/os';
-import { OS } from '../init/init';
-import { errorNotification, infoNotification, warningNotification } from '../notifications';
+import { getPath } from '../init/Paths';
+import { getOSBoolean } from '../init/OS';
+import { OS } from '../init/Init';
+import { errorNotification, infoNotification, warningNotification } from '../Notifications';
 
 export function checkTasksFile(): void {
 	const TASKSJSON = join(getPath().vscUserData, 'tasks.json');

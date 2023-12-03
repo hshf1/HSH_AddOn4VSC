@@ -1,10 +1,10 @@
 import { execSync } from "child_process";
 
-import { errorNotification, infoNotification, withProgressNotification } from "../notifications";
-import { getOSString } from "../init/os";
-import { OS } from "../init/init";
+import { errorNotification, infoNotification, withProgressNotification } from "../Notifications";
+import { getOSString } from "../init/OS";
+import { OS } from "../init/Init";
 import { installChoco } from "./chocolatey";
-import { getSettingsInit } from "../init/init";
+import { getSettingsInit } from "../init/Init";
 
 export function installC(): void {
     let callback: (() => void) | undefined = undefined;

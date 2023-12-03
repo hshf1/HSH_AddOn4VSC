@@ -2,10 +2,10 @@ import { copyFileSync, existsSync, readFileSync, statSync, unlinkSync, writeFile
 import { join } from "path";
 import { window, workspace } from "vscode";
 
-import { getPath } from "../init/paths";
-import { getOSBoolean } from "../init/os";
-import { OS } from "../init/init";
-import { errorNotification, infoNotification, warningNotification } from "../notifications";
+import { getPath } from "../init/Paths";
+import { getOSBoolean } from "../init/OS";
+import { OS } from "../init/Init";
+import { errorNotification, infoNotification, warningNotification } from "../Notifications";
 
 export function checkSettingsFile(): void {
     const SETTINGSJSONPATH = join(getPath().vscUserData, 'settings.json');

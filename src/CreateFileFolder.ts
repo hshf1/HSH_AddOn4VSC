@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, writeFileSync } from "fs";
 
-import { errorNotification, infoNotification } from "./notifications";
+import { errorNotification, infoNotification } from "./Notifications";
 
 export function folder(path: string) {
     try {

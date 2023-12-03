@@ -2,10 +2,10 @@ import { Uri, workspace, window, commands } from 'vscode';
 import { extname, dirname, basename, join, parse } from 'path';
 import { existsSync } from 'fs';
 
-import { getOSBoolean } from './init/os';
+import { getOSBoolean } from './init/OS';
 import { writeLog } from './LogFile';
-import { OS } from './init/init';
-import { warningNotification } from './notifications';
+import { OS } from './init/Init';
+import { warningNotification } from './Notifications';
 
 let firstInit: boolean = false;
 
