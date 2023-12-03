@@ -89,12 +89,12 @@ const constregistercommands = [
             reportAProblem();
         }
     },
-    {
-        name: getConstCommands()[8].command,
-        callback: () => {
-            //
-        }
-    },
+    // {
+    //     name: getConstCommands()[8].command,
+    //     callback: () => {
+    //         //
+    //     }
+    // },
     {
         name: getConstCommands()[9].command,
         callback: () => {

@@ -10,9 +10,13 @@ import { infoNotification } from './Notifications';
 
 export function activate(context: ExtensionContext): void {
 	infoNotification(`HSH_AddOn4VSC gestartet!`);
-	initExtension();
-	initEvents();
-	initCommands(context);
+	try {
+		initExtension();
+		initEvents();
+		initCommands(context);
+	} catch (error) {
+		console.log("ERRORORROR: ", error)
+	}
 }
 
 export function deactivate(): void {
