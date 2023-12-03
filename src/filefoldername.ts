@@ -3,8 +3,8 @@ import { extname, dirname, basename, join, parse } from 'path';
 import { existsSync } from 'fs';
 
 import { getOSBoolean } from './init/os';
-import { writeLog } from './logfile';
-import { OS } from './init/enum';
+import { writeLog } from './LogFile';
+import { OS } from './init/init';
 import { warningNotification } from './notifications';
 
 let firstInit: boolean = false;

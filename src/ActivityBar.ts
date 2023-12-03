@@ -3,10 +3,10 @@ import {
     EventEmitter, Event, TreeItem
 } from 'vscode';
 
-import { getConstCommands } from './constants';
+import { getConstCommands } from './Constants';
 import { getComputerraumConfig } from './init/init';
 import { getOSBoolean } from './init/os';
-import { OS } from './init/enum';
+import { OS } from './init/init';
 import { infoNotification } from './notifications';
 
 let dependenciesMain: Dependency[] = [];
@@ -65,8 +65,6 @@ class DepNodeProvider implements TreeDataProvider<Dependency> {
             return [...dependenciesSettingsjson];
         } else if (dependency.label === 'tasks.json') {
             return [...dependenciesTasksjson];
-        } else if (dependency.label === 'Programmiersprache ändern') {
-            return [...dependenciesProgramLanguages];
         } else if (dependency.label === 'Compiler') {
             return [...dependenciesCompiler];
         } else if (dependency.label === 'Chocolatey (Zur installation von Compilern)') {
@@ -100,7 +98,6 @@ async function aktualisieren(): Promise<void> {
     dependenciesMain = [
         new Dependency('GitHub: VSCode (HsH-Repository)', TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: ['https://github.com/hshf1/VSCode'] }),
         new Dependency('GitHub: Vorlesung C (HsH-Repository)', TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: ['https://github.com/hshf1/VorlesungC'] }),
-        new Dependency('Programmiersprache ändern', TreeItemCollapsibleState.None, getConstCommands()[8]),
         new Dependency('In Verzeichnis der geöffneten Datei wechseln', TreeItemCollapsibleState.None, getConstCommands()[9]),
         ...(!getComputerraumConfig()
             ? [new Dependency('Compiler', TreeItemCollapsibleState.Collapsed)]

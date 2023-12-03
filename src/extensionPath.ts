@@ -5,7 +5,7 @@ import { copy, ensureDir } from "fs-extra";
 
 import { getPath } from "./init/paths";
 import { getComputerraumConfig, restartVSC } from "./init/init";
-import { writeLog } from "./logfile";
+import { writeLog } from "./LogFile";
 import { errorNotification, infoNotification } from "./notifications";
 
 let initExtensionsDirRunning = false;

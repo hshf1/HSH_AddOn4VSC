@@ -4,7 +4,7 @@ import { window, workspace } from "vscode";
 
 import { getPath } from "../init/paths";
 import { getOSBoolean } from "../init/os";
-import { OS } from "../init/enum";
+import { OS } from "../init/init";
 import { errorNotification, infoNotification, warningNotification } from "../notifications";
 
 export function checkSettingsFile(): void {

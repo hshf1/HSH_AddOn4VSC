@@ -1,14 +1,14 @@
 import { homedir } from 'os';
-import { existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import { exec } from 'child_process';
 
 import { getComputerraumConfig, restartVSC } from './init';
-import { writeLog } from '../logfile';
+import { writeLog } from '../LogFile';
 import { getOSBoolean, getOSString } from './os';
 import { initExtensionsDir } from '../extensionPath';
-import { OS } from './enum';
-import { getProgLanguageString, initLanguage } from './language';
+import { OS } from './init';
+import { file, folder } from '../CreateFileFolder';
+import { getCTestProg, getJavaTestProg, getPythonTestProg } from '../Constants';
 
 let paths: Paths;
 let reloadNeeded: boolean = false;
@@ -16,12 +16,10 @@ let reloadNeeded: boolean = false;
 export class Paths {
     private readonly userHomeRO: string;
     private readonly osRO: string;
-    private readonly langRO: string;
     private readonly hshRO: boolean;
 
     constructor() {
         this.osRO = getOSString();
-        this.langRO = getProgLanguageString();
         this.userHomeRO = homedir();
         this.hshRO = getComputerraumConfig();
     }
@@ -36,6 +34,10 @@ export class Paths {
         } else {
             return join(this.userHomeRO, 'Documents');
         }
+    }
+
+    get hshMainUserFolder(): string {
+        return join(this.userWorkParentFolder, 'HsH_Uebung');
     }
 
     get vscUserData(): string {
@@ -55,30 +57,28 @@ export class Paths {
         return join(this.vscUserData, 'HSH_AddOn4VSC');
     }
 
-    get uebungsFolder(): string {
-        switch (this.langRO) {
-            case 'C':
-                return join(this.userWorkParentFolder, 'C_Uebung');
-            case 'Java':
-                return join(this.userWorkParentFolder, 'Java_Uebung');
-            case 'Python':
-                return join(this.userWorkParentFolder, 'Python_Uebung');
-            default:
-                return ``;
-        }
+    get cUebungsFolder(): string {
+        return join(this.hshMainUserFolder, 'C_Uebung');
+    }
+    
+    get javaUebungsFolder(): string {
+        return join(this.hshMainUserFolder, 'Java_Uebung');
+    }
+    
+    get pythonUebungsFolder(): string {
+        return join(this.hshMainUserFolder, 'Python_Uebung');
     }
 
-    get testProgFile(): string {
-        switch (this.langRO) {
-            case 'C':
-                return join(this.uebungsFolder, 'testprog.c');
-            case 'Java':
-                return join(this.uebungsFolder, 'HelloWorld.java');
-            case 'Python':
-                return join(this.uebungsFolder, 'HelloWorld.py');
-            default:
-                return ``;
-        }
+    get cTestProgFile(): string {
+        return join(this.cUebungsFolder, 'testprog.c');
+    }
+
+    get javaTestProgFile(): string {
+        return join(this.javaUebungsFolder, 'HelloWorld.java');
+    }
+
+    get pythonTestProgFile(): string {
+        return join(this.pythonUebungsFolder, 'HelloWorld.py');
     }
 
     get reportAProblemString(): string {
@@ -87,17 +87,17 @@ export class Paths {
 }
 
 export function initPath(): void {
-    initLanguage();
     paths = new Paths();
-    if (!existsSync(paths.tempAddOn)) {
-        try {
-            mkdirSync(paths.tempAddOn);
-            writeLog(`HsH_AddOn4VSC Temp-Ordner wurde erstellt`, 'INFO');
-        } catch (error: any) {
-            writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR');
-        }
-    }
 
+    folder(paths.tempAddOn);
+    folder(paths.hshMainUserFolder);
+    folder(paths.cUebungsFolder);
+    folder(paths.javaUebungsFolder);
+    folder(paths.pythonUebungsFolder);
+
+    file(paths.cTestProgFile, getCTestProg());
+    file(paths.javaTestProgFile, getJavaTestProg());
+    file(paths.pythonTestProgFile, getPythonTestProg());
 }
 
 export function getPath(): Paths {

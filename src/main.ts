@@ -2,7 +2,7 @@ import { ExtensionContext } from 'vscode';
 
 import { initExtension } from './init/init';
 import { initEvents } from './eventHandler';
-import { initCommands } from './commands';
+import { initCommands } from './Commands';
 import { infoNotification } from './notifications';
 
 // TODO: https://code.visualstudio.com/docs/cpp/config-mingw hier sind vielleicht bessere wege, um die Erweiterung zu verbessern

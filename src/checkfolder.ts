@@ -1,9 +1,29 @@
-import { Uri, OpenDialogOptions, commands, window } from 'vscode';
-import { existsSync, mkdirSync, writeFileSync } from 'fs';
+import { Uri, OpenDialogOptions, commands, window, workspace } from 'vscode';
+import { existsSync } from 'fs';
 
 import { getPath } from './init/paths';
-import { getTestProg } from './constants';
-import { writeLog } from './logfile';
+import { writeLog } from './LogFile';
+import { dirname } from 'path';
+import { errorNotification } from './notifications';
+
+let varInitFolder = false;
+
+export function initFolder() {
+	const openWorkspace = workspace.workspaceFolders?.toString() || '';
+	const openFile = window.activeTextEditor?.document.uri;
+
+	console.log(openWorkspace, '&', openFile);
+
+	if (!(openWorkspace)) {
+		if ((openFile)) {
+			openFileFolder(openFile);
+		} else {
+			openPreFolder();
+		}
+	}
+
+	varInitFolder = true;
+}
 
 function openFolder(): void {
 	const options: OpenDialogOptions = {
@@ -21,30 +41,23 @@ function openFolder(): void {
 	});
 }
 
-export function openPreFolder(): void {
-	const uebungsFolder = getPath().uebungsFolder;
-	const testProg = getPath().testProgFile;
+function openPreFolder(): void {
+	const uebungsFolder = getPath().hshMainUserFolder;
 	const folderUri = Uri.file(uebungsFolder);
-
-	if (!existsSync(uebungsFolder)) {
-		try {
-			mkdirSync(uebungsFolder);
-		} catch (error: any) {
-			writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR');
-		}
-	}
-
-	if (!existsSync(testProg)) {
-		try {
-			writeFileSync(testProg, getTestProg());
-		} catch (error: any) {
-			writeLog(`[${error.stack?.split('\n')[2]?.trim()}] ${error}`, 'ERROR');
-		}
-	}
 
 	if (existsSync(uebungsFolder)) {
 		commands.executeCommand(`vscode.openFolder`, folderUri);
 	} else {
 		openFolder();
+	}
+}
+
+function openFileFolder(openFile: Uri): void {
+	const dirFileFolder = Uri.file(dirname(openFile.path));
+
+	try {
+		commands.executeCommand(`vscode.openFolder`, dirFileFolder);
+	} catch (error) {
+		errorNotification(`Fehler bei Funktion openFileFolder: ${error}`);
 	}
 }

@@ -1,5 +1,5 @@
-import { OS } from "./enum";
-import { writeLog } from "../logfile";
+import { OS } from "./init";
+import { writeLog } from "../LogFile";
 import { initWinLocation } from "./init";
 
 let os = { windows: false, osx: false, linux: false, string: '' };

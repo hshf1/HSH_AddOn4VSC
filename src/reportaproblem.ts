@@ -6,10 +6,10 @@ import { writeFileSync } from "fs";
 import { tmpdir } from "os";
 import { createTransport } from "nodemailer";
 
-import { getLogFileName, getLogFilePath, writeLog } from "./logfile";
+import { getLogFileName, getLogFilePath, writeLog } from "./LogFile";
 import { getPath, getUserEnvironmentPath } from './init/paths';
 import { getOSBoolean } from "./init/os";
-import { OS } from "./init/enum";
+import { OS } from "./init/init";
 import { infoNotification } from "./notifications";
 
 const execAsync = promisify(exec);

@@ -2,7 +2,7 @@ import { execSync } from "child_process";
 
 import { errorNotification, infoNotification, withProgressNotification } from "../notifications";
 import { getOSString } from "../init/os";
-import { OS } from "../init/enum";
+import { OS } from "../init/init";
 import { installChoco } from "./chocolatey";
 import { getSettingsInit } from "../init/init";
 

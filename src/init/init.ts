@@ -1,24 +1,28 @@
-import { extensions, commands, window, workspace, ProgressLocation } from 'vscode';
+import { extensions, commands, window, ProgressLocation } from 'vscode';
 import { exec, execSync } from 'child_process';
 import { existsSync } from 'fs';
 
-import { initActivityBar } from '../activity_bar';
-import { openPreFolder } from '../checkfolder';
-import { initLogFile, writeLog } from '../logfile';
+import { initActivityBar } from '../ActivityBar';
+import { initFolder } from '../CheckFolder';
+import { initLogFile, writeLog } from '../LogFile';
 import { checkPaths, initPath } from './paths';
 import { getOSBoolean, setOS } from './os';
 import { checkSettingsFile } from '../json/settings';
 import { checkTasksFile } from '../json/tasks';
 import { initExtensionsDir } from '../extensionPath';
-import { OS, ProgLang } from './enum';
-import { getProgLanguageBoolean, getProgLanguageString, initLanguage } from './language';
 import { installC } from '../compiler/c';
 import { installJava } from '../compiler/java';
 import { installPython } from '../compiler/python';
 
 let settings = {
-    computerraum: false, progLanguage: ProgLang.c, init: false, reloadNeeded: false
+    computerraum: false, init: false, reloadNeeded: false
 };
+
+export enum OS {
+    windows = 'Windows',
+    macOS = 'MacOS',
+    linux = 'Linux'
+}
 
 export function initExtension(): void {
     window.withProgress({
@@ -28,20 +32,15 @@ export function initExtension(): void {
     }, async () => {
         writeLog(`Initialisierung beginnt!`, 'INFO');
         setOS();
-        initLanguage();
         initPath();
-        if (!(workspace.workspaceFolders?.toString)) {
-            openPreFolder();
-        }
+        initFolder();
         initLogFile();
         checkMissingExtension();
+        compiler();
         initActivityBar();
         checkSettingsFile();
         checkTasksFile();
         checkPaths();
-        if (!getComputerraumConfig()) {
-            initCompiler();
-        }
     }).then(() => {
         settings.init = true;
         writeLog(`Initialisierung beendet!`, 'INFO');
@@ -72,7 +71,6 @@ export function setComputerraumConfig(tmp: boolean): void {
     if (oldConfig !== tmp) {
         initPath();
         initExtensionsDir();
-        initCompiler();
     }
 }
 
@@ -93,22 +91,6 @@ export function restartVSC(): void {
                 }
             });
         });
-}
-
-export function initCompiler(): void {
-    switch (getProgLanguageString()) {
-        case ProgLang.c:
-            installC();
-            break;
-        case ProgLang.java:
-            installJava();
-            break;
-        case ProgLang.python:
-            installPython();
-            break;
-        default:
-            return;
-    }
 }
 
 function checkMissingExtension(): void {
@@ -132,13 +114,19 @@ function checkMissingExtension(): void {
         commands.executeCommand('workbench.extensions.installExtension', 'vadimcn.vscode-lldb');
     }
 
-    if (getProgLanguageBoolean(ProgLang.java) && !extensions.getExtension('vscjava.vscode-java-pack')) {
+    if (!extensions.getExtension('vscjava.vscode-java-pack')) {
         writeLog(`vscjava.vscode-java-pack wird nachinstalliert`, 'INFO');
         commands.executeCommand('workbench.extensions.installExtension', 'vscjava.vscode-java-pack');
     }
 
-    if (getProgLanguageBoolean(ProgLang.python) && !extensions.getExtension('ms-python.python')) {
+    if (!extensions.getExtension('ms-python.python')) {
         writeLog(`ms-python.python wird nachinstalliert`, 'INFO');
         commands.executeCommand('workbench.extensions.installExtension', 'ms-python.python');
     }
+}
+
+function compiler() {
+    installC();
+    installJava();
+    installPython();
 }

@@ -1,7 +1,5 @@
 import { Command } from "vscode";
 
-import { getProgLanguageString } from "./init/language";
-
 export function getConstCommands(): Command[] {
     return [
         { command: 'extension.on', title: "Erweiterung wieder aktivieren" }, // 0
@@ -12,7 +10,7 @@ export function getConstCommands(): Command[] {
         { command: 'install.compiler', title: 'C Compiler prüfen / installieren' }, // 5
         { command: 'setRZHsH.setting', title: 'HsH Rechenzentrum' },
         { command: 'report.problem', title: 'Problem melden' },
-        { command: 'switch.language', title: 'C' },
+        { command: '', title: '' }, // Derzeit frei
         { command: 'switch.folder', title: 'In das Verzeichnis der aktuell geöffneten Datei wechseln' },
         { command: 'settingsjson.open', title: 'Aktuelle settings.json öffnen' }, // 10
         { command: 'oldsettingsjson.open', title: 'Alte settings.json öffnen' },
@@ -29,11 +27,8 @@ export function getConstCommands(): Command[] {
     ];
 }
 
-export function getTestProg() {
-    const PROGLANGUAGE = getProgLanguageString();
-
-    if (PROGLANGUAGE === 'C') {
-        return `#include <stdio.h>
+export function getCTestProg() {
+    return `#include <stdio.h>
 
 int main()
 {
@@ -51,8 +46,10 @@ int main()
     y = 12 + 4 % 3 * 7 / 8;
     return 0;
 }`;
-    } else if (PROGLANGUAGE === 'Java') {
-        return `public class HelloWorld {
+}
+
+export function getJavaTestProg() {
+    return `public class HelloWorld {
     public static void main(String[] args) {
 
         System.out.println("Java said, Hello, World!");
@@ -67,8 +64,10 @@ int main()
 
     }
 }`;
-    } else if (PROGLANGUAGE === 'Python') {
-        return `print("Python said, Hello World!")
+}
+
+export function getPythonTestProg() {
+    return `print("Python said, Hello World!")
 i = 1
 print(i)
 i += 1
@@ -77,7 +76,4 @@ i += 1
 print(i)
 i += 1
 print(i)`;
-    } else {
-        return '';
-    }
 }

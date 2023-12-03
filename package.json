@@ -21,22 +21,7 @@
   ],
   "main": "./out/main.js",
   "contributes": {
-    "configuration": {
-      "title": "HSH_AddOn4VSC",
-      "properties": {
-        "addon4vsc.sprache": {
-          "type": "string",
-          "enum": [
-            "C",
-            "Java",
-            "Python"
-          ],
-          "description": "Hier kann die Programmiersprache ausgewählt werden, die genutzt werden soll.",
-          "default": "C",
-          "scope": "application"
-        }
-      }
-    },
+    "configuration": {},
     "viewsContainers": {
       "activitybar": [
         {

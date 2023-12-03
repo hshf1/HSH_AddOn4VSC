@@ -1,6 +1,6 @@
 import { ProgressLocation, window } from "vscode";
 
-import { writeLog } from "./logfile";
+import { writeLog } from "./LogFile";
 
 export function infoNotification(msg: string, showUser?: boolean, modal?: boolean): void {
     writeLog(`${msg}`, 'INFO');

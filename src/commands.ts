@@ -1,16 +1,15 @@
 import { commands, env, ExtensionContext, Uri, window } from 'vscode';
 
-import { treeDataProvider } from './activity_bar';
-import { getConstCommands } from './constants';
+import { treeDataProvider } from './ActivityBar';
+import { getConstCommands } from './Constants';
 import { openTasksFile, setTasksFile } from './json/tasks';
 import { getComputerraumConfig, setComputerraumConfig } from './init/init';
 import { reportAProblem } from './reportaproblem';
-import { openLogFile } from './logfile';
+import { openLogFile } from './LogFile';
 import { getOSBoolean } from './init/os';
 import { switchDirectory } from './filefoldername';
 import { addMissingSettings, openOldSettingsFile, openSettingsFile, setSettingsFile } from './json/settings';
-import { setLanguage } from './init/language';
-import { OS } from './init/enum';
+import { OS } from './init/init';
 import { errorNotification } from './notifications';
 import { installChoco, removeChoco } from './compiler/chocolatey';
 import { installC, uninstallC } from './compiler/c';
@@ -92,8 +91,8 @@ const constregistercommands = [
     },
     {
         name: getConstCommands()[8].command,
-        callback: async () => {
-            await setLanguage();
+        callback: () => {
+            //
         }
     },
     {
