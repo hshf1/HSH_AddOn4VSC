@@ -1,7 +1,7 @@
 import { execSync } from "child_process";
 import { existsSync } from "fs";
 
-import { errorNotification, infoNotification, warningNotification } from "../Notifications";
+import { errorNotification, infoNotification, warningNotification } from "../functions/Notifications";
 import { getComputerraumConfig } from "../init/Init";
 
 export function installChoco(): void {

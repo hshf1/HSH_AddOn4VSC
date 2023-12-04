@@ -2,9 +2,9 @@ import { Uri, OpenDialogOptions, commands, window, workspace } from 'vscode';
 import { existsSync } from 'fs';
 
 import { getPath } from './init/Paths';
-import { writeLog } from './LogFile';
+import { writeLog } from './functions/LogFile';
 import { dirname } from 'path';
-import { errorNotification } from './Notifications';
+import { errorNotification } from './functions/Notifications';
 
 let varInitFolder = false;
 

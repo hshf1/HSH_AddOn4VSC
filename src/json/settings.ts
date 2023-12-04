@@ -5,7 +5,7 @@ import { window, workspace } from "vscode";
 import { getPath } from "../init/Paths";
 import { getOSBoolean } from "../init/OS";
 import { OS } from "../init/Init";
-import { errorNotification, infoNotification, warningNotification } from "../Notifications";
+import { errorNotification, infoNotification, warningNotification } from "../functions/Notifications";
 
 export function checkSettingsFile(): void {
     const SETTINGSJSONPATH = join(getPath().vscUserData, 'settings.json');

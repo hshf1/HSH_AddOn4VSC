@@ -3,8 +3,8 @@ import { exec } from "child_process";
 import { ProgressLocation, window } from "vscode";
 import { copy, ensureDir } from "fs-extra";
 
-import { getPath } from "./init/Paths";
-import { getComputerraumConfig, restartVSC } from "./init/Init";
+import { getPath } from "../init/Paths";
+import { getComputerraumConfig, restartVSC } from "../init/Init";
 import { writeLog } from "./LogFile";
 import { errorNotification, infoNotification } from "./Notifications";
 

@@ -3,11 +3,11 @@ import { join } from 'path';
 import { exec } from 'child_process';
 
 import { getComputerraumConfig, restartVSC } from './Init';
-import { writeLog } from '../LogFile';
+import { writeLog } from '../functions/LogFile';
 import { getOSBoolean, getOSString } from './OS';
-import { initExtensionsDir } from '../extensionPath';
+import { initExtensionsDir } from '../functions/ExtensionPath';
 import { OS } from './Init';
-import { file, folder } from '../CreateFileFolder';
+import { file, folder } from '../functions/CreateFileFolder';
 import { getCTestProg, getJavaTestProg, getPythonTestProg } from '../Constants';
 
 let paths: Paths;

@@ -3,10 +3,10 @@ import {
     EventEmitter, Event, TreeItem
 } from 'vscode';
 
-import { getConstCommands } from './Constants';
-import { getComputerraumConfig } from './init/Init';
-import { getOSBoolean } from './init/OS';
-import { OS } from './init/Init';
+import { getConstCommands } from '../Constants';
+import { getComputerraumConfig } from '../init/Init';
+import { getOSBoolean } from '../init/OS';
+import { OS } from '../init/Init';
 import { infoNotification } from './Notifications';
 
 let dependenciesMain: Dependency[] = [];

@@ -1,16 +1,16 @@
 import { commands, env, ExtensionContext, Uri, window } from 'vscode';
 
-import { treeDataProvider } from './ActivityBar';
+import { treeDataProvider } from './functions/ActivityBar';
 import { getConstCommands } from './Constants';
-import { openTasksFile, setTasksFile } from './json/tasks';
+import { openTasksFile, setTasksFile } from './json/Tasks';
 import { getComputerraumConfig, setComputerraumConfig } from './init/Init';
-import { reportAProblem } from './Report';
-import { openLogFile } from './LogFile';
+import { reportAProblem } from './functions/Report';
+import { openLogFile } from './functions/LogFile';
 import { getOSBoolean } from './init/OS';
-import { switchDirectory } from './FileFolderName';
-import { addMissingSettings, openOldSettingsFile, openSettingsFile, setSettingsFile } from './json/settings';
+import { switchDirectory } from './functions/FileFolderName';
+import { addMissingSettings, openOldSettingsFile, openSettingsFile, setSettingsFile } from './json/Settings';
 import { OS } from './init/Init';
-import { errorNotification } from './Notifications';
+import { errorNotification } from './functions/Notifications';
 import { installChoco, removeChoco } from './compiler/chocolatey';
 import { installC, uninstallC } from './compiler/c';
 import { installJava, uninstallJava } from './compiler/java';

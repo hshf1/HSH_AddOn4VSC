@@ -1,7 +1,7 @@
 import { execSync } from "child_process";
 
 import { getSettingsInit } from "../init/Init";
-import { errorNotification, infoNotification } from "../Notifications";
+import { errorNotification, infoNotification } from "../functions/Notifications";
 
 export function checkSnap(): void {
     const settingsInit = getSettingsInit();

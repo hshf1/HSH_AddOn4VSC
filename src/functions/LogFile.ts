@@ -2,7 +2,7 @@ import { appendFileSync, existsSync, readdirSync, unlinkSync, writeFileSync } fr
 import { join } from 'path';
 import { window, workspace } from 'vscode';
 
-import { getPath } from './init/Paths';
+import { getPath } from '../init/Paths';
 
 let logFileName: string = '';
 let logFilePath: string = '';

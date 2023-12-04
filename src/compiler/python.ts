@@ -1,6 +1,6 @@
 import { execSync } from "child_process";
 
-import { errorNotification, infoNotification, withProgressNotification } from "../Notifications";
+import { errorNotification, infoNotification, withProgressNotification } from "../functions/Notifications";
 import { getOSString } from "../init/OS";
 import { OS } from "../init/Init";
 import { installChoco } from "./chocolatey";
