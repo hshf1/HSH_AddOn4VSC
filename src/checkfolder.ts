@@ -12,9 +12,7 @@ export function initFolder() {
 	const openWorkspace = workspace.workspaceFolders?.toString() || '';
 	const openFile = window.activeTextEditor?.document.uri;
 
-	console.log(openWorkspace, '&', openFile);
-
-	if (!(openWorkspace)) {
+	if (!(openWorkspace) && !varInitFolder) {
 		if ((openFile)) {
 			openFileFolder(openFile);
 		} else {
