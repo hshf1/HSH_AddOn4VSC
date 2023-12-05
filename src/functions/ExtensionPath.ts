@@ -3,10 +3,11 @@ import { exec } from "child_process";
 import { ProgressLocation, window } from "vscode";
 import { copy, ensureDir } from "fs-extra";
 
-import { getPath } from "../init/Paths";
-import { getComputerraumConfig, restartVSC } from "../init/Init";
+import { getPath } from "./Paths";
 import { writeLog } from "./LogFile";
 import { errorNotification, infoNotification } from "./Notifications";
+import { restartVSC } from "./Utils";
+import { getComputerraumConfig } from "./OS";
 
 let initExtensionsDirRunning = false;
 

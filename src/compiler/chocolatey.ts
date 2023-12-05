@@ -2,10 +2,11 @@ import { execSync } from "child_process";
 import { existsSync } from "fs";
 
 import { errorNotification, infoNotification, warningNotification } from "../functions/Notifications";
-import { getComputerraumConfig } from "../init/Init";
+
+let init = false;
 
 export function installChoco(): void {
-    if (getComputerraumConfig()) {
+    if (init) {
         return;
     }
     
@@ -23,6 +24,8 @@ export function installChoco(): void {
             errorNotification(`Installation von chocolatey fehlgeschlagen!`, true, true);
         }
     }
+
+    init = true;
 }
 
 export function removeChoco(): void {

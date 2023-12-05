@@ -7,9 +7,8 @@ import { tmpdir } from "os";
 import { createTransport } from "nodemailer";
 
 import { getLogFileName, getLogFilePath, writeLog } from "./LogFile";
-import { getPath, getUserEnvironmentPath } from '../init/Paths';
-import { getOSBoolean } from "../init/OS";
-import { OS } from "../init/Init";
+import { getPath, getUserEnvironmentPath } from './Paths';
+import { OS, getOSBoolean } from "./OS";
 import { infoNotification } from "./Notifications";
 
 const execAsync = promisify(exec);

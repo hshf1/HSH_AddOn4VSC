@@ -3,16 +3,13 @@ import {
     EventEmitter, Event, TreeItem
 } from 'vscode';
 
-import { getConstCommands } from '../Constants';
-import { getComputerraumConfig } from '../init/Init';
-import { getOSBoolean } from '../init/OS';
-import { OS } from '../init/Init';
+import { getCommands } from '../constants/Commands';
+import { OS, getComputerraumConfig, getOSBoolean } from './OS';
 import { infoNotification } from './Notifications';
 
 let dependenciesMain: Dependency[] = [];
 let dependenciesSettings: Dependency[] = [];
 let dependenciesSettingsjson: Dependency[] = [];
-let dependenciesProgramLanguages: Dependency[] = [];
 let dependenciesTasksjson: Dependency[] = [];
 let dependenciesCompiler: Dependency[] = [];
 let dependenciesChocolatey: Dependency[] = [];
@@ -98,34 +95,33 @@ async function aktualisieren(): Promise<void> {
     dependenciesMain = [
         new Dependency('GitHub: VSCode (HsH-Repository)', TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: ['https://github.com/hshf1/VSCode'] }),
         new Dependency('GitHub: Vorlesung C (HsH-Repository)', TreeItemCollapsibleState.None, { command: 'open.link', title: 'Öffne Link', arguments: ['https://github.com/hshf1/VorlesungC'] }),
-        new Dependency('In Verzeichnis der geöffneten Datei wechseln', TreeItemCollapsibleState.None, getConstCommands()[9]),
+        new Dependency('In Verzeichnis der geöffneten Datei wechseln', TreeItemCollapsibleState.None, getCommands()[9]),
         ...(!getComputerraumConfig()
             ? [new Dependency('Compiler', TreeItemCollapsibleState.Collapsed)]
             : []),
         new Dependency('Einstellungen', TreeItemCollapsibleState.Collapsed),
-        new Dependency('Problem melden', TreeItemCollapsibleState.None, getConstCommands()[7])
+        new Dependency('Problem melden', TreeItemCollapsibleState.None, getCommands()[7])
     ];
 
     dependenciesSettings = [
         new Dependency('settings.json', TreeItemCollapsibleState.Collapsed),
         new Dependency('tasks.json', TreeItemCollapsibleState.Collapsed),
-        new Dependency('LogFile öffnen', TreeItemCollapsibleState.None, getConstCommands()[16]),
+        new Dependency('LogFile öffnen', TreeItemCollapsibleState.None, getCommands()[16]),
         ...(getOSBoolean(OS.windows)
-            ? [new Dependency(getComputerraumConfig() ? 'Ändern auf privaten Windows-Rechner' : 'Ändern auf HsH Windows-Rechner', TreeItemCollapsibleState.None, getConstCommands()[6])]
+            ? [new Dependency(getComputerraumConfig() ? 'Ändern auf privaten Windows-Rechner' : 'Ändern auf HsH Windows-Rechner', TreeItemCollapsibleState.None, getCommands()[6])]
             : [])
     ];
 
     dependenciesSettingsjson = [
-        new Dependency('settings.json überprüfen', TreeItemCollapsibleState.None, getConstCommands()[12]),
-        new Dependency('settings.json zurücksetzen', TreeItemCollapsibleState.None, getConstCommands()[2]),
-        new Dependency('aktuelle settings.json öffnen', TreeItemCollapsibleState.None, getConstCommands()[10]),
-        new Dependency('alte settings.json öffnen', TreeItemCollapsibleState.None, getConstCommands()[11])
+        new Dependency('settings.json überprüfen', TreeItemCollapsibleState.None, getCommands()[12]),
+        new Dependency('settings.json zurücksetzen', TreeItemCollapsibleState.None, getCommands()[2]),
+        new Dependency('aktuelle settings.json öffnen', TreeItemCollapsibleState.None, getCommands()[10]),
+        new Dependency('alte settings.json öffnen', TreeItemCollapsibleState.None, getCommands()[11])
     ];
 
     dependenciesTasksjson = [
-        // new Dependency('tasks.json überprüfen', TreeItemCollapsibleState.None, getConstCommands()[]),
-        new Dependency('tasks.json zurücksetzen', TreeItemCollapsibleState.None, getConstCommands()[3]),
-        new Dependency('aktuelle tasks.json öffnen', TreeItemCollapsibleState.None, getConstCommands()[13])
+        new Dependency('tasks.json zurücksetzen', TreeItemCollapsibleState.None, getCommands()[3]),
+        new Dependency('aktuelle tasks.json öffnen', TreeItemCollapsibleState.None, getCommands()[13])
     ];
 
     dependenciesCompiler = [
@@ -137,22 +133,22 @@ async function aktualisieren(): Promise<void> {
     ];
 
     dependenciesChocolatey = [
-        new Dependency('Chocolatey installieren', TreeItemCollapsibleState.None, getConstCommands()[17]),
-        new Dependency('Chocolatey löschen', TreeItemCollapsibleState.None, getConstCommands()[18])
+        new Dependency('Chocolatey installieren', TreeItemCollapsibleState.None, getCommands()[17]),
+        new Dependency('Chocolatey löschen', TreeItemCollapsibleState.None, getCommands()[18])
     ];
 
     dependenciesCCompiler = [
-        new Dependency('C-Compiler prüfen / installieren', TreeItemCollapsibleState.None, getConstCommands()[5]),
-        new Dependency('C-Compiler deinstallieren', TreeItemCollapsibleState.None, getConstCommands()[19])
+        new Dependency('C-Compiler prüfen / installieren', TreeItemCollapsibleState.None, getCommands()[5]),
+        new Dependency('C-Compiler deinstallieren', TreeItemCollapsibleState.None, getCommands()[19])
     ];
 
     dependenciesJavaCompiler = [
-        new Dependency('Java-Compiler prüfen / installieren', TreeItemCollapsibleState.None, getConstCommands()[14]),
-        new Dependency('Java-Compiler deinstallieren', TreeItemCollapsibleState.None, getConstCommands()[20])
+        new Dependency('Java-Compiler prüfen / installieren', TreeItemCollapsibleState.None, getCommands()[14]),
+        new Dependency('Java-Compiler deinstallieren', TreeItemCollapsibleState.None, getCommands()[20])
     ];
 
     dependenciesPythonCompiler = [
-        new Dependency('Python-Compiler prüfen / installieren', TreeItemCollapsibleState.None, getConstCommands()[15]),
-        new Dependency('Python-Compiler deinstallieren', TreeItemCollapsibleState.None, getConstCommands()[21])
+        new Dependency('Python-Compiler prüfen / installieren', TreeItemCollapsibleState.None, getCommands()[15]),
+        new Dependency('Python-Compiler deinstallieren', TreeItemCollapsibleState.None, getCommands()[21])
     ];
 }

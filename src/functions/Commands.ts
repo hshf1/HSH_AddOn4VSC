@@ -1,48 +1,48 @@
 import { commands, env, ExtensionContext, Uri, window } from 'vscode';
 
-import { treeDataProvider } from './functions/ActivityBar';
-import { getConstCommands } from './Constants';
-import { openTasksFile, setTasksFile } from './json/Tasks';
-import { getComputerraumConfig, setComputerraumConfig } from './init/Init';
-import { reportAProblem } from './functions/Report';
-import { openLogFile } from './functions/LogFile';
-import { getOSBoolean } from './init/OS';
-import { switchDirectory } from './functions/FileFolderName';
-import { addMissingSettings, openOldSettingsFile, openSettingsFile, setSettingsFile } from './json/Settings';
-import { OS } from './init/Init';
-import { errorNotification } from './functions/Notifications';
-import { installChoco, removeChoco } from './compiler/chocolatey';
-import { installC, uninstallC } from './compiler/c';
-import { installJava, uninstallJava } from './compiler/java';
-import { installPython, uninstallPython } from './compiler/python';
+import { treeDataProvider } from './ActivityBar';
+import { setTasksFile } from './Tasks';
+import { reportAProblem } from './Report';
+import { getComputerraumConfig, getOSBoolean, OS, setComputerraumConfig } from './OS';
+import { switchDirectory } from './FileFolderName';
+import { addMissingSettings, setSettingsFile } from './Settings';
+import { errorNotification } from './Notifications';
+import { installChoco, removeChoco } from '../compiler/chocolatey';
+import { installC, uninstallC } from '../compiler/c';
+import { installJava, uninstallJava } from '../compiler/java';
+import { installPython, uninstallPython } from '../compiler/python';
+import { openFile } from './Utils';
+import { getLogFilePath } from './LogFile';
+import { getPath } from './Paths';
+import { getCommands } from '../constants/Commands';
 
 const constregistercommands = [
     {
-        name: getConstCommands()[0].command,
+        name: getCommands()[0].command,
         callback: () => {
             treeDataProvider.refresh();
         }
     },
     {
-        name: getConstCommands()[1].command,
+        name: getCommands()[1].command,
         callback: () => {
             treeDataProvider.refresh();
         }
     },
     {
-        name: getConstCommands()[2].command,
+        name: getCommands()[2].command,
         callback: () => {
             setSettingsFile();
         }
     },
     {
-        name: getConstCommands()[3].command,
+        name: getCommands()[3].command,
         callback: () => {
             setTasksFile();
         }
     },
     {
-        name: getConstCommands()[4].command,
+        name: getCommands()[4].command,
         callback: (...args: any) => {
             if (args[0] === '') {
                 errorNotification(`Es wurde kein Link zum Öffnen übergeben!`, true);
@@ -53,13 +53,13 @@ const constregistercommands = [
         }
     },
     {
-        name: getConstCommands()[5].command,
+        name: getCommands()[5].command,
         callback: () => {
             installC();
         }
     },
     {
-        name: getConstCommands()[6].command,
+        name: getCommands()[6].command,
         callback: async () => {
             const COMPUTERRAUM = getComputerraumConfig();
 
@@ -84,7 +84,7 @@ const constregistercommands = [
         }
     },
     {
-        name: getConstCommands()[7].command,
+        name: getCommands()[7].command,
         callback: async () => {
             reportAProblem();
         }
@@ -96,79 +96,87 @@ const constregistercommands = [
     //     }
     // },
     {
-        name: getConstCommands()[9].command,
+        name: getCommands()[9].command,
         callback: () => {
             switchDirectory();
         }
     },
     {
-        name: getConstCommands()[10].command,
+        name: getCommands()[10].command,
         callback: () => {
-            openSettingsFile();
+            const settingsPath = getPath().settingsFile;
+
+            openFile(settingsPath);
         }
     },
     {
-        name: getConstCommands()[11].command,
+        name: getCommands()[11].command,
         callback: () => {
-            openOldSettingsFile();
+            const oldSettingsPath = getPath().oldSettingsFile;
+
+            openFile(oldSettingsPath);
         }
     },
     {
-        name: getConstCommands()[12].command,
+        name: getCommands()[12].command,
         callback: () => {
             addMissingSettings();
         }
     },
     {
-        name: getConstCommands()[13].command,
+        name: getCommands()[13].command,
         callback: () => {
-            openTasksFile();
+            const tasksPath = getPath().tasksFile;
+
+            openFile(tasksPath);
         }
     },
     {
-        name: getConstCommands()[14].command,
+        name: getCommands()[14].command,
         callback: () => {
             installJava();
         }
     },
     {
-        name: getConstCommands()[15].command,
+        name: getCommands()[15].command,
         callback: () => {
             installPython();
         }
     },
     {
-        name: getConstCommands()[16].command,
+        name: getCommands()[16].command,
         callback: () => {
-            openLogFile();
+            const logFilePath = getLogFilePath();
+
+            openFile(logFilePath);
         }
     },
     {
-        name: getConstCommands()[17].command,
+        name: getCommands()[17].command,
         callback: () => {
             installChoco();
         }
     },
     {
-        name: getConstCommands()[18].command,
+        name: getCommands()[18].command,
         callback: () => {
             removeChoco();
         }
     },
     {
-        name: getConstCommands()[19].command,
+        name: getCommands()[19].command,
         callback: () => {
             uninstallC();
         }
     },
     {
-        name: getConstCommands()[20].command,
+        name: getCommands()[20].command,
         callback: () => {
             uninstallJava();
         }
     },
     {
-        name: getConstCommands()[21].command,
+        name: getCommands()[21].command,
         callback: () => {
             uninstallPython();
         }

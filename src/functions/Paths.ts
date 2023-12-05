@@ -2,13 +2,11 @@ import { homedir } from 'os';
 import { join } from 'path';
 import { exec } from 'child_process';
 
-import { getComputerraumConfig, restartVSC } from './Init';
-import { writeLog } from '../functions/LogFile';
-import { getOSBoolean, getOSString } from './OS';
-import { initExtensionsDir } from '../functions/ExtensionPath';
-import { OS } from './Init';
-import { file, folder } from '../functions/CreateFileFolder';
-import { getCTestProg, getJavaTestProg, getPythonTestProg } from '../Constants';
+import { writeLog } from './LogFile';
+import { OS, getComputerraumConfig, getOSBoolean, getOSString } from './OS';
+import { initExtensionsDir } from './ExtensionPath';
+import { createFile, createFolder, restartVSC } from './Utils';
+import { getCTestProg, getJavaTestProg, getPythonTestProg } from '../constants/TestProgFiles';
 
 let paths: Paths;
 let reloadNeeded: boolean = false;
@@ -81,6 +79,18 @@ export class Paths {
         return join(this.pythonUebungsFolder, 'HelloWorld.py');
     }
 
+    get settingsFile(): string {
+        return join(this.vscUserData, 'settings.json');
+    }
+
+    get tasksFile(): string {
+        return join(this.vscUserData, 'tasks.json');
+    }
+
+    get oldSettingsFile(): string {
+        return join(this.tempAddOn, 'old_settings.json');
+    }
+
     get reportAProblemString(): string {
         return 'zehpziuruwsucfzf';
     }
@@ -89,15 +99,15 @@ export class Paths {
 export function initPath(): void {
     paths = new Paths();
 
-    folder(paths.tempAddOn);
-    folder(paths.hshMainUserFolder);
-    folder(paths.cUebungsFolder);
-    folder(paths.javaUebungsFolder);
-    folder(paths.pythonUebungsFolder);
+    createFolder(paths.tempAddOn);
+    createFolder(paths.hshMainUserFolder);
+    createFolder(paths.cUebungsFolder);
+    createFolder(paths.javaUebungsFolder);
+    createFolder(paths.pythonUebungsFolder);
 
-    file(paths.cTestProgFile, getCTestProg());
-    file(paths.javaTestProgFile, getJavaTestProg());
-    file(paths.pythonTestProgFile, getPythonTestProg());
+    createFile(paths.cTestProgFile, getCTestProg());
+    createFile(paths.javaTestProgFile, getJavaTestProg());
+    createFile(paths.pythonTestProgFile, getPythonTestProg());
 }
 
 export function getPath(): Paths {

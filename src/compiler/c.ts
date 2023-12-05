@@ -1,10 +1,10 @@
 import { execSync } from "child_process";
 
 import { errorNotification, infoNotification, withProgressNotification } from "../functions/Notifications";
-import { getOSString } from "../init/OS";
-import { OS } from "../init/Init";
+import { OS, getOSString } from "../functions/OS";
 import { installChoco } from "./chocolatey";
-import { getSettingsInit } from "../init/Init";
+
+let init = false;
 
 export function installC(): void {
     let callback: (() => void) | undefined = undefined;
@@ -27,6 +27,8 @@ export function installC(): void {
     if (callback !== undefined) {
         withProgressNotification(`Installiere / Überprüfe C-Compiler...`, false, callback);
     }
+
+    init = true;
 }
 
 export function uninstallC(): void {
@@ -52,11 +54,9 @@ export function uninstallC(): void {
 }
 
 function installMingW(): void {
-    const settingsInit = getSettingsInit();
-
     try {
         execSync(`gcc --version`);
-        infoNotification(`C-Compiler ist bereits installiert!`, settingsInit, settingsInit);
+        infoNotification(`C-Compiler ist bereits installiert!`, init, init);
     } catch (error) {
         try {
             execSync(`powershell -Command "Start-Process cmd -Wait -Verb runAs -ArgumentList '/k choco install mingw --version=8.1.0 -y -f && EXIT /B'"`);
@@ -78,11 +78,9 @@ function uninstallMingW(): void {
 }
 
 function installCCompilerMacOS(): void {
-    const settingsInit = getSettingsInit();
-
     try {
         execSync(`gcc --version`);
-        infoNotification(`C-Compiler ist bereits installiert!`, settingsInit, settingsInit);
+        infoNotification(`C-Compiler ist bereits installiert!`, init, init);
     } catch (error) {
         try {
             execSync(`command xcode-select --install`);

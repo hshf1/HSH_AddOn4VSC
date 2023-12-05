@@ -1,10 +1,10 @@
 import { execSync } from "child_process";
 
 import { errorNotification, infoNotification, withProgressNotification } from "../functions/Notifications";
-import { getOSString } from "../init/OS";
-import { OS } from "../init/Init";
+import { OS, getOSString } from "../functions/OS";
 import { installChoco } from "./chocolatey";
-import { getSettingsInit } from "../init/Init";
+
+let init = false;
 
 export function installPython(): void {
     let callback: (() => void) | undefined = undefined;
@@ -27,6 +27,8 @@ export function installPython(): void {
     if (callback !== undefined) {
         withProgressNotification(`Installiere / Überprüfe Python-Compiler...`, false, callback);
     }
+
+    init = true;
 }
 
 export function uninstallPython(): void {
@@ -52,16 +54,14 @@ export function uninstallPython(): void {
 }
 
 function installPythonWindows(): void {
-    const settingsInit = getSettingsInit();
-
     try {
         execSync(`python --version`);
-        infoNotification(`Python-Compiler ist bereits installiert!`, settingsInit, settingsInit);
+        infoNotification(`Python-Compiler ist bereits installiert!`, init, init);
     }
     catch (error) {
         try {
             execSync(`python3 --version`);
-            infoNotification(`Python-Compiler ist bereits installiert!`, settingsInit, settingsInit);
+            infoNotification(`Python-Compiler ist bereits installiert!`, init, init);
         } catch (error) {
             try {
                 execSync(`powershell -Command "Start-Process cmd -Wait -Verb runAs -ArgumentList '/k choco install python3 -y -f && EXIT /B'"`);
@@ -84,11 +84,9 @@ function uninstallPythonWindows(): void {
 }
 
 function installPythonMacOS(): void {
-    const settingsInit = getSettingsInit();
-
     try {
         execSync(`python3 --version`);
-        infoNotification(`Python-Compiler ist bereits installiert!`, settingsInit, settingsInit);
+        infoNotification(`Python-Compiler ist bereits installiert!`, init, init);
     } catch (error) {
         try {
             execSync(`brew install python3`);
@@ -110,11 +108,9 @@ function uninstallPythonMacOS(): void {
 }
 
 function installPythonLinux(): void {
-    const settingsInit = getSettingsInit();
-
     try {
         execSync(`python3 --version`);
-        infoNotification(`Python-Compiler bereits installiert!`, settingsInit, settingsInit);
+        infoNotification(`Python-Compiler bereits installiert!`, init, init);
     } catch (error) {
         try {
             execSync(`sudo apt install python3 -y`);

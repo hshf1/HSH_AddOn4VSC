@@ -1,8 +1,7 @@
 import { appendFileSync, existsSync, readdirSync, unlinkSync, writeFileSync } from 'fs';
 import { join } from 'path';
-import { window, workspace } from 'vscode';
 
-import { getPath } from '../init/Paths';
+import { getPath } from './Paths';
 
 let logFileName: string = '';
 let logFilePath: string = '';
@@ -29,18 +28,6 @@ export function getLogFilePath(): string {
     return logFilePath;
 }
 
-/** Zu verwendende Level
- * 
- * - INFO
- * - WARNING
- * - ERROR
- * 
- * Beispiele:
- * 
- * `writeLog('AddOn wurde erfolgreich gestartet!', 'INFO')`
- * 
- * `writeLog('Folgende Meldung wurde ausgegeben: '+${error}, 'ERROR')`
- */
 export function writeLog(msg: string, lvl: string): void {
     logBuffer.push(`[${currentDateString} ${new Date(Date.now()).toLocaleTimeString('de-DE')}][${lvl}] - ${msg}\n`);
 
@@ -79,16 +66,5 @@ function deleteLog(): void {
         }
     } catch (error) {
         writeLog(`Fehler beim Löschen der Log-Dateien: ${error}`, 'ERROR');
-    }
-}
-
-export function openLogFile(): void {
-    if (existsSync(logFilePath)) {
-        workspace.openTextDocument(logFilePath)
-            .then((document) => {
-                window.showTextDocument(document);
-            });
-    } else {
-        window.showErrorMessage('Kein aktuelles LogFile gefunden!');
     }
 }

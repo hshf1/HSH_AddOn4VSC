@@ -3,11 +3,11 @@ import { existsSync } from "fs";
 import { error } from "console";
 
 import { errorNotification, infoNotification, withProgressNotification } from "../functions/Notifications";
-import { getOSString } from "../init/OS";
-import { OS } from "../init/Init";
+import { OS, getOSString } from "../functions/OS";
 import { installChoco } from "./chocolatey";
-import { getSettingsInit } from "../init/Init";
 import { checkSnap } from "./snapLinux";
+
+let init = false;
 
 export function installJava(): void {
     let callback: (() => void) | undefined = undefined;
@@ -30,6 +30,8 @@ export function installJava(): void {
     if (callback !== undefined) {
         withProgressNotification(`Installiere / Überprüfe Java-Compiler...`, false, callback);
     }
+
+    init = true;
 }
 
 export function uninstallJava(): void {
@@ -55,8 +57,6 @@ export function uninstallJava(): void {
 }
 
 function installJavaWindows(): void {
-    const settingsInit = getSettingsInit();
-
     if (!existsSync("C:\\Program Files\\OpenJDK\\jdk-20.0.1\\bin")) {
         try {
             execSync(`powershell -Command "Start-Process cmd -Wait -Verb runAs -ArgumentList '/k choco install openjdk --version=20.0.1 -y -f && EXIT /B'"`);
@@ -65,7 +65,7 @@ function installJavaWindows(): void {
             errorNotification(`Java-Compiler Deinstallation wurde nicht erfolgreich durchgeführt`);
         }
     } else {
-        infoNotification(`Java-Compiler ist bereits installiert!`, settingsInit, settingsInit);
+        infoNotification(`Java-Compiler ist bereits installiert!`, init, init);
     }
 }
 
@@ -81,11 +81,9 @@ function uninstallJavaWindows(): void {
 }
 
 function installJavaMacOS(): void {
-    const settingsInit = getSettingsInit();
-
     try {
         if(existsSync(`/usr/local/Cellar/openjdk`)) {
-            infoNotification(`Java-Compiler bereits installiert!`, settingsInit, settingsInit);
+            infoNotification(`Java-Compiler bereits installiert!`, init, init);
         } else {
             throw error(`OpenJDK nicht vorhanden`);
         }
@@ -113,11 +111,9 @@ function uninstallJavaMacOS(): void {
 }
 
 function installJavaLinux(): void {
-    const settingsInit = getSettingsInit();
-
     try {
         execSync(`openjdk`);
-        infoNotification(`Java-Compiler bereits installiert!`, settingsInit, settingsInit);
+        infoNotification(`Java-Compiler bereits installiert!`, init, init);
     } catch (error) {
         try {
             checkSnap();

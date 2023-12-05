@@ -1,14 +1,13 @@
 import { execSync } from "child_process";
 
-import { getSettingsInit } from "../init/Init";
 import { errorNotification, infoNotification } from "../functions/Notifications";
 
-export function checkSnap(): void {
-    const settingsInit = getSettingsInit();
+let init = false;
 
+export function checkSnap(): void {
     try {
         execSync(`snap`);
-        infoNotification(`snap bereits installiert!`, settingsInit, settingsInit);
+        infoNotification(`snap bereits installiert!`, init, init);
     } catch (error) {
         try {
             moveFile();
@@ -19,6 +18,8 @@ export function checkSnap(): void {
             errorNotification(`Snap nicht erfolgreich installiert!`);
         }
     }
+
+    init = true;
 }
 
 function moveFile(): void {
