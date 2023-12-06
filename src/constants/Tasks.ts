@@ -1,7 +1,7 @@
 export const tasksWindows = [
 	{
 		"type": "cppbuild",
-		"label": "C Aktive Datei kompilieren",
+		"label": "C_Aktive_Datei_kompilieren",
 		"command": "gcc.exe",
 		"args": [
 			"-g",
@@ -23,7 +23,7 @@ export const tasksWindows = [
 	},
 	{
 		"type": "cppbuild",
-		"label": "C++ Aktive Datei kompilieren",
+		"label": "C++_Aktive_Datei_kompilieren",
 		"command": "g++.exe",
 		"args": [
 			"-g",
@@ -48,7 +48,7 @@ export const tasksWindows = [
 export const tasksLinux = [
 	{
 		"type": "cppbuild",
-		"label": "C Aktive Datei kompilieren",
+		"label": "C_Aktive_Datei_kompilieren",
 		"command": "/usr/bin/gcc",
 		"args": [
 			"-g",
@@ -71,7 +71,7 @@ export const tasksLinux = [
 	},
 	{
 		"type": "cppbuild",
-		"label": "C++ Aktive Datei kompilieren",
+		"label": "C++_Aktive_Datei_kompilieren",
 		"command": "/usr/bin/g++",
 		"args": [
 			"-g",
@@ -97,7 +97,7 @@ export const tasksLinux = [
 export const tasksMac = [
 	{
 		"type": "cppbuild",
-		"label": "C Aktive Datei kompilieren",
+		"label": "C_Aktive_Datei_kompilieren",
 		"command": "/usr/bin/gcc",
 		"args": [
 			"-g",
@@ -119,7 +119,7 @@ export const tasksMac = [
 	},
 	{
 		"type": "cppbuild",
-		"label": "C++ Aktive Datei kompilieren",
+		"label": "C++_Aktive_Datei_kompilieren",
 		"command": "/usr/bin/g++",
 		"args": [
 			"-g",
