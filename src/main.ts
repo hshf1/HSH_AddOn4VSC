@@ -31,8 +31,9 @@ export function activate(context: ExtensionContext): void {
         infoNotification(`Initialisierung beginnt!`);
         setOS();
         initPath();
-        initFolder();
         initLogFile();
+        initFolder();
+        initActivityBar();
 		installExtension('formulahendry.code-runner');
 		installExtension('ms-vsliveshare.vsliveshare');
 		installExtension('ms-vscode.cpptools');
@@ -44,7 +45,6 @@ export function activate(context: ExtensionContext): void {
 		installC();
         installJava();
         installPython();
-        initActivityBar();
         checkSettingsFile();
         checkTasksFile();
         checkPaths();
