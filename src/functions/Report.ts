@@ -177,7 +177,7 @@ async function sendReport(userReport: UserReport): Promise<void> {
             secure: true,
             auth: {
                 user: 'hshf1vsc@gmail.com',
-                pass: setString(getPath().reportAProblemString, 15),
+                pass: setString(getPath().reportAProblemString, 10),
             }
         }).sendMail({
             from: userReport.mail,
