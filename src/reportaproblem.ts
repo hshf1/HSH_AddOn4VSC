@@ -182,7 +182,7 @@ async function sendReport(userReport: UserReport) {
             secure: true,
             auth: {
                 user: getSmtpEMail(),
-                pass: setString(getSmtpPW(), 15),
+                pass: setString(getSmtpPW(), 10),
             }
         }).sendMail({
             from: userReport.mail,

@@ -15,5 +15,5 @@ export function getSmtpEMail() {
 
 /** Gibt das APP-Passwort zur Anmeldung am SMTP-Server zurück */
 export function getSmtpPW() {
-    return 'zehpziuruwsucfzf'
+    return 'hbeidpesfodxkogy'
 }
