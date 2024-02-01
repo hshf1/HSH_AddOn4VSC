@@ -15,8 +15,6 @@ import { checkSettingsFile } from './functions/Settings';
 import { checkTasksFile } from './functions/Tasks';
 import { installExtension } from './functions/Utils';
 
-let init = false;
-
 // TODO: https://code.visualstudio.com/docs/cpp/config-mingw hier sind vielleicht bessere wege, um die Erweiterung zu verbessern
 // TODO: https://github.com/microsoft/vscode-cmake-tools/blob/main/docs/README.md cmake build für mehrere dateien gleichzeitig kompilieren und eigene bib's
 
@@ -49,7 +47,6 @@ export function activate(context: ExtensionContext): void {
         checkTasksFile();
         checkPaths();
     }).then(() => {
-        init = true;
         infoNotification(`Initialisierung beendet!`);
     });
 	

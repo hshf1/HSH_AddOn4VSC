@@ -26,18 +26,6 @@ export class Paths {
         return this.userHomeRO;
     }
 
-    get userWorkParentFolder(): string {
-        if (this.hshRO) {
-            return `U:`;
-        } else {
-            return join(this.userHomeRO, 'Documents');
-        }
-    }
-
-    get hshMainUserFolder(): string {
-        return join(this.userWorkParentFolder, 'HsH_Uebung');
-    }
-
     get vscUserData(): string {
         switch (this.osRO) {
             case 'Windows':
@@ -53,6 +41,18 @@ export class Paths {
 
     get tempAddOn(): string {
         return join(this.vscUserData, 'HSH_AddOn4VSC');
+    }
+
+    get userWorkParentFolder(): string {
+        if (this.hshRO) {
+            return `${this.userHome}\\AppData\\Roaming\\Code\\User\\${this.tempAddOn}`;
+        } else {
+            return join(this.userHomeRO, 'Documents');
+        }
+    }
+
+    get hshMainUserFolder(): string {
+        return join(this.userWorkParentFolder, 'HsH_Uebung');
     }
 
     get cUebungsFolder(): string {

@@ -57,7 +57,7 @@ function initWinLocation(): void {
 
         infoNotification(`Username: ${username}`);
 
-        if (username.startsWith('fh-h/') || username.startsWith('fh-h\\') || existsSync(`U:\\Systemordner`)) {
+        if (username.startsWith('fh-h/') || username.startsWith('fh-h\\')) {
             computerraum = true;
         }
 
