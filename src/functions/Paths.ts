@@ -45,7 +45,7 @@ export class Paths {
 
     get userWorkParentFolder(): string {
         if (this.hshRO) {
-            return join(this.vscUserData, this.tempAddOn);
+            return this.tempAddOn;
         } else {
             return join(this.userHomeRO, 'Documents');
         }
