@@ -1,11 +1,12 @@
 import { appendFileSync, existsSync, readdirSync, unlinkSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
-import { getPath } from './init/paths';
+import { getPath } from './Paths';
 
 let logFileName: string = '';
 let logFilePath: string = '';
 let logBuffer: string[] = [];
+
 const currentDateString = new Date(Date.now()).toLocaleDateString('de-DE', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/(\d+)\.(\d+)\.(\d+)/, '$3-$2-$1');
 
 export function initLogFile(): void {
@@ -27,19 +28,7 @@ export function getLogFilePath(): string {
     return logFilePath;
 }
 
-/** Zu verwendende Level
- * 
- * - INFO
- * - WARNING
- * - ERROR
- * 
- * Beispiele:
- * 
- * `writeLog('AddOn wurde erfolgreich gestartet!', 'INFO')`
- * 
- * `writeLog('Folgende Meldung wurde ausgegeben: '+${error}, 'ERROR')`
- */
-export function writeLog(msg: string, lvl: string): string {
+export function writeLog(msg: string, lvl: string): void {
     logBuffer.push(`[${currentDateString} ${new Date(Date.now()).toLocaleTimeString('de-DE')}][${lvl}] - ${msg}\n`);
 
     if (logFilePath !== '' && logBuffer.length > 0) {
@@ -54,8 +43,6 @@ export function writeLog(msg: string, lvl: string): string {
             }
         }
     }
-
-    return msg;
 }
 
 function deleteLog(): void {

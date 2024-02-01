@@ -9,37 +9,19 @@
     "type": "git",
     "url": "https://github.com/hshf1/HSH_AddOn4VSC"
   },
-  "version": "1.8.10",
+  "version": "2.0.0",
   "engines": {
-    "vscode": "^1.50.0"
+    "vscode": "^1.75.0"
   },
   "categories": [
     "Other"
   ],
   "activationEvents": [
-    "onCommand:default.settingsjson",
-    "onCommand:default.tasksjson",
-    "onCommand:extension.on",
-    "onCommand:extension.off",
-    "onCommand:open.link",
-    "onCommand:report.problem",
-    "onCommand:switch.language",
     "onStartupFinished"
   ],
   "main": "./out/main.js",
   "contributes": {
-    "configuration": {
-      "title": "HSH_AddOn4VSC",
-      "properties": {
-        "addon4vsc.sprache": {
-          "type": "string",
-          "enum": ["C", "Java", "Python"],
-          "description": "Hier kann die Programmiersprache ausgewählt werden, die genutzt werden soll.",
-          "default": "C",
-          "scope": "application"
-        }
-      }
-    },
+    "configuration": {},
     "viewsContainers": {
       "activitybar": [
         {
@@ -58,40 +40,7 @@
         }
       ]
     },
-    "commands": [
-      {
-        "command": "open.link",
-        "title": "Öffne Link '%link%'"
-      },
-      {
-        "command": "default.settingsjson",
-        "title": "settings.json zurücksetzen"
-      },
-      {
-        "command": "default.tasksjson",
-        "title": "tasks.json zurücksetzen"
-      },
-      {
-        "command": "extension.on",
-        "title": "Erweiterung wieder aktivieren"
-      },
-      {
-        "command": "extension.off",
-        "title": "Erweiterung pausieren"
-      },
-      {
-        "command": "report.problem",
-        "title": "Problem melden"
-      },
-      {
-        "command": "switch.language",
-        "title": "Programmiersprache wechseln"
-      },
-      {
-        "command": "switch.folder",
-        "title": "In das Verzeichnis der aktuell geöffneten Datei wechseln"
-      }
-    ]
+    "commands": []
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
@@ -101,11 +50,7 @@
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js"
   },
-  "extensionDependencies": [
-    "formulahendry.code-runner",
-    "ms-vscode.cpptools",
-    "ms-vsliveshare.vsliveshare"
-  ],
+  "extensionDependencies": [],
   "devDependencies": {
     "@types/fs-extra": "^11.0.1",
     "@types/glob": "^8.0.0",
@@ -124,7 +69,6 @@
   "dependencies": {
     "@types/request": "^2.48.8",
     "fs-extra": "^11.1.1",
-    "nodemailer": "^6.9.1",
-    "request": "^2.88.2"
+    "nodemailer": "^6.9.1"
   }
 }
