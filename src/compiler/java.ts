@@ -62,7 +62,7 @@ function installJavaWindows(): void {
             execSync(`powershell -Command "Start-Process cmd -Wait -Verb runAs -ArgumentList '/k choco install openjdk --version=20.0.1 -y -f && EXIT /B'"`);
             infoNotification(`Java-Compiler Deinstallation wurde erfolgreich durchgeführt`);
         } catch (error) {
-            errorNotification(`Java-Compiler Deinstallation wurde nicht erfolgreich durchgeführt`);
+            errorNotification(`Java-Compiler Installation wurde nicht erfolgreich durchgeführt`);
         }
     } else {
         infoNotification(`Java-Compiler ist bereits installiert!`, init, init);
