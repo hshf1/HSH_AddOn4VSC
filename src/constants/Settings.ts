@@ -10,7 +10,7 @@ export const launchWindows = {
             "MIMode": "gdb",
             "program": "\${fileDirname}\\\\\${fileBasenameNoExtension}.exe",
             "cwd": "\${workspaceFolder}",
-            "preLaunchTask": "C_Aktive_Datei_kompilieren"
+            "preLaunchTask": "ckompilieren"
         },
         {
             "name": "C++ -> Aktive-Datei debuggen",
@@ -21,7 +21,7 @@ export const launchWindows = {
             "MIMode": "gdb",
             "program": "\${fileDirname}\\\\\${fileBasenameNoExtension}.exe",
             "cwd": "\${workspaceFolder}",
-            "preLaunchTask": "C++_Aktive_Datei_kompilieren"
+            "preLaunchTask": "cppkompilieren"
         },
         {
             "name": "Python -> Aktive-Datei debuggen",
@@ -50,7 +50,7 @@ export const launchLinux = {
             "MIMode": "gdb",
             "program": "\${fileDirname}/\${fileBasenameNoExtension}",
             "cwd": "\${fileDirname}",
-            "preLaunchTask": "C_Aktive_Datei_kompilieren"
+            "preLaunchTask": "ckompilieren"
         },
         {
             "name": "C++ -> Aktive-Datei debuggen",
@@ -59,7 +59,7 @@ export const launchLinux = {
             "MIMode": "gdb",
             "program": "\${fileDirname}/\${fileBasenameNoExtension}",
             "cwd": "\${fileDirname}",
-            "preLaunchTask": "C++_Aktive_Datei_kompilieren"
+            "preLaunchTask": "cppkompilieren"
         },
         {
             "name": "Python -> Aktive-Datei",
@@ -92,7 +92,7 @@ export const launchMac = {
             "environment": [],
             "externalConsole": true,
             "MIMode": "lldb",
-            "preLaunchTask": "C_Aktive_Datei_kompilieren"
+            "preLaunchTask": "ckompilieren"
         },
         {
             "type": "cppdbg",
@@ -105,7 +105,7 @@ export const launchMac = {
             "environment": [],
             "externalConsole": true,
             "MIMode": "lldb",
-            "preLaunchTask": "C++_Aktive_Datei_kompilieren"
+            "preLaunchTask": "cppkompilieren"
         },
         {
             "name": "Python -> Aktive-Datei",
