@@ -26,7 +26,7 @@
       "activitybar": [
         {
           "id": "package-explorer",
-          "title": "Erweiterung für VorlesungC",
+          "title": "Erweiterung für Vorlesung Grundlagen C-Programmieren",
           "icon": "images/activity_bar.svg"
         }
       ]
